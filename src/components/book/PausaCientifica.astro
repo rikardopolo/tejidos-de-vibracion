@@ -1,0 +1,19 @@
+---
+/**
+ * PausaCientifica · wrapper de conveniencia alrededor de Marginalia.
+ * Equivale a <Marginalia kind="pausa-cientifica" ...>.
+ * El eyebrow se renderiza en índigo via .marginalia--cientifica.
+ */
+import Marginalia from './Marginalia.astro';
+
+interface Props {
+  titulo: string;
+  duracion?: string;
+}
+
+const { titulo, duracion } = Astro.props;
+---
+
+<Marginalia kind="pausa-cientifica" titulo={titulo} duracion={duracion}>
+  <slot />
+</Marginalia>

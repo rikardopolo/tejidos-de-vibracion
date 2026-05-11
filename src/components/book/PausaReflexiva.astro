@@ -1,0 +1,18 @@
+---
+/**
+ * PausaReflexiva · wrapper de conveniencia alrededor de Marginalia.
+ * Equivale a <Marginalia kind="pausa-reflexiva" ...>.
+ */
+import Marginalia from './Marginalia.astro';
+
+interface Props {
+  titulo: string;
+  duracion?: string;
+}
+
+const { titulo, duracion } = Astro.props;
+---
+
+<Marginalia kind="pausa-reflexiva" titulo={titulo} duracion={duracion}>
+  <slot />
+</Marginalia>

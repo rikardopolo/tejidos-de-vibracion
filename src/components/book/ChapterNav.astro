@@ -1,0 +1,45 @@
+---
+/**
+ * ChapterNav · navegación al pie de cada capítulo.
+ * Grid de tres columnas: anterior · índice · siguiente.
+ * El enlace central siempre apunta a /indice con el texto canónico.
+ * En mobile colapsa a una columna apilada.
+ */
+
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+interface Props {
+  prev?: NavItem;
+  next?: NavItem;
+}
+
+const { prev, next } = Astro.props;
+---
+
+<nav class="chapter-nav" aria-label="Navegación entre capítulos">
+  {prev ? (
+    <a class="chapter-nav__item chapter-nav__item--prev" href={prev.href}>
+      <p class="chapter-nav__cue">&larr; Anterior</p>
+      <span class="chapter-nav__label">{prev.label}</span>
+    </a>
+  ) : (
+    <span></span>
+  )}
+
+  <a class="chapter-nav__item chapter-nav__item--center" href="/indice">
+    <p class="chapter-nav__cue">Índice</p>
+    <span class="chapter-nav__label">Volver a los tres actos</span>
+  </a>
+
+  {next ? (
+    <a class="chapter-nav__item chapter-nav__item--next" href={next.href}>
+      <p class="chapter-nav__cue">Siguiente &rarr;</p>
+      <span class="chapter-nav__label">{next.label}</span>
+    </a>
+  ) : (
+    <span></span>
+  )}
+</nav>

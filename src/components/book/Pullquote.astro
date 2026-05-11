@@ -1,0 +1,17 @@
+---
+/**
+ * Pullquote · cita literaria destacada.
+ * center=false (default) → borde lateral oro, alineación izquierda.
+ * center=true            → diamantes superior e inferior, sin borde, centrada.
+ */
+
+interface Props {
+  center?: boolean;
+}
+
+const { center = false } = Astro.props;
+---
+
+<p class={`pullquote${center ? ' pullquote--center' : ''}`}>
+  <slot />
+</p>

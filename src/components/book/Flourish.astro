@@ -1,0 +1,16 @@
+---
+/**
+ * Flourish · divisor tipográfico decorativo.
+ * kind="diamond"  → entre escenas dentro de una sección
+ * kind="triple"   → entre secciones mayores
+ * kind="rule"     → debajo de cabeceras
+ */
+
+interface Props {
+  kind: 'diamond' | 'triple' | 'rule';
+}
+
+const { kind } = Astro.props;
+---
+
+<div class={`flourish flourish--${kind}`}></div>

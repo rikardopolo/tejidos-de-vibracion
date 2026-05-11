@@ -1,0 +1,19 @@
+---
+/**
+ * VozTejido · wrapper de conveniencia alrededor de Marginalia.
+ * Voz íntima del autor en primera persona.
+ * El eyebrow se renderiza en verde via .marginalia--voz.
+ */
+import Marginalia from './Marginalia.astro';
+
+interface Props {
+  titulo: string;
+  duracion?: string;
+}
+
+const { titulo, duracion } = Astro.props;
+---
+
+<Marginalia kind="voz-del-tejido" titulo={titulo} duracion={duracion}>
+  <slot />
+</Marginalia>

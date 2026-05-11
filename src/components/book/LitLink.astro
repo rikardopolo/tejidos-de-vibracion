@@ -1,0 +1,27 @@
+---
+/**
+ * LitLink · enlace literario subrayado (CTA sin aspecto de botón de software).
+ * size="default"   → 1.125rem, borde inferior oro
+ * size="lg"        → 1.25rem, mismo borde
+ * size="secondary" → Inter 0.875rem, color índigo
+ */
+
+interface Props {
+  href: string;
+  size?: 'default' | 'lg' | 'secondary';
+}
+
+const { href, size = 'default' } = Astro.props;
+
+const classMap: Record<string, string> = {
+  default:   'lit-link',
+  lg:        'lit-link lit-link--lg',
+  secondary: 'lit-link-secondary',
+};
+
+const cls = classMap[size];
+---
+
+<a href={href} class={cls}>
+  <slot />
+</a>

@@ -1,0 +1,33 @@
+---
+/**
+ * TocEntry · entrada del índice del libro.
+ * Estado publicado: enlace activo con número y título.
+ * Estado en gestación: opacidad 50 %, pointer-events: none.
+ */
+
+interface Props {
+  num: string;
+  title: string;
+  subtitle: string;
+  href?: string;
+  gestating?: boolean;
+}
+
+const { num, title, subtitle, href, gestating = false } = Astro.props;
+
+const Tag = gestating || !href ? 'span' : 'a';
+const extraAttrs = gestating ? { 'aria-disabled': 'true' } : {};
+const hrefAttr = !gestating && href ? { href } : {};
+---
+
+<Tag
+  class={`toc-entry${gestating ? ' toc-entry--gestating' : ''}`}
+  {...hrefAttr}
+  {...extraAttrs}
+>
+  <span class="toc-entry__num">{num}</span>
+  <span class="toc-entry__body">
+    <span class="toc-entry__title">{title}</span>
+    <span class="toc-entry__sub">{subtitle}</span>
+  </span>
+</Tag>

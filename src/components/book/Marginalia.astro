@@ -1,0 +1,64 @@
+---
+/**
+ * Marginalia · contenedor pedagógico genérico.
+ * Nueve variantes de `kind`, mismo borde oro, distinto eyebrow.
+ *
+ * Variantes con modificador CSS especial:
+ *   pausa-cientifica / ventana-cuantica → .marginalia--cientifica (eyebrow índigo)
+ *   voz-del-tejido                      → .marginalia--voz        (eyebrow verde)
+ *   (todas las demás)                   → sin modificador         (eyebrow oro-suave)
+ */
+
+type MarginaliaKind =
+  | 'pausa-reflexiva'
+  | 'pausa-cientifica'
+  | 'voz-del-tejido'
+  | 'ejercicio-formal'
+  | 'laboratorio-interior'
+  | 'ventana-cuantica'
+  | 'checkpoint'
+  | 'pausa-respiratoria'
+  | 'mapa-conceptual';
+
+interface Props {
+  kind: MarginaliaKind;
+  titulo: string;
+  duracion?: string;
+}
+
+const { kind, titulo, duracion } = Astro.props;
+
+const kindLabels: Record<MarginaliaKind, string> = {
+  'pausa-reflexiva':    'Pausa reflexiva',
+  'pausa-cientifica':   'Pausa científica',
+  'voz-del-tejido':     'Voz del tejido',
+  'ejercicio-formal':   'Ejercicio formal',
+  'laboratorio-interior': 'Laboratorio interior',
+  'ventana-cuantica':   'Ventana cuántica',
+  'checkpoint':         'Checkpoint',
+  'pausa-respiratoria': 'Pausa respiratoria',
+  'mapa-conceptual':    'Mapa conceptual',
+};
+
+const modifiers: Partial<Record<MarginaliaKind, string>> = {
+  'pausa-cientifica': 'marginalia--cientifica',
+  'ventana-cuantica': 'marginalia--cientifica',
+  'voz-del-tejido':   'marginalia--voz',
+};
+
+const modifier = modifiers[kind] ?? '';
+const label = kindLabels[kind];
+---
+
+<aside class={`marginalia${modifier ? ' ' + modifier : ''}`}>
+  <p class="marginalia__kind">{label}</p>
+  {duracion && (
+    <p class="muted" style="font-family: var(--sans); font-size: 0.8125rem; letter-spacing: 0.05em; margin: 0 0 0.5rem 0;">
+      DURACIÓN · {duracion}
+    </p>
+  )}
+  <h3 class="marginalia__title">{titulo}</h3>
+  <div class="marginalia__body">
+    <slot />
+  </div>
+</aside>
