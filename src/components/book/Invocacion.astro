@@ -1,0 +1,9 @@
+---
+export interface Props {
+  centered?: boolean;
+}
+const { centered = true } = Astro.props;
+---
+<p class={`invocacion${centered ? ' invocacion--center' : ''}`}>
+  <slot />
+</p>

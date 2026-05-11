@@ -16,6 +16,10 @@
   --oro-suave:   #B68914;
   --oro-fantasma:rgba(212, 160, 23, 0.18);
   --nocturno:    #0A0E1A;
+
+  /* Header — variables para modo noche */
+  --header-bg:         rgba(250, 247, 242, 0.82);
+  --header-bg-scrolled:rgba(250, 247, 242, 0.94);
   --indigo:      #2D1B69;
   --verde:       #1D9E75;
 
@@ -37,7 +41,7 @@
   /* Ritmo */
   --lh-body: 1.7;
   --lh-tight: 1.2;
-  --col: 36rem;            /* ~62ch en EB Garamond */
+  --col: 42rem;            /* ~72ch en EB Garamond — rango óptimo 60-80 */
   --col-wide: 52rem;
   --gap-xs: 0.5rem;
   --gap-sm: 1rem;

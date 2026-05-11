@@ -26,17 +26,18 @@ body {
 .progress-rail {
   position: fixed;
   top: 0; left: 0; right: 0;
-  height: 1px;
+  height: 2px;
   background: transparent;
-  z-index: 50;
+  z-index: 60;
   pointer-events: none;
 }
 .progress-rail::before {
   content: '';
   display: block;
-  height: 1px;
+  height: 2px;
   width: var(--p, 0%);
-  background: rgba(212, 160, 23, 0.45);
+  background: var(--oro);
+  box-shadow: 0 0 4px rgba(212, 160, 23, 0.3);
   transition: width 80ms linear;
 }
 
@@ -48,14 +49,14 @@ body {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(250, 247, 242, 0.82);
+  background: var(--header-bg);
   backdrop-filter: saturate(140%) blur(8px);
   -webkit-backdrop-filter: saturate(140%) blur(8px);
   border-bottom: 1px solid transparent;
   transition: background 200ms ease, border-color 200ms ease;
 }
 .book-header.is-scrolled {
-  background: rgba(250, 247, 242, 0.94);
+  background: var(--header-bg-scrolled);
   border-bottom-color: var(--pergamino-2);
 }
 .book-header__inner {
@@ -281,6 +282,43 @@ main {
 .flourish--diamond::before { content: '◆'; }
 .flourish--triple::before  { content: '◇   ◆   ◇'; }
 .flourish--rule::before    { content: '— ◇ —'; letter-spacing: 0.3em; }
+
+/* frase invocación — para frases cortas y destacadas tipo "Cruza conmigo el umbral" */
+.invocacion {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  line-height: 1.5;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--oro);
+  letter-spacing: 0.01em;
+  margin: 3.5rem auto;
+  max-width: 28rem;
+  text-align: center;
+  text-wrap: balance;
+}
+.invocacion--center { text-align: center; }
+
+@media (max-width: 720px) {
+  .invocacion { font-size: 1.25rem; margin: 2.5rem auto; }
+}
+
+/* h2 de sección dentro del cuerpo de lectura (p. ej., Obertura) */
+.measure h2 {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--oro);
+  text-align: center;
+  margin: 4rem auto 2.5rem;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  scroll-margin-top: 5rem;
+}
+.measure h2::first-letter {
+  text-transform: uppercase;
+}
 
 /* pull quote literario */
 .pullquote {
@@ -817,6 +855,8 @@ html[data-reader-mode="night"] {
   --reposo: #7d7972;
   --oro: #d4a017;
   --oro-suave: #b68914;
+  --header-bg: rgba(26, 23, 20, 0.82);
+  --header-bg-scrolled: rgba(26, 23, 20, 0.94);
 }
 
 /* Reading sizes — applied via [data-reader-size] on <html> */
