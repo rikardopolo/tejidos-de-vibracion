@@ -1,0 +1,63 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import LitLink from '@/components/book/LitLink.astro';
+---
+
+<LecturaLarga
+  title="Colofón · Tejidos de Vibración"
+  description="Linaje, herramientas y agradecimientos del Volumen I de Tejidos de Vibración. Las voces, los libros y los maestros que sostienen esta trama."
+  pageId="colofon"
+>
+  <article class="measure" style="padding-top: 5rem;">
+    <header>
+      <p class="eyebrow">Colofón</p>
+      <h1 class="title-1">Linaje, herramientas, agradecimientos</h1>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">Este libro no se escribió en solitario, aunque su escritura sí ocurra en soledad. Lo que sigue es el reconocimiento sostenido de las voces, los libros, los maestros y los instrumentos sin los cuales este Volumen I no existiría.</p>
+    </section>
+
+    <section class="section-gap">
+      <h2 class="title-2">Linaje vivo</h2>
+      <p class="prose">Estos son algunos de los nombres que sostienen, sin saberlo, la trama de este libro. La lista completa — treinta y ocho voces que forman la Constelación — vive en el sitio del proyecto.</p>
+      <ul style="list-style: none; padding: 0; margin: 2rem 0; font-family: var(--serif); font-size: 1.125rem; line-height: 2.1; column-count: 2; column-gap: 3rem;">
+        <li>Francisco Varela</li><li>David Bohm</li><li>Carlo Rovelli</li>
+        <li>Fritjof Capra</li><li>Alan Watts</li><li>Iain McGilchrist</li>
+        <li>Henri Bergson</li><li>William James</li><li>Maurice Merleau-Ponty</li>
+        <li>Erwin Schrödinger</li><li>Niels Bohr</li><li>John Archibald Wheeler</li>
+        <li>Rupert Sheldrake</li><li>Pierre Hadot</li><li>Simone Weil</li>
+      </ul>
+      <p class="prose">
+        <LitLink href="https://tejidosderealidad.com/pensadores" size="secondary">La Constelación completa, en el portal hermano &rarr;</LitLink>
+      </p>
+    </section>
+
+    <section class="section-gap">
+      <h2 class="title-2">Herramientas</h2>
+      <div class="prose">
+        <p class="no-indent">El sitio se construyó con cuidado tipográfico antes que con sofisticación técnica. <em>EB Garamond</em>, diseñada por Georg Duffner como revivalmente paciente de los tipos de Claude Garamont, sostiene el cuerpo y los títulos. <em>Inter</em>, de Rasmus Andersson, aparece solo donde la metadata pide neutralidad. No se usaron sombras, gradientes ni esquinas redondeadas. Todo el sitio cabe en menos de cincuenta kilobytes por página.</p>
+      </div>
+    </section>
+
+    <section class="section-gap">
+      <h2 class="title-2">Agradecimientos</h2>
+      <div class="prose">
+        <p class="no-indent">A quienes leyeron borradores cuando los borradores no eran legibles. A quienes preguntaron lo correcto en el momento incorrecto, y obligaron al texto a crecer. A quienes acompañaron el silencio largo en que se escribió la Obertura. A los tres lectores arquetipo que sin saberlo escriben conmigo cada párrafo: la Ingeniera Escéptica, la Buscadora Espiritual, el Estudiante de Filosofía.</p>
+        <p>Y a quien esté leyendo esto: gracias por haber llegado hasta el colofón. Pocos libros se leen hasta aquí. Que este sea uno de los suyos es un regalo que el autor no merece y agradece sin condiciones.</p>
+      </div>
+    </section>
+
+    <section class="section-gap" style="border-top: 1px solid var(--pergamino-2); padding-top: 3rem;">
+      <p class="meta">Tejidos de Vibración · Volumen I · Primera edición digital · 2026</p>
+      <p class="meta">Bogotá · Colombia. Tejidosderealidad.com · Tejidosdevibracion.com.</p>
+      <p class="meta">&copy; Ricardo Polo · Orion. Todos los textos publicados bajo licencia de lectura abierta. Para reproducción parcial, escribir a contacto@tejidosderealidad.com.</p>
+    </section>
+
+    <p style="margin-top: 5rem; margin-bottom: 6rem;" class="center">
+      <LitLink href="/" size="secondary">Volver a la portada</LitLink>
+    </p>
+  </article>
+</LecturaLarga>

@@ -1,0 +1,65 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import LitLink from '@/components/book/LitLink.astro';
+---
+
+<LecturaLarga
+  title="Sobre el libro · Tejidos de Vibración"
+  description="Tejidos de Vibración: qué es, cómo se publica, para quién está escrito y quién lo escribe. Volumen I del proyecto Tejidos de Realidad."
+  pageId="sobre"
+>
+  <article class="measure" style="padding-top: 5rem;">
+    <header>
+      <p class="eyebrow">Sobre el libro</p>
+      <h1 class="title-1">¿Qué es Tejidos de Vibración?</h1>
+      <p class="title-1__sub">Volumen I de un proyecto sostenido durante años</p>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">Tejidos de Vibración es un libro escrito durante años en la frontera entre dos lenguajes. El primero, el de la ciencia rigurosa que aprendió a medir el latido de los electrones y la edad del universo. El segundo, el de la contemplación profunda que aprendió a cartografiar el silencio interior. El libro no intenta reconciliarlos. Intenta mostrar que, mirados con paciencia, dicen lo mismo en idiomas incompatibles.</p>
+
+      <p>El proyecto al que pertenece se llama Tejidos de Realidad y vive en su propio sitio, con un laboratorio de simuladores, una constelación de pensadores y ensayos que se publican aparte. Este sitio es solo el libro. Está hecho para ser leído, no para ser usado.</p>
+    </section>
+
+    <section class="prose section-gap">
+      <h2 class="title-3">Cómo se publica</h2>
+      <p class="no-indent">El libro se publica por entregas. La Obertura, el Capítulo 1, el Capítulo 2 y el Capítulo 3 ya están abiertos. Los siete capítulos siguientes se publican a medida que se tejen. No hay calendario fijo. Hay un ritmo: el del trabajo paciente que el libro pide para ser escrito y el que pide para ser leído.</p>
+      <p>Quienes acompañen el libro a medida que se entrega lo harán recibiendo cada capítulo en su correo, junto con una carta del Tejedor con notas sobre el proceso. Esa carta no se publica en ningún otro lugar.</p>
+    </section>
+
+    <section class="prose section-gap">
+      <h2 class="title-3">Para quién está escrito</h2>
+      <p class="no-indent">Para la ingeniera escéptica que necesita ver rigor antes de creer en una metáfora. Para la buscadora que necesita sentir invitación antes de aceptar un argumento. Para el estudiante de filosofía que ama un aparato erudito bien construido y una voz literaria que no se disculpa por serlo. El libro está pensado para servir a los tres simultáneamente, y los tres están invitados a perdonar lo que el libro no resuelva.</p>
+    </section>
+
+    <aside class="marginalia">
+      <p class="marginalia__kind">Voz del tejido</p>
+      <h3 class="marginalia__title">Sobre el formato impreso</h3>
+      <div class="marginalia__body">
+        <p class="no-indent">El libro estará disponible en formato impreso cuando termine la gestación del Volumen I. Por ahora vive en su versión digital, abierta a todos, sin pago. Si quieres que se te avise cuando exista la edición de papel, basta con estar suscrito a los envíos.</p>
+      </div>
+    </aside>
+
+    <section class="prose section-gap" style="display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: start;">
+      <div>
+        <h2 class="title-3" style="margin-top: 0;">El autor</h2>
+        <p class="no-indent">Ricardo Polo · Orion lleva años sentado en la frontera entre la ecuación y el silencio. No es físico de laboratorio ni monje de monasterio. Es alguien que se atrevió a sostener la pregunta hasta que un libro creció a su alrededor.</p>
+        <p>El nombre Orion firma todos los textos del proyecto. Es la forma canónica de la firma. El nombre civil aparece donde la ley lo exige.</p>
+      </div>
+      <figure style="margin: 0; max-width: 22rem;">
+        <img
+          src="/assets/ricardo-polo.png"
+          alt="Retrato de Ricardo Polo · Orion sobre fondo cósmico"
+          style="width: 100%; height: auto; display: block; border-radius: 2px; filter: contrast(0.95) brightness(0.96);"
+        />
+        <figcaption class="meta" style="margin-top: 0.75rem; font-style: italic;">Ricardo Polo · Orion. Retrato del proyecto.</figcaption>
+      </figure>
+    </section>
+
+    <p style="margin-top: 5rem; margin-bottom: 6rem;" class="center">
+      <LitLink href="/obertura">Empezar por la Obertura</LitLink>
+    </p>
+  </article>
+</LecturaLarga>

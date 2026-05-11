@@ -1,0 +1,52 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import LitLink from '@/components/book/LitLink.astro';
+---
+
+<LecturaLarga
+  title="Buscar · Tejidos de Vibración"
+  description="Busca palabras, conceptos o frases dentro de los capítulos abiertos de Tejidos de Vibración: la Obertura y los Capítulos 1 al 3."
+  pageId="buscar"
+>
+  <article class="measure" style="padding-top: 5rem;">
+    <header>
+      <p class="eyebrow">Buscar dentro del libro</p>
+      <h1 class="title-1">Encontrar un hilo en la trama</h1>
+      <p class="title-1__sub">Buscar palabras, conceptos o frases dentro de los capítulos abiertos</p>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="section-gap">
+      <form id="form-buscar" class="form-inline" style="max-width: 36rem;" novalidate>
+        <input
+          class="form-inline__field"
+          type="search"
+          id="search-q"
+          placeholder="por ejemplo: cimática, observador, Penélope"
+          aria-label="Buscar en el libro"
+        />
+        <button class="form-inline__submit" type="submit">Buscar</button>
+      </form>
+      <p class="form-microcopy" style="margin-top: 1rem;">La búsqueda recorre la Obertura y los Capítulos 1 al 3. Los capítulos en gestación todavía no participan.</p>
+    </section>
+
+    <section id="search-results" class="section-gap"></section>
+
+    <section class="prose section-gap" id="search-empty">
+      <p class="no-indent muted" style="font-style: italic;">
+        Escribe algo en el campo de arriba. Si no sabes qué buscar, prueba con
+        <a href="#" data-search-suggest="vibración" class="lit-link-secondary" style="display:inline; padding-bottom:1px;">vibración</a>,
+        <a href="#" data-search-suggest="observador" class="lit-link-secondary" style="display:inline; padding-bottom:1px;">observador</a>
+        o
+        <a href="#" data-search-suggest="cuerda" class="lit-link-secondary" style="display:inline; padding-bottom:1px;">cuerda</a>.
+      </p>
+    </section>
+
+    <p style="margin-top: 5rem; margin-bottom: 6rem;">
+      <LitLink href="/indice" size="secondary">Volver al índice</LitLink>
+    </p>
+  </article>
+
+  <script src="/libro-buscar.js" defer></script>
+</LecturaLarga>

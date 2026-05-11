@@ -1,0 +1,54 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import TocEntry from '@/components/book/TocEntry.astro';
+import LitLink from '@/components/book/LitLink.astro';
+---
+
+<LecturaLarga
+  title="Acto II · Cuerpo · Tejidos de Vibración"
+  description="La biología que escucha: tres capítulos sobre el cuerpo como instrumento, la neurociencia de la frecuencia y los estados expandidos de consciencia."
+  pageId="acto-ii"
+>
+  <article class="measure" style="padding-top: 6rem;">
+    <header class="center">
+      <p class="eyebrow">Acto II</p>
+      <h1 class="title-1" style="font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1; margin-bottom: 1.5rem;">Cuerpo</h1>
+      <p class="title-1__sub" style="font-size: 1.625rem;">La biología que escucha</p>
+    </header>
+
+    <div class="flourish flourish--triple" style="margin-top: 4rem;"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">Una vez aceptado que la materia es composición, queda preguntarse qué tipo de composición es una. La biología contemporánea — la que aprende, despacio, a hablar de campos, coherencias y ritmos sin perder el rigor — empieza a entregar respuestas que los manuales del siglo XX no podían siquiera enunciar. El Acto II recorre el cuerpo desde adentro: del corazón como oscilador a los estados expandidos en que la consciencia se afina sin perderse.</p>
+    </section>
+
+    <section style="margin-top: 5rem;">
+      <TocEntry
+        num="IV"
+        title="La biología del campo coherente"
+        subtitle="Corazón, células y los ritmos que el cuerpo comparte con el mundo"
+        gestating={true}
+      />
+      <TocEntry
+        num="V"
+        title="Neurociencia de la frecuencia"
+        subtitle="Ondas cerebrales, atención y el cerebro como instrumento"
+        gestating={true}
+      />
+      <TocEntry
+        num="VI"
+        title="Estados expandidos de consciencia"
+        subtitle="Lo que ocurre cuando la red por defecto se silencia"
+        gestating={true}
+      />
+    </section>
+
+    <section class="prose section-gap-lg">
+      <p class="no-indent" style="font-style: italic; color: var(--tinta-suave);">Al final del Acto II, el libro habrá descrito un cuerpo. Faltará, todavía, decir quién es el que habita ese cuerpo y desde dónde mira. Eso lo hará el Acto III.</p>
+    </section>
+
+    <p class="center" style="margin-top: 5rem; margin-bottom: 7rem;">
+      <LitLink href="/acto-iii">Continuar al Acto III · Tejedor</LitLink>
+    </p>
+  </article>
+</LecturaLarga>

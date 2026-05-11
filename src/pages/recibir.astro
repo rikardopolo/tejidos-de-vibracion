@@ -1,0 +1,55 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import LitLink from '@/components/book/LitLink.astro';
+---
+
+<LecturaLarga
+  title="Recibir el libro · Tejidos de Vibración"
+  description="Recibe la Obertura y cada capítulo de Tejidos de Vibración a medida que se publica, junto con una carta del Tejedor sobre el proceso de escritura."
+  pageId="recibir"
+>
+  <article class="measure" style="padding-top: 6rem;">
+    <header>
+      <p class="eyebrow">Si quieres acompañar el libro</p>
+      <h1 class="title-1" style="font-size: 2.75rem; font-style: italic; color: var(--oro);">Recibir el libro a medida que se teje</h1>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">Quien deje aquí su correo recibirá la Obertura completa de inmediato, los capítulos siguientes a medida que se publiquen, y una carta del Tejedor — más o menos mensual — con notas del proceso: qué se está pensando, qué se está leyendo, qué duda llegó esta semana al escritorio. Esa carta no aparece publicada en ningún otro lugar del sitio.</p>
+
+      <p>No recibirás: ofertas, descuentos, lanzamientos urgentes, ventas cruzadas, contenido patrocinado, ni envíos frecuentes. Todo el libro estará abierto y leíble en este sitio sin necesidad de suscripción. El correo es solo una forma más íntima de acompañar lo que se está escribiendo.</p>
+    </section>
+
+    <form id="form-recibir" class="form-inline" style="margin-top: 3rem; max-width: 32rem;" novalidate>
+      <input
+        class="form-inline__field"
+        type="email"
+        name="email"
+        required
+        placeholder="tu correo"
+        aria-label="Tu correo"
+        autocomplete="email"
+      />
+      <input
+        type="text"
+        name="honeypot"
+        tabindex="-1"
+        autocomplete="off"
+        style="position:absolute;left:-9999px;"
+        aria-hidden="true"
+      />
+      <button class="form-inline__submit" type="submit">Recibir</button>
+    </form>
+    <p id="form-status" class="form-microcopy" role="status" aria-live="polite" style="margin-top: 1.5rem;">Te enviaremos solo cuando un capítulo esté listo. Nunca antes.</p>
+
+    <p class="form-microcopy" style="margin-top: 1rem;">Protegido por la Ley 1581 de habeas data. Cada correo trae link de baja con un click. <a href="/privacidad" class="lit-link-secondary" style="display:inline; padding-bottom:1px;">Política de privacidad</a>.</p>
+
+    <p style="margin-top: 5rem; margin-bottom: 8rem;">
+      <LitLink href="/indice" size="secondary">¿Querés mirar el índice antes?</LitLink>
+    </p>
+  </article>
+
+  <script src="/libro-recibir.js" defer></script>
+</LecturaLarga>

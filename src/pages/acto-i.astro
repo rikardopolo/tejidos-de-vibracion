@@ -1,0 +1,54 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import TocEntry from '@/components/book/TocEntry.astro';
+import LitLink from '@/components/book/LitLink.astro';
+---
+
+<LecturaLarga
+  title="Acto I · Fundamentos · Tejidos de Vibración"
+  description="Los tres capítulos fundacionales de Tejidos de Vibración: El universo como sinfonía, La ciencia que aprendió a escuchar y El mundo cuántico."
+  pageId="acto-i"
+>
+  <article class="measure" style="padding-top: 6rem;">
+    <header class="center">
+      <p class="eyebrow">Acto I</p>
+      <h1 class="title-1" style="font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1; margin-bottom: 1.5rem;">Fundamentos</h1>
+      <p class="title-1__sub" style="font-size: 1.625rem;">La vibración primordial</p>
+    </header>
+
+    <div class="flourish flourish--triple" style="margin-top: 4rem;"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">Lo que sigue es el suelo del libro. Sin estos tres capítulos, el resto no tiene dónde apoyarse. La pregunta del Acto I es elemental, casi infantil: si todo lo que llamamos «cosas» es, en algún nivel, vibración sostenida, ¿qué quiere decir eso? La respuesta no cabe en una frase. Cabe, con suerte, en tres capítulos que recorren dos mil quinientos años, desde Pitágoras y los martillos de la herrería hasta el escándalo todavía abierto del experimento de la doble rendija.</p>
+    </section>
+
+    <section style="margin-top: 5rem;">
+      <TocEntry
+        num="I"
+        title="El universo como sinfonía"
+        subtitle="La historia secreta del sonido y la física de la vibración"
+        href="/capitulo/cap-1-universo-sinfonia"
+      />
+      <TocEntry
+        num="II"
+        title="La ciencia que aprendió a escuchar"
+        subtitle="De Pitágoras a la cimática: medir lo que vibra"
+        href="/capitulo/cap-2-ciencia-escuchar"
+      />
+      <TocEntry
+        num="III"
+        title="El mundo cuántico"
+        subtitle="Cuando la materia dejó de ser sustancia y empezó a ser onda"
+        href="/capitulo/cap-3-mundo-cuantico"
+      />
+    </section>
+
+    <section class="prose section-gap-lg">
+      <p class="no-indent" style="font-style: italic; color: var(--tinta-suave);">Cuando termines el Acto I, el siguiente acto te esperará con una pregunta nueva: si la materia es composición, ¿qué tipo de composición es un cuerpo vivo?</p>
+    </section>
+
+    <p class="center" style="margin-top: 5rem; margin-bottom: 7rem;">
+      <LitLink href="/acto-ii">Continuar al Acto II · Cuerpo</LitLink>
+    </p>
+  </article>
+</LecturaLarga>

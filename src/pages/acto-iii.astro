@@ -1,0 +1,60 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import TocEntry from '@/components/book/TocEntry.astro';
+import LitLink from '@/components/book/LitLink.astro';
+---
+
+<LecturaLarga
+  title="Acto III · Tejedor · Tejidos de Vibración"
+  description="El observador como problema y como condición: cuatro capítulos sobre consciencia, el campo relacional, la filosofía de la ciencia vibracional y el tejedor consciente."
+  pageId="acto-iii"
+>
+  <article class="measure" style="padding-top: 6rem;">
+    <header class="center">
+      <p class="eyebrow">Acto III</p>
+      <h1 class="title-1" style="font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1; margin-bottom: 1.5rem;">Tejedor</h1>
+      <p class="title-1__sub" style="font-size: 1.625rem;">La mirada que teje</p>
+    </header>
+
+    <div class="flourish flourish--triple" style="margin-top: 4rem;"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">Los dos actos anteriores describieron un mundo y un cuerpo. Este acto se atreve a hablar del observador. No del observador como problema técnico de la mecánica cuántica, sino del observador como el único fenómeno que ninguna ciencia puede estudiar del todo desde afuera, porque es la condición desde la que se estudia. El Acto III es el más arriesgado del libro. También es, probablemente, el más necesario.</p>
+    </section>
+
+    <section style="margin-top: 5rem;">
+      <TocEntry
+        num="VII"
+        title="El problema del observador"
+        subtitle="Por qué la consciencia no se deja medir desde afuera"
+        gestating={true}
+      />
+      <TocEntry
+        num="VIII"
+        title="El campo relacional"
+        subtitle="Lo que ocurre entre dos consciencias atentas"
+        gestating={true}
+      />
+      <TocEntry
+        num="IX"
+        title="Filosofía de la ciencia vibracional"
+        subtitle="Los límites del lenguaje científico ante la experiencia"
+        gestating={true}
+      />
+      <TocEntry
+        num="X"
+        title="El tejedor consciente"
+        subtitle="Vivir como si la mirada importara, porque importa"
+        gestating={true}
+      />
+    </section>
+
+    <section class="prose section-gap-lg">
+      <p class="no-indent" style="font-style: italic; color: var(--tinta-suave);">Al cerrar el Volumen I, el lector no tendrá un sistema de creencias. Tendrá, con suerte, un instrumento afinado y un par de preguntas más limpias de las que traía al entrar.</p>
+    </section>
+
+    <p class="center" style="margin-top: 5rem; margin-bottom: 7rem;">
+      <LitLink href="/colofon">Llegar al Colofón</LitLink>
+    </p>
+  </article>
+</LecturaLarga>
