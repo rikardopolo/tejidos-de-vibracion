@@ -1,0 +1,148 @@
+---
+/**
+ * /indice · Tabla de contenidos del Volumen I
+ * Mirrors handoff indice.html design.
+ * Caps. I–III se cargan desde la colección `book`;
+ * Caps. IV–X están hardcoded (en gestación, sin MDX aún).
+ */
+import { getCollection } from 'astro:content';
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import TocEntry from '@/components/book/TocEntry.astro';
+import LitLink from '@/components/book/LitLink.astro';
+
+// Slug → href map for published chapters
+const SLUG_MAP: Record<number, string> = {
+  1: '/capitulo/cap-1-universo-sinfonia',
+  2: '/capitulo/cap-2-ciencia-escuchar',
+  3: '/capitulo/cap-3-mundo-cuantico',
+};
+
+// Load published chapters from the collection
+const allChapters = await getCollection('book', ({ data }) =>
+  data.kind === 'capitulo' && data.status === 'published'
+);
+const publishedByNumber = new Map(
+  allChapters.map((e) => [e.data.chapter as number, e.data])
+);
+
+// Gestating chapters (no MDX yet — hardcoded per spec)
+const gestatingChapters = [
+  { num: 4, roman: 'IV', title: 'La biología del campo coherente', subtitle: 'Corazón, células y los ritmos que el cuerpo comparte con el mundo' },
+  { num: 5, roman: 'V',  title: 'Neurociencia de la frecuencia',  subtitle: 'Ondas cerebrales, atención y el cerebro como instrumento' },
+  { num: 6, roman: 'VI', title: 'Estados expandidos de consciencia', subtitle: 'Lo que ocurre cuando la red por defecto se silencia' },
+  { num: 7, roman: 'VII',  title: 'El problema del observador',   subtitle: 'Por qué la consciencia no se deja medir desde afuera' },
+  { num: 8, roman: 'VIII', title: 'El campo relacional',          subtitle: 'Lo que ocurre entre dos consciencias atentas' },
+  { num: 9, roman: 'IX',   title: 'Filosofía de la ciencia vibracional', subtitle: 'Los límites del lenguaje científico ante la experiencia' },
+  { num: 10, roman: 'X',  title: 'El tejedor consciente',         subtitle: 'Vivir como si la mirada importara, porque importa' },
+];
+---
+
+<LecturaLarga
+  title="Índice · Volumen I · Tejidos de Vibración"
+  description="Índice del Volumen I de Tejidos de Vibración. Tres actos, diez capítulos sobre la física vibracional, la biología del campo coherente y la consciencia."
+  pageId="indice"
+>
+  <article class="measure" style="padding-top: 5rem;">
+    <header>
+      <h1 class="title-1">Índice</h1>
+      <p class="meta">Volumen I · Tejidos de Vibración</p>
+    </header>
+
+    <!-- Obertura -->
+    <TocEntry
+      num="—"
+      title="Obertura"
+      subtitle="El tejedor consciente despierta"
+      href="/obertura"
+    />
+
+    <!-- Acto I · Fundamentos -->
+    <section class="toc-act">
+      <p class="toc-act__cue">Acto I</p>
+      <h2 class="toc-act__title">
+        Fundamentos<span class="toc-act__title-tail">La vibración primordial</span>
+      </h2>
+
+      {[1, 2, 3].map((n) => {
+        const roman = ['I', 'II', 'III'][n - 1];
+        const data = publishedByNumber.get(n);
+        const href = SLUG_MAP[n];
+        return data ? (
+          <TocEntry
+            num={roman}
+            title={data.title}
+            subtitle={data.subtitle ?? ''}
+            href={href}
+          />
+        ) : (
+          <!-- Fallback if collection entry missing for some reason -->
+          <TocEntry num={roman} title={`Capítulo ${roman}`} subtitle="" gestating />
+        );
+      })}
+    </section>
+
+    <!-- Acto II · Cuerpo -->
+    <section class="toc-act">
+      <p class="toc-act__cue">Acto II</p>
+      <h2 class="toc-act__title">
+        Cuerpo<span class="toc-act__title-tail">La biología que escucha</span>
+      </h2>
+
+      {gestatingChapters.filter((c) => c.num >= 4 && c.num <= 6).map((c) => (
+        <TocEntry
+          num={c.roman}
+          title={c.title}
+          subtitle={c.subtitle}
+          gestating
+        />
+      ))}
+    </section>
+
+    <!-- Acto III · Tejedor -->
+    <section class="toc-act">
+      <p class="toc-act__cue">Acto III</p>
+      <h2 class="toc-act__title">
+        Tejedor<span class="toc-act__title-tail">La mirada que teje</span>
+      </h2>
+
+      {gestatingChapters.filter((c) => c.num >= 7).map((c) => (
+        <TocEntry
+          num={c.roman}
+          title={c.title}
+          subtitle={c.subtitle}
+          gestating
+        />
+      ))}
+    </section>
+
+    <!-- Aparato del libro -->
+    <section style="margin-top: 7rem;">
+      <p class="eyebrow">Aparato del libro</p>
+      <ul style="list-style: none; padding: 0; margin: 1.5rem 0 0 0; font-family: var(--serif); font-size: 1.0625rem; line-height: 2;">
+        <li>
+          <a href="https://tejidosderealidad.com/pensadores" class="lit-link-secondary" style="color: var(--tinta);">
+            Anexo C · La Constelación de Pensadores
+          </a>
+          <span class="meta"> — vive en el portal hermano</span>
+        </li>
+        <li>
+          <a href="https://tejidosderealidad.com/simuladores" class="lit-link-secondary" style="color: var(--tinta);">
+            Anexo D · El Laboratorio de Simuladores
+          </a>
+          <span class="meta"> — vive en el portal hermano</span>
+        </li>
+        <li>
+          <a href="/colofon" class="lit-link-secondary" style="color: var(--tinta);">
+            Colofón · Linaje, herramientas y agradecimientos
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <!-- CTA final -->
+    <p style="margin-top: 6rem; margin-bottom: 6rem;" class="center">
+      <LitLink href="/obertura">Empezar por la Obertura</LitLink>
+    </p>
+
+  </article>
+</LecturaLarga>
