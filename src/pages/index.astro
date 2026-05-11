@@ -1,17 +1,44 @@
 ---
-// Placeholder portada — se reemplaza en el Paso 9 con la versión portada del handoff.
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import Flourish from '@/components/book/Flourish.astro';
+import LitLink from '@/components/book/LitLink.astro';
 ---
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tejidos de Vibración · Volumen I</title>
-  <meta name="description" content="Tejidos de Vibración, Volumen I del proyecto Tejidos de Realidad. Por Ricardo Polo · Orion." />
-</head>
-<body>
-  <main>
-    <h1>Tejidos de Vibración</h1>
-    <p>Bootstrap inicial — el sitio se construye en los pasos siguientes del prompt v3.0.</p>
-  </main>
-</body>
-</html>
+
+<LecturaLarga
+  title="Tejidos de Vibración · Volumen I"
+  description="Tejidos de Vibración, Volumen I del proyecto Tejidos de Realidad. Por Ricardo Polo · Orion."
+  pageId="home"
+>
+  <article class="cover measure">
+    <p class="eyebrow eyebrow--gold" style="margin-top: 6rem;">Volumen I · Tejidos de Realidad</p>
+
+    <h1 class="monumental">Tejidos<br/>de <em>Vibración</em></h1>
+
+    <p class="umbral-line">Donde la mirada teje lo posible en lo real, y el silencio entre dos latidos resulta ser el río que ambas orillas comparten.</p>
+
+    <p class="meta" style="margin-top: 3rem;">
+      Ricardo Polo · Orion<br/>
+      <span class="muted">Volumen I del proyecto Tejidos de Realidad</span>
+    </p>
+
+    <div class="prose" style="margin-top: 4rem;">
+      <p class="no-indent">No soy físico de laboratorio, ni monje de monasterio. Soy alguien que lleva años sentado en la frontera entre la ecuación y el silencio, preguntándome si esa frontera existe.</p>
+      <p>Tejidos de Vibración es el resultado de esa pregunta sostenida durante años. No pretende dar respuestas definitivas. Pretende cambiar la calidad de las preguntas.</p>
+    </div>
+
+    <p style="margin-top: 3rem;">
+      <LitLink size="lg" href="/obertura">Empezar por la Obertura</LitLink>
+    </p>
+
+    <div class="lit-link-row" style="margin-top: 2.5rem;">
+      <LitLink size="secondary" href="/indice">Recorrer el índice</LitLink>
+      <LitLink size="secondary" href="/recibir">Recibir los capítulos</LitLink>
+    </div>
+
+    <Flourish kind="rule" />
+
+    <p class="meta center" style="margin-bottom: 6rem;">
+      Tres actos · Diez capítulos · Una Obertura ya abierta
+    </p>
+  </article>
+</LecturaLarga>
