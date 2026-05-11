@@ -1,0 +1,13 @@
+---
+// BotonPDF.astro · Stub Nivel 2 (inactivo al lanzamiento).
+// Solo se renderiza si SUSCRIPCION_ACTIVA=true.
+import { suscripcionActiva } from '@/lib/gating';
+export interface Props { slug: string }
+const active = suscripcionActiva();
+const { slug } = Astro.props;
+---
+{active && (
+  <a class="boton-pdf" href={`/pdf/${slug}.pdf`} download>
+    Descargar PDF
+  </a>
+)}

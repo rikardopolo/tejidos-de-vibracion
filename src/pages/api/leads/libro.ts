@@ -1,9 +1,10 @@
 import type { APIRoute } from 'astro';
 import { leadSchema, addContactToList, hashIp, isRateLimited } from '@/lib/brevo';
+import { generateAccessToken } from '@/lib/token';
 
-export const prerender = false; // serverless
+export const prerender = false;
 
-export const POST: APIRoute = async ({ request, clientAddress }) => {
+export const POST: APIRoute = async ({ request, clientAddress, cookies }) => {
   // 1. Parsear body
   let body: unknown;
   try {
@@ -15,7 +16,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   // 2. Validar
   const parsed = leadSchema.safeParse(body);
   if (!parsed.success) {
-    return new Response(JSON.stringify({ error: 'invalid_input' }), { status: 400 });
+    return new Response(
+      JSON.stringify({ error: 'invalid_input', issues: parsed.error.issues.map(i => i.path.join('.')) }),
+      { status: 400 }
+    );
   }
 
   // 3. Honeypot — éxito silencioso si es bot
@@ -32,12 +36,13 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     });
   }
 
-  // 5. Brevo
+  // 5. Verificar env vars
   const apiKey = import.meta.env.BREVO_API_KEY;
   const listIdRaw = import.meta.env.BREVO_LISTA_LIBRO;
+  const tokenSecret = import.meta.env.ACCESS_TOKEN_SECRET;
 
-  if (!apiKey || !listIdRaw) {
-    console.error('Brevo env vars missing');
+  if (!apiKey || !listIdRaw || !tokenSecret) {
+    console.error('Missing env vars: BREVO_API_KEY/BREVO_LISTA_LIBRO/ACCESS_TOKEN_SECRET');
     return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
   }
 
@@ -46,14 +51,34 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
   }
 
-  const result = await addContactToList(parsed.data.email, listId, apiKey);
+  // 6. Brevo
+  const result = await addContactToList({
+    email: parsed.data.email,
+    listId,
+    apiKey,
+    attributes: {
+      NOMBRE: parsed.data.nombre,
+      NIVEL: 'tejedor',
+      FUENTE: 'registro-libro',
+    },
+  });
 
   if (!result.ok) {
     console.error('Brevo error:', result);
     return new Response(JSON.stringify({ error: 'brevo_failed' }), { status: 502 });
   }
 
-  return new Response(JSON.stringify({ success: true }), {
+  // 7. Generar token y setear cookie HttpOnly
+  const token = generateAccessToken(parsed.data.email, tokenSecret);
+  cookies.set('tejedor-access', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 30 * 24 * 60 * 60,
+  });
+
+  return new Response(JSON.stringify({ success: true, nombre: parsed.data.nombre }), {
     status: 201,
     headers: { 'Content-Type': 'application/json' },
   });

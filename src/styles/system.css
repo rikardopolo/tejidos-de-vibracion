@@ -863,3 +863,153 @@ html[data-reader-mode="night"] {
 html[data-reader-size="small"]   { --fs-body: 1.0625rem; }
 html[data-reader-size="default"] { --fs-body: 1.1875rem; }
 html[data-reader-size="large"]   { --fs-body: 1.3125rem; }
+
+/* ─────────────────────────── GATING · Corte Tejedor & BloqueRegistro */
+
+.corte-tejedor { display: none; }
+
+/* Por defecto (sin data-nivel o data-nivel="1"+): mostrar todo, ocultar bloque-registro */
+.bloque-registro { display: none; }
+
+/* Nivel 0: mostrar el corte como fade, ocultar todo lo que sigue (excepto UI persistente) */
+body[data-nivel="0"] .corte-tejedor {
+  display: block;
+  position: relative;
+  height: 8rem;
+  margin: 0 auto;
+  margin-top: -3rem;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    var(--pergamino) 80%,
+    var(--pergamino) 100%);
+}
+
+body[data-nivel="0"] .corte-tejedor ~ *:not(.bloque-registro):not(.book-toc):not(.book-toc-trigger):not(.reader-controls):not(.reader-controls-trigger) {
+  display: none !important;
+}
+
+body[data-nivel="0"] .bloque-registro {
+  display: block;
+  max-width: 32rem;
+  margin: 0 auto 4rem;
+  padding: 0 1.5rem;
+}
+
+.bloque-registro__inner {
+  background: var(--pergamino);
+  padding-top: 1rem;
+}
+
+.bloque-registro__intro {
+  font-family: var(--serif);
+  font-size: 1.375rem;
+  font-style: italic;
+  color: var(--oro);
+  text-align: center;
+  margin: 2rem 0 1.5rem;
+}
+
+.bloque-registro__copy {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--tinta-suave);
+  text-align: center;
+  margin: 0 0 2rem;
+  text-wrap: balance;
+}
+
+.form-registro {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-registro__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form-registro__label {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--reposo);
+}
+
+.form-registro input[type="text"]:not([name="honeypot"]),
+.form-registro input[type="email"] {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--pergamino-2);
+  background: var(--pergamino);
+  color: var(--tinta);
+  border-radius: 2px;
+  transition: border-color 180ms ease;
+}
+
+.form-registro input[type="text"]:focus,
+.form-registro input[type="email"]:focus {
+  outline: none;
+  border-color: var(--oro);
+}
+
+.form-registro__honeypot {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+}
+
+.form-registro__submit {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--pergamino);
+  background: var(--tinta);
+  border: 1px solid var(--tinta);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.form-registro__submit:hover { background: var(--oro); border-color: var(--oro); }
+.form-registro__submit:disabled { opacity: 0.6; cursor: wait; }
+
+.form-registro__nota {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--reposo);
+  text-align: center;
+  margin: 0.5rem 0 0;
+}
+
+.form-registro__status {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--oro);
+  text-align: center;
+  margin: 1.5rem 0 0;
+  min-height: 1.5em;
+}
+
+/* Página /recibir: wrap del formulario inline */
+.recibir-form-wrap {
+  max-width: 32rem;
+  margin: 3rem auto 4rem;
+}
+
+/* Night mode: ajuste del gradiente del corte */
+html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
+  background: linear-gradient(to bottom, transparent 0%, var(--pergamino) 80%);
+}

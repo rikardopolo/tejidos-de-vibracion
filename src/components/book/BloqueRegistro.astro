@@ -1,0 +1,44 @@
+---
+// BloqueRegistro.astro · Bloque que se muestra al final del fragmento Nivel 0.
+// Contiene fade + copy + formulario nombre/email + status.
+// Solo visible cuando body[data-nivel="0"] (via CSS).
+---
+<aside class="bloque-registro" data-bloque-registro>
+  <div class="bloque-registro__fade" aria-hidden="true"></div>
+
+  <div class="bloque-registro__inner">
+    <p class="bloque-registro__intro">Este capítulo sigue.</p>
+    <p class="bloque-registro__copy">
+      Para leerlo completo, dejame saber quién sos. Un nombre y un correo — nada más.
+      Es la primera forma de pertenecer al tejido.
+    </p>
+
+    <form id="form-registro" class="form-registro" novalidate>
+      <label class="form-registro__field">
+        <span class="form-registro__label">Nombre</span>
+        <input type="text" name="nombre" required minlength="2" maxlength="100"
+               placeholder="tu nombre" autocomplete="given-name" />
+      </label>
+
+      <label class="form-registro__field">
+        <span class="form-registro__label">Correo</span>
+        <input type="email" name="email" required maxlength="254"
+               placeholder="tu correo" autocomplete="email" />
+      </label>
+
+      <input type="text" name="honeypot" tabindex="-1" autocomplete="off"
+             aria-hidden="true" class="form-registro__honeypot" />
+
+      <button type="submit" class="form-registro__submit">Entrar al tejido</button>
+
+      <p class="form-registro__nota">
+        Sin spam. Sin venta de datos.<br />
+        Cada correo trae link de baja con un click.
+      </p>
+    </form>
+
+    <p id="form-registro-status" class="form-registro__status" role="status" aria-live="polite"></p>
+  </div>
+</aside>
+
+<script src="/libro-registro.js" defer></script>

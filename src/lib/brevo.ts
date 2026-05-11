@@ -1,12 +1,12 @@
 /**
  * brevo.ts · Helpers para la API de Brevo (email marketing).
- * Solo necesita addContactToList para el libro (una sola lista).
  */
 import { z } from 'zod';
 
 const BREVO_API_BASE = 'https://api.brevo.com/v3';
 
 export const leadSchema = z.object({
+  nombre: z.string().min(2).max(100).trim(),
   email: z.string().email().max(254),
   honeypot: z.string().max(0),
 });
@@ -22,12 +22,14 @@ interface BrevoContactPayload {
   smsBlacklisted?: boolean;
 }
 
-export async function addContactToList(
-  email: string,
-  listId: number,
-  apiKey: string,
-  attributes?: Record<string, string>
-): Promise<{ ok: true } | { ok: false; status: number; message: string }> {
+export async function addContactToList(opts: {
+  email: string;
+  listId: number;
+  apiKey: string;
+  attributes?: Record<string, string>;
+}): Promise<{ ok: true } | { ok: false; status: number; message: string }> {
+  const { email, listId, apiKey, attributes } = opts;
+
   const payload: BrevoContactPayload = {
     email: email.toLowerCase().trim(),
     listIds: [listId],

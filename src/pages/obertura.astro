@@ -1,6 +1,9 @@
 ---
 import { getEntry } from 'astro:content';
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import BloqueRegistro from '@/components/book/BloqueRegistro.astro';
+
+export const prerender = false;
 
 const obertura = await getEntry('book', 'obertura');
 if (!obertura) throw new Error('Obertura entry not found');
@@ -26,5 +29,7 @@ const data = obertura.data;
     <section class="prose dropcap section-gap">
       <Content />
     </section>
+
+    <BloqueRegistro />
   </article>
 </LecturaLarga>

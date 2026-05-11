@@ -1,37 +1,33 @@
 ---
 /**
  * /capitulo/[slug] · Ruta dinámica para capítulos publicados.
- * Genera una página estática por cada entrada de la colección `book`
- * donde kind='capitulo' y status='published'.
+ * Server-rendered (prerender=false) para poder leer cookies y aplicar gating.
  */
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import ChapterNav from '@/components/book/ChapterNav.astro';
+import BloqueRegistro from '@/components/book/BloqueRegistro.astro';
 import { romanize } from '@/lib/utils';
 
-export async function getStaticPaths() {
-  const chapters = await getCollection('book', ({ data }) =>
-    data.kind === 'capitulo' && data.status === 'published'
-  );
-  const sorted = chapters.sort((a, b) => a.data.order - b.data.order);
+export const prerender = false;
 
-  return sorted.map((entry, idx) => ({
-    params: { slug: entry.slug },
-    props: {
-      entry,
-      prev: idx > 0 ? sorted[idx - 1] : null,
-      next: idx < sorted.length - 1 ? sorted[idx + 1] : null,
-    },
-  }));
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/indice');
+
+const entry = await getEntry('book', slug);
+if (!entry || entry.data.kind !== 'capitulo' || entry.data.status !== 'published') {
+  return Astro.redirect('/indice');
 }
 
-interface Props {
-  entry: CollectionEntry<'book'>;
-  prev: CollectionEntry<'book'> | null;
-  next: CollectionEntry<'book'> | null;
-}
+// Calcular prev/next dentro de capítulos publicados
+const allChapters = await getCollection('book', ({ data }) =>
+  data.kind === 'capitulo' && data.status === 'published'
+);
+const sorted = allChapters.sort((a, b) => a.data.order - b.data.order);
+const idx = sorted.findIndex(c => c.slug === slug);
+const prev = idx > 0 ? sorted[idx - 1] : null;
+const next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
 
-const { entry, prev, next } = Astro.props;
 const { Content } = await entry.render();
 const data = entry.data;
 
@@ -39,17 +35,11 @@ const chapterNum = data.chapter ?? 0;
 const romanChapter = romanize(chapterNum);
 
 const prevProp = prev
-  ? {
-      href: `/capitulo/${prev.slug}`,
-      label: `Cap. ${romanize(prev.data.chapter ?? 0)} · ${prev.data.title}`,
-    }
+  ? { href: `/capitulo/${prev.slug}`, label: `Cap. ${romanize(prev.data.chapter ?? 0)} · ${prev.data.title}` }
   : undefined;
 
 const nextProp = next
-  ? {
-      href: `/capitulo/${next.slug}`,
-      label: `Cap. ${romanize(next.data.chapter ?? 0)} · ${next.data.title}`,
-    }
+  ? { href: `/capitulo/${next.slug}`, label: `Cap. ${romanize(next.data.chapter ?? 0)} · ${next.data.title}` }
   : undefined;
 ---
 
@@ -70,6 +60,8 @@ const nextProp = next
     <section class="prose dropcap section-gap">
       <Content />
     </section>
+
+    <BloqueRegistro />
 
     <ChapterNav prev={prevProp} next={nextProp} />
   </article>

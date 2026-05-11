@@ -9,6 +9,7 @@ interface Props {
   bodyClass?: string;
   pageId?: string;
   jsonLd?: Record<string, unknown>;
+  nivel?: 0 | 1 | 2;
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   bodyClass,
   pageId,
   jsonLd,
+  nivel = 0,
 } = Astro.props;
 
 const siteUrl = 'https://tejidosdevibracion.com';
@@ -85,7 +87,7 @@ const schema = jsonLd ?? defaultJsonLd;
     <!-- JSON-LD -->
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
-  <body class={bodyClass} data-page={pageId}>
+  <body class={bodyClass} data-page={pageId} data-nivel={nivel}>
     <slot />
   </body>
 </html>
