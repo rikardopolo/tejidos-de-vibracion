@@ -6,8 +6,8 @@
 
 :root {
   /* Paleta — pergamino dominante */
-  --pergamino:   #F5F0E5;
-  --pergamino-2: #EBE4D2;  /* sombra ligera, divisores · ajustado para mantener contraste con el nuevo pergamino */
+  --pergamino:   #F2EAD5;
+  --pergamino-2: #E5DBBE;  /* sombra ligera, divisores · ajustado para mantener contraste con el nuevo pergamino */
   --tinta:       #1A1A1A;
   --tinta-suave: #3A3530;
   --reposo:      #8A8A8A;
@@ -18,8 +18,8 @@
   --nocturno:    #0A0E1A;
 
   /* Header — variables para modo noche */
-  --header-bg:         rgba(245, 240, 229, 0.82);
-  --header-bg-scrolled:rgba(245, 240, 229, 0.94);
+  --header-bg:         rgba(242, 234, 213, 0.82);
+  --header-bg-scrolled:rgba(242, 234, 213, 0.94);
   --indigo:      #2D1B69;
   --verde:       #1D9E75;
 
