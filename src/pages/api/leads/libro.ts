@@ -36,11 +36,14 @@ export const POST: APIRoute = async ({ request, clientAddress, cookies }) => {
     });
   }
 
-  // 5. Verificar env vars (lectura runtime via process.env como fallback)
+  // 5. Verificar env vars (runtime via process.env primero, build-time como fallback)
   const readEnv = (key: string): string | undefined => {
+    if (typeof process !== 'undefined' && process.env) {
+      const p = process.env[key];
+      if (p !== undefined && p !== '') return p;
+    }
     const m = (import.meta.env as Record<string, string | undefined>)[key];
     if (m !== undefined && m !== '') return m;
-    if (typeof process !== 'undefined' && process.env) return process.env[key];
     return undefined;
   };
   const apiKey = readEnv('BREVO_API_KEY');
