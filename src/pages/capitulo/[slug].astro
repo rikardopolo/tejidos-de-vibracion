@@ -1,0 +1,76 @@
+---
+/**
+ * /capitulo/[slug] · Ruta dinámica para capítulos publicados.
+ * Genera una página estática por cada entrada de la colección `book`
+ * donde kind='capitulo' y status='published'.
+ */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import ChapterNav from '@/components/book/ChapterNav.astro';
+import { romanize } from '@/lib/utils';
+
+export async function getStaticPaths() {
+  const chapters = await getCollection('book', ({ data }) =>
+    data.kind === 'capitulo' && data.status === 'published'
+  );
+  const sorted = chapters.sort((a, b) => a.data.order - b.data.order);
+
+  return sorted.map((entry, idx) => ({
+    params: { slug: entry.slug },
+    props: {
+      entry,
+      prev: idx > 0 ? sorted[idx - 1] : null,
+      next: idx < sorted.length - 1 ? sorted[idx + 1] : null,
+    },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'book'>;
+  prev: CollectionEntry<'book'> | null;
+  next: CollectionEntry<'book'> | null;
+}
+
+const { entry, prev, next } = Astro.props;
+const { Content } = await entry.render();
+const data = entry.data;
+
+const chapterNum = data.chapter ?? 0;
+const romanChapter = romanize(chapterNum);
+
+const prevProp = prev
+  ? {
+      href: `/capitulo/${prev.slug}`,
+      label: `Cap. ${romanize(prev.data.chapter ?? 0)} · ${prev.data.title}`,
+    }
+  : undefined;
+
+const nextProp = next
+  ? {
+      href: `/capitulo/${next.slug}`,
+      label: `Cap. ${romanize(next.data.chapter ?? 0)} · ${next.data.title}`,
+    }
+  : undefined;
+---
+
+<LecturaLarga
+  title={`Cap. ${romanChapter} · ${data.title} · Tejidos de Vibración`}
+  description={data.subtitle}
+  pageId={`capitulo-${chapterNum}`}
+>
+  <article class="measure" style="padding-top: 5rem;">
+    <header>
+      <p class="eyebrow">Acto {data.act} · Capítulo {romanChapter.toLowerCase()}</p>
+      <h1 class="title-1">{data.title}</h1>
+      {data.subtitle && <p class="title-1__sub">{data.subtitle}</p>}
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose dropcap section-gap">
+      <Content />
+    </section>
+
+    <ChapterNav prev={prevProp} next={nextProp} />
+  </article>
+</LecturaLarga>
