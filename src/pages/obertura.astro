@@ -1,0 +1,30 @@
+---
+import { getEntry } from 'astro:content';
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+
+const obertura = await getEntry('book', 'obertura');
+if (!obertura) throw new Error('Obertura entry not found');
+const { Content } = await obertura.render();
+const data = obertura.data;
+---
+
+<LecturaLarga
+  title={`${data.title} · ${data.subtitle} · Tejidos de Vibración`}
+  description="Obertura del Volumen I de Tejidos de Vibración. Por Ricardo Polo · Orion."
+  pageId="obertura"
+  ogImage="/og/obertura.png"
+>
+  <article class="measure" style="padding-top: 5rem;">
+    <header class="stack-sm">
+      <p class="eyebrow">Volumen I · Apertura</p>
+      <h1 class="title-1">{data.title}</h1>
+      <p class="title-1__sub">{data.subtitle}</p>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose dropcap section-gap">
+      <Content />
+    </section>
+  </article>
+</LecturaLarga>
