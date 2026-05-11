@@ -49,5 +49,3 @@ export function gatingActivo(): boolean {
 export function suscripcionActiva(): boolean {
   return readEnv('SUSCRIPCION_ACTIVA') === 'true';
 }
-</content>
-</invoke>
