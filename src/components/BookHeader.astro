@@ -1,0 +1,36 @@
+---
+/**
+ * BookHeader · barra de navegación sticky del libro.
+ * El resaltado de página activa se detecta con Astro.url.pathname (sin JS).
+ * El comportamiento .is-scrolled se añade via /libro-init.js.
+ */
+
+const path = Astro.url.pathname;
+
+function isCurrent(href: string): boolean {
+  if (href === '/') return path === '/';
+  return path === href || path.startsWith(href + '/');
+}
+---
+
+<header class="book-header" id="book-header">
+  <div class="book-header__inner">
+    <a class="book-header__mark" href="/"><em>Tejidos de</em> Vibración</a>
+    <nav class="book-header__nav" aria-label="Navegación principal">
+      <a href="/indice" aria-current={isCurrent('/indice') ? 'page' : undefined}>Índice</a>
+      <a href="/obertura" aria-current={isCurrent('/obertura') ? 'page' : undefined}>Obertura</a>
+      <a href="/recibir" aria-current={isCurrent('/recibir') ? 'page' : undefined}>Recibir</a>
+      <a
+        class="book-header__nav--secondary"
+        href="/comunidad"
+        aria-current={isCurrent('/comunidad') ? 'page' : undefined}
+      >Comunidad</a>
+      <a
+        class="book-header__nav--secondary"
+        href="/sobre-el-libro"
+        aria-current={isCurrent('/sobre-el-libro') ? 'page' : undefined}
+      >Sobre el libro</a>
+    </nav>
+  </div>
+</header>
+<div class="progress-rail" id="progress-rail" aria-hidden="true"></div>
