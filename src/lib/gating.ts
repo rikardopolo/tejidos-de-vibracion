@@ -11,8 +11,24 @@ import { verifyAccessToken } from './token';
 
 export type Nivel = 0 | 1 | 2;
 
+/**
+ * Lee una variable de entorno respetando build time + runtime.
+ * Vite inlines `import.meta.env.X` en build time; si la var no estaba
+ * disponible entonces, queda como `undefined`. `process.env` se evalúa
+ * en runtime en Node (Vercel Serverless), garantizando que los valores
+ * más recientes del dashboard sean visibles sin rebuild.
+ */
+function readEnv(key: string): string | undefined {
+  const fromMeta = (import.meta.env as Record<string, string | undefined>)[key];
+  if (fromMeta !== undefined && fromMeta !== '') return fromMeta;
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env[key];
+  }
+  return undefined;
+}
+
 export function getNivel(cookies: AstroCookies): Nivel {
-  const secret = import.meta.env.ACCESS_TOKEN_SECRET;
+  const secret = readEnv('ACCESS_TOKEN_SECRET');
   if (!secret) return 0;
 
   const cookie = cookies.get('tejedor-access');
@@ -27,9 +43,11 @@ export function getNivel(cookies: AstroCookies): Nivel {
 }
 
 export function gatingActivo(): boolean {
-  return import.meta.env.GATING_ACTIVO === 'true';
+  return readEnv('GATING_ACTIVO') === 'true';
 }
 
 export function suscripcionActiva(): boolean {
-  return import.meta.env.SUSCRIPCION_ACTIVA === 'true';
+  return readEnv('SUSCRIPCION_ACTIVA') === 'true';
 }
+</content>
+</invoke>

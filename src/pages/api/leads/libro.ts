@@ -36,10 +36,16 @@ export const POST: APIRoute = async ({ request, clientAddress, cookies }) => {
     });
   }
 
-  // 5. Verificar env vars
-  const apiKey = import.meta.env.BREVO_API_KEY;
-  const listIdRaw = import.meta.env.BREVO_LISTA_LIBRO;
-  const tokenSecret = import.meta.env.ACCESS_TOKEN_SECRET;
+  // 5. Verificar env vars (lectura runtime via process.env como fallback)
+  const readEnv = (key: string): string | undefined => {
+    const m = (import.meta.env as Record<string, string | undefined>)[key];
+    if (m !== undefined && m !== '') return m;
+    if (typeof process !== 'undefined' && process.env) return process.env[key];
+    return undefined;
+  };
+  const apiKey = readEnv('BREVO_API_KEY');
+  const listIdRaw = readEnv('BREVO_LISTA_LIBRO');
+  const tokenSecret = readEnv('ACCESS_TOKEN_SECRET');
 
   if (!apiKey || !listIdRaw || !tokenSecret) {
     console.error('Missing env vars: BREVO_API_KEY/BREVO_LISTA_LIBRO/ACCESS_TOKEN_SECRET');
