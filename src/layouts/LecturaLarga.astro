@@ -1,11 +1,14 @@
 ---
 /**
  * LecturaLarga · layout para páginas de lectura larga (capítulos, obertura, etc.)
- * Extiende Base con: header sticky, progress rail, footer, y script de comportamiento.
+ * Extiende Base con: header sticky, progress rail, footer, BookToc, ReaderControls
+ * y scripts de comportamiento CSP-safe.
  */
 import Base from './Base.astro';
 import BookHeader from '../components/BookHeader.astro';
 import BookFooter from '../components/BookFooter.astro';
+import BookToc from '../components/book/BookToc.astro';
+import ReaderControls from '../components/book/ReaderControls.astro';
 
 interface Props {
   title: string;
@@ -37,5 +40,10 @@ const { title, description, canonical, ogImage, bodyClass, pageId, jsonLd } = As
 
   <BookFooter />
 
+  <BookToc />
+  <ReaderControls />
+
   <script src="/libro-init.js" defer></script>
+  <script src="/libro-reader.js" defer></script>
+  <script src="/libro-toc.js" defer></script>
 </Base>

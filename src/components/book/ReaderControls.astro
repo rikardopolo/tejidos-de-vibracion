@@ -1,0 +1,28 @@
+---
+/**
+ * ReaderControls · panel flotante para controles de lectura.
+ * Tamaño de texto (pequeño/normal/grande) y modo (día/noche).
+ * El estado se persiste en localStorage via libro-reader.js.
+ */
+---
+
+<aside id="reader-controls" class="reader-controls" hidden>
+  <p class="reader-controls__title">Lectura</p>
+
+  <div class="reader-controls__group">
+    <span class="reader-controls__label">Tamaño</span>
+    <button data-action="text-smaller" aria-label="Texto más pequeño">A-</button>
+    <button data-action="text-default" aria-label="Texto tamaño normal">A</button>
+    <button data-action="text-larger" aria-label="Texto más grande">A+</button>
+  </div>
+
+  <div class="reader-controls__group">
+    <span class="reader-controls__label">Modo</span>
+    <button data-action="mode-day" aria-label="Modo día">☀</button>
+    <button data-action="mode-night" aria-label="Modo noche">☾</button>
+  </div>
+</aside>
+
+<button id="reader-controls-trigger" class="reader-controls-trigger" aria-label="Abrir controles de lectura">
+  <span aria-hidden="true">Aa</span>
+</button>

@@ -1,0 +1,17 @@
+---
+/**
+ * BookToc · sidebar/popup flotante con el índice del capítulo.
+ * El script libro-toc.js lee los <h2>/<h3> del DOM y construye la lista.
+ * Si no hay encabezados, el trigger se oculta automáticamente.
+ */
+---
+
+<nav id="book-toc" class="book-toc" aria-label="Índice del capítulo" hidden>
+  <button class="book-toc__close" aria-label="Cerrar índice">×</button>
+  <p class="book-toc__title">En esta página</p>
+  <ol class="book-toc__list"></ol>
+</nav>
+
+<button id="book-toc-trigger" class="book-toc-trigger" aria-label="Abrir índice del capítulo">
+  <span aria-hidden="true">☰</span>
+</button>

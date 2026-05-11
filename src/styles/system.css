@@ -653,3 +653,173 @@ main {
 }
 
 ::selection { background: rgba(212, 160, 23, 0.28); color: var(--tinta); }
+
+/* ==========================================================================
+   BOOK TOC · índice flotante del capítulo
+   ========================================================================== */
+
+.book-toc-trigger {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--pergamino);
+  border: 1px solid var(--pergamino-2);
+  font-family: var(--sans);
+  font-size: 1.25rem;
+  color: var(--tinta-suave);
+  cursor: pointer;
+  z-index: 60;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: background 160ms ease, transform 160ms ease;
+}
+.book-toc-trigger:hover { background: var(--pergamino-2); transform: translateY(-1px); }
+
+.book-toc {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 2rem;
+  width: 18rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--pergamino);
+  border: 1px solid var(--pergamino-2);
+  padding: 1.25rem 1.5rem;
+  z-index: 60;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+}
+.book-toc[hidden] { display: none; }
+.book-toc__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: transparent;
+  border: 0;
+  font-size: 1.25rem;
+  color: var(--reposo);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+}
+.book-toc__close:hover { color: var(--tinta); }
+.book-toc__title {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--reposo);
+  margin: 0 0 0.75rem 0;
+}
+.book-toc__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.book-toc__list li { margin: 0.5rem 0; }
+.book-toc__list li.is-h3 { padding-left: 1rem; font-size: 0.9375rem; color: var(--tinta-suave); }
+.book-toc__list a { color: var(--tinta); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 180ms ease; }
+.book-toc__list a:hover { border-bottom-color: var(--oro); }
+.book-toc__list a.is-active { color: var(--oro-suave); font-weight: 500; }
+
+@media (max-width: 720px) {
+  .book-toc {
+    bottom: 0; right: 0; left: 0;
+    width: auto; max-height: 60vh;
+    border-bottom: none;
+    border-radius: 0;
+  }
+  .book-toc-trigger { bottom: 1rem; right: 1rem; }
+}
+
+/* ==========================================================================
+   READER CONTROLS · controles de lectura flotantes
+   ========================================================================== */
+
+.reader-controls-trigger {
+  position: fixed;
+  bottom: 2rem;
+  right: 5rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--pergamino);
+  border: 1px solid var(--pergamino-2);
+  font-family: var(--serif);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--tinta-suave);
+  cursor: pointer;
+  z-index: 60;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  transition: background 160ms ease, transform 160ms ease;
+}
+.reader-controls-trigger:hover { background: var(--pergamino-2); transform: translateY(-1px); }
+
+.reader-controls {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 5rem;
+  width: 14rem;
+  background: var(--pergamino);
+  border: 1px solid var(--pergamino-2);
+  padding: 1rem 1.25rem;
+  z-index: 60;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+}
+.reader-controls[hidden] { display: none; }
+.reader-controls__title {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--reposo);
+  margin: 0 0 0.75rem 0;
+}
+.reader-controls__group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+.reader-controls__label {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--reposo);
+  flex: 1;
+}
+.reader-controls__group button {
+  background: transparent;
+  border: 1px solid var(--pergamino-2);
+  padding: 0.375rem 0.625rem;
+  font-family: var(--serif);
+  font-size: 0.9375rem;
+  cursor: pointer;
+  color: var(--tinta);
+  border-radius: 2px;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+.reader-controls__group button:hover { border-color: var(--oro); background: var(--pergamino-2); }
+.reader-controls__group button.is-active { border-color: var(--oro); color: var(--oro-suave); }
+
+/* Reading modes — applied via [data-reader-mode] on <html> */
+html[data-reader-mode="night"] {
+  --pergamino: #1a1714;
+  --pergamino-2: #2a2620;
+  --tinta: #e8e3da;
+  --tinta-suave: #c4bfb6;
+  --reposo: #7d7972;
+  --oro: #d4a017;
+  --oro-suave: #b68914;
+}
+
+/* Reading sizes — applied via [data-reader-size] on <html> */
+html[data-reader-size="small"]   { --fs-body: 1.0625rem; }
+html[data-reader-size="default"] { --fs-body: 1.1875rem; }
+html[data-reader-size="large"]   { --fs-body: 1.3125rem; }
