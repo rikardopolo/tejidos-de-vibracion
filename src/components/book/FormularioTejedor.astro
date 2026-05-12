@@ -1,0 +1,47 @@
+---
+/**
+ * FormularioTejedor.astro — Captura nombre + correo + consentimiento + honeypot.
+ * Envía POST a /api/leads/libro (que dispara DOI flow en Brevo).
+ *
+ * Props:
+ *   id: para distinguir múltiples instancias en una misma página (default "form-tejedor")
+ *   variant: "inline" (compacto, para BloqueRegistro) o "page" (centrado, para /recibir)
+ */
+export interface Props {
+  id?: string;
+  variant?: 'inline' | 'page';
+}
+const { id = 'form-tejedor', variant = 'inline' } = Astro.props;
+---
+
+<form id={id} class={`form-tejedor form-tejedor--${variant}`} novalidate data-tejedor-form>
+  <label class="form-tejedor__field">
+    <span class="form-tejedor__label">Nombre</span>
+    <input type="text" name="nombre" required minlength="2" maxlength="100"
+           placeholder="tu nombre" autocomplete="given-name" />
+  </label>
+
+  <label class="form-tejedor__field">
+    <span class="form-tejedor__label">Correo</span>
+    <input type="email" name="correo" required maxlength="254"
+           placeholder="tu correo" autocomplete="email" />
+  </label>
+
+  <label class="form-tejedor__consent">
+    <input type="checkbox" name="acepto" required />
+    <span>Acepto recibir los capítulos por correo y conozco la <a href="/privacidad" class="lit-link">política de privacidad</a>.</span>
+  </label>
+
+  <input type="text" name="website" tabindex="-1" autocomplete="off"
+         aria-hidden="true" class="form-tejedor__honeypot" />
+
+  <button type="submit" class="form-tejedor__submit">Entrar al tejido</button>
+
+  <p class="form-tejedor__nota">
+    Sin spam. Sin venta de datos. Cada correo trae link de baja con un click.
+  </p>
+
+  <p class={`form-tejedor__status form-tejedor__status--${id}`} role="status" aria-live="polite" data-status-for={id}></p>
+</form>
+
+<script src="/formulario-tejedor.js" defer></script>
