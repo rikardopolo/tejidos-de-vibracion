@@ -1,15 +1,15 @@
 ---
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import FormularioTejedor from '@/components/book/FormularioTejedor.astro';
 import { getNivel, gatingActivo } from '@/lib/gating';
 
 export const prerender = false;
 
 const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
 ---
-
 <LecturaLarga
   title="Pertenecer al tejido · Tejidos de Vibración"
-  description="Un nombre y un correo. Con eso la Obertura se abre completa y empezás a recibir los capítulos a medida que se tejen."
+  description="Un nombre y un correo. La primera forma de pertenecer al tejido y recibir los capítulos a medida que se tejen."
   pageId="recibir"
 >
   <article class="measure" style="padding-top: 5rem;">
@@ -18,11 +18,9 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
       <h1 class="title-1">Pertenecer al tejido</h1>
     </header>
 
-    <div class="flourish flourish--rule"></div>
-
-    <div class="prose section-gap">
-      {nivel === 0 ? (
-        <>
+    {nivel === 0 ? (
+      <>
+        <div class="prose">
           <p class="no-indent">
             Un nombre y un correo. Con eso, la Obertura se abre completa, los capítulos publicados se desbloquean,
             y empezás a recibir las entregas nuevas a medida que se tejen.
@@ -30,44 +28,20 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
           <p>
             Es la primera forma de pertenecer. No la única — pero es la que abre la puerta.
           </p>
-        </>
-      ) : (
-        <>
-          <p class="no-indent">Ya estás dentro del tejido.</p>
-          <p>
-            La Obertura y los capítulos publicados están abiertos. Cada nueva entrega te va a llegar al correo.
-            Si querés volver a leer, podés empezar por la Obertura.
-          </p>
-          <p style="margin-top:3rem;">
-            <a class="lit-link" href="/obertura">Empezar por la Obertura →</a>
-          </p>
-        </>
-      )}
-    </div>
-
-    {nivel === 0 && (
-      <div class="recibir-form-wrap">
-        <form id="form-registro" class="form-registro" novalidate>
-          <label class="form-registro__field">
-            <span class="form-registro__label">Nombre</span>
-            <input type="text" name="nombre" required minlength="2" maxlength="100"
-                   placeholder="tu nombre" autocomplete="given-name" />
-          </label>
-          <label class="form-registro__field">
-            <span class="form-registro__label">Correo</span>
-            <input type="email" name="email" required maxlength="254"
-                   placeholder="tu correo" autocomplete="email" />
-          </label>
-          <input type="text" name="honeypot" tabindex="-1" autocomplete="off"
-                 aria-hidden="true" class="form-registro__honeypot" />
-          <button type="submit" class="form-registro__submit">Entrar al tejido</button>
-          <p class="form-registro__nota">
-            Sin spam. Sin venta de datos.<br />
-            Cada correo trae link de baja con un click. Más en <a href="/privacidad" class="lit-link-secondary">privacidad</a>.
-          </p>
-        </form>
-        <p id="form-registro-status" class="form-registro__status" role="status" aria-live="polite"></p>
-        <script src="/libro-registro.js" defer></script>
+        </div>
+        <div class="recibir-form-wrap">
+          <FormularioTejedor id="form-tejedor-recibir" variant="page" />
+        </div>
+      </>
+    ) : (
+      <div class="prose">
+        <p class="no-indent">Ya estás dentro del tejido.</p>
+        <p>
+          La Obertura y los capítulos publicados están abiertos. Cada nueva entrega te llegará al correo.
+        </p>
+        <p style="margin-top:3rem;">
+          <a class="lit-link" href="/obertura">Empezar por la Obertura →</a>
+        </p>
       </div>
     )}
   </article>

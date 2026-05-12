@@ -1,0 +1,86 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import { verifyAccessToken } from '@/lib/token';
+
+export const prerender = false;
+
+const readEnv = (key: string): string | undefined => {
+  if (typeof process !== 'undefined' && process.env) {
+    const p = process.env[key];
+    if (p !== undefined && p !== '') return p;
+  }
+  const m = (import.meta.env as Record<string, string | undefined>)[key];
+  if (m !== undefined && m !== '') return m;
+  return undefined;
+};
+
+const token = Astro.url.searchParams.get('t');
+const secret = readEnv('ACCESS_TOKEN_SECRET');
+let confirmado = false;
+let emailConfirmado: string | undefined;
+
+if (token && secret) {
+  const result = verifyAccessToken(token, secret);
+  if (result.valid) {
+    Astro.cookies.set('tejedor-access', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 30 * 24 * 60 * 60, // 30 días
+    });
+    confirmado = true;
+    emailConfirmado = result.email;
+  }
+}
+---
+<LecturaLarga
+  title="Bienvenido al tejido · Tejidos de Vibración"
+  description="Tu correo está confirmado. El libro está abierto."
+  pageId="bienvenido"
+>
+  <article class="measure" style="padding-top: 5rem;">
+    <header class="center">
+      <p class="eyebrow eyebrow--gold">Tejidos de Vibración</p>
+      <h1 class="title-1" style="font-style: italic;">El libro está abierto</h1>
+    </header>
+
+    <div class="flourish flourish--triple" style="margin-top: 2.5rem;"></div>
+
+    <div class="prose">
+      {confirmado ? (
+        <>
+          <p class="no-indent">
+            Bienvenido al tejido. Tu correo está confirmado y vas a recibir, en los próximos minutos, una carta
+            de bienvenida que te cuenta cómo se publica el libro y qué podés esperar de cada entrega.
+          </p>
+          <p>
+            Mientras llega ese correo, podés empezar a leer. La Obertura está abierta completa.
+            Los tres capítulos publicados también. Los que están en gestación esperan, y cuando estén listos
+            te llegan al correo antes que a nadie.
+          </p>
+          <p>
+            Cruzaste el umbral. Lo que sigue ya no se lee solo. Se lee con vos.
+          </p>
+        </>
+      ) : (
+        <>
+          <p class="no-indent">
+            Algo no coincidió con tu enlace de confirmación. Puede que haya caducado, o que haya viajado
+            a través de demasiados clientes de correo.
+          </p>
+          <p>
+            Si te registraste hace minutos y este enlace ya no funciona, lo más sencillo es volver a
+            <a href="/recibir" class="lit-link">empezar el registro</a> con el mismo correo. Brevo se encarga de no duplicarte.
+          </p>
+        </>
+      )}
+    </div>
+
+    <div class="center" style="margin-top: 4rem; margin-bottom: 6rem;">
+      <a class="lit-link lit-link--lg" href="/obertura">
+        {confirmado ? 'Empezar por la Obertura →' : 'Volver al inicio →'}
+      </a>
+    </div>
+  </article>
+</LecturaLarga>

@@ -1,43 +1,39 @@
 (function () {
   'use strict';
 
-  function init() {
-    var form = document.getElementById('form-registro');
-    var status = document.getElementById('form-registro-status');
-    if (!form || !status) return;
+  function bindForm(form) {
+    var status = document.querySelector('[data-status-for="' + form.id + '"]');
+    if (!status) return;
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      var formData = new FormData(form);
-      var nombre = (formData.get('nombre') || '').toString().trim();
-      var email = (formData.get('email') || '').toString().trim();
-      var honeypot = (formData.get('honeypot') || '').toString();
+      var fd = new FormData(form);
+      var nombre = String(fd.get('nombre') || '').trim();
+      var correo = String(fd.get('correo') || '').trim();
+      var acepto = fd.get('acepto') === 'on' || fd.get('acepto') === 'true';
+      var website = String(fd.get('website') || '');
 
-      if (nombre.length < 2) {
-        status.textContent = 'Falta tu nombre.';
-        return;
-      }
-      if (!email.includes('@') || email.length < 5) {
-        status.textContent = 'Revisa el correo: parece que falta el formato.';
-        return;
-      }
+      // Validación client-side mínima (la real está en backend)
+      if (nombre.length < 2) { status.textContent = 'Falta tu nombre.'; return; }
+      if (!correo.includes('@') || correo.length < 5) { status.textContent = 'Revisa el correo.'; return; }
+      if (!acepto) { status.textContent = 'Necesitas aceptar para entrar.'; return; }
 
       var submitBtn = form.querySelector('button[type="submit"]');
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Entrando…'; }
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando…'; }
 
       try {
         var res = await fetch('/api/leads/libro', {
           method: 'POST',
           credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nombre, email: email, honeypot: honeypot }),
+          body: JSON.stringify({ nombre: nombre, correo: correo, acepto: true, website: website }),
         });
 
         if (res.ok) {
-          var data = await res.json().catch(function () { return {}; });
-          status.textContent = 'Bienvenido al tejido, ' + (data.nombre || nombre) + '.';
-          // Recarga la página: la cookie nueva activa Nivel 1 y se ve el capítulo completo
-          setTimeout(function () { window.location.reload(); }, 900);
+          status.textContent = 'Revisa tu correo. Te enviamos un link para confirmar.';
+          form.reset();
+          // Ocultar el form tras éxito; mostrar status visible
+          form.classList.add('is-sent');
         } else if (res.status === 429) {
           status.textContent = 'Acabas de enviarlo. Espera un minuto antes de intentar de nuevo.';
           if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Entrar al tejido'; }
@@ -53,6 +49,10 @@
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Entrar al tejido'; }
       }
     });
+  }
+
+  function init() {
+    document.querySelectorAll('form[data-tejedor-form]').forEach(bindForm);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
