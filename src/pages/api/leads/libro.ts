@@ -1,5 +1,11 @@
 import type { APIRoute } from 'astro';
-import { leadSchema, createDoiContact, hashIp, isRateLimited } from '@/lib/brevo';
+import {
+  leadSchema,
+  upsertContact,
+  sendTransactionalEmail,
+  hashIp,
+  isRateLimited,
+} from '@/lib/brevo';
 import { generateAccessToken } from '@/lib/token';
 
 export const prerender = false;
@@ -36,7 +42,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     );
   }
 
-  // Honeypot: éxito silencioso si lo llenan
+  // Honeypot: éxito silencioso si lo llenan (Zod ya hizo refuse, pero por si acaso)
   if (parsed.data.website !== '') {
     return new Response(JSON.stringify({ success: true }), { status: 200 });
   }
@@ -51,46 +57,57 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   }
 
   const apiKey = readEnv('BREVO_API_KEY');
-  const listIdRaw = readEnv('BREVO_LISTA_LIBRO');
   const templateIdRaw = readEnv('BREVO_TEMPLATE_DOI');
   const tokenSecret = readEnv('ACCESS_TOKEN_SECRET');
   const siteUrl = readEnv('PUBLIC_SITE_URL') || readEnv('SITE_URL') || 'https://tejidosdevibracion.com';
 
-  if (!apiKey || !listIdRaw || !templateIdRaw || !tokenSecret) {
-    console.error('Missing env vars: BREVO_API_KEY/BREVO_LISTA_LIBRO/BREVO_TEMPLATE_DOI/ACCESS_TOKEN_SECRET');
+  if (!apiKey || !templateIdRaw || !tokenSecret) {
+    console.error('Missing env vars: BREVO_API_KEY/BREVO_TEMPLATE_DOI/ACCESS_TOKEN_SECRET');
     return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
   }
 
-  const listId = Number(listIdRaw);
   const templateId = Number(templateIdRaw);
-  if (Number.isNaN(listId) || Number.isNaN(templateId)) {
+  if (Number.isNaN(templateId)) {
     return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
   }
 
-  // Generamos token HMAC ahora y lo pasamos en la redirectionUrl
-  // /bienvenido lo validará y seteará la cookie
-  const token = generateAccessToken(parsed.data.correo, tokenSecret);
-  const redirectionUrl = `${siteUrl}/bienvenido?t=${encodeURIComponent(token)}`;
-
-  const result = await createDoiContact({
+  // 1. Crear contacto en Brevo (sin lista todavía, así el workflow no se dispara)
+  const upsert = await upsertContact({
     email: parsed.data.correo,
     apiKey,
-    listId,
-    templateId,
-    redirectionUrl,
     attributes: {
       NOMBRE: parsed.data.nombre,
       NIVEL: 'tejedor',
       FUENTE: 'registro-libro',
+      DOI_PENDIENTE: 'true',
     },
   });
 
-  if (!result.ok) {
-    console.error('Brevo DOI error:', result);
+  if (!upsert.ok) {
+    console.error('Brevo upsertContact failed:', upsert);
     return new Response(JSON.stringify({ error: 'brevo_failed' }), { status: 502 });
   }
 
-  // NO seteamos cookie aquí. La cookie se setea en /bienvenido tras la confirmación DOI.
+  // 2. Generar token HMAC y URL de confirmación
+  const token = generateAccessToken(parsed.data.correo, tokenSecret);
+  const confirmationUrl = `${siteUrl}/bienvenido?t=${encodeURIComponent(token)}`;
+
+  // 3. Enviar email transaccional (template #9) con CONFIRMATION_URL como parámetro
+  const sent = await sendTransactionalEmail({
+    to: { email: parsed.data.correo, name: parsed.data.nombre },
+    templateId,
+    params: {
+      NOMBRE: parsed.data.nombre,
+      CONFIRMATION_URL: confirmationUrl,
+    },
+    apiKey,
+  });
+
+  if (!sent.ok) {
+    console.error('Brevo sendTransactionalEmail failed:', sent);
+    return new Response(JSON.stringify({ error: 'email_send_failed' }), { status: 502 });
+  }
+
   return new Response(
     JSON.stringify({
       success: true,

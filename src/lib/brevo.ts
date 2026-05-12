@@ -1,6 +1,10 @@
 /**
- * brevo.ts · Helpers para la API de Brevo (email marketing).
- * Double Opt-In (DOI) flow.
+ * brevo.ts · Helpers para la API de Brevo (email marketing + transactional).
+ *
+ * NO usamos createDoiContact porque Brevo exige un "DOI template" registrado
+ * oficialmente. Usamos sendTransacEmail con un link DOI custom controlado por
+ * nosotros (apunta a /bienvenido?t=HMAC_TOKEN). Tras la confirmación añadimos
+ * el contacto a la lista #9 → workflow → bienvenida.
  */
 import { z } from 'zod';
 
@@ -15,32 +19,25 @@ export const leadSchema = z.object({
 
 export type Lead = z.infer<typeof leadSchema>;
 
-interface DoiPayload {
-  email: string;
-  includeListIds: number[];
-  templateId: number;
-  redirectionUrl: string;
-  attributes?: Record<string, string>;
-}
-
-export async function createDoiContact(opts: {
+/**
+ * Crea (o actualiza) un contacto en Brevo SIN añadirlo a ninguna lista.
+ * Usamos esto pre-confirmación: el contacto existe en Brevo pero el workflow
+ * de bienvenida (asociado a la lista #9) no se dispara hasta que confirme.
+ */
+export async function upsertContact(opts: {
   email: string;
   apiKey: string;
-  listId: number;
-  templateId: number;
-  redirectionUrl: string;
   attributes?: Record<string, string>;
 }): Promise<{ ok: true } | { ok: false; status: number; message: string }> {
-  const payload: DoiPayload = {
+  const payload = {
     email: opts.email.toLowerCase().trim(),
-    includeListIds: [opts.listId],
-    templateId: opts.templateId,
-    redirectionUrl: opts.redirectionUrl,
+    updateEnabled: true,
+    listIds: [] as number[],
     attributes: opts.attributes,
   };
 
   try {
-    const res = await fetch(`${BREVO_API_BASE}/contacts/doubleOptinConfirmation`, {
+    const res = await fetch(`${BREVO_API_BASE}/contacts`, {
       method: 'POST',
       headers: {
         'accept': 'application/json',
@@ -51,27 +48,98 @@ export async function createDoiContact(opts: {
     });
 
     const text = await res.text();
-    // Log siempre para diagnóstico
-    console.log(`[Brevo DOI] status=${res.status} email=${payload.email.slice(0, 5)}*** body=${text.slice(0, 300)}`);
+    console.log(`[Brevo upsertContact] status=${res.status} body=${text.slice(0, 200)}`);
 
-    if (res.status === 201 || res.status === 204) {
-      return { ok: true };
-    }
-
-    // Si el contacto ya existe y está pendiente, Brevo devuelve 400 — lo tratamos como éxito
-    // (re-enviará el email de confirmación)
+    if (res.status === 201 || res.status === 204) return { ok: true };
+    // Contact ya existe (200 ok or 400 with "exist" message)
     if (res.status === 400 && (text.includes('already') || text.includes('exist'))) {
       return { ok: true };
     }
-
     return { ok: false, status: res.status, message: text.slice(0, 300) };
   } catch (e) {
-    console.error('[Brevo DOI] fetch threw:', e);
+    console.error('[Brevo upsertContact] fetch threw:', e);
     return { ok: false, status: 0, message: String(e).slice(0, 300) };
   }
 }
 
-// Rate limit en memoria (por hash de IP, 1 req / 60 s)
+/**
+ * Añade un contacto existente a una lista. Esto dispara cualquier workflow
+ * configurado en Brevo con trigger "Contact added to list".
+ */
+export async function addContactToList(opts: {
+  email: string;
+  listId: number;
+  apiKey: string;
+}): Promise<{ ok: true } | { ok: false; status: number; message: string }> {
+  try {
+    const res = await fetch(`${BREVO_API_BASE}/contacts/lists/${opts.listId}/contacts/add`, {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': opts.apiKey,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ emails: [opts.email.toLowerCase().trim()] }),
+    });
+
+    const text = await res.text();
+    console.log(`[Brevo addContactToList] status=${res.status} listId=${opts.listId} body=${text.slice(0, 200)}`);
+
+    if (res.status === 201 || res.status === 204) return { ok: true };
+    // El contacto ya está en la lista
+    if (res.status === 400 && text.includes('already')) return { ok: true };
+    return { ok: false, status: res.status, message: text.slice(0, 300) };
+  } catch (e) {
+    console.error('[Brevo addContactToList] fetch threw:', e);
+    return { ok: false, status: 0, message: String(e).slice(0, 300) };
+  }
+}
+
+/**
+ * Envía un email transaccional usando una plantilla de Brevo.
+ * Los placeholders en el template se rellenan con `params`:
+ *   - {{params.NOMBRE}} → el nombre del usuario
+ *   - {{params.CONFIRMATION_URL}} → URL custom para confirmar DOI
+ */
+export async function sendTransactionalEmail(opts: {
+  to: { email: string; name?: string };
+  templateId: number;
+  params: Record<string, string>;
+  apiKey: string;
+}): Promise<{ ok: true; messageId?: string } | { ok: false; status: number; message: string }> {
+  const payload = {
+    to: [{ email: opts.to.email.toLowerCase().trim(), name: opts.to.name }],
+    templateId: opts.templateId,
+    params: opts.params,
+  };
+
+  try {
+    const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': opts.apiKey,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await res.text();
+    console.log(`[Brevo sendTransactionalEmail] status=${res.status} templateId=${opts.templateId} body=${text.slice(0, 200)}`);
+
+    if (res.status === 201 || res.status === 200) {
+      let messageId: string | undefined;
+      try { messageId = JSON.parse(text).messageId; } catch { /* ignore */ }
+      return { ok: true, messageId };
+    }
+    return { ok: false, status: res.status, message: text.slice(0, 300) };
+  } catch (e) {
+    console.error('[Brevo sendTransactionalEmail] fetch threw:', e);
+    return { ok: false, status: 0, message: String(e).slice(0, 300) };
+  }
+}
+
+// ─── Rate limit en memoria (1 req / 60 s por hash IP) ─────────────────────
 const rateBuckets = new Map<string, number>();
 const RATE_WINDOW_MS = 60_000;
 

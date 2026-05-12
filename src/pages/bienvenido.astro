@@ -1,6 +1,7 @@
 ---
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import { verifyAccessToken } from '@/lib/token';
+import { addContactToList } from '@/lib/brevo';
 
 export const prerender = false;
 
@@ -16,6 +17,8 @@ const readEnv = (key: string): string | undefined => {
 
 const token = Astro.url.searchParams.get('t');
 const secret = readEnv('ACCESS_TOKEN_SECRET');
+const apiKey = readEnv('BREVO_API_KEY');
+const listIdRaw = readEnv('BREVO_LISTA_LIBRO');
 let confirmado = false;
 let emailConfirmado: string | undefined;
 
@@ -31,6 +34,20 @@ if (token && secret) {
     });
     confirmado = true;
     emailConfirmado = result.email;
+
+    // Añadir contacto a la lista #9 → dispara workflow → envía template #7 (bienvenida)
+    // Esto es idempotente: si ya está en la lista, Brevo devuelve 400 que tratamos como éxito.
+    if (apiKey && listIdRaw && emailConfirmado) {
+      const listId = Number(listIdRaw);
+      if (!Number.isNaN(listId)) {
+        const added = await addContactToList({ email: emailConfirmado, listId, apiKey });
+        if (!added.ok) {
+          console.error('[bienvenido] addContactToList failed:', added);
+          // No bloqueamos al usuario: la cookie ya está seteada, el contacto existe
+          // El admin puede añadirlo manualmente si hace falta.
+        }
+      }
+    }
   }
 }
 ---
