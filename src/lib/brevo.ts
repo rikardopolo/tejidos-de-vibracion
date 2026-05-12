@@ -50,20 +50,24 @@ export async function createDoiContact(opts: {
       body: JSON.stringify(payload),
     });
 
+    const text = await res.text();
+    // Log siempre para diagnóstico
+    console.log(`[Brevo DOI] status=${res.status} email=${payload.email.slice(0, 5)}*** body=${text.slice(0, 300)}`);
+
     if (res.status === 201 || res.status === 204) {
       return { ok: true };
     }
 
-    const text = await res.text();
     // Si el contacto ya existe y está pendiente, Brevo devuelve 400 — lo tratamos como éxito
     // (re-enviará el email de confirmación)
     if (res.status === 400 && (text.includes('already') || text.includes('exist'))) {
       return { ok: true };
     }
 
-    return { ok: false, status: res.status, message: text.slice(0, 200) };
+    return { ok: false, status: res.status, message: text.slice(0, 300) };
   } catch (e) {
-    return { ok: false, status: 0, message: String(e).slice(0, 200) };
+    console.error('[Brevo DOI] fetch threw:', e);
+    return { ok: false, status: 0, message: String(e).slice(0, 300) };
   }
 }
 
