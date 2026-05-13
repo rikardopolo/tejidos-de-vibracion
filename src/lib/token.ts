@@ -20,9 +20,26 @@ export function verifyAccessToken(
 ): { valid: true; email: string; issuedAt: number } | { valid: false; reason: 'malformed' | 'bad_signature' | 'expired' } {
   try {
     const decoded = Buffer.from(token, 'base64url').toString('utf8');
-    const parts = decoded.split('.');
-    if (parts.length !== 3) return { valid: false, reason: 'malformed' };
-    const [email, timestampStr, signature] = parts;
+
+    // El email puede contener puntos (ej. rikardo.polo@gmail.com), así que NO podemos
+    // usar split('.') directamente. Parseamos desde la derecha:
+    //   - últimos N chars hex (después del último '.') = firma (SHA-256 hex = 64 chars)
+    //   - el bloque entre el penúltimo y último '.' = timestamp (epoch ms)
+    //   - todo lo demás (antes del penúltimo '.') = email
+    const lastDot = decoded.lastIndexOf('.');
+    if (lastDot === -1) return { valid: false, reason: 'malformed' };
+    const signature = decoded.slice(lastDot + 1);
+    const beforeSig = decoded.slice(0, lastDot);
+
+    const prevDot = beforeSig.lastIndexOf('.');
+    if (prevDot === -1) return { valid: false, reason: 'malformed' };
+    const timestampStr = beforeSig.slice(prevDot + 1);
+    const email = beforeSig.slice(0, prevDot);
+
+    if (!email || !timestampStr || !signature) {
+      return { valid: false, reason: 'malformed' };
+    }
+
     const expectedPayload = `${email}.${timestampStr}`;
     const expectedSig = crypto.createHmac('sha256', secret).update(expectedPayload).digest('hex');
 
