@@ -50,53 +50,41 @@ if (token && secret) {
     }
   }
 }
+
+// Si el token es válido, redirige directo a la Obertura.
+// El "momento ceremonial" lo vive el lector al cruzar el umbral de la lectura, no en una
+// página intermedia. Aquí solo nos quedamos si el token no es válido (mensaje de fallback).
+if (confirmado) {
+  return Astro.redirect('/obertura', 302);
+}
 ---
 <LecturaLarga
-  title="Bienvenido al tejido · Tejidos de Vibración"
-  description="Tu correo está confirmado. El libro está abierto."
+  title="Enlace caducado · Tejidos de Vibración"
+  description="Tu enlace de confirmación no coincidió. Vuelve a registrarte."
   pageId="bienvenido"
 >
   <article class="measure" style="padding-top: 5rem;">
     <header class="center">
-      <p class="eyebrow eyebrow--gold">Tejidos de Vibración</p>
-      <h1 class="title-1" style="font-style: italic;">El libro está abierto</h1>
+      <p class="eyebrow">Tejidos de Vibración</p>
+      <h1 class="title-1" style="font-style: italic;">El enlace ya no abre</h1>
     </header>
 
     <div class="flourish flourish--triple" style="margin-top: 2.5rem;"></div>
 
     <div class="prose">
-      {confirmado ? (
-        <>
-          <p class="no-indent">
-            Bienvenido al tejido. Tu correo está confirmado y vas a recibir, en los próximos minutos, una carta
-            de bienvenida que te cuenta cómo se publica el libro y qué podés esperar de cada entrega.
-          </p>
-          <p>
-            Mientras llega ese correo, podés empezar a leer. La Obertura está abierta completa.
-            Los tres capítulos publicados también. Los que están en gestación esperan, y cuando estén listos
-            te llegan al correo antes que a nadie.
-          </p>
-          <p>
-            Cruzaste el umbral. Lo que sigue ya no se lee solo. Se lee con vos.
-          </p>
-        </>
-      ) : (
-        <>
-          <p class="no-indent">
-            Algo no coincidió con tu enlace de confirmación. Puede que haya caducado, o que haya viajado
-            a través de demasiados clientes de correo.
-          </p>
-          <p>
-            Si te registraste hace minutos y este enlace ya no funciona, lo más sencillo es volver a
-            <a href="/recibir" class="lit-link">empezar el registro</a> con el mismo correo. Brevo se encarga de no duplicarte.
-          </p>
-        </>
-      )}
+      <p class="no-indent">
+        Algo no coincidió con tu enlace de confirmación. Puede que haya caducado, o que haya viajado
+        a través de demasiados clientes de correo y se haya cortado en alguna parte.
+      </p>
+      <p>
+        No es nada grave. Vuelve a <a href="/recibir" class="lit-link">empezar el registro</a> con el mismo
+        correo: Brevo se encarga de no duplicarte y te enviará un nuevo enlace.
+      </p>
     </div>
 
     <div class="center" style="margin-top: 4rem; margin-bottom: 6rem;">
-      <a class="lit-link lit-link--lg" href="/obertura">
-        {confirmado ? 'Empezar por la Obertura →' : 'Volver al inicio →'}
+      <a class="lit-link lit-link--lg" href="/recibir">
+        Volver a registrarme →
       </a>
     </div>
   </article>
