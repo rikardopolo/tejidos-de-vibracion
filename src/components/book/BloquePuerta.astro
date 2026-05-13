@@ -1,0 +1,86 @@
+---
+/**
+ * BloquePuerta · bloque ceremonial que aparece cuando el lector
+ * NO tiene acceso al contenido restante.
+ *
+ * Props:
+ *   tipo: "obertura" — con formulario (Nivel 0 → 1)
+ *   tipo: "cap-espera" — sin formulario (Nivel 1, contenido en gestación)
+ *   tipo: "cap-bloqueado" — sin formulario (Nivel 0, fragmento total bloqueado, CTA a /recibir)
+ *   capitulo?: string — número de capítulo (ej. "Capítulo 2") para textos contextuales
+ *   titulo?: string — override del título por defecto
+ *   subtitulo?: string — texto del cuerpo override
+ */
+import FormularioTejedor from './FormularioTejedor.astro';
+
+export interface Props {
+  tipo: 'obertura' | 'cap-espera' | 'cap-bloqueado';
+  capitulo?: string;
+  titulo?: string;
+  subtitulo?: string;
+}
+
+const { tipo, capitulo, titulo, subtitulo } = Astro.props;
+
+// Defaults según tipo
+const defaults = {
+  obertura: {
+    eyebrow: 'Continúa el umbral',
+    titulo: 'La Obertura sigue más allá',
+    cuerpo: 'El umbral apenas se entreabre. Lo que has leído es la primera respiración de un libro que dura tres actos. Para cruzar la Obertura completa — y para encontrar, al final, el primer movimiento del Capítulo 1 — déjame tu nombre y tu correo.',
+    conFormulario: true,
+    notaPie: 'Sin spam. Sin venta de datos. Al final de cada correo hay un enlace para darte de baja con un solo clic.',
+    firma: undefined as string | undefined,
+  },
+  'cap-bloqueado': {
+    eyebrow: 'Cruzar el umbral',
+    titulo: capitulo ? `${capitulo} requiere cruzar la Obertura` : 'Este capítulo requiere cruzar la Obertura',
+    cuerpo: `${capitulo ?? 'Este capítulo'} es parte del Volumen I, libre para los tejedores registrados. Si aún no has dado tu nombre y tu correo, esta es la puerta.`,
+    conFormulario: true,
+    notaPie: 'Sin spam. Sin venta de datos.',
+    firma: undefined as string | undefined,
+  },
+  'cap-espera': {
+    eyebrow: 'El capítulo sigue',
+    titulo: capitulo ? `${capitulo} se está abriendo despacio` : 'El capítulo se está abriendo despacio',
+    cuerpo: 'Has cruzado el umbral, y la primera respiración de este capítulo ya está en ti. Lo que sigue se abrirá en su tiempo. Te avisaré por este mismo correo cuando cada sección esté lista. El libro encuentra su ritmo, y vamos juntos. Estás en la lista. Espera bien.',
+    conFormulario: false,
+    notaPie: undefined as string | undefined,
+    firma: '— El Tejedor\nOrion',
+  },
+} as const;
+
+const d = defaults[tipo];
+const tituloFinal = titulo ?? d.titulo;
+const cuerpoFinal = subtitulo ?? d.cuerpo;
+const conFormulario = d.conFormulario;
+const notaPie = 'notaPie' in d ? d.notaPie : undefined;
+const firma = 'firma' in d ? d.firma : undefined;
+
+const formId = `form-tejedor-puerta-${tipo}`;
+---
+
+<aside class={`bloque-puerta bloque-puerta--${tipo}`} data-bloque-puerta>
+  <div class="bloque-puerta__ornament" aria-hidden="true">◆</div>
+
+  <p class="bloque-puerta__eyebrow">{d.eyebrow}</p>
+
+  <h2 class="bloque-puerta__titulo">{tituloFinal}</h2>
+
+  <p class="bloque-puerta__cuerpo">{cuerpoFinal}</p>
+
+  {conFormulario && (
+    <div class="bloque-puerta__form">
+      <FormularioTejedor id={formId} variant="inline" />
+      {notaPie && <p class="bloque-puerta__nota">{notaPie}</p>}
+    </div>
+  )}
+
+  {firma && (
+    <div class="bloque-puerta__firma">
+      {firma.split('\n').map((linea: string) => <p>{linea}</p>)}
+    </div>
+  )}
+
+  <div class="bloque-puerta__ornament bloque-puerta__ornament--bottom" aria-hidden="true">◆</div>
+</aside>

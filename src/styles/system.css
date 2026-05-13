@@ -1122,3 +1122,162 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
   margin: 1.5rem 0 0;
   min-height: 1.5em;
 }
+
+/* ─────────────────────────── Figuras del libro */
+.figura-libro {
+  margin: 3rem 0;
+  text-align: center;
+}
+
+.figura-libro img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border: 1px solid var(--pergamino-2);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.figura-libro figcaption {
+  font-family: var(--serif);
+  font-size: 0.9375rem;
+  font-style: italic;
+  color: var(--reposo);
+  margin-top: 1rem;
+  line-height: 1.5;
+  text-align: center;
+  text-wrap: balance;
+}
+
+@media (max-width: 720px) {
+  .figura-libro { margin: 2rem 0; }
+  .figura-libro figcaption { font-size: 0.875rem; }
+}
+
+/* ─────────────────────────── BloquePuerta · gating ceremonial */
+.bloque-puerta {
+  max-width: 36rem;
+  margin: 5rem auto 4rem;
+  padding: 3rem 2rem;
+  background: var(--pergamino-2);
+  border-top: 1px solid rgba(212, 160, 23, 0.3);
+  border-bottom: 1px solid rgba(212, 160, 23, 0.3);
+  text-align: center;
+}
+
+.bloque-puerta__ornament {
+  font-size: 1.25rem;
+  color: var(--oro);
+  margin: 0 0 1.5rem 0;
+}
+
+.bloque-puerta__ornament--bottom {
+  margin: 1.5rem 0 0 0;
+}
+
+.bloque-puerta__eyebrow {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--oro);
+  margin: 0 0 1.25rem 0;
+}
+
+.bloque-puerta__titulo {
+  font-family: var(--serif);
+  font-size: 1.625rem;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--tinta);
+  margin: 0 0 1.5rem 0;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.bloque-puerta__cuerpo {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--tinta-suave);
+  margin: 0 0 2rem 0;
+  text-wrap: pretty;
+}
+
+.bloque-puerta__form {
+  margin: 2rem 0 0;
+}
+
+.bloque-puerta__nota {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--reposo);
+  margin: 1.5rem 0 0;
+}
+
+.bloque-puerta__firma {
+  margin: 2rem 0 0;
+}
+
+.bloque-puerta__firma p {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--tinta-suave);
+  margin: 0.25rem 0;
+  font-size: 1rem;
+}
+
+@media (max-width: 720px) {
+  .bloque-puerta {
+    margin: 3rem auto 3rem;
+    padding: 2rem 1.25rem;
+  }
+  .bloque-puerta__titulo { font-size: 1.375rem; }
+  .bloque-puerta__cuerpo { font-size: 1rem; }
+}
+
+/* Cuando el visitante es Nivel 1+ ocultamos bloques que pidan registro */
+body[data-nivel="1"] .bloque-puerta--obertura,
+body[data-nivel="1"] .bloque-puerta--cap-bloqueado,
+body[data-nivel="2"] .bloque-puerta--obertura,
+body[data-nivel="2"] .bloque-puerta--cap-bloqueado {
+  display: none;
+}
+
+/* Cuando el visitante es Nivel 0 ocultamos los bloques de espera (no son relevantes) */
+body[data-nivel="0"] .bloque-puerta--cap-espera {
+  display: none;
+}
+
+/* ─────────────────────────── Banner "Has cruzado el umbral" */
+.banner-umbral-cruzado {
+  text-align: center;
+  margin: 5rem auto 4rem;
+  max-width: 36rem;
+}
+
+.banner-umbral-cruzado__intro {
+  font-size: 1.25rem;
+  color: var(--oro);
+  margin: 0 0 1rem 0;
+}
+
+.banner-umbral-cruzado h2 {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.5rem;
+  color: var(--tinta);
+  margin: 0 0 1rem 0;
+}
+
+.banner-umbral-cruzado p {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  color: var(--tinta-suave);
+  margin: 0 0 2rem 0;
+}
+
+body[data-nivel="0"] .banner-umbral-cruzado { display: none; }

@@ -1,12 +1,21 @@
 ---
 /**
- * /capitulo/[slug] · Ruta dinámica para capítulos publicados.
+ * /capitulo/[slug] · Ruta dinámica para capítulos del libro.
  * Server-rendered (prerender=false) para poder leer cookies y aplicar gating.
+ *
+ * Comportamiento por nivel y estado del capítulo:
+ * - cap-1 publicado:
+ *     Nivel 0 → header + BloquePuerta "cap-bloqueado"
+ *     Nivel 1 → contenido con CorteTejedor + BloquePuerta "cap-espera"
+ * - caps 2/3 (draft/gestación):
+ *     Nivel 0 → header + BloquePuerta "cap-bloqueado"
+ *     Nivel 1 → header + BloquePuerta "cap-espera"
  */
 import { getCollection, getEntry } from 'astro:content';
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import ChapterNav from '@/components/book/ChapterNav.astro';
-import BloqueRegistro from '@/components/book/BloqueRegistro.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
+import { getNivel, gatingActivo } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 
 export const prerender = false;
@@ -15,32 +24,45 @@ const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/indice');
 
 const entry = await getEntry('book', slug);
-if (!entry || entry.data.kind !== 'capitulo' || entry.data.status !== 'published') {
+if (!entry || entry.data.kind !== 'capitulo') {
   return Astro.redirect('/indice');
 }
 
-// Calcular prev/next dentro de capítulos publicados
-const allChapters = await getCollection('book', ({ data }) =>
-  data.kind === 'capitulo' && data.status === 'published'
+const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
+const data = entry.data;
+const chapterNum = data.chapter ?? 0;
+const capitulo = `Capítulo ${romanize(chapterNum)}`;
+
+// El cap-1 publicado tiene acceso parcial para Nivel 1
+const esCap1Publicado = data.status === 'published' && chapterNum === 1;
+// Un tejedor nivel 1 ve el contenido del cap-1 (con CorteTejedor aplicado)
+const verContenido = nivel >= 1 && esCap1Publicado;
+// Tipo de BloquePuerta según nivel
+const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
+
+let Content: any = null;
+if (verContenido) {
+  const rendered = await entry.render();
+  Content = rendered.Content;
+}
+
+// prev/next solo entre capítulos publicados
+const allChapters = await getCollection('book', ({ data: d }) =>
+  d.kind === 'capitulo' && d.status === 'published'
 );
-const sorted = allChapters.sort((a, b) => a.data.order - b.data.order);
+const sorted = allChapters.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
 const idx = sorted.findIndex(c => c.slug === slug);
 const prev = idx > 0 ? sorted[idx - 1] : null;
 const next = idx < sorted.length - 1 ? sorted[idx + 1] : null;
 
-const { Content } = await entry.render();
-const data = entry.data;
-
-const chapterNum = data.chapter ?? 0;
-const romanChapter = romanize(chapterNum);
-
 const prevProp = prev
   ? { href: `/capitulo/${prev.slug}`, label: `Cap. ${romanize(prev.data.chapter ?? 0)} · ${prev.data.title}` }
   : undefined;
-
 const nextProp = next
   ? { href: `/capitulo/${next.slug}`, label: `Cap. ${romanize(next.data.chapter ?? 0)} · ${next.data.title}` }
   : undefined;
+
+const romanChapter = romanize(chapterNum);
 ---
 
 <LecturaLarga
@@ -49,20 +71,22 @@ const nextProp = next
   pageId={`capitulo-${chapterNum}`}
 >
   <article class="measure" style="padding-top: 5rem;">
-    <header>
-      <p class="eyebrow">Acto {data.act} · Capítulo {romanChapter.toLowerCase()}</p>
+    <header class="stack-sm">
+      <p class="eyebrow">Acto {data.act} · Capítulo {romanChapter}</p>
       <h1 class="title-1">{data.title}</h1>
       {data.subtitle && <p class="title-1__sub">{data.subtitle}</p>}
     </header>
 
     <div class="flourish flourish--rule"></div>
 
-    <section class="prose dropcap section-gap">
-      <Content />
-    </section>
+    {Content && (
+      <section class="prose dropcap section-gap">
+        <Content />
+      </section>
+    )}
 
-    <BloqueRegistro />
+    <BloquePuerta tipo={tipoBloquePuerta} capitulo={capitulo} />
 
-    <ChapterNav prev={prevProp} next={nextProp} />
+    {verContenido && <ChapterNav prev={prevProp} next={nextProp} />}
   </article>
 </LecturaLarga>

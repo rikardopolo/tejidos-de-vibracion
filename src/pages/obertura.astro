@@ -1,7 +1,8 @@
 ---
 import { getEntry } from 'astro:content';
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
-import BloqueRegistro from '@/components/book/BloqueRegistro.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
+import { getNivel, gatingActivo } from '@/lib/gating';
 
 export const prerender = false;
 
@@ -9,6 +10,8 @@ const obertura = await getEntry('book', 'obertura');
 if (!obertura) throw new Error('Obertura entry not found');
 const { Content } = await obertura.render();
 const data = obertura.data;
+
+const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
 ---
 
 <LecturaLarga
@@ -30,6 +33,15 @@ const data = obertura.data;
       <Content />
     </section>
 
-    <BloqueRegistro />
+    <!-- Bloque-puerta para Nivel 0 (oculto en Nivel 1+ via CSS) -->
+    <BloquePuerta tipo="obertura" />
+
+    <!-- Banner para Nivel 1+ (se muestra solo cuando data-nivel >= 1) -->
+    <section class="banner-umbral-cruzado">
+      <p class="banner-umbral-cruzado__intro">◆</p>
+      <h2>Has cruzado el umbral</h2>
+      <p>El Capítulo 1 está abierto para ti.</p>
+      <a class="lit-link lit-link--lg" href="/capitulo/cap-1-universo-sinfonia">Empezar el Capítulo 1 →</a>
+    </section>
   </article>
 </LecturaLarga>

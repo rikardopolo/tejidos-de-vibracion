@@ -42,3 +42,5 @@ $RECYCLE.BIN/
 
 # Misc
 *.log
+
+.vercel

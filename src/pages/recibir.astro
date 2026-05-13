@@ -18,20 +18,33 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
       <h1 class="title-1">Pertenecer al tejido</h1>
     </header>
 
+    <div class="flourish flourish--rule"></div>
+
     {nivel === 0 ? (
       <>
         <div class="prose">
           <p class="no-indent">
-            Un nombre y un correo. Con eso, la Obertura se abre completa, los capítulos publicados se desbloquean,
-            y empezás a recibir las entregas nuevas a medida que se tejen.
+            Un nombre y un correo. Con eso, la Obertura del libro se abre completa para ti, y la primera
+            sección del Capítulo 1 te espera al final.
           </p>
           <p>
-            Es la primera forma de pertenecer. No la única — pero es la que abre la puerta.
+            Esta es la primera forma de pertenecer al tejido — la que abre la puerta. Más adelante habrá
+            otras: cartas íntimas del Tejedor, acceso a los siguientes capítulos a medida que se vayan
+            tejiendo, el libro completo cuando esté terminado.
+          </p>
+          <p>
+            Es la decisión más liviana del libro. Y la más importante.
           </p>
         </div>
+
         <div class="recibir-form-wrap">
           <FormularioTejedor id="form-tejedor-recibir" variant="page" />
         </div>
+
+        <p class="form-tejedor__nota" style="margin-top: 2rem;">
+          Sin spam. Sin venta de datos. Al final de cada correo hay un enlace para darte de baja con un
+          solo clic. Más en <a href="/privacidad" class="lit-link">privacidad</a>.
+        </p>
       </>
     ) : (
       <div class="prose">
