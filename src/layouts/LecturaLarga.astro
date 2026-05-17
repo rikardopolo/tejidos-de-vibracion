@@ -42,7 +42,7 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
 
   <div class="progress-rail" id="progress-rail" aria-hidden="true"></div>
 
-  <main>
+  <main id="main-content" tabindex="-1">
     <slot />
   </main>
 

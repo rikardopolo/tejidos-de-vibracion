@@ -7,6 +7,64 @@
 
 * { box-sizing: border-box; }
 
+/* ==========================================================================
+   A11Y · Focus visible global · WCAG 2.4.7 (Focus Visible) · Level AA
+   Outline dorado con offset para máximo contraste sobre pergamino y tinta.
+   `:focus { outline: none }` oculta el ring por defecto (mouse users) ·
+   sólo `:focus-visible` (teclado / AT) lo muestra. Patrón canónico moderno.
+   ========================================================================== */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--oro);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Modo noche · outline igualmente visible sobre fondo oscuro */
+body.modo-tinta :focus-visible {
+  outline: 2px solid var(--oro);
+  outline-offset: 3px;
+}
+
+/* ==========================================================================
+   A11Y · Skip-link · WCAG 2.4.1 (Bypass Blocks) · Level A
+   Oculto por defecto (translateY -100%), visible al recibir focus por teclado.
+   Coherente con paleta Pergamino + variante modo noche.
+   ========================================================================== */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  padding: 0.75rem 1.25rem;
+  background: var(--pergamino);
+  color: var(--tinta);
+  font-family: var(--sans, "Inter", sans-serif);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: 2px solid var(--oro);
+  border-radius: 0 0 4px 0;
+  transform: translateY(-100%);
+  transition: transform 180ms ease-out;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--oro);
+  outline-offset: 3px;
+}
+
+/* Modo noche */
+body.modo-tinta .skip-link {
+  background: var(--tinta);
+  color: var(--pergamino);
+}
+
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
@@ -468,7 +526,6 @@ main {
   background: transparent;
   border: 0;
   padding: 0.75rem 0;
-  outline: none;
 }
 .form-inline__field::placeholder { color: var(--reposo-claro); font-style: italic; }
 .form-inline__submit {
@@ -955,7 +1012,6 @@ body[data-nivel="0"] .bloque-registro {
 
 .form-registro input[type="text"]:focus,
 .form-registro input[type="email"]:focus {
-  outline: none;
   border-color: var(--oro);
 }
 
@@ -1059,7 +1115,7 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
   transition: border-color 180ms ease;
 }
 
-.form-tejedor input:focus { outline: none; border-color: var(--oro); }
+.form-tejedor input:focus { border-color: var(--oro); }
 
 .form-tejedor__consent {
   display: flex;
