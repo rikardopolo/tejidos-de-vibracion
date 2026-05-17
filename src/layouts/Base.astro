@@ -88,6 +88,7 @@ const schema = jsonLd ?? defaultJsonLd;
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
   <body class={bodyClass} data-page={pageId} data-nivel={nivel}>
+    <a href="#main-content" class="skip-link">Saltar al contenido</a>
     <slot />
   </body>
 </html>
