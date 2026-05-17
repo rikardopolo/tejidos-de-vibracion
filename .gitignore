@@ -44,3 +44,6 @@ $RECYCLE.BIN/
 *.log
 
 .vercel
+
+# Temporales / backups scratch (no versionar)
+.tmp-*
