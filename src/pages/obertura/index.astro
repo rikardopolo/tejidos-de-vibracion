@@ -1,0 +1,372 @@
+---
+/**
+ * /obertura · biblioteca · TOC de las 15 piezas de la Obertura.
+ *
+ * Migrada desde el portal `tejidos-de-realidad` el 2026-05-18.
+ * Auth gate · cookie `tejedor-access` HMAC firmada (sistema del libro).
+ *
+ * Estructura editorial:
+ *   i.   Apertura     · 00 · 01 · interludio i
+ *   ii.  Capacidades  · 02 · 03 · interludio ii · 04
+ *   iii. Marco        · 05 · 06 · 07 · 08 · 09
+ *   iv.  Cierre       · interludio iii · 10 · 11
+ */
+import OberturaLayout from '@/layouts/OberturaLayout.astro';
+import { getCollection } from 'astro:content';
+import { getNivel, gatingActivo } from '@/lib/gating';
+
+export const prerender = false;
+
+/**
+ * Piezas de acceso público · Nivel 0 (sin cookie).
+ * Las demás 12 piezas requieren Nivel 1 · marcadas en la biblioteca con
+ * un indicador visual sutil ◆ apagado (oro fantasma).
+ */
+const PIEZAS_PUBLICAS = new Set([
+  '00-frontispicio',
+  '01-anclaje',
+  'interludio-i',
+]);
+
+// La biblioteca es Nivel 0 público · todas las piezas se listan, las
+// bloqueadas reciben un indicador visual. El gating real ocurre en [slug].astro
+// al entrar a piezas Nivel 1.
+//
+// Bot allowlist · search engines + LLM crawlers + social unfurlers + validators.
+const ua = Astro.request.headers.get('user-agent') ?? '';
+const isBot = /bot|crawl|spider|googlebot|bingbot|gptbot|claudebot|perplexitybot|google-extended|oai-searchbot|anthropic-ai|cohere-ai|yandex|baiduspider|duckduckbot|applebot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|slackbot|discord|mojeekbot|opengraph|preview|unfurl|metainspector|embed/i.test(ua);
+
+// Resolver nivel · biblioteca pública para todos · solo se usa para propagar a CSS.
+const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
+
+const allEntries = await getCollection('obertura', ({ data }) => data.status === 'published');
+allEntries.sort((a, b) => a.data.order - b.data.order);
+
+const sectionMeta = {
+  apertura: { num: 'i', heading: 'Apertura', sub: 'Cruzar el umbral' },
+  capacidades: { num: 'ii', heading: 'Las tres capacidades', sub: 'Presenciar · discriminar · participar' },
+  marco: { num: 'iii', heading: 'Marco y compromiso', sub: 'Cómo se lee, qué se afirma' },
+  cierre: { num: 'iv', heading: 'Cierre', sub: 'Lo que queda despierto' },
+} as const;
+
+type SectionKey = keyof typeof sectionMeta;
+const sectionOrder: SectionKey[] = ['apertura', 'capacidades', 'marco', 'cierre'];
+
+const grouped = sectionOrder.map((key) => ({
+  key,
+  meta: sectionMeta[key],
+  entries: allEntries.filter((e) => e.data.section === key),
+}));
+---
+
+<OberturaLayout
+  title="Tejidos de Vibración · Obertura · Biblioteca"
+  description="Biblioteca de la Obertura del Volumen I · 11 capítulos + 3 interludios musicales · Tejidos de Vibración."
+  schemas={[
+    {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Article',
+          '@id': 'https://tejidosdevibracion.com/obertura#article',
+          headline: 'Obertura · Tejidos de Vibración',
+          alternativeHeadline: 'Capítulo de apertura del Volumen I',
+          url: 'https://tejidosdevibracion.com/obertura',
+          description: 'Obertura del libro Tejidos de Vibración · Volumen I. 11 capítulos + 3 interludios musicales. Acceso gratuito.',
+          image: 'https://tejidosdevibracion.com/og/og-libro.png',
+          datePublished: '2026-01-01T00:00:00-05:00',
+          dateModified: '2026-04-29T00:00:00-05:00',
+          inLanguage: 'es',
+          author: { '@id': 'https://tejidosdevibracion.com/sobre-el-libro#person' },
+          publisher: { '@id': 'https://tejidosdevibracion.com/#organization' },
+          isPartOf: { '@id': 'https://tejidosdevibracion.com/obertura#book' },
+          isAccessibleForFree: true,
+          mainEntityOfPage: 'https://tejidosdevibracion.com/obertura',
+          // Outbound citations · linaje intelectual del libro. Mix de
+          // referencias filosóficas (Stanford), físicas (Wikipedia) y
+          // recursos didácticos (MIT OCW, Feynman Lectures).
+          citation: [
+            { '@type': 'CreativeWork', url: 'https://plato.stanford.edu/entries/qm/', name: 'Quantum Mechanics · Stanford Encyclopedia of Philosophy' },
+            { '@type': 'CreativeWork', url: 'https://plato.stanford.edu/entries/consciousness/', name: 'Consciousness · Stanford Encyclopedia of Philosophy' },
+            { '@type': 'CreativeWork', url: 'https://plato.stanford.edu/entries/qt-consciousness/', name: 'Quantum Approaches to Consciousness · Stanford Encyclopedia' },
+            { '@type': 'CreativeWork', url: 'https://en.wikipedia.org/wiki/Cymatics', name: 'Cymatics · Wikipedia' },
+            { '@type': 'CreativeWork', url: 'https://en.wikipedia.org/wiki/Atomic_orbital', name: 'Atomic orbital · Wikipedia' },
+            { '@type': 'CreativeWork', url: 'https://en.wikipedia.org/wiki/Double-slit_experiment', name: 'Double-slit experiment · Wikipedia' },
+            { '@type': 'CreativeWork', url: 'https://en.wikipedia.org/wiki/Magnetocardiography', name: 'Magnetocardiography · Wikipedia' },
+            {
+              '@type': 'CreativeWork',
+              url: 'https://www.feynmanlectures.caltech.edu/III_toc.html',
+              name: 'The Feynman Lectures Vol. III · Quantum Mechanics',
+              author: { '@type': 'Person', name: 'Richard Feynman' },
+            },
+          ],
+          // hasPart · señal explícita de la estructura del libro como
+          // recursos referenciados (los 6 simuladores son experimentos del
+          // libro). Esto le dice a Google: "este Article tiene partes
+          // identificables, que son aplicaciones interactivas".
+          hasPart: [
+            { '@id': 'https://tejidosderealidad.com/simuladores/cymatica#resource' },
+            { '@id': 'https://tejidosderealidad.com/simuladores/orbitales#resource' },
+            { '@id': 'https://tejidosderealidad.com/simuladores/campo-cuantico#resource' },
+            { '@id': 'https://tejidosderealidad.com/simuladores/doble-rendija#resource' },
+            { '@id': 'https://tejidosderealidad.com/simuladores/tejido#resource' },
+            { '@id': 'https://tejidosderealidad.com/simuladores/constelacion#resource' },
+          ],
+        },
+        {
+          '@type': 'Book',
+          '@id': 'https://tejidosdevibracion.com/obertura#book',
+          name: 'Tejidos de Vibración · Volumen I',
+          alternativeHeadline: 'Manual V5.2',
+          author: { '@id': 'https://tejidosdevibracion.com/sobre-el-libro#person' },
+          publisher: { '@id': 'https://tejidosdevibracion.com/#organization' },
+          inLanguage: 'es',
+          bookFormat: 'https://schema.org/EBook',
+          url: 'https://tejidosdevibracion.com/',
+          datePublished: '2026',
+          abstract: 'Volumen I de la serie Tejidos de Realidad. Tres actos sobre física, conciencia y cymática, acompañados de un laboratorio interactivo de seis simuladores.',
+        },
+        {
+          '@type': 'BreadcrumbList',
+          '@id': 'https://tejidosdevibracion.com/obertura#breadcrumb',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://tejidosdevibracion.com/' },
+            { '@type': 'ListItem', position: 2, name: 'Índice', item: 'https://tejidosdevibracion.com/indice' },
+            { '@type': 'ListItem', position: 3, name: 'Obertura', item: 'https://tejidosdevibracion.com/obertura' },
+          ],
+        },
+      ],
+    },
+  ]}
+  nivel={nivel}
+>
+  <header class="biblio-cover">
+    <p class="volumen">Volumen i</p>
+    <h1 class="book-title">Tejidos <span class="ampersand">de</span> Vibración</h1>
+    <div class="ornament-large">◇ &nbsp; ◆ &nbsp; ◇</div>
+    <p class="obertura-label">Obertura</p>
+    <p class="obertura-sub">El Tejedor Consciente Despierta</p>
+    <p class="author">Ricardo Polo · Orion</p>
+    <p class="epigraph">
+      Una Obertura no introduce los temas de la ópera que vendrá. Los toca
+      todos, compactados, en forma de resumen anticipado.
+    </p>
+  </header>
+
+  <div class="toc">
+    {grouped.map((group) => group.entries.length > 0 && (
+      <section class="toc-section">
+        <p class="heading">{group.meta.num} · {group.meta.heading}</p>
+        <p class="heading-sub">{group.meta.sub}</p>
+        <ol>
+          {group.entries.map((entry) => {
+            const esPublica = PIEZAS_PUBLICAS.has(entry.slug);
+            const esBloqueada = !esPublica && nivel < 1;
+            return (
+              <li class={esBloqueada ? 'is-locked' : ''}>
+                <a
+                  href={`/obertura/${entry.slug}`}
+                  aria-label={esBloqueada ? `${entry.data.title} · requiere registro` : undefined}
+                >
+                  <span class="num">{entry.data.chapterNum}</span>
+                  <span class="body">
+                    {entry.data.title}
+                    {esBloqueada && <span class="lock" aria-hidden="true">◆</span>}
+                    {entry.data.subtitle && <em>{entry.data.subtitle}</em>}
+                  </span>
+                  <span class="arrow">→</span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    ))}
+  </div>
+
+  <div class="ornament-large">◇ &nbsp; ◆ &nbsp; ◇</div>
+
+  <p class="biblio-footer">
+    Compuesto en EB Garamond. Acentos en Inter y JetBrains Mono.<br>
+    Hilo carmesí · papel cálido · índigo de los carriles científicos.
+  </p>
+</OberturaLayout>
+
+<style>
+  .biblio-cover {
+    text-align: center;
+    padding: 2rem 0 3rem;
+    border-bottom: 1px solid var(--obertura-rule-soft);
+    margin-bottom: 4rem;
+  }
+  .volumen {
+    font-family: var(--obertura-sans);
+    font-weight: 400;
+    font-size: 0.78rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--obertura-ink-faded);
+    margin: 0 0 2.5rem;
+  }
+  .book-title {
+    font-family: var(--obertura-serif);
+    font-weight: 500;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0 0 0.6rem;
+    line-height: 1.05;
+  }
+  .book-title .ampersand {
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: lowercase;
+    color: var(--obertura-thread);
+  }
+  .ornament-large {
+    text-align: center;
+    color: var(--obertura-thread);
+    margin: 4.5rem 0;
+    font-size: 1.25rem;
+    letter-spacing: 1.2em;
+    user-select: none;
+  }
+  .obertura-label {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin: 0 0 0.8rem;
+  }
+  .obertura-sub {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.35rem;
+    color: var(--obertura-ink);
+    margin: 0;
+  }
+  .author {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    color: var(--obertura-ink-soft);
+    margin: 1.4rem 0 1.2rem;
+  }
+  .epigraph {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--obertura-ink-faded);
+    line-height: 1.5;
+    max-width: 26rem;
+    margin: 0 auto;
+    padding: 1.2rem 0 0;
+    border-top: 1px solid var(--obertura-rule-soft);
+  }
+
+  .toc {
+    margin: 0 auto;
+  }
+
+  .toc-section {
+    margin-bottom: 4rem;
+  }
+  .toc-section .heading {
+    font-family: var(--obertura-sans);
+    font-weight: 500;
+    font-size: 0.78rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin: 0 0 0.3rem;
+    text-align: center;
+  }
+  .toc-section .heading-sub {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.08rem;
+    color: var(--obertura-ink-faded);
+    text-align: center;
+    margin: 0 0 1.8rem;
+  }
+  .toc-section ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .toc-section li {
+    margin: 0;
+    border-bottom: 1px solid var(--obertura-rule-soft);
+  }
+  .toc-section li:first-child {
+    border-top: 1px solid var(--obertura-rule-soft);
+  }
+  .toc-section a {
+    display: grid;
+    grid-template-columns: 3.6rem 1fr 1.5rem;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.2rem 0.4rem;
+    text-decoration: none;
+    color: var(--obertura-ink);
+    transition: background 0.2s, padding 0.2s;
+  }
+  .toc-section a:hover {
+    background: var(--obertura-thread-hover);
+    padding-left: 1rem;
+  }
+  .toc-section .num {
+    font-family: var(--obertura-mono);
+    font-size: 0.85rem;
+    color: var(--obertura-thread);
+    letter-spacing: 0.05em;
+  }
+  .toc-section .body {
+    font-family: var(--obertura-serif);
+    font-size: 1.18rem;
+    line-height: 1.3;
+  }
+  .toc-section .body em {
+    display: block;
+    font-style: italic;
+    font-size: 0.92rem;
+    color: var(--obertura-ink-faded);
+    margin-top: 0.15rem;
+  }
+  .toc-section .arrow {
+    font-family: var(--obertura-serif);
+    color: var(--obertura-thread);
+    font-size: 1.1rem;
+    text-align: right;
+    transition: transform 0.2s;
+  }
+  .toc-section a:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  .biblio-footer {
+    text-align: center;
+    font-style: italic;
+    color: var(--obertura-ink-faded);
+    font-size: 0.95rem;
+    max-width: 28rem;
+    margin: 2rem auto;
+  }
+
+  /* Indicador de pieza bloqueada · oro fantasma · solo visible Nivel 0 */
+  .toc-section .lock {
+    color: var(--obertura-gold);
+    opacity: 0.42;
+    font-size: 0.72rem;
+    margin-left: 0.45rem;
+    vertical-align: middle;
+    letter-spacing: 0;
+  }
+  .toc-section .is-locked a:hover .lock {
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+</style>
