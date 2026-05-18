@@ -791,6 +791,44 @@ main {
 .stack-md > * + * { margin-top: 2rem; }
 .stack-lg > * + * { margin-top: 4rem; }
 
+/* Spacing utilities · reemplazan inline style="margin-top/bottom/padding-top"
+ * (Sprint 5B · 2026-05-18). Nombres: N = rem entero, Nh = N.5 rem.
+ * Los valores alineados con tokens usan var(--gap-X) para heredar cambios. */
+
+/* margin-top */
+.mt-0  { margin-top: 0; }
+.mt-1  { margin-top: var(--gap-sm); }   /* 1rem */
+.mt-1h { margin-top: 1.5rem; }          /* 1.5rem */
+.mt-2  { margin-top: var(--gap-md); }   /* 2rem */
+.mt-2h { margin-top: 2.5rem; }          /* 2.5rem */
+.mt-3  { margin-top: 3rem; }
+.mt-4  { margin-top: var(--gap-lg); }   /* 4rem */
+.mt-5  { margin-top: 5rem; }
+.mt-6  { margin-top: var(--gap-xl); }   /* 6rem */
+.mt-7  { margin-top: 7rem; }
+
+/* margin-bottom */
+.mb-4  { margin-bottom: var(--gap-lg); }  /* 4rem */
+.mb-6  { margin-bottom: var(--gap-xl); }  /* 6rem */
+.mb-7  { margin-bottom: 7rem; }
+.mb-8  { margin-bottom: 8rem; }
+
+/* padding-top (article top-breathing-room) */
+.pt-5  { padding-top: 5rem; }
+.pt-6  { padding-top: var(--gap-xl); }   /* 6rem */
+.pt-7  { padding-top: 7rem; }
+.pt-8  { padding-top: 8rem; }
+
+/* CTA actions stack · 404 + páginas de destino sin contenido */
+.cta-stack {
+  margin-top: var(--gap-lg);   /* 4rem */
+  margin-bottom: 8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+}
+
 .sr-only {
   position: absolute; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;
