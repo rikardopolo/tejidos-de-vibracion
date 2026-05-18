@@ -1,0 +1,83 @@
+---
+/**
+ * <OberturaToc> · índice navegable de las 15 piezas de la Obertura.
+ *
+ * Botón flotante (esquina superior izquierda en desktop, inferior en móvil)
+ * que abre un panel deslizable con la lista completa, agrupada por las 4
+ * secciones del libro (apertura, capacidades, marco, cierre).
+ *
+ * Highlights la pieza actual usando el slug propio de la URL. Cierra al
+ * click fuera, ESC, o tras navegar.
+ *
+ * No requiere JS framework: usa <details>+<summary> para el toggle y un
+ * pequeño script inline (CSP-safe vía nonce) para el active state, ESC
+ * y outside-click. Reading-progress y scroll-spy se mantienen en el
+ * layout principal.
+ */
+import { getCollection } from 'astro:content';
+
+type Section = 'apertura' | 'capacidades' | 'marco' | 'cierre';
+const SECTION_LABELS: Record<Section, string> = {
+  apertura:    'Apertura',
+  capacidades: 'Capacidades',
+  marco:       'Marco',
+  cierre:      'Cierre',
+};
+const SECTION_ORDER: Section[] = ['apertura', 'capacidades', 'marco', 'cierre'];
+
+interface Props {
+  /** Slug de la pieza actual · se highlightea en el panel. */
+  current?: string;
+}
+const { current } = Astro.props;
+
+const all = await getCollection('obertura', ({ data }) => data.status === 'published');
+all.sort((a, b) => a.data.order - b.data.order);
+
+// Group by section
+const grouped: Record<Section, typeof all> = {
+  apertura: [],
+  capacidades: [],
+  marco: [],
+  cierre: [],
+};
+for (const entry of all) {
+  const sec = entry.data.section as Section;
+  if (sec in grouped) grouped[sec].push(entry);
+}
+---
+
+<details class="obertura-toc" id="obertura-toc">
+  <summary class="obertura-toc-toggle" aria-label="Abrir índice de la Obertura">
+    <span class="obertura-toc-icon" aria-hidden="true">☰</span>
+    <span class="obertura-toc-label">Índice</span>
+  </summary>
+  <nav class="obertura-toc-panel" aria-label="Índice de la Obertura">
+    <p class="obertura-toc-title">Obertura · 15 piezas</p>
+    {SECTION_ORDER.map((sec) => (
+      <div class="obertura-toc-section">
+        <p class="obertura-toc-section-label">{SECTION_LABELS[sec]}</p>
+        <ol class="obertura-toc-list">
+          {grouped[sec].map((entry) => (
+            <li class={`obertura-toc-item${entry.slug === current ? ' is-current' : ''}`}>
+              <a href={`/obertura/${entry.slug}`}>
+                <span class="obertura-toc-num">{entry.data.chapterNum}</span>
+                <span class="obertura-toc-name">{entry.data.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+    ))}
+  </nav>
+</details>
+
+<!-- Estilos del panel TOC (.obertura-toc-*) viven globalmente en
+     OberturaLayout.astro para que ChapterToc y BookToc compartan el
+     mismo chrome sin duplicación. -->
+<style>
+  /* (intencionalmente vacío · ver OberturaLayout.astro global styles) */
+</style>
+
+<!-- Comportamiento (close on outside click / ESC) externalizado para CSP-safe. -->
+<script is:inline src="/obertura-toc.js" defer></script>

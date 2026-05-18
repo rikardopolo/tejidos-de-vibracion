@@ -69,4 +69,42 @@ const chapterSections = defineCollection({
   }),
 });
 
-export const collections = { book, 'chapter-sections': chapterSections };
+/**
+ * Colección `obertura` · 15 piezas que componen la Obertura del Volumen I
+ * (estructura de biblioteca con 4 secciones).
+ *
+ * Migrada desde el portal `tejidos-de-realidad` el 2026-05-18 · ver
+ * PROMPT-MIGRACION-OBERTURA-2026-05-18.md.
+ *
+ * Estructura editorial:
+ *   i.   Apertura     · 00-frontispicio · 01-anclaje · interludio-i
+ *   ii.  Capacidades  · 02-meta-observador · 03-interferometro · interludio-ii · 04-tejedor
+ *   iii. Marco        · 05-cartografia · 06-velos · 07-voz-transversal · 08-niveles · 09-estados
+ *   iv.  Cierre       · interludio-iii · 10-sintesis · 11-cierre
+ */
+const obertura = defineCollection({
+  type: 'content',
+  schema: z.object({
+    /** Número del capítulo o interludio · "00", "01", ..., "11", "i", "ii", "iii" */
+    chapterNum: z.string(),
+    /** Tipo · capítulo regular o interludio musical (más etéreo) */
+    kind: z.enum(['frontispicio', 'capitulo', 'interludio']),
+    /** Título principal (ej. "El Meta-Observador") */
+    title: z.string(),
+    /** Subtítulo en cursiva (ej. "La consciencia que se observa observando") */
+    subtitle: z.string().optional(),
+    /** Sección de la biblioteca · 4 grupos en el TOC */
+    section: z.enum(['apertura', 'capacidades', 'marco', 'cierre']),
+    /** Posición numérica para ordenamiento en TOC y prev/next */
+    order: z.number(),
+    /** Etiqueta corta del header sticky (ej. "00 · Frontispicio") */
+    headerLabel: z.string(),
+    /** Estado de publicación */
+    status: z.enum(['draft', 'review', 'published']).default('published'),
+    publishedAt: z.date().optional(),
+    authors: z.array(z.string()).default(['Ricardo Polo']),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { book, 'chapter-sections': chapterSections, obertura };

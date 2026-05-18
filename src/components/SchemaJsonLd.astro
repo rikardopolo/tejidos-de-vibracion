@@ -1,0 +1,28 @@
+---
+/**
+ * SchemaJsonLd · renderiza JSON-LD SSR.
+ *
+ * Inyecta <script type="application/ld+json"> con el schema indicado.
+ * El renderizado es SSR (no client-side) · llega en el HTML inicial,
+ * antes de hidratación · evita el problema de Google Dec-2025 sobre
+ * structured data inyectado por JavaScript post-hidratación.
+ *
+ * Uso:
+ *   <SchemaJsonLd schema={{ "@context": "https://schema.org", "@type": "Article", ... }} />
+ *
+ * Para múltiples bloques en una página, usar @graph:
+ *   <SchemaJsonLd schema={{
+ *     "@context": "https://schema.org",
+ *     "@graph": [ {...}, {...}, {...} ]
+ *   }} />
+ */
+
+interface Props {
+  /** Objeto schema (JSON-LD). Puede ser un solo bloque o un @graph. */
+  schema: Record<string, unknown>;
+}
+
+const { schema } = Astro.props;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

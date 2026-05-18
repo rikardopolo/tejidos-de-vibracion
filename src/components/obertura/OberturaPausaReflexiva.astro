@@ -1,0 +1,109 @@
+---
+/**
+ * <PausaReflexiva> · ejercicio contemplativo breve.
+ *
+ * Aside con borde carmesí izquierdo, label con disco hueco, título serif,
+ * duración en cursiva, pasos numerados con etiqueta en mayúsculas.
+ *
+ * Uso (MDX):
+ *   <PausaReflexiva title="El primer noto" duration="1-2 minutos">
+ *     <p>...prosa con <em>énfasis</em>...</p>
+ *     <Step label="Paso 1" />Texto del paso 1
+ *     <blockquote>...</blockquote>
+ *   </PausaReflexiva>
+ *
+ * Doctrina: matchea el estilo `.pausa-reflexiva` de la fuente HTML
+ * (styles.css · líneas 266-318).
+ */
+
+interface Props {
+  /** Título corto del ejercicio (ej. "El primer noto"). */
+  title: string;
+  /** Duración aproximada en texto libre (ej. "2-3 minutos"). */
+  duration?: string;
+  /** Etiqueta sobreescribible · default "Pausa Reflexiva". Se usa para
+   *  reusar este componente con label "Anclaje Experiencial" sin duplicar CSS. */
+  label?: string;
+}
+
+const { title, duration, label = 'Pausa Reflexiva' } = Astro.props;
+---
+
+<aside class="pausa-reflexiva">
+  <div class="label">{label}</div>
+  <h3 class="title">{title}</h3>
+  {duration && <p class="duration">Duración: {duration}</p>}
+  <div class="content">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .pausa-reflexiva {
+    background: var(--obertura-thread-soft);
+    border-left: 2px solid var(--obertura-thread);
+    padding: 2rem 1.8rem 1.2rem;
+    margin: 3rem -0.5rem;
+    position: relative;
+  }
+  .label {
+    font-family: var(--obertura-sans);
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .label::before {
+    content: "";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--obertura-thread);
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--obertura-thread) 0 30%, transparent 31%);
+  }
+  .title {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin: 0 0 0.2rem;
+    color: var(--obertura-ink);
+    line-height: 1.2;
+  }
+  .duration {
+    font-family: var(--obertura-sans);
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--obertura-ink-faded);
+    margin: 0 0 1.4rem;
+    font-weight: 400;
+  }
+  .content :global(p) {
+    font-size: 0.97em;
+    margin-block: 0 1.2em;
+  }
+  .content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .content :global(.step) {
+    font-family: var(--obertura-sans);
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin-right: 0.4rem;
+  }
+  .content :global(blockquote) {
+    border-left: 2px solid var(--obertura-thread-quote);
+    padding-left: 1rem;
+    margin: 1.2rem 0;
+    font-style: italic;
+    color: var(--obertura-ink-soft);
+  }
+</style>

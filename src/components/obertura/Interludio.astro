@@ -1,0 +1,83 @@
+---
+/**
+ * <Interludio> · interludio musical · pieza etérea entre capítulos.
+ *
+ * Bloque con fondo paper-deep, dos notas musicales decorativas en
+ * esquinas opuestas, label + título + prosa en italic suave.
+ *
+ * Doctrina: matchea `.interludio` (styles.css · líneas 526-578).
+ */
+
+interface Props {
+  /** Etiqueta del interludio (ej. "Interludio Musical i"). */
+  label: string;
+  /** Título poético del interludio (ej. "Entre dos orillas"). */
+  title: string;
+}
+
+const { label, title } = Astro.props;
+---
+
+<section class="interludio">
+  <p class="interludio-label">{label}</p>
+  <p class="interludio-title">{title}</p>
+  <div class="content">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .interludio {
+    margin: 5rem -1rem;
+    padding: 3rem 1.8rem;
+    background: var(--obertura-paper-deep);
+    border-radius: 2px;
+    text-align: left;
+    position: relative;
+    font-family: var(--obertura-serif);
+    color: var(--obertura-ink-soft);
+  }
+  .interludio::before {
+    content: "♪";
+    position: absolute;
+    top: 1rem;
+    left: 1.4rem;
+    font-size: 1.4rem;
+    color: var(--obertura-thread);
+  }
+  .interludio::after {
+    content: "♪";
+    position: absolute;
+    bottom: 1rem;
+    right: 1.4rem;
+    font-size: 1.4rem;
+    color: var(--obertura-thread);
+    transform: scaleX(-1);
+  }
+  .interludio-label {
+    font-family: var(--obertura-sans);
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    text-align: center;
+    margin: 0 0 0.4rem;
+  }
+  .interludio-title {
+    font-family: var(--obertura-serif);
+    font-weight: 500;
+    font-style: italic;
+    font-size: 1.5rem;
+    text-align: center;
+    color: var(--obertura-ink);
+    margin: 0 0 2rem;
+  }
+  .content :global(p) {
+    font-size: 1.02em;
+    margin: 0 0 var(--obertura-rhythm);
+  }
+  .content :global(p em) {
+    font-style: italic;
+  }
+</style>
