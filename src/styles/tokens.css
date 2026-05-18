@@ -49,4 +49,9 @@
   --gap-lg: 4rem;
   --gap-xl: 6rem;
   --gap-xxl: 9rem;
+
+  /* Easings · canon editorial cross-repo (Sprint 5A audit Taste 2026-05-17)
+     easeOutCirc · sweet spot contemplativo entre snappy y blando.
+     Sustituye `ease-out` hardcodeado en transitions decorativas. */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
 }
