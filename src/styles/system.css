@@ -1337,3 +1337,31 @@ body[data-nivel="0"] .bloque-puerta--cap-espera {
 }
 
 body[data-nivel="0"] .banner-umbral-cruzado { display: none; }
+
+/* ════════════════════════════════════════════════════════════════
+ * A11y · prefers-reduced-motion GLOBAL safety net (P0 · audit Taste 2026-05-17)
+ * ════════════════════════════════════════════════════════════════
+ * Catch-all para usuarios con sensibilidad vestibular o que
+ * configuraron `prefers-reduced-motion: reduce` en su OS.
+ *
+ * Reduce todas las animaciones/transiciones a casi cero · preserva
+ * la jerarquía visual (no oculta nada) pero elimina el movimiento.
+ *
+ * Cubre: scroll-reveal · pulse loops · hero fades · transiciones de
+ * hover · cualquier @keyframes activo en el libro.
+ * ════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* SVG SMIL animations · respeta el toggle del SO */
+  animate, animateMotion, animateTransform {
+    begin: indefinite !important;
+  }
+}
