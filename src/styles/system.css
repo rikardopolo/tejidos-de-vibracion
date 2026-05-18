@@ -187,6 +187,32 @@ main {
 .section-gap-xl { margin-top: var(--gap-xxl); }
 
 /* ==========================================================================
+   COVER · grain overlay sandbox · canon G-4 audit Taste 2026-05-17
+   Materialidad de papel · noise.svg overlay con mix-blend-mode multiply.
+   Opacity muy sutil (0.04) · canon "high-end visual design" para libro.
+   Medir Web Vitals mobile antes de adoptar en hero global.
+   ========================================================================== */
+.cover {
+  position: relative;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url('/noise.svg');
+  background-repeat: repeat;
+  background-size: 320px 320px;
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+  z-index: 0;
+}
+.cover > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==========================================================================
    TIPOGRAFÍA — componentes
    ========================================================================== */
 
@@ -303,6 +329,30 @@ main {
 .prose > p + p { text-indent: 1.25em; }    /* sangría de continuación al estilo libro */
 .prose > p:first-child { text-indent: 0; }
 .prose > p.no-indent { text-indent: 0; }
+
+/* ==========================================================================
+   DROP-CAP · canon G-2 audit Taste 2026-05-17
+   Capital inicial al estilo Penguin Modern Classics.
+   Aplica solo en .drop-cap (decisión editorial · A/B en Cap 3).
+   ========================================================================== */
+.prose > p.drop-cap::first-letter {
+  float: left;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 4.5em;
+  line-height: 0.85;
+  margin: 0.08em 0.08em 0 0;
+  color: var(--oro);
+  font-feature-settings: "kern", "liga";
+}
+
+/* Mobile · drop-cap más pequeño para evitar romper measure */
+@media (max-width: 540px) {
+  .prose > p.drop-cap::first-letter {
+    font-size: 3.5em;
+    margin: 0.1em 0.06em 0 0;
+  }
+}
 
 .prose em { font-style: italic; }
 .prose strong { font-weight: 600; }
