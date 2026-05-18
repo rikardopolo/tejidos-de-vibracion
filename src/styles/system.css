@@ -49,7 +49,7 @@ body.modo-tinta :focus-visible {
   border: 2px solid var(--oro);
   border-radius: 0 0 4px 0;
   transform: translateY(-100%);
-  transition: transform 180ms ease-out;
+  transition: transform 180ms var(--ease-editorial);
 }
 
 .skip-link:focus,
