@@ -1,0 +1,104 @@
+---
+/**
+ * FiguraEditorial · figura editorial genérica para capítulos del libro.
+ *
+ * Equivalente arquitectónico de `<FiguraObertura />` pero en el namespace
+ * del libro (capítulos 1-10). Visualmente idéntico al de la Obertura pero
+ * con nombres de clase propios (`.figura-editorial__*`) para que ambos
+ * componentes puedan divergir editorialmente en el futuro sin tocar el
+ * canon de la Obertura.
+ *
+ * Patrón del repo: <img> plain con paths absolutos desde `public/assets/`
+ * (NO `astro:assets` · `imageService: false` en astro.config.mjs).
+ *
+ * Props:
+ *   src: path absoluto a la PNG · ej. "/assets/cap-1/figura-1-1.png"
+ *   alt: texto alt accesible para screen readers
+ *   numero: numeración editorial · ej. "1.1", "1.2", "O.1"
+ *   titulo: título italic del pie · ej. "El monocordio de Pitágoras"
+ *   caption: pie de figura completo · texto literal del manuscrito
+ *   ancho, alto: dimensiones opcionales (CLS-friendly)
+ */
+interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+  numero: string;
+  titulo: string;
+  ancho?: number;
+  alto?: number;
+}
+
+const { src, alt, caption, numero, titulo, ancho, alto } = Astro.props;
+---
+
+<figure class="figura-editorial">
+  <div class="figura-editorial__marco">
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      width={ancho}
+      height={alto}
+      class="figura-editorial__imagen"
+    />
+  </div>
+  <figcaption class="figura-editorial__caption">
+    <span class="figura-editorial__numero">Figura {numero}</span>
+    <span class="figura-editorial__separador"> · </span>
+    <span class="figura-editorial__titulo">{titulo}</span>
+    <p class="figura-editorial__pie">{caption}</p>
+  </figcaption>
+</figure>
+
+<style>
+  .figura-editorial {
+    margin: 3rem auto;
+    max-width: 720px;
+    text-align: center;
+  }
+
+  .figura-editorial__marco {
+    border: 1px solid var(--oro-fantasma);
+    padding: 1.5rem;
+    background: rgba(229, 219, 190, 0.4);
+    border-radius: 2px;
+  }
+
+  .figura-editorial__imagen {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .figura-editorial__caption {
+    margin-top: 1.25rem;
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--tinta-suave);
+    text-align: left;
+  }
+
+  .figura-editorial__numero {
+    font-style: italic;
+    color: var(--oro-suave);
+    font-weight: 500;
+  }
+
+  .figura-editorial__separador {
+    color: var(--reposo);
+  }
+
+  .figura-editorial__titulo {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .figura-editorial__pie {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--reposo);
+  }
+</style>
