@@ -35,6 +35,13 @@ const book = defineCollection({
     tags: z.array(z.string()).default([]),
     /** URL al PDF descargable (Capa 2+). */
     pdfUrl: z.string().optional(),
+    /**
+     * Marca el MDX como contenido archivado: el cuerpo editorial vive en
+     * `chapter-sections/` y este archivo se conserva solo para que el routing
+     * resuelva `chapterEntry` (controla el status que heredan las piezas).
+     * Metadata pura · no afecta runtime · señal para mantenedores.
+     */
+    archived: z.boolean().default(false),
   }),
 });
 
