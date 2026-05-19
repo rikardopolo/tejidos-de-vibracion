@@ -1,0 +1,25 @@
+---
+/**
+ * <Diamond> · separador ornamental simple ◆ para el libro.
+ *
+ * Marca un cambio de movimiento dentro del flujo prosódico (similar a un
+ * salto de párrafo más fuerte). Color oro suave del libro (paleta paper-and-ink
+ * canónica · NO el thread carmesí de la Obertura · ver CANON entry #3).
+ *
+ * Equivalente arquitectónico de `obertura/Diamond.astro` pero con paleta
+ * del libro · permite divergencia futura sin tocar canon de la Obertura.
+ */
+---
+
+<div class="diamond" aria-hidden="true">◆</div>
+
+<style>
+  .diamond {
+    text-align: center;
+    color: var(--oro-suave);
+    margin: 2rem 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.6em;
+    user-select: none;
+  }
+</style>
