@@ -17,9 +17,12 @@ const SLUG_MAP: Record<number, string> = {
   3: '/capitulo/cap-3-mundo-cuantico',
 };
 
-// Load published chapters from the collection
+// Load chapters visibles en el índice · 'published' renderiza contenido,
+// 'fragmento-permanente' renderiza BloquePuerta 'espera' (mismo runtime
+// behavior que un cap N1 no publicado · ver capitulo/[slug].astro).
 const allChapters = await getCollection('book', ({ data }) =>
-  data.kind === 'capitulo' && data.status === 'published'
+  data.kind === 'capitulo' &&
+  (data.status === 'published' || data.status === 'fragmento-permanente')
 );
 const publishedByNumber = new Map(
   allChapters.map((e) => [e.data.chapter as number, e.data])
@@ -63,8 +66,38 @@ const gestatingChapters = [
         Fundamentos<span class="toc-act__title-tail">La vibración primordial</span>
       </h2>
 
-      {[1, 2, 3].map((n) => {
-        const roman = ['I', 'II', 'III'][n - 1];
+      {/*
+        Estrategia de monetización v2.0 · estados del Acto I:
+        - Cap. I  → libre con registro · abre en junio 2026 (soon · fragmento-permanente hasta lanzamiento)
+        - Cap. II → libre con registro · abre en julio 2026 (soon)
+        - Cap. III → libre con registro · abre en agosto 2026 (soon)
+        Los caps IV-X siguen como `gestating` (Acto II y III · pagos).
+        Pre-venta del Acto II en el bloque `.toc-preventa` más abajo.
+
+        En junio 2026 (lanzamiento): cambiar Cap. I a
+          { soon: false, access: 'Libre · requiere registro' }
+          + status: "published" en cap-1-universo-sinfonia.mdx
+      */}
+      {[
+        {
+          n: 1,
+          roman: 'I',
+          access: 'Libre · abre en junio',
+          soon: true,
+        },
+        {
+          n: 2,
+          roman: 'II',
+          access: 'Libre · abre en julio',
+          soon: true,
+        },
+        {
+          n: 3,
+          roman: 'III',
+          access: 'Libre · abre en agosto',
+          soon: true,
+        },
+      ].map(({ n, roman, access, soon }) => {
         const data = publishedByNumber.get(n);
         const href = SLUG_MAP[n];
         return data ? (
@@ -73,9 +106,10 @@ const gestatingChapters = [
             title={data.title}
             subtitle={data.subtitle ?? ''}
             href={href}
+            access={access}
+            soon={soon}
           />
         ) : (
-          <!-- Fallback if collection entry missing for some reason -->
           <TocEntry num={roman} title={`Capítulo ${roman}`} subtitle="" gestating />
         );
       })}
@@ -113,6 +147,20 @@ const gestatingChapters = [
           gestating
         />
       ))}
+    </section>
+
+    {/* CTA pre-venta · Acto II · estrategia de monetización v2.0.
+        El href `/comprar/acto-2` aún no existe · se creará en el
+        sprint Lemon Squeezy (Mes 3 · Sep 2026). */}
+    <section class="toc-preventa">
+      <p class="toc-preventa__eyebrow">Acto II · Pre-venta</p>
+      <p class="toc-preventa__copy">
+        Los capítulos IV a VII están en pre-venta a precio especial
+        hasta septiembre de 2026.
+      </p>
+      <a href="/comprar/acto-2" class="toc-preventa__cta">
+        Ver la pre-venta · $26 USD&nbsp;&rarr;
+      </a>
     </section>
 
     <!-- Aparato del libro -->

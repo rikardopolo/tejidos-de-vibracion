@@ -1,8 +1,21 @@
 ---
 /**
  * TocEntry · entrada del índice del libro.
- * Estado publicado: enlace activo con número y título.
- * Estado en gestación: opacidad 50 %, pointer-events: none.
+ *
+ * Tres estados visuales mutuamente excluyentes (con precedencia):
+ *   1. published (default) · enlace activo con número y título · semántica: "escrito y disponible"
+ *   2. soon                · `<span>` no clickeable · opacity 0.5 · badge access nítido
+ *                            semántica: "escrito, aún no disponible · libre con registro"
+ *   3. gestating           · `<span>` no clickeable · opacity 0.5 · sin badge
+ *                            semántica: "no escrito / en gestación"
+ *
+ * Precedencia: si se pasan `soon` y `gestating` simultáneamente, `soon` gana
+ * (es el estado más informativo · indica que la pieza existe pero abre después).
+ *
+ * Prop `access` opcional · renderiza badge `<span class="toc-entry__access">`
+ * con el copy de nivel de acceso (ej. "Libre · requiere registro",
+ * "Libre · abre en julio"). El badge mantiene legibilidad sobre contenedores
+ * opacos (estados soon/gestating · ver system.css).
  */
 
 interface Props {
@@ -11,17 +24,31 @@ interface Props {
   subtitle: string;
   href?: string;
   gestating?: boolean;
+  /** Pieza escrita pero aún no disponible · libre con registro al abrir. */
+  soon?: boolean;
+  /** Badge editorial de nivel de acceso · texto literal mostrado bajo el subtitle. */
+  access?: string;
 }
 
-const { num, title, subtitle, href, gestating = false } = Astro.props;
+const { num, title, subtitle, href, gestating = false, soon = false, access } = Astro.props;
 
-const Tag = gestating || !href ? 'span' : 'a';
-const extraAttrs = gestating ? { 'aria-disabled': 'true' } : {};
-const hrefAttr = !gestating && href ? { href } : {};
+// Precedencia: soon > gestating > published
+const isSoon = soon;
+const isGestating = !isSoon && gestating;
+const isActive = !isSoon && !isGestating && !!href;
+
+const Tag = isActive ? 'a' : 'span';
+const modifierClass = isSoon
+  ? ' toc-entry--soon'
+  : isGestating
+    ? ' toc-entry--gestating'
+    : '';
+const extraAttrs = (isSoon || isGestating) ? { 'aria-disabled': 'true' } : {};
+const hrefAttr = isActive ? { href } : {};
 ---
 
 <Tag
-  class={`toc-entry${gestating ? ' toc-entry--gestating' : ''}`}
+  class={`toc-entry${modifierClass}`}
   {...hrefAttr}
   {...extraAttrs}
 >
@@ -29,5 +56,6 @@ const hrefAttr = !gestating && href ? { href } : {};
   <span class="toc-entry__body">
     <span class="toc-entry__title">{title}</span>
     <span class="toc-entry__sub">{subtitle}</span>
+    {access && <span class="toc-entry__access">{access}</span>}
   </span>
 </Tag>
