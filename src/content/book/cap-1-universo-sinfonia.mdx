@@ -7,6 +7,7 @@ act: "I"
 chapter: 1
 kind: "capitulo"
 status: "fragmento-permanente"
+archived: true
 publishedAt: 2026-05-01
 authors:
   - "Ricardo Polo"
@@ -18,6 +19,27 @@ tags:
   - "AUM"
 readingTime: 136
 ---
+
+{/*
+  ARCHIVED · 2026-05-19
+  Este archivo se conserva como referencia y para resolver chapterEntry
+  en el routing. El contenido editorial actual del Cap. 1 vive segmentado
+  en src/content/chapter-sections/cap-1-universo-sinfonia/.
+
+  El status de este archivo controla el gating de todas las piezas del
+  capitulo (fix PR-A 0c323a2 · status inheritance from parent chapter).
+  Para abrir el Cap. 1 al publico (junio 2026), cambiar:
+    status: "fragmento-permanente" -> status: "published"
+
+  El flag `archived: true` es metadata pura. Ningun renderer lo consulta
+  en runtime: el smart routing en [chapter]/index.astro decide por
+  hasSections === true, que desplaza este monolitico al fallback que
+  ya no se ejecuta.
+
+  Cuando PR-D (diff editorial deferido) consolide los hallazgos del
+  manuscrito v2 vs este MDX monolitico, este archivo puede sustituirse
+  por un placeholder minimo si se decide.
+*/}
 
 import Flourish from '@/components/book/Flourish.astro';
 import Pullquote from '@/components/book/Pullquote.astro';
