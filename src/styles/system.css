@@ -722,8 +722,84 @@ main {
   color: var(--reposo);
   margin-top: 0.4rem;
 }
-.toc-entry--gestating { opacity: 0.5; cursor: default; pointer-events: none; }
-.toc-entry--gestating .toc-entry__title { border-bottom: none; }
+/* Estados no-activos · opacity 0.5 aplicada a los children individuales
+ * (num, title, sub) en lugar del contenedor, para que el badge __access
+ * — que sí debe verse nítido — no herede el atenuado.
+ *
+ * CSS opacity crea stacking context y se multiplica por la cadena de
+ * ancestors · no puede "restaurarse" a 1 en un hijo. Por eso aplicamos
+ * a los elementos hermanos del badge, no al contenedor padre. */
+.toc-entry--gestating,
+.toc-entry--soon {
+  cursor: default;
+  pointer-events: none;
+}
+.toc-entry--gestating .toc-entry__num,
+.toc-entry--gestating .toc-entry__title,
+.toc-entry--gestating .toc-entry__sub,
+.toc-entry--soon .toc-entry__num,
+.toc-entry--soon .toc-entry__title,
+.toc-entry--soon .toc-entry__sub {
+  opacity: 0.5;
+}
+.toc-entry--gestating .toc-entry__title,
+.toc-entry--soon .toc-entry__title {
+  border-bottom: none;
+}
+
+/* toc-entry__access · badge editorial de nivel de acceso.
+ * Renderiza una línea italic en oro suave bajo el subtitle. NO recibe
+ * opacity de los modificadores soon/gestating (queda nítido) · es la
+ * señal visual que distingue "próximo gratis" (con badge) de "en
+ * gestación" (sin badge) y de "pago" (sin badge). */
+.toc-entry__access {
+  display: block;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--oro-suave);
+  margin-top: 0.4rem;
+  letter-spacing: 0.01em;
+}
+
+/* toc-preventa · bloque editorial de pre-venta del Acto II.
+ * Vive entre la última sección del Acto III y el "Aparato del libro"
+ * en /indice. Comunica precio y vigencia de la pre-venta. */
+.toc-preventa {
+  margin: 3rem 0;
+  padding: 1.5rem;
+  border: 1px solid var(--oro-fantasma);
+  border-radius: 2px;
+  background: rgba(212, 160, 23, 0.04);
+}
+.toc-preventa__eyebrow {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--oro-suave);
+  margin: 0 0 0.6rem;
+}
+.toc-preventa__copy {
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--tinta-suave);
+  margin: 0 0 1rem;
+}
+.toc-preventa__cta {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--oro);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 180ms ease;
+}
+.toc-preventa__cta:hover {
+  color: var(--oro-suave);
+}
 
 /* ==========================================================================
    FOOTER
