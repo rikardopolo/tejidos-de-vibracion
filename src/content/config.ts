@@ -24,7 +24,13 @@ const book = defineCollection({
     readingTime: z.number().optional(),
     publishedAt: z.date().optional(),
     /** Estado editorial de la pieza. */
-    status: z.enum(['draft', 'review', 'published', 'gestation']).default('draft'),
+    /**
+     * Estado editorial de la pieza.
+     * - 'draft', 'review', 'gestation' · invisible en /indice
+     * - 'published' · visible en /indice como link activo · si chapterNum === 1, renderiza contenido completo a Nivel 1
+     * - 'fragmento-permanente' · escrito pero NO disponible aún · visible en /indice con badge "soon" · runtime muestra BloquePuerta 'cap-espera'/'cap-bloqueado' (igual que un cap N1 no publicado)
+     */
+    status: z.enum(['draft', 'review', 'published', 'gestation', 'fragmento-permanente']).default('draft'),
     authors: z.array(z.string()).default(['Ricardo Polo']),
     tags: z.array(z.string()).default([]),
     /** URL al PDF descargable (Capa 2+). */

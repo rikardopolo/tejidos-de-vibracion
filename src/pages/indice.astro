@@ -17,9 +17,12 @@ const SLUG_MAP: Record<number, string> = {
   3: '/capitulo/cap-3-mundo-cuantico',
 };
 
-// Load published chapters from the collection
+// Load chapters visibles en el índice · 'published' renderiza contenido,
+// 'fragmento-permanente' renderiza BloquePuerta 'espera' (mismo runtime
+// behavior que un cap N1 no publicado · ver capitulo/[slug].astro).
 const allChapters = await getCollection('book', ({ data }) =>
-  data.kind === 'capitulo' && data.status === 'published'
+  data.kind === 'capitulo' &&
+  (data.status === 'published' || data.status === 'fragmento-permanente')
 );
 const publishedByNumber = new Map(
   allChapters.map((e) => [e.data.chapter as number, e.data])
@@ -65,18 +68,22 @@ const gestatingChapters = [
 
       {/*
         Estrategia de monetización v2.0 · estados del Acto I:
-        - Cap. I  → libre con registro · activo ahora (Nivel 1 · gating Brevo activo)
+        - Cap. I  → libre con registro · abre en junio 2026 (soon · fragmento-permanente hasta lanzamiento)
         - Cap. II → libre con registro · abre en julio 2026 (soon)
         - Cap. III → libre con registro · abre en agosto 2026 (soon)
         Los caps IV-X siguen como `gestating` (Acto II y III · pagos).
         Pre-venta del Acto II en el bloque `.toc-preventa` más abajo.
+
+        En junio 2026 (lanzamiento): cambiar Cap. I a
+          { soon: false, access: 'Libre · requiere registro' }
+          + status: "published" en cap-1-universo-sinfonia.mdx
       */}
       {[
         {
           n: 1,
           roman: 'I',
-          access: 'Libre · requiere registro',
-          soon: false,
+          access: 'Libre · abre en junio',
+          soon: true,
         },
         {
           n: 2,
