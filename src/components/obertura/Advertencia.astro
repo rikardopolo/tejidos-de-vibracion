@@ -1,0 +1,68 @@
+---
+/**
+ * <Advertencia> · aviso editorial con marcador triangular dorado.
+ *
+ * Para contextos donde se debe alertar al lector (ej. higiene contemplativa
+ * en cap. 09 sobre estados expandidos).
+ *
+ * Doctrina: matchea `.advertencia` (styles.css · líneas 494-524).
+ */
+
+interface Props {
+  /** Título del aviso. */
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<aside class="advertencia">
+  <div class="label">Advertencia</div>
+  <h3 class="title">{title}</h3>
+  <div class="content">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .advertencia {
+    background: rgba(156, 122, 42, 0.10);
+    border: 1px solid var(--obertura-gold);
+    padding: 1.8rem 1.8rem 1.2rem;
+    margin: 3rem -0.5rem;
+    position: relative;
+  }
+  .label {
+    font-family: var(--obertura-sans);
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-gold);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .label::before {
+    content: "△";
+    font-size: 1.1em;
+  }
+  .title {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0 0 1rem;
+    color: var(--obertura-ink);
+    line-height: 1.25;
+  }
+  .content :global(p) {
+    margin-block: 0 1.2em;
+  }
+  .content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .content :global(ul) {
+    margin: 1rem 0;
+  }
+</style>

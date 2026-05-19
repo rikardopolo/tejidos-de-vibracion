@@ -1,0 +1,103 @@
+---
+/**
+ * <VozTejido> · semblanza biográfica de un autor citado en el libro.
+ *
+ * Bloque con gradiente vertical sobre paper-deep, borde superior carmesí,
+ * pequeño rombo decorativo arriba, retrato con iniciales, nombre y fechas
+ * centrados, prosa narrativa.
+ *
+ * Doctrina: matchea `.voz-tejido` (styles.css · líneas 449-492).
+ */
+
+interface Props {
+  /** Iniciales del autor para el retrato (ej. "W·J", "F·V"). */
+  portrait: string;
+  /** Nombre completo. */
+  name: string;
+  /** Fechas de vida (ej. "1842 — 1910"). */
+  dates: string;
+}
+
+const { portrait, name, dates } = Astro.props;
+---
+
+<aside class="voz-tejido">
+  <div class="label">Voz del Tejido</div>
+  <div class="portrait" aria-hidden="true">{portrait}</div>
+  <p class="name">{name}</p>
+  <p class="dates">{dates}</p>
+  <div class="content">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .voz-tejido {
+    margin: 4rem -0.5rem;
+    padding: 2.2rem 1.8rem 1.8rem;
+    background: linear-gradient(180deg, var(--obertura-paper-deep) 0%, transparent 100%);
+    border-top: 1px solid var(--obertura-thread);
+    position: relative;
+  }
+  .voz-tejido::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: var(--obertura-paper);
+    border-top: 1px solid var(--obertura-thread);
+    border-left: 1px solid var(--obertura-thread);
+  }
+  .label {
+    font-family: var(--obertura-sans);
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin-bottom: 0.6rem;
+    text-align: center;
+  }
+  .portrait {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--obertura-thread-mark);
+    border: 1.5px solid var(--obertura-thread);
+    color: var(--obertura-thread);
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    letter-spacing: 0.05em;
+  }
+  .name {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 1.55rem;
+    margin: 0 0 0.2rem;
+    text-align: center;
+    color: var(--obertura-ink);
+    line-height: 1.15;
+  }
+  .dates {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--obertura-ink-faded);
+    text-align: center;
+    margin: 0 0 1.8rem;
+  }
+  .content :global(p) {
+    margin-block: 0 1.2em;
+  }
+  .content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

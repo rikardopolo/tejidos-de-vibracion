@@ -1,0 +1,98 @@
+---
+/**
+ * <NivelesGrid> · 4 cards con los niveles de evidencia (1-4).
+ *
+ * Usado en cap. 08-niveles. Muestra las 4 categorías editoriales del
+ * compromiso epistemológico del libro · consenso, evidencia preliminar,
+ * hipótesis especulativa, tradición/intuición.
+ */
+
+const niveles = [
+  {
+    n: 1,
+    title: 'Consenso científico robusto',
+    desc:
+      'Múltiples estudios convergentes, replicaciones independientes, consenso amplio en la disciplina. Ej.: la atención modifica respuestas neurales tan temprano como V1; los meditadores experimentados muestran cambios estructurales en ínsula y corteza cingulada anterior.',
+  },
+  {
+    n: 2,
+    title: 'Evidencia preliminar prometedora',
+    desc:
+      'Estudios serios pero limitados en número o tamaño. Replicación parcial, mecanismo plausible, debate activo. Ej.: efectos somáticos de prácticas de respiración prolongada; coherencia cardíaca y regulación emocional.',
+  },
+  {
+    n: 3,
+    title: 'Hipótesis especulativa de figura seria',
+    desc:
+      'Propuesta filosófica o científica de un autor riguroso, pero sin consenso disciplinar. Ej.: el universo participativo de Wheeler; el orden implicado de Bohm; las teorías integradas de la consciencia (Tononi, IIT).',
+  },
+  {
+    n: 4,
+    title: 'Tradición contemplativa o intuición autoral',
+    desc:
+      'Saber acumulado por linajes contemplativos, o intuición del autor explícitamente marcada como tal. No medible con métodos científicos, pero tampoco refutado por ellos. Se ofrece como invitación, no como hecho.',
+  },
+];
+---
+
+<div class="niveles-grid">
+  {niveles.map((nivel) => (
+    <div class={`nivel-card n${nivel.n}`}>
+      <p class="nivel-num">Nivel {nivel.n}</p>
+      <p class="nivel-title">{nivel.title}</p>
+      <p class="nivel-desc">{nivel.desc}</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .niveles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin: 2.5rem 0;
+  }
+  .nivel-card {
+    padding: 1.4rem 1.2rem;
+    border: 1px solid;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .nivel-card.n1 { border-color: var(--level-1); }
+  .nivel-card.n2 { border-color: var(--level-2); }
+  .nivel-card.n3 { border-color: var(--level-3); }
+  .nivel-card.n4 { border-color: var(--level-4); }
+  .nivel-num {
+    font-family: var(--obertura-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0 0 0.4rem;
+    padding: 0.18em 0.6em;
+    display: inline-block;
+    color: var(--obertura-paper);
+    border-radius: 2px;
+  }
+  .nivel-card.n1 .nivel-num { background: var(--level-1); }
+  .nivel-card.n2 .nivel-num { background: var(--level-2); }
+  .nivel-card.n3 .nivel-num { background: var(--level-3); }
+  .nivel-card.n4 .nivel-num { background: var(--level-4); }
+  .nivel-title {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin: 0 0 0.6rem;
+    color: var(--obertura-ink);
+    line-height: 1.25;
+  }
+  .nivel-desc {
+    font-family: var(--obertura-serif);
+    font-size: 0.93rem;
+    line-height: 1.55;
+    margin: 0;
+    color: var(--obertura-ink-soft);
+  }
+  @media (max-width: 640px) {
+    .niveles-grid { grid-template-columns: 1fr; }
+  }
+</style>

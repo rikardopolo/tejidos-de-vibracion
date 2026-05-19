@@ -1,0 +1,97 @@
+---
+/**
+ * <Laboratorio> · ejercicio interior estructurado más profundo.
+ *
+ * Aside con borde indigo, esquinas decoradas, título serif italic,
+ * duración, pasos largos.
+ *
+ * Doctrina: matchea `.laboratorio` (styles.css · líneas 320-374).
+ */
+
+interface Props {
+  /** Título del laboratorio (ej. "El testigo que no se cansa"). */
+  title: string;
+  /** Duración aproximada (ej. "8-10 minutos"). */
+  duration?: string;
+}
+
+const { title, duration } = Astro.props;
+---
+
+<aside class="laboratorio">
+  <div class="label">Laboratorio Interior</div>
+  <h3 class="title">{title}</h3>
+  {duration && <p class="duration">Duración: {duration}</p>}
+  <div class="content">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .laboratorio {
+    background: rgba(31, 37, 71, 0.05);
+    border: 1px solid rgba(31, 37, 71, 0.25);
+    padding: 2rem 1.8rem;
+    margin: 3rem -0.5rem;
+    position: relative;
+  }
+  .laboratorio::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 32px;
+    height: 32px;
+    border-top: 2px solid var(--obertura-indigo);
+    border-left: 2px solid var(--obertura-indigo);
+  }
+  .laboratorio::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 32px;
+    height: 32px;
+    border-bottom: 2px solid var(--obertura-indigo);
+    border-right: 2px solid var(--obertura-indigo);
+  }
+  .label {
+    font-family: var(--obertura-sans);
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-indigo);
+    margin-bottom: 0.4rem;
+  }
+  .title {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-style: italic;
+    font-size: 1.4rem;
+    margin: 0 0 0.2rem;
+    color: var(--obertura-indigo);
+    line-height: 1.2;
+  }
+  .duration {
+    font-family: var(--obertura-sans);
+    font-size: 0.82rem;
+    color: var(--obertura-ink-faded);
+    margin: 0 0 1.4rem;
+  }
+  .content :global(p) {
+    margin-block: 0 1.2em;
+  }
+  .content :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .content :global(.step) {
+    font-family: var(--obertura-sans);
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--obertura-indigo);
+    margin-right: 0.4rem;
+  }
+</style>

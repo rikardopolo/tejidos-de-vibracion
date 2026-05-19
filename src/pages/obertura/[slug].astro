@@ -1,0 +1,264 @@
+---
+/**
+ * /obertura/[slug] · ruta dinámica para piezas individuales de la Obertura.
+ *
+ * Migrada desde el portal `tejidos-de-realidad` el 2026-05-18.
+ *
+ * Renderiza un capítulo o interludio de la Obertura con:
+ *   - Header sticky con número del capítulo
+ *   - Reading progress bar
+ *   - Layout paper-and-ink dedicado
+ *   - Navegación prev/next al final
+ *   - Auth gate por cookie HMAC `tejedor-access` (sistema del libro)
+ *
+ * Slugs válidos · derivados del nombre del archivo en `content/obertura/`:
+ *   00-frontispicio · 01-anclaje · interludio-i · 02-meta-observador · ...
+ *   ... · interludio-iii · 10-sintesis · 11-cierre
+ */
+import OberturaLayout from '@/layouts/OberturaLayout.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { getNivel, gatingActivo } from '@/lib/gating';
+import { SITE, breadcrumb, wrapGraph } from '@/lib/seo';
+
+export const prerender = false;
+
+/**
+ * Piezas de acceso público · Nivel 0 (sin cookie).
+ * Las demás piezas (12 de 15) requieren Nivel 1 · cookie `tejedor-access`.
+ * Decisión documentada en PROMPT-MIGRACION-OBERTURA-2026-05-18.md FASE 4.
+ */
+const PIEZAS_PUBLICAS = new Set([
+  '00-frontispicio',
+  '01-anclaje',
+  'interludio-i',
+]);
+
+// Bot allowlist · search engines + LLM crawlers + social unfurlers + validators.
+// Bypass del gating · sirve contenido completo para indexación y previews.
+const ua = Astro.request.headers.get('user-agent') ?? '';
+const isBot = /bot|crawl|spider|googlebot|bingbot|gptbot|claudebot|perplexitybot|google-extended|oai-searchbot|anthropic-ai|cohere-ai|yandex|baiduspider|duckduckbot|applebot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|slackbot|discord|mojeekbot|opengraph|preview|unfurl|metainspector|embed/i.test(ua);
+
+const { slug } = Astro.params;
+if (!slug) {
+  return Astro.redirect('/obertura');
+}
+
+const entry = await getEntry('obertura', slug);
+if (!entry) {
+  return new Response('Capítulo no encontrado', { status: 404 });
+}
+
+// Resolver nivel y derivar acceso a la pieza.
+const esPublica = PIEZAS_PUBLICAS.has(slug);
+const nivelRequerido: 0 | 1 = esPublica ? 0 : 1;
+// Bots ven todo · gatingActivo() permite override por env · si no, default Nivel 1
+const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
+const tieneAcceso = nivel >= nivelRequerido;
+
+// Solo renderizar contenido si tiene acceso · piezas Nivel 1 muestran
+// header + BloquePuerta cuando el lector está en Nivel 0 (patrón cap-2/3).
+let Content: any = null;
+if (tieneAcceso) {
+  const rendered = await entry.render();
+  Content = rendered.Content;
+}
+
+const { title, subtitle, headerLabel, chapterNum, kind, publishedAt, authors } = entry.data;
+
+// Resolver prev/next desde la colección completa
+const all = await getCollection('obertura', ({ data }) => data.status === 'published');
+all.sort((a, b) => a.data.order - b.data.order);
+const idx = all.findIndex((e) => e.slug === slug);
+const prev = idx > 0 ? all[idx - 1] : null;
+const next = idx < all.length - 1 ? all[idx + 1] : null;
+
+// ───────────────────────────────────────────────────────────
+// Schema.org · Article + BreadcrumbList por pieza
+// ───────────────────────────────────────────────────────────
+const canonicalPath = `/obertura/${slug}`;
+const description = subtitle ?? `Capítulo ${chapterNum} de la Obertura del Volumen I`;
+const datePublishedIso = (publishedAt instanceof Date ? publishedAt : new Date('2026-01-01'))
+  .toISOString();
+
+// kind=interludio → Article (más etéreo, breve, no técnico)
+// kind=capitulo/frontispicio → Article + Chapter (parte del libro)
+const articleType = kind === 'interludio' ? 'Article' : ['Article', 'Chapter'];
+
+const pieceSchema = wrapGraph([
+  {
+    '@type': articleType,
+    '@id': `${SITE}${canonicalPath}#article`,
+    headline: title,
+    ...(subtitle ? { alternativeHeadline: subtitle } : {}),
+    description,
+    url: `${SITE}${canonicalPath}`,
+    image: `${SITE}/og/og-libro.png`,
+    datePublished: datePublishedIso,
+    dateModified: datePublishedIso,
+    inLanguage: 'es',
+    author: authors.map((name) =>
+      name === 'Ricardo Polo'
+        ? { '@id': `${SITE}/sobre-el-libro#person` }
+        : { '@type': 'Person', name },
+    ),
+    publisher: { '@id': `${SITE}/#organization` },
+    isPartOf: { '@id': `${SITE}/obertura#article` },
+    isAccessibleForFree: true,
+    mainEntityOfPage: `${SITE}${canonicalPath}`,
+    position: idx + 1,
+  },
+  breadcrumb(
+    [
+      { name: 'Inicio', href: '/' },
+      { name: 'Índice', href: '/indice' },
+      { name: 'Obertura', href: '/obertura' },
+      { name: title, href: canonicalPath },
+    ],
+    `${canonicalPath}#breadcrumb`,
+  ),
+]);
+---
+
+<OberturaLayout
+  title={`${title} · Tejidos de Vibración`}
+  description={description}
+  headerLabel={headerLabel}
+  currentSlug={slug}
+  schemas={[pieceSchema]}
+  nivel={nivel}
+>
+  <article class={`obertura-piece kind-${kind}`}>
+    {tieneAcceso && Content ? (
+      <Content />
+    ) : (
+      <header class="piece-locked-header">
+        <p class="locked-eyebrow">{headerLabel}</p>
+        <h1 class="locked-title">{title}</h1>
+        {subtitle && <p class="locked-subtitle">{subtitle}</p>}
+      </header>
+    )}
+  </article>
+
+  {!tieneAcceso && (
+    <BloquePuerta tipo="obertura-pieza" />
+  )}
+
+  {tieneAcceso && (
+    <nav class="prev-next" aria-label="Navegación entre capítulos">
+      {prev ? (
+        <a class="nav-link nav-prev" href={`/obertura/${prev.slug}`}>
+          <span class="nav-direction">← Anterior</span>
+          <span class="nav-num">{prev.data.chapterNum}</span>
+          <span class="nav-title">{prev.data.title}</span>
+        </a>
+      ) : (
+        <a class="nav-link nav-back" href="/obertura">
+          <span class="nav-direction">← Biblioteca</span>
+        </a>
+      )}
+
+      {next ? (
+        <a class="nav-link nav-next" href={`/obertura/${next.slug}`}>
+          <span class="nav-direction">Siguiente →</span>
+          <span class="nav-num">{next.data.chapterNum}</span>
+          <span class="nav-title">{next.data.title}</span>
+        </a>
+      ) : (
+        <a class="nav-link nav-back" href="/obertura">
+          <span class="nav-direction">Biblioteca →</span>
+        </a>
+      )}
+    </nav>
+  )}
+</OberturaLayout>
+
+<style>
+  .prev-next {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 5rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--obertura-rule);
+  }
+  .nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.2rem 1rem;
+    text-decoration: none;
+    border: 1px solid var(--obertura-rule-soft);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .nav-link:hover {
+    border-color: var(--obertura-thread);
+    background: var(--obertura-thread-hover);
+  }
+  .nav-prev {
+    text-align: left;
+  }
+  .nav-next {
+    text-align: right;
+  }
+  .nav-back {
+    text-align: center;
+    grid-column: span 1;
+  }
+  .nav-direction {
+    font-family: var(--obertura-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+  }
+  .nav-num {
+    font-family: var(--obertura-mono);
+    font-size: 0.78rem;
+    color: var(--obertura-ink-faded);
+    margin-top: 0.4rem;
+  }
+  .nav-title {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--obertura-ink);
+    line-height: 1.2;
+  }
+
+  @media (max-width: 540px) {
+    .prev-next { grid-template-columns: 1fr; }
+  }
+
+  /* Header de pieza bloqueada · Nivel 0 viendo pieza Nivel 1 */
+  .piece-locked-header {
+    text-align: center;
+    margin: 2rem 0 0;
+    padding: 0 0 1rem;
+  }
+  .locked-eyebrow {
+    font-family: var(--obertura-sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin: 0 0 1.2rem;
+  }
+  .locked-title {
+    font-family: var(--obertura-serif);
+    font-weight: 500;
+    font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    line-height: 1.2;
+    color: var(--obertura-ink);
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+  }
+  .locked-subtitle {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--obertura-ink-faded);
+    margin: 0;
+    text-wrap: balance;
+  }
+</style>

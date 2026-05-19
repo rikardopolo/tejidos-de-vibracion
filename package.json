@@ -21,6 +21,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
     "@types/node": "^22.10.5",
     "typescript": "^5.7.2"
   },

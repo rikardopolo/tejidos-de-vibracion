@@ -1,0 +1,790 @@
+---
+/**
+ * OberturaLayout · layout dedicado de la Obertura · estética paper-and-ink.
+ *
+ * "Modo lectura" con fondo cálido (sub-paleta `--obertura-*` armonizada
+ * con el canon Pergamino del libro · Opción C · 2026-05-18), tipografía
+ * serif EB Garamond, acentos en hilo carmesí (canon) · indigo de los
+ * carriles científicos · dorado apagado para los niveles de evidencia.
+ *
+ * Migrado desde el portal `tejidos-de-realidad` · ver
+ * PROMPT-MIGRACION-OBERTURA-2026-05-18.md.
+ *
+ * Cargas:
+ *   - EB Garamond (italic + roman) · cargada vía src/styles/tokens.css
+ *   - Inter (UI accents)
+ *   - JetBrains Mono (evidence-level chips)
+ *
+ * Provee CSS vars `--obertura-*` que los componentes de `components/obertura/*`
+ * consumen.
+ */
+
+import '@/styles/fonts.css';
+import SchemaJsonLd from '@/components/SchemaJsonLd.astro';
+import OberturaToc from '@/components/obertura/OberturaToc.astro';
+import OberturaReaderControls from '@/components/obertura/OberturaReaderControls.astro';
+import { baseSchemaGraph, SITE as SEO_SITE } from '@/lib/seo';
+
+interface Props {
+  /** Título HTML para el <head>. */
+  title: string;
+  /** Descripción meta. */
+  description?: string;
+  /** Etiqueta del header sticky · "00 · Frontispicio", "Interludio i", etc. */
+  headerLabel?: string;
+  /** Slug actual · highlightea la pieza activa en el TOC. */
+  currentSlug?: string;
+  /** Schema.org JSON-LD adicional · array de bloques. */
+  schemas?: Record<string, unknown>[];
+  /** Qué TOC mostrar:
+   *   - 'obertura' (default) → lista las 15 piezas de la Obertura
+   *   - 'custom' → renderiza el slot `toc` */
+  tocVariant?: 'obertura' | 'custom';
+  /** Href del back-link en el header sticky.
+   *  Override · default: '/libro/obertura' si tocVariant='obertura', '/libro' resto. */
+  backHref?: string;
+  /** aria-label del back-link.
+   *  Override · default: contextual según tocVariant. */
+  backAriaLabel?: string;
+  /** Nivel de acceso del lector (0=anónimo, 1=tejedor, 2=suscriptor).
+   *  Se propaga a body[data-nivel="..."] para CSS de gating. Default: 1. */
+  nivel?: 0 | 1 | 2;
+}
+
+const SITE = SEO_SITE;
+const {
+  title,
+  description,
+  headerLabel,
+  currentSlug,
+  schemas = [],
+  tocVariant = 'obertura',
+  backHref,
+  backAriaLabel,
+  nivel = 1,
+} = Astro.props;
+const resolvedBackHref = backHref ?? '/obertura';
+const resolvedBackAriaLabel = backAriaLabel ?? 'Volver al índice de la Obertura';
+const baseGraph = baseSchemaGraph();
+const canonical = new URL(Astro.url.pathname, SITE).toString();
+// OG image · `/og/og-libro.png` (1200x630 paper-and-ink · libro abierto
+// con hilo carmesí + sello de cera). Compartida por la biblioteca y los
+// 15 capítulos. Generada con HTML/CSS template + puppeteer-core.
+const ogImage = `${SITE}/og/og-libro.png`;
+---
+
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+
+<!-- Canonical · indexación · hreflang -->
+<link rel="canonical" href={canonical} />
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1" />
+<link rel="alternate" hreflang="es-CO" href={canonical} />
+<link rel="alternate" hreflang="es" href={canonical} />
+<link rel="alternate" hreflang="x-default" href={canonical} />
+
+<!-- Open Graph · capítulos del libro digital -->
+<meta property="og:title" content={title} />
+{description && <meta property="og:description" content={description} />}
+<meta property="og:type" content="article" />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content="es_CO" />
+<meta property="og:site_name" content="Tejidos de Realidad" />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={`${title} · Obertura del Volumen I · Tejidos de Vibración`} />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+{description && <meta name="twitter:description" content={description} />}
+<meta name="twitter:image" content={ogImage} />
+
+{/* Fonts self-hosted vía @fontsource (importadas en `styles/fonts.css`).
+   FCP -150-250ms vs Google Fonts · CSP estricto · privacy-first. */}
+
+<!-- Schema.org base · Organization + WebSite + Person · misma fuente que DefaultLayout -->
+<SchemaJsonLd schema={{
+  '@context': 'https://schema.org',
+  '@graph': baseGraph,
+}} />
+
+{schemas.map((s) => <SchemaJsonLd schema={s} />)}
+
+<!-- Reader prefs (font-size, theme) restauradas antes del primer paint · CSP-safe externo -->
+<script is:inline src="/obertura-init.js"></script>
+</head>
+<body data-nivel={nivel}>
+
+<div class="thread-strip" aria-hidden="true"></div>
+<div class="reading-progress" id="obertura-progress"></div>
+
+{tocVariant === 'custom' ? (
+  <slot name="toc" />
+) : (
+  <OberturaToc current={currentSlug} />
+)}
+<OberturaReaderControls />
+
+{headerLabel && (
+  <div class="obertura-header">
+    <a href={resolvedBackHref} class="back-link" aria-label={resolvedBackAriaLabel}>
+      <span class="accent">◆</span> {headerLabel}
+    </a>
+  </div>
+)}
+
+<main class="obertura-main">
+  <slot />
+</main>
+
+<script is:inline>
+  // Reading progress bar · seguimiento del scroll
+  (function () {
+    const bar = document.getElementById('obertura-progress');
+    if (!bar) return;
+    const update = () => {
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const ratio = max > 0 ? h.scrollTop / max : 0;
+      bar.style.transform = 'scaleX(' + ratio + ')';
+    };
+    document.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+</script>
+
+<style is:global>
+  /* ─── Custom properties Obertura ─────────────────────────────
+     Sub-paleta paper-and-ink de la Obertura · armonizada con el canon
+     Pergamino del libro (2026-05-18 · migración portal→libro · Opción C).
+     - Alineados al canon Pergamino: paper, paper-warm, ink, ink-soft
+     - Preservados con identidad paper-and-ink: ink-faded (cálido), gold (apagado)
+     - Canon intocable: thread (Hilo del Tejedor) + sus 5 variantes alpha
+     Ver decisión documentada en CANON.md sección "Sub-paleta Obertura". */
+  :root {
+    --obertura-paper: #f2ead5;         /* alineado al canon --pergamino */
+    --obertura-paper-warm: #e5dbbe;    /* alineado al canon --pergamino-2 */
+    --obertura-paper-deep: #e2d5b8;    /* preservado · profundidad propia */
+    --obertura-ink: #1a1a1a;           /* alineado al canon --tinta */
+    --obertura-ink-soft: #3a3530;      /* alineado al canon --tinta-suave */
+    --obertura-ink-faded: #6b5f4d;     /* PRESERVADO · faded cálido sobre paper */
+    --obertura-thread: #8b2e2e;        /* CANON · Hilo del Tejedor */
+    --obertura-thread-deep: #5a1818;   /* CANON · variante deep del hilo */
+    /* Variantes alpha del hilo · canon (grey area D2 audit 2026-05-17) */
+    --obertura-thread-hover: rgba(139, 46, 46, 0.04);    /* hover de TOC/nav-links */
+    --obertura-thread-ambient: rgba(139, 46, 46, 0.025); /* gradient ambient sutil */
+    --obertura-thread-soft: rgba(139, 46, 46, 0.07);     /* bg PausaReflexiva */
+    --obertura-thread-mark: rgba(139, 46, 46, 0.08);     /* bg badge VozTejido */
+    --obertura-thread-quote: rgba(139, 46, 46, 0.3);     /* border-left blockquotes */
+    --obertura-indigo: #1f2547;
+    --obertura-indigo-soft: #3b446e;
+    --obertura-gold: #9c7a2a;          /* PRESERVADO · oro apagado p/ indicadores epistémicos */
+    --obertura-rule: rgba(26, 22, 18, 0.18);
+    --obertura-rule-soft: rgba(26, 22, 18, 0.08);
+
+    --obertura-serif: 'EB Garamond', 'EB Garamond Fallback', 'Iowan Old Style', Georgia, serif;
+    --obertura-sans: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, sans-serif;
+    --obertura-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+
+    --obertura-col: 34rem;
+    --obertura-rhythm: 1.5rem;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--obertura-paper);
+    color: var(--obertura-ink);
+    font-family: var(--obertura-serif);
+    font-size: 21px;
+    line-height: 1.62;
+    font-feature-settings: "kern", "liga", "onum";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* paper grain · radial gradients muy sutiles */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at 20% 10%, var(--obertura-thread-ambient) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(31, 37, 71, 0.022) 0%, transparent 55%);
+    z-index: 0;
+  }
+
+  /* ─── Header sticky con número de capítulo ──────────────── */
+  .obertura-header {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(180deg, var(--obertura-paper) 0%, var(--obertura-paper) 70%, transparent 100%);
+    padding: 1rem 1.5rem 1.5rem;
+    text-align: center;
+    z-index: 10;
+    backdrop-filter: blur(2px);
+  }
+  .obertura-header .back-link {
+    font-family: var(--obertura-sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-ink-faded);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .obertura-header .back-link:hover {
+    color: var(--obertura-thread);
+  }
+  .obertura-header .accent {
+    color: var(--obertura-thread);
+    margin-right: 0.6rem;
+  }
+
+  /* ─── Reading progress bar · top del viewport ───────────── */
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: var(--obertura-thread);
+    z-index: 100;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.1s ease-out;
+  }
+
+  /* ─── Thread strip lateral · línea decorativa ─────────── */
+  .thread-strip {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(139, 46, 46, 0.15) 10%,
+      rgba(139, 46, 46, 0.25) 50%,
+      rgba(139, 46, 46, 0.15) 90%,
+      transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ─── Main · columna de lectura ──────────────────────── */
+  .obertura-main {
+    position: relative;
+    z-index: 1;
+    max-width: var(--obertura-col);
+    margin: 0 auto;
+    padding: 4rem 1.5rem 8rem;
+  }
+
+  /* ─── Tipografía base ────────────────────────────────── */
+  .obertura-main p {
+    margin: 0 0 var(--obertura-rhythm);
+    text-wrap: pretty;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+  .obertura-main p.lead {
+    font-size: 1.18em;
+    line-height: 1.55;
+    color: var(--obertura-ink-soft);
+  }
+  .obertura-main p.dropcap::first-letter,
+  .obertura-main p.lead.dropcap::first-letter {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 4.4em;
+    line-height: 0.85;
+    float: left;
+    padding: 0.05em 0.12em 0 0;
+    color: var(--obertura-thread);
+    font-style: italic;
+  }
+
+  .obertura-main em,
+  .obertura-main i { font-style: italic; }
+  .obertura-main strong,
+  .obertura-main b { font-weight: 600; color: var(--obertura-ink); }
+
+  /* ─── Encabezados ────────────────────────────────────── */
+  .obertura-main h1.book-title {
+    font-family: var(--obertura-serif);
+    font-weight: 500;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0 0 0.6rem;
+    line-height: 1.05;
+  }
+  .obertura-main h1.book-title .ampersand {
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: lowercase;
+    color: var(--obertura-thread);
+  }
+
+  .obertura-main h2.chapter {
+    font-family: var(--obertura-serif);
+    font-weight: 500;
+    font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    line-height: 1.15;
+    margin: 5rem 0 2rem;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+  .obertura-main h2.chapter .num {
+    display: block;
+    font-family: var(--obertura-sans);
+    font-weight: 400;
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin-bottom: 0.5rem;
+  }
+
+  /* h3.sub · subtítulos de sección "kicker italic" — ej.
+     "Cuatro pueblos formulan la misma pregunta", "Cuatro siglos
+     aprendiendo a escuchar". Pivote temático corto, italic con leading
+     diamante en thread carmesí + tiny top accent line.
+     Tamaño en em para que escale con el body (21px → ~30px). */
+  .obertura-main h3.sub {
+    font-family: var(--obertura-serif);
+    font-weight: 500;
+    font-style: italic;
+    font-size: 1.42em;
+    line-height: 1.22;
+    margin: 3rem 0 1.4rem;
+    color: var(--obertura-ink);
+    letter-spacing: 0.003em;
+    text-wrap: balance;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--obertura-rule-soft);
+    position: relative;
+  }
+  .obertura-main h3.sub::before {
+    content: "◆";
+    position: absolute;
+    top: -0.55em;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--obertura-paper);
+    padding: 0 0.6em;
+    font-size: 0.55em;
+    color: var(--obertura-thread);
+    font-style: normal;
+    letter-spacing: 0;
+  }
+  body[data-theme="dark"] .obertura-main h3.sub::before {
+    background: var(--obertura-paper);
+  }
+  .obertura-main h3.sub .num {
+    font-family: var(--obertura-sans);
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.78em;
+    color: var(--obertura-ink-faded);
+    margin-right: 0.55em;
+    letter-spacing: 0.05em;
+  }
+
+  /* h4.sub-sub · sub-subsecciones tipo eyebrow — ej.
+     "Las riberas del Ganges · el AUM védico", "Mersenne · el monje que
+     midió la música de Dios", "Interpretación A · Prana como aire físico
+     (Nivel 1 · consenso consolidado)". Italic carmesí con leading rombo.
+     Tamaño en em para que escale con el body (21px → ~22px) y tenga
+     armonía con la prosa circundante. */
+  .obertura-main h4.sub-sub {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-style: italic;
+    font-size: 1.06em;
+    line-height: 1.3;
+    margin: 2.4rem 0 1rem;
+    color: var(--obertura-thread);
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+  .obertura-main h4.sub-sub::before {
+    content: "◇ ";
+    color: var(--obertura-thread);
+    font-style: normal;
+    margin-right: 0.4em;
+    opacity: 0.8;
+  }
+  /* Anotación parentética dentro del h4 (Nivel · descripción) ·
+     se separa visualmente como sub-línea muted, no italic, para
+     diferenciar el meta epistémico del título conceptual. */
+  .obertura-main h4.sub-sub .sub-sub-meta {
+    display: block;
+    margin-top: 0.3em;
+    font-family: var(--obertura-sans);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 0.68em;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--obertura-ink-faded);
+  }
+
+  /* Citaciones sagradas · mantras / escrituras / mitos cosmogónicos
+     emitidos por el parser como <blockquote class="cita"> cuando un
+     párrafo completo viene envuelto en italic en el canon. Visualmente
+     destacado en indigo con borde izquierdo, evocando el "carril
+     contemplativo" del libro. */
+  .obertura-main blockquote.cita {
+    margin: 2.2rem 0 2.2rem 0.5rem;
+    padding: 0.4rem 0 0.4rem 1.5rem;
+    border-left: 2.5px solid var(--obertura-indigo);
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.06em;
+    line-height: 1.5;
+    color: var(--obertura-indigo);
+    text-wrap: pretty;
+  }
+  body[data-theme="dark"] .obertura-main blockquote.cita {
+    color: var(--obertura-indigo);
+  }
+
+  /* ─── Listas con marca diamante ──────────────────────── */
+  .obertura-main ul.bullet,
+  .obertura-main ul:not(.evidence-list):not([class]) {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+  .obertura-main ul.bullet li,
+  .obertura-main ul:not(.evidence-list):not([class]) li {
+    position: relative;
+    padding-left: 1.6rem;
+    margin-bottom: 0.8rem;
+    line-height: 1.55;
+  }
+  .obertura-main ul.bullet li::before,
+  .obertura-main ul:not(.evidence-list):not([class]) li::before {
+    content: "◇";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--obertura-thread);
+    font-size: 0.8em;
+  }
+
+  /* ─── Blockquote ─────────────────────────────────────── */
+  .obertura-main blockquote {
+    margin: 1.5rem 0;
+    padding: 0 1.4rem;
+    border-left: 2px solid var(--obertura-thread);
+    font-style: italic;
+    color: var(--obertura-ink-soft);
+  }
+
+  /* ─── Eyebrow centered (UMBRAL POÉTICO, etc.) ────────── */
+  .obertura-main .section-eyebrow-bold {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    text-align: center;
+    margin: 2.5rem 0 1.2rem;
+  }
+
+  /* ─── Frontispiece (portada del PDF) ─────────────────── */
+  .obertura-main .frontispiece {
+    text-align: center;
+    padding: 2rem 0 3rem;
+    border-bottom: 1px solid var(--obertura-rule-soft);
+    margin-bottom: 4rem;
+  }
+  .frontispiece-volumen {
+    font-family: var(--obertura-sans);
+    font-weight: 400;
+    font-size: 0.78rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--obertura-ink-faded);
+    margin: 0 0 2.5rem;
+  }
+  .frontispiece-ornament {
+    text-align: center;
+    color: var(--obertura-thread);
+    margin: 4.5rem 0;
+    font-size: 1.25rem;
+    letter-spacing: 1.2em;
+    user-select: none;
+  }
+  .frontispiece-kicker {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin: 2.5rem 0 0.8rem;
+  }
+  .frontispiece-subtitle {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.35rem;
+    color: var(--obertura-ink);
+    margin: 0;
+  }
+  .frontispiece-author {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--obertura-ink-soft);
+    margin: 1.2rem 0 0.3rem;
+  }
+  .frontispiece-date {
+    font-family: var(--obertura-sans);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--obertura-ink-faded);
+  }
+
+  /* ─── Copyright page (registro SafeCreative) ─────────── */
+  .copyright-page {
+    margin: 3rem auto 4rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--obertura-rule-soft);
+    border-bottom: 1px solid var(--obertura-rule-soft);
+    font-family: var(--obertura-serif);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--obertura-ink-soft);
+  }
+  .copyright-page p { margin: 0.4rem 0; }
+  .copyright-title {
+    font-style: italic;
+    margin-bottom: 1.4rem !important;
+  }
+  .copyright-code-num {
+    font-family: var(--obertura-mono);
+    font-size: 0.92em;
+    color: var(--obertura-ink);
+  }
+  .copyright-rights { font-style: italic; margin-top: 1.4rem !important; }
+  .copyright-edition {
+    margin-top: 1.2rem !important;
+    font-family: var(--obertura-sans);
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--obertura-ink-faded);
+  }
+  .copyright-page a {
+    color: var(--obertura-indigo);
+    border-bottom: 1px solid var(--obertura-rule-soft);
+  }
+
+  /* ─── Reader font-size scaler (P8.2) ─────────────────── */
+  body[data-font-size="s"]  { font-size: 19px; }
+  body[data-font-size="m"]  { font-size: 21px; } /* default */
+  body[data-font-size="l"]  { font-size: 23px; }
+  body[data-font-size="xl"] { font-size: 25px; }
+
+  /* ─── Dark / paper theme toggle (P8.2) ───────────────── */
+  /* Tema "dark" preserva la paleta carmesí/dorado pero invierte papel→tinta */
+  body[data-theme="dark"] {
+    --obertura-paper:      #14110d;
+    --obertura-paper-warm: #1c1812;
+    --obertura-paper-deep: #221d16;
+    --obertura-ink:        #e8dec9;
+    --obertura-ink-soft:   #c9bfa6;
+    --obertura-ink-faded:  #8b8270;
+    --obertura-thread:     #c75d5d;
+    --obertura-thread-deep:#9a3434;
+    --obertura-indigo:     #8b95c4;
+    --obertura-indigo-soft:#6e7aa8;
+    --obertura-gold:       #d4a754;
+    --obertura-rule:       rgba(232, 222, 201, 0.18);
+    --obertura-rule-soft:  rgba(232, 222, 201, 0.08);
+  }
+  body[data-theme="dark"]::before {
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(199, 93, 93, 0.04) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(139, 149, 196, 0.04) 0%, transparent 55%);
+  }
+
+  /* ─── Reduced motion ─────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .reading-progress { transition: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ─── TOC panel chrome (compartido OberturaToc / ChapterToc / BookToc) ─── */
+  .obertura-toc {
+    position: fixed;
+    top: 1.2rem;
+    left: 1.2rem;
+    z-index: 90;
+  }
+  .obertura-toc-toggle {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0.95rem;
+    background: rgba(241, 233, 216, 0.92);
+    border: 1px solid var(--obertura-rule);
+    color: var(--obertura-ink);
+    font-family: var(--obertura-sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .obertura-toc-toggle::-webkit-details-marker { display: none; }
+  .obertura-toc-toggle::marker { content: ''; }
+  .obertura-toc-toggle:hover {
+    border-color: var(--obertura-thread);
+    background: rgba(241, 233, 216, 1);
+  }
+  .obertura-toc-icon {
+    color: var(--obertura-thread);
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+  body[data-theme="dark"] .obertura-toc-toggle {
+    background: rgba(20, 17, 13, 0.92);
+  }
+  body[data-theme="dark"] .obertura-toc-toggle:hover {
+    background: rgba(20, 17, 13, 1);
+  }
+  .obertura-toc[open] .obertura-toc-panel {
+    position: fixed;
+    top: 4rem;
+    left: 1.2rem;
+    width: min(360px, calc(100vw - 2.4rem));
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    padding: 1.4rem 1.5rem 1.6rem;
+    background: var(--obertura-paper-warm);
+    border: 1px solid var(--obertura-rule);
+    box-shadow: 0 12px 36px rgba(26, 22, 18, 0.18);
+    z-index: 91;
+  }
+  body[data-theme="dark"] .obertura-toc[open] .obertura-toc-panel {
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+  }
+  .obertura-toc-title {
+    font-family: var(--obertura-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin: 0 0 1rem;
+  }
+  .obertura-toc-section { margin-bottom: 1.2rem; }
+  .obertura-toc-section:last-child { margin-bottom: 0; }
+  .obertura-toc-section-label {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--obertura-ink-faded);
+    margin: 0 0 0.4rem;
+  }
+  .obertura-toc-list { list-style: none; padding: 0; margin: 0; }
+  .obertura-toc-item a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding: 0.4rem 0;
+    text-decoration: none;
+    border-bottom: 1px solid var(--obertura-rule-soft);
+    color: var(--obertura-ink);
+    font-family: var(--obertura-serif);
+    transition: color 0.15s;
+  }
+  .obertura-toc-item:last-child a { border-bottom: 0; }
+  .obertura-toc-item a:hover { color: var(--obertura-thread); }
+  .obertura-toc-num {
+    font-family: var(--obertura-mono);
+    font-size: 0.72rem;
+    color: var(--obertura-ink-faded);
+    flex-shrink: 0;
+    min-width: 1.6rem;
+  }
+  .obertura-toc-name {
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+  .obertura-toc-item.is-current a {
+    color: var(--obertura-thread);
+    font-style: italic;
+  }
+  .obertura-toc-item.is-current .obertura-toc-num {
+    color: var(--obertura-thread);
+  }
+  /* Pending/back variants (ChapterToc / BookToc) */
+  .obertura-toc-pending {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--obertura-rule-soft);
+    color: var(--obertura-ink-faded);
+    font-family: var(--obertura-serif);
+    font-size: 0.9rem;
+  }
+  .obertura-toc-item.is-pending:last-child .obertura-toc-pending { border-bottom: 0; }
+  .obertura-toc-status {
+    font-family: var(--obertura-sans);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--obertura-ink-faded);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .obertura-toc-item.kind-back .obertura-toc-num { color: var(--obertura-thread); }
+  .obertura-toc-item.kind-back .obertura-toc-name {
+    font-style: italic;
+    color: var(--obertura-ink-faded);
+  }
+
+  /* ─── Móvil ──────────────────────────────────────────── */
+  @media (max-width: 640px) {
+    body[data-font-size="s"]  { font-size: 17px; }
+    body[data-font-size="m"]  { font-size: 19px; }
+    body[data-font-size="l"]  { font-size: 21px; }
+    body[data-font-size="xl"] { font-size: 23px; }
+    .obertura-main { padding: 3rem 1.2rem 6rem; }
+    .obertura-header { padding: 0.7rem 1rem 1rem; }
+    .obertura-toc {
+      top: auto;
+      bottom: 1rem;
+      left: 1rem;
+    }
+    .obertura-toc[open] .obertura-toc-panel {
+      top: auto;
+      bottom: 4rem;
+      left: 1rem;
+      max-height: 70vh;
+    }
+  }
+</style>
+</body>
+</html>

@@ -1,0 +1,120 @@
+---
+/**
+ * <PausaCientifica> · contenido científico citable con nivel de evidencia.
+ *
+ * Aside con doble borde indigo arriba/abajo, label en mono con flecha,
+ * título indigo, etiqueta de nivel de evidencia (1-4), citas, límites.
+ *
+ * Doctrina: matchea `.pausa-cientifica` (styles.css · líneas 376-447).
+ */
+
+interface Props {
+  /** Título del bloque científico. */
+  title: string;
+  /** Nivel de evidencia · 1 (consenso) → 4 (intuición autoral). */
+  level: 1 | 2 | 3 | 4;
+  /** Texto del nivel · ej. "Nivel 1 · Consenso científico". Si no se da, se compone uno default. */
+  levelLabel?: string;
+}
+
+const { title, level, levelLabel } = Astro.props;
+
+const defaultLabels: Record<number, string> = {
+  1: 'Nivel 1 · Consenso científico',
+  2: 'Nivel 2 · Evidencia preliminar',
+  3: 'Nivel 3 · Hipótesis especulativa',
+  4: 'Nivel 4 · Tradición o intuición',
+};
+const finalLabel = levelLabel ?? defaultLabels[level];
+---
+
+<aside class="pausa-cientifica">
+  <div class="label">Pausa Científica</div>
+  <h4 class="title">{title}</h4>
+  <span class={`evidence-level lvl-${level}`}>{finalLabel}</span>
+  <div class="content">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .pausa-cientifica {
+    background: var(--obertura-paper-warm);
+    border-top: 3px double var(--obertura-indigo);
+    border-bottom: 3px double var(--obertura-indigo);
+    padding: 1.8rem 1.8rem 1.4rem;
+    margin: 3rem -0.5rem;
+    font-family: var(--obertura-serif);
+    position: relative;
+  }
+  .label {
+    font-family: var(--obertura-mono);
+    font-weight: 500;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--obertura-indigo);
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .label::before {
+    content: "▸";
+    font-family: var(--obertura-serif);
+    color: var(--obertura-indigo);
+  }
+  .title {
+    font-family: var(--obertura-serif);
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0 0 0.4rem;
+    color: var(--obertura-indigo);
+    line-height: 1.25;
+  }
+  .evidence-level {
+    display: inline-block;
+    font-family: var(--obertura-mono);
+    font-size: 0.72rem;
+    background: var(--obertura-indigo);
+    color: var(--obertura-paper);
+    padding: 0.18em 0.6em;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.2rem;
+  }
+  .evidence-level.lvl-1 { background: #1f2547; }
+  .evidence-level.lvl-2 { background: #3b446e; }
+  .evidence-level.lvl-3 { background: #6b5f4d; }
+  .evidence-level.lvl-4 { background: #9c7a2a; }
+
+  .content :global(p) {
+    margin-block: 0 1.2em;
+  }
+  .content :global(ul) {
+    font-size: 0.95em;
+    padding-left: 1.2rem;
+    margin: 1rem 0;
+  }
+  .content :global(ul li) {
+    margin-bottom: 0.5rem;
+  }
+  .content :global(.ref) {
+    font-size: 0.85em;
+    color: var(--obertura-ink-faded);
+    font-style: italic;
+    border-left: 1px solid var(--obertura-rule);
+    padding-left: 0.9rem;
+    margin: 1.2rem 0;
+  }
+  .content :global(.limit) {
+    font-size: 0.92em;
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+    border-top: 1px dashed var(--obertura-rule);
+    color: var(--obertura-ink-soft);
+  }
+  .content :global(.limit strong) {
+    color: var(--obertura-indigo);
+  }
+</style>
