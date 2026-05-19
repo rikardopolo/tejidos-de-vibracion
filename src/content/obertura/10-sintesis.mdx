@@ -13,14 +13,20 @@ tags: ["sintesis", "mapa", "obertura"]
 ---
 
 import Diamond from '@/components/obertura/Diamond.astro';
-import MapaConceptual from '@/components/obertura/MapaConceptual.astro';
 import Ornament from '@/components/obertura/Ornament.astro';
+import FiguraObertura from '@/components/obertura/FiguraObertura.astro';
 
 <h2 id="sec-mapa-conceptual-de-la-obertura" class="chapter">Mapa Conceptual de la Obertura</h2>
 
 Antes de cruzar el umbral al Capítulo 1, una síntesis visual del territorio que hemos abierto. Este mapa es fractal: cada elemento contiene a los demás en miniatura. Léelo primero como imagen, luego con las glosas que lo acompañan.
 
-<MapaConceptual />
+<FiguraObertura
+  src="/assets/obertura/figura-o-5.png"
+  numero="O.5"
+  titulo="Mapa Conceptual de la Obertura · El Tejedor Consciente Despierta"
+  alt="Mapa conceptual radial con el Tejedor Consciente en el centro, conectado a tres capacidades (Meta-Observador, Interferómetro, Tejedor), cinco territorios, tres velos de lectura y cuatro niveles de evidencia"
+  caption="Mapa conceptual de la Obertura: la arquitectura completa del libro condensada en una imagen. En el centro, el Tejedor Consciente —voz-destino del libro, que es el lector mismo cuando las tres capacidades se activan simultáneamente. Las tres capacidades (Meta-Observador, Interferómetro, Tejedor) se despliegan en cinco territorios (Universo Interno, Vínculos, Sinfonía Integral, Linaje y Memoria, Naturaleza Cósmica), se leen en tres velos (Información, Encarnación, Reconocimiento) y se sostienen mediante el compromiso epistemológico de cuatro niveles de evidencia. Cada elemento contiene fractalmente a los demás. Tres testigos transversales acompañan: William James, Francisco Varela y Simone Weil. El mapa no es ornamento: es herramienta. A medida que avance el viaje, vuelve a esta imagen para reorientarte. Cuando las tres capacidades, los cinco territorios y los tres velos hayan dejado de ser categorías externas y se hayan vuelto modos de estar, el mapa puede doblarse y guardarse."
+/>
 
 <Diamond />
 
