@@ -1,0 +1,174 @@
+---
+/**
+ * /capitulo/[chapter] · indice biblioteca del capítulo + fallback monolítico.
+ *
+ * Comportamiento smart según estado del capítulo:
+ *
+ * 1. Si el capítulo tiene piezas en `chapter-sections` (estado `published` o
+ *    `fragmento-permanente`) → renderiza la BIBLIOTECA del capítulo: lista
+ *    navegable de piezas con header sticky + TOC editorial.
+ *
+ * 2. Si no hay piezas (chapter-sections vacío para este capítulo) →
+ *    renderiza el header del capítulo + BloquePuerta (espera para N1,
+ *    bloqueado para N0). Este es el FALLBACK MONOLÍTICO · misma UX que
+ *    el `[slug].astro` antiguo. Aplica para:
+ *    - Cap. 1 con `status: "fragmento-permanente"` antes de migración (PR-B)
+ *    - Cap. 2 y Cap. 3 en gestación (sin chapter-sections planeadas todavía)
+ *
+ * Patrón paralelo a `pages/obertura/index.astro` (biblioteca de Obertura).
+ * Reemplaza el antiguo `pages/capitulo/[slug].astro`.
+ */
+import { getCollection, getEntry } from 'astro:content';
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
+import { getNivel, gatingActivo } from '@/lib/gating';
+import { romanize } from '@/lib/utils';
+
+export const prerender = false;
+
+const { chapter } = Astro.params;
+if (!chapter) return Astro.redirect('/indice');
+
+const chapterEntry = await getEntry('book', chapter);
+if (!chapterEntry || chapterEntry.data.kind !== 'capitulo') {
+  return Astro.redirect('/indice');
+}
+
+const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
+const data = chapterEntry.data;
+const chapterNum = data.chapter ?? 0;
+const romanChapter = romanize(chapterNum);
+const capitulo = `Capítulo ${romanChapter}`;
+
+// Buscar todas las piezas del capítulo en chapter-sections.
+//
+// El filtro NO aplica `status` porque la visibilidad pública la decide
+// el status del CAPÍTULO PADRE (ver `[section].astro` para racional).
+// El campo `status` por pieza queda para tracking editorial interno
+// pero NO afecta el gating runtime.
+const allSections = await getCollection('chapter-sections', ({ data: d }) =>
+  d.chapter === chapter
+);
+const sections = allSections.sort((a, b) => a.data.order - b.data.order);
+const hasSections = sections.length > 0;
+
+// Fallback monolítico (sin chapter-sections): mismo comportamiento que el
+// antiguo [slug].astro. Cap. 1 con status 'fragmento-permanente' siempre
+// muestra BloquePuerta (esCap1Publicado=false). Cap. 2/3 idem.
+const esCap1Publicado = !hasSections && data.status === 'published' && chapterNum === 1;
+const verContenido = nivel >= 1 && esCap1Publicado;
+const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
+
+let Content: any = null;
+if (verContenido) {
+  const rendered = await chapterEntry.render();
+  Content = rendered.Content;
+}
+
+// prev/next entre capítulos publicados (para fallback monolítico)
+const allChapters = await getCollection('book', ({ data: d }) =>
+  d.kind === 'capitulo' && d.status === 'published'
+);
+const sorted = allChapters.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
+const idx = sorted.findIndex(c => c.slug === chapter);
+const prev = idx > 0 ? sorted[idx - 1] : null;
+const next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
+---
+
+<LecturaLarga
+  title={`Cap. ${romanChapter} · ${data.title} · Tejidos de Vibración`}
+  description={data.subtitle ?? `Capítulo ${romanChapter} del Volumen I`}
+  pageId={`capitulo-${chapterNum}`}
+>
+  <article class="measure pt-5">
+    <header class="stack-sm">
+      <p class="eyebrow">Acto {data.act} · Capítulo {romanChapter}</p>
+      <h1 class="title-1">{data.title}</h1>
+      {data.subtitle && <p class="title-1__sub">{data.subtitle}</p>}
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    {hasSections ? (
+      <Fragment>
+        {/* BIBLIOTECA · piezas navegables del capítulo */}
+        <p class="section-eyebrow">Las {sections.length} piezas del capítulo</p>
+        <ol class="cap-toc">
+          {sections.map((s) => (
+            <li class="cap-toc__item">
+              <a href={`/capitulo/${chapter}/${s.slug.split('/').pop()}`} class="cap-toc__link">
+                <span class="cap-toc__num">{s.data.num ?? s.data.headerLabel}</span>
+                <span class="cap-toc__body">
+                  <span class="cap-toc__title">{s.data.title}</span>
+                  {s.data.subtitle && <em class="cap-toc__sub">{s.data.subtitle}</em>}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </Fragment>
+    ) : (
+      <Fragment>
+        {/* FALLBACK MONOLÍTICO · sin piezas en chapter-sections aún. */}
+        {Content && (
+          <section class="prose dropcap section-gap">
+            <Content />
+          </section>
+        )}
+
+        <BloquePuerta tipo={tipoBloquePuerta} capitulo={capitulo} />
+      </Fragment>
+    )}
+  </article>
+</LecturaLarga>
+
+<style>
+  /* Biblioteca del capítulo · estilos scoped (system.css del libro carga
+   * los tokens globales · estos detalles son específicos de la biblioteca). */
+  .cap-toc {
+    list-style: none;
+    padding: 0;
+    margin: 2rem 0 4rem;
+  }
+  .cap-toc__item {
+    border-bottom: 1px solid var(--pergamino-2);
+  }
+  .cap-toc__item:first-child {
+    border-top: 1px solid var(--pergamino-2);
+  }
+  .cap-toc__link {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    column-gap: 1.5rem;
+    align-items: baseline;
+    padding: 1.25rem 0;
+    text-decoration: none;
+    color: var(--tinta);
+    transition: background 180ms ease, padding 180ms ease;
+  }
+  .cap-toc__link:hover {
+    background: var(--pergamino-2);
+    padding-left: 0.75rem;
+  }
+  .cap-toc__num {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--oro-suave);
+    letter-spacing: 0.05em;
+  }
+  .cap-toc__title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+  .cap-toc__sub {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--reposo);
+    margin-top: 0.2rem;
+  }
+</style>

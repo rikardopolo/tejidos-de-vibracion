@@ -1,0 +1,35 @@
+---
+/**
+ * AnclajeExperiencial · bloque ritual de portada del capítulo.
+ *
+ * Aparece como primera experiencia del lector al entrar al capítulo
+ * (antes incluso del Umbral Poético). Contiene un ejercicio corporal
+ * inicial que ancla la lectura en sensación antes de cualquier idea.
+ *
+ * Visualmente hermano de `<CierreVibracional />` (ambos usan
+ * `.ritual-block` · ver `src/styles/system.css`). El paralelo visual
+ * refuerza la arquitectura editorial: cada capítulo es un viaje circular
+ * con apertura y cierre rituales claros.
+ *
+ * Props:
+ *   titulo: ej. "El Silencio que Vibra"
+ *   duracion: opcional · ej. "3 minutos"
+ */
+interface Props {
+  titulo: string;
+  duracion?: string;
+}
+
+const { titulo, duracion } = Astro.props;
+---
+
+<aside class="ritual-block ritual-block--anclaje">
+  <p class="ritual-block__eyebrow">Anclaje Experiencial</p>
+  {duracion && (
+    <p class="ritual-block__duracion">Duración · {duracion}</p>
+  )}
+  <h2 class="ritual-block__title">{titulo}</h2>
+  <div class="ritual-block__body">
+    <slot />
+  </div>
+</aside>

@@ -1,0 +1,182 @@
+---
+/**
+ * /capitulo/[chapter]/[section] · ruta dinámica para piezas individuales
+ * de un capítulo del libro.
+ *
+ * Migrada en patrón paralelo a `/obertura/[slug]` pero con doble nivel
+ * de path para preservar `/capitulo/<chapter>/<section>` como URL canónica
+ * (decisión arquitectónica B1 · ver PROMPT-CAP1-BIBLIOTECA-FIGURAS-2026-05-18.md).
+ *
+ * Source de piezas: colección `chapter-sections`.
+ *   - Carpeta: src/content/chapter-sections/<chapter>/<section>.mdx
+ *   - Frontmatter: chapter, kind, num, title, subtitle, order, headerLabel, status
+ *
+ * Gating idéntico al de la Obertura:
+ *   - status 'published' + nivel >= 1 → contenido completo
+ *   - status 'fragmento-permanente' o nivel < 1 → BloquePuerta espera/bloqueado
+ *
+ * Bot allowlist replicada del Obertura/[slug] · search engines + LLM
+ * crawlers + social unfurlers bypasean el gating.
+ */
+import { getCollection, getEntry } from 'astro:content';
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
+import { getNivel, gatingActivo } from '@/lib/gating';
+import { romanize } from '@/lib/utils';
+
+export const prerender = false;
+
+const { chapter, section } = Astro.params;
+if (!chapter || !section) return Astro.redirect('/indice');
+
+// Bot allowlist · permite indexación + previews sin cookie.
+const ua = Astro.request.headers.get('user-agent') ?? '';
+const isBot = /bot|crawl|spider|googlebot|bingbot|gptbot|claudebot|perplexitybot|google-extended|oai-searchbot|anthropic-ai|cohere-ai|yandex|baiduspider|duckduckbot|applebot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|slackbot|discord|mojeekbot|opengraph|preview|unfurl|metainspector|embed/i.test(ua);
+
+// Cargar la pieza solicitada.
+const entry = await getEntry('chapter-sections', `${chapter}/${section}`);
+if (!entry || entry.data.chapter !== chapter) {
+  return new Response('Pieza no encontrada', { status: 404 });
+}
+
+// Verificar que el capítulo padre existe.
+const chapterEntry = await getEntry('book', chapter);
+if (!chapterEntry || chapterEntry.data.kind !== 'capitulo') {
+  return Astro.redirect('/indice');
+}
+
+const chapterNum = chapterEntry.data.chapter ?? 0;
+const romanChapter = romanize(chapterNum);
+const capitulo = `Capítulo ${romanChapter}`;
+
+// Nivel del lector + decisión de acceso.
+//
+// IMPORTANTE · el gating lee el status del CAPÍTULO PADRE
+// (`book/<chapter>.mdx`), NO el de la pieza individual.
+//
+// Razón editorial: el capítulo es la unidad publicada. En junio 2026 un
+// solo cambio en `book/cap-1-universo-sinfonia.mdx` (status published)
+// activa las 9 piezas simultáneamente · cero fricción de mantenimiento.
+//
+// El campo `status` en el frontmatter de cada pieza queda para tracking
+// editorial interno (draft/review/published) pero NO afecta el gating
+// runtime. Lo único que define visibilidad pública es el status del
+// capítulo padre.
+const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
+const tieneAcceso = chapterEntry.data.status === 'published' && nivel >= 1;
+const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
+
+let Content: any = null;
+if (tieneAcceso) {
+  const rendered = await entry.render();
+  Content = rendered.Content;
+}
+
+const { title, subtitle, headerLabel, kind, num } = entry.data;
+
+// Resolver prev/next entre piezas visibles del mismo capítulo.
+const allSections = await getCollection('chapter-sections', ({ data: d }) =>
+  d.chapter === chapter &&
+  (d.status === 'published' || d.status === 'fragmento-permanente')
+);
+const sorted = allSections.sort((a, b) => a.data.order - b.data.order);
+const idx = sorted.findIndex(s => s.slug === entry.slug);
+const prev = idx > 0 ? sorted[idx - 1] : null;
+const next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
+---
+
+<LecturaLarga
+  title={`${title} · Cap. ${romanChapter} · Tejidos de Vibración`}
+  description={subtitle ?? `${headerLabel} · Capítulo ${romanChapter}`}
+  pageId={`capitulo-${chapterNum}-${section}`}
+>
+  <article class="measure pt-5">
+    <header class="stack-sm">
+      <p class="eyebrow">{capitulo} · {headerLabel}</p>
+      <h1 class="title-1">{title}</h1>
+      {subtitle && <p class="title-1__sub">{subtitle}</p>}
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    {tieneAcceso && Content ? (
+      <section class="prose dropcap section-gap">
+        <Content />
+      </section>
+    ) : (
+      <BloquePuerta tipo={tipoBloquePuerta} capitulo={capitulo} />
+    )}
+
+    {tieneAcceso && (
+      <nav class="cap-prev-next" aria-label="Navegación entre piezas">
+        {prev ? (
+          <a class="cap-prev-next__link cap-prev-next__prev" href={`/capitulo/${chapter}/${prev.slug.split('/').pop()}`}>
+            <span class="cap-prev-next__dir">← Anterior</span>
+            <span class="cap-prev-next__title">{prev.data.title}</span>
+          </a>
+        ) : (
+          <a class="cap-prev-next__link cap-prev-next__back" href={`/capitulo/${chapter}`}>
+            <span class="cap-prev-next__dir">← Índice</span>
+          </a>
+        )}
+
+        {next ? (
+          <a class="cap-prev-next__link cap-prev-next__next" href={`/capitulo/${chapter}/${next.slug.split('/').pop()}`}>
+            <span class="cap-prev-next__dir">Siguiente →</span>
+            <span class="cap-prev-next__title">{next.data.title}</span>
+          </a>
+        ) : (
+          <a class="cap-prev-next__link cap-prev-next__back" href={`/capitulo/${chapter}`}>
+            <span class="cap-prev-next__dir">Índice →</span>
+          </a>
+        )}
+      </nav>
+    )}
+  </article>
+</LecturaLarga>
+
+<style>
+  .cap-prev-next {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 5rem 0 6rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--pergamino-2);
+  }
+  .cap-prev-next__link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.2rem 1rem;
+    text-decoration: none;
+    border: 1px solid var(--pergamino-2);
+    color: var(--tinta);
+    transition: border-color 180ms ease, background 180ms ease;
+  }
+  .cap-prev-next__link:hover {
+    border-color: var(--oro-suave);
+    background: var(--pergamino-2);
+  }
+  .cap-prev-next__prev { text-align: left; }
+  .cap-prev-next__next { text-align: right; }
+  .cap-prev-next__back { text-align: center; }
+  .cap-prev-next__dir {
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+  }
+  .cap-prev-next__title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--tinta);
+    line-height: 1.2;
+  }
+
+  @media (max-width: 540px) {
+    .cap-prev-next { grid-template-columns: 1fr; }
+  }
+</style>

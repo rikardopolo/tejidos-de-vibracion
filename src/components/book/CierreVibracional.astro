@@ -1,0 +1,35 @@
+---
+/**
+ * CierreVibracional · bloque ritual de cierre del capítulo.
+ *
+ * Aparece como última experiencia del lector al terminar el capítulo
+ * (después del último contenido editorial). Contiene la síntesis ritual
+ * + puente al siguiente capítulo.
+ *
+ * Visualmente hermano de `<AnclajeExperiencial />` (ambos usan
+ * `.ritual-block` · ver `src/styles/system.css`). El paralelo visual
+ * refuerza la arquitectura editorial: cada capítulo es un viaje circular
+ * con apertura y cierre rituales claros.
+ *
+ * Props:
+ *   titulo: ej. "Lo que llevamos contigo"
+ *   duracion: opcional (raro en cierre · existe por simetría con Anclaje)
+ */
+interface Props {
+  titulo: string;
+  duracion?: string;
+}
+
+const { titulo, duracion } = Astro.props;
+---
+
+<aside class="ritual-block ritual-block--cierre">
+  <p class="ritual-block__eyebrow">Cierre Vibracional</p>
+  {duracion && (
+    <p class="ritual-block__duracion">Duración · {duracion}</p>
+  )}
+  <h2 class="ritual-block__title">{titulo}</h2>
+  <div class="ritual-block__body">
+    <slot />
+  </div>
+</aside>

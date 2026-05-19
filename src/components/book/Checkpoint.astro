@@ -1,0 +1,20 @@
+---
+/**
+ * Checkpoint · wrapper de conveniencia alrededor de Marginalia.
+ * Equivale a <Marginalia kind="checkpoint" ...>.
+ * Usado para bloques de comprensión metacognitiva al cierre de cada
+ * sección · síntesis + preguntas + termómetro de "qué te queda".
+ */
+import Marginalia from './Marginalia.astro';
+
+interface Props {
+  titulo: string;
+  duracion?: string;
+}
+
+const { titulo, duracion } = Astro.props;
+---
+
+<Marginalia kind="checkpoint" titulo={titulo} duracion={duracion}>
+  <slot />
+</Marginalia>

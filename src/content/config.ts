@@ -55,8 +55,15 @@ const chapterSections = defineCollection({
   schema: z.object({
     /** Slug del capítulo padre (ej. "cap-1-universo-sinfonia"). */
     chapter: z.string(),
-    /** Tipo de sección. */
-    kind: z.enum(['umbral', 'anclaje', 'numbered', 'cierre']),
+    /**
+     * Tipo de sección dentro del capítulo:
+     * - 'portada'  · entrada del capítulo (título + Anclaje Experiencial)
+     * - 'umbral'   · Umbral Poético (apertura literaria del capítulo)
+     * - 'anclaje'  · Anclaje Experiencial (ejercicio corporal inicial)
+     * - 'numbered' · §N.M secciones canónicas (§1.1, §1.2, ...)
+     * - 'cierre'   · Cierre Vibracional (síntesis + mantra final)
+     */
+    kind: z.enum(['portada', 'umbral', 'anclaje', 'numbered', 'cierre']),
     /** Número §N.M para secciones tipo 'numbered' (ej. "1.1"). */
     num: z.string().optional(),
     /** Título principal de la sección. */
@@ -67,8 +74,12 @@ const chapterSections = defineCollection({
     order: z.number(),
     /** Etiqueta corta del header sticky (ej. "Capítulo 1 · §1.1"). */
     headerLabel: z.string(),
-    /** Estado editorial. */
-    status: z.enum(['draft', 'review', 'published']).default('draft'),
+    /**
+     * Estado editorial · mismo significado que en colección `book`:
+     * - 'fragmento-permanente' · escrito pero no disponible · BloquePuerta espera
+     * - 'published' · contenido completo renderiza para Nivel 1
+     */
+    status: z.enum(['draft', 'review', 'published', 'fragmento-permanente']).default('draft'),
     publishedAt: z.date().optional(),
     authors: z.array(z.string()).default(['Ricardo Polo']),
     tags: z.array(z.string()).default([]),
