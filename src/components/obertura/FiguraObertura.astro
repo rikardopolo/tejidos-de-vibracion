@@ -1,0 +1,102 @@
+---
+/**
+ * FiguraObertura · figura editorial paper-and-ink para la Obertura.
+ *
+ * Renderiza un PNG desde `public/assets/obertura/` con marco discreto
+ * en oro fantasma + pie editorial con numeración (Figura O.N) + título
+ * italic + caption completo.
+ *
+ * Patrón del repo: <img> plain con paths absolutos · NO `astro:assets`
+ * (imageService: false en astro.config.mjs · ver entrada CANON.md).
+ *
+ * Props:
+ *   src: path absoluto a la PNG · ej. "/assets/obertura/figura-o-1.png"
+ *   alt: texto alt accesible para screen readers
+ *   numero: numeración corta · ej. "O.1", "O.2"
+ *   titulo: título editorial italic · ej. "Los tres ritmos del cuerpo resonante"
+ *   caption: pie de figura completo · texto literal del manuscrito
+ *   ancho, alto: dimensiones opcionales (CLS-friendly)
+ */
+interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+  numero: string;
+  titulo: string;
+  ancho?: number;
+  alto?: number;
+}
+
+const { src, alt, caption, numero, titulo, ancho, alto } = Astro.props;
+---
+
+<figure class="figura-obertura">
+  <div class="figura-obertura__marco">
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      width={ancho}
+      height={alto}
+      class="figura-obertura__imagen"
+    />
+  </div>
+  <figcaption class="figura-obertura__caption">
+    <span class="figura-obertura__numero">Figura {numero}</span>
+    <span class="figura-obertura__separador"> · </span>
+    <span class="figura-obertura__titulo">{titulo}</span>
+    <p class="figura-obertura__pie">{caption}</p>
+  </figcaption>
+</figure>
+
+<style>
+  .figura-obertura {
+    margin: 3rem auto;
+    max-width: 720px;
+    text-align: center;
+  }
+
+  .figura-obertura__marco {
+    border: 1px solid rgba(156, 122, 42, 0.18);
+    padding: 1.5rem;
+    background: rgba(242, 234, 213, 0.4);
+    border-radius: 2px;
+  }
+
+  .figura-obertura__imagen {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .figura-obertura__caption {
+    margin-top: 1.25rem;
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--obertura-ink-faded, #6b5f4d);
+    text-align: left;
+  }
+
+  .figura-obertura__numero {
+    font-style: italic;
+    color: var(--obertura-gold, #9c7a2a);
+    font-weight: 500;
+  }
+
+  .figura-obertura__separador {
+    color: var(--obertura-ink-faded, #6b5f4d);
+  }
+
+  .figura-obertura__titulo {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .figura-obertura__pie {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--obertura-ink-faded, #6b5f4d);
+  }
+</style>
