@@ -1529,3 +1529,77 @@ body[data-nivel="0"] .banner-umbral-cruzado { display: none; }
     begin: indefinite !important;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════
+ * Ritual-block · bloques rituales de apertura y cierre de capítulo.
+ *
+ * Estética compartida entre <AnclajeExperiencial /> (portada) y
+ * <CierreVibracional /> (cierre). Marco prominente (más que una pausa
+ * intermedia) · paleta paper-and-ink del libro · invita al lector a
+ * detenerse y notar que está entrando o saliendo de un capítulo.
+ *
+ * Modifiers `--anclaje` y `--cierre` solo cambian el eyebrow text
+ * (manejado por el componente · misma estética visual).
+ * ════════════════════════════════════════════════════════════════ */
+.ritual-block {
+  max-width: 36rem;
+  margin: 4rem auto;
+  padding: 2.5rem 2rem;
+  border-top: 1px solid var(--oro-fantasma);
+  border-bottom: 1px solid var(--oro-fantasma);
+  background: var(--pergamino-2);
+  text-align: left;
+}
+
+.ritual-block__eyebrow {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--oro-suave);
+  text-align: center;
+  margin: 0 0 0.6rem;
+}
+
+.ritual-block__duracion {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--reposo);
+  text-align: center;
+  margin: 0 0 1.25rem;
+}
+
+.ritual-block__title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-style: italic;
+  font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+  line-height: 1.25;
+  color: var(--tinta);
+  text-align: center;
+  text-wrap: balance;
+  margin: 0 0 1.75rem;
+}
+
+.ritual-block__body {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--tinta-suave);
+}
+
+.ritual-block__body > :first-child { margin-top: 0; }
+.ritual-block__body > :last-child  { margin-bottom: 0; }
+
+@media (max-width: 540px) {
+  .ritual-block {
+    margin: 3rem auto;
+    padding: 2rem 1.4rem;
+  }
+  .ritual-block__title { font-size: 1.3rem; }
+  .ritual-block__body  { font-size: 1rem; }
+}
