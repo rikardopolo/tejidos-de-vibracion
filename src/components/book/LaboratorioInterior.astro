@@ -1,0 +1,20 @@
+---
+/**
+ * LaboratorioInterior · wrapper de conveniencia alrededor de Marginalia.
+ * Equivale a <Marginalia kind="laboratorio-interior" ...>.
+ * Usado para ejercicios prácticos paso a paso (Laboratorio AUM,
+ * Nadi Shodhana, Tu Catedral, etc. en los capítulos del libro).
+ */
+import Marginalia from './Marginalia.astro';
+
+interface Props {
+  titulo: string;
+  duracion?: string;
+}
+
+const { titulo, duracion } = Astro.props;
+---
+
+<Marginalia kind="laboratorio-interior" titulo={titulo} duracion={duracion}>
+  <slot />
+</Marginalia>

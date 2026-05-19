@@ -1,0 +1,20 @@
+---
+/**
+ * VentanaCuantica · wrapper de conveniencia alrededor de Marginalia.
+ * Equivale a <Marginalia kind="ventana-cuantica" ...>.
+ * Comparte estilo visual con PausaCientifica (modifier `marginalia--cientifica`)
+ * pero con eyebrow propio · usado para bloques de rigor científico cuántico.
+ */
+import Marginalia from './Marginalia.astro';
+
+interface Props {
+  titulo: string;
+  duracion?: string;
+}
+
+const { titulo, duracion } = Astro.props;
+---
+
+<Marginalia kind="ventana-cuantica" titulo={titulo} duracion={duracion}>
+  <slot />
+</Marginalia>
