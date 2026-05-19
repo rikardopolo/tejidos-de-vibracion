@@ -50,8 +50,20 @@ const romanChapter = romanize(chapterNum);
 const capitulo = `Capítulo ${romanChapter}`;
 
 // Nivel del lector + decisión de acceso.
+//
+// IMPORTANTE · el gating lee el status del CAPÍTULO PADRE
+// (`book/<chapter>.mdx`), NO el de la pieza individual.
+//
+// Razón editorial: el capítulo es la unidad publicada. En junio 2026 un
+// solo cambio en `book/cap-1-universo-sinfonia.mdx` (status published)
+// activa las 9 piezas simultáneamente · cero fricción de mantenimiento.
+//
+// El campo `status` en el frontmatter de cada pieza queda para tracking
+// editorial interno (draft/review/published) pero NO afecta el gating
+// runtime. Lo único que define visibilidad pública es el status del
+// capítulo padre.
 const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
-const tieneAcceso = entry.data.status === 'published' && nivel >= 1;
+const tieneAcceso = chapterEntry.data.status === 'published' && nivel >= 1;
 const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
 let Content: any = null;

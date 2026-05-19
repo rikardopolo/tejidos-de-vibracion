@@ -40,10 +40,14 @@ const chapterNum = data.chapter ?? 0;
 const romanChapter = romanize(chapterNum);
 const capitulo = `Capítulo ${romanChapter}`;
 
-// Buscar piezas de este capítulo en chapter-sections (status visible).
+// Buscar todas las piezas del capítulo en chapter-sections.
+//
+// El filtro NO aplica `status` porque la visibilidad pública la decide
+// el status del CAPÍTULO PADRE (ver `[section].astro` para racional).
+// El campo `status` por pieza queda para tracking editorial interno
+// pero NO afecta el gating runtime.
 const allSections = await getCollection('chapter-sections', ({ data: d }) =>
-  d.chapter === chapter &&
-  (d.status === 'published' || d.status === 'fragmento-permanente')
+  d.chapter === chapter
 );
 const sections = allSections.sort((a, b) => a.data.order - b.data.order);
 const hasSections = sections.length > 0;
