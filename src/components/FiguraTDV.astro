@@ -1,0 +1,171 @@
+---
+/**
+ * FiguraTDV · figura editorial canónica de Tejidos de Vibración.
+ *
+ * Reemplaza el patrón de "imagen-en-recuadro" usado previamente en la Obertura
+ * (`FiguraObertura.astro`) y en los capítulos (`FiguraEditorial.astro`).
+ *
+ * La imagen flota directamente sobre el pergamino con sombra mínima.
+ * El bloque editorial (número · título · subtítulo opcional) va ARRIBA de
+ * la imagen; el caption descriptivo va DEBAJO.
+ *
+ * Patrón del repo: <img> plain con paths absolutos desde `public/assets/`
+ * (NO `astro:assets` · `imageService: false` en astro.config.mjs).
+ *
+ * Props:
+ *   numero       · numeración corta · ej. "O.1", "1.3"
+ *   titulo       · título editorial · ej. "Los tres ritmos del cuerpo resonante"
+ *   subtitulo    · OPCIONAL · subtítulo italic de matiz · undefined si no hay
+ *   imagen       · path absoluto a la imagen · ej. "/assets/obertura/figura-o-1.png"
+ *                  El componente busca automáticamente .avif y .webp del mismo
+ *                  basename (generados por scripts/optimize-images.mjs) y los
+ *                  sirve via <picture> con fallback al PNG/JPG original.
+ *   alt          · texto alt accesible (obligatorio)
+ *   descripcion  · pie descriptivo completo · texto literal del manuscrito
+ *                  (NO debe iniciar con "Figura O.X:" — el número va arriba)
+ *   ancho, alto  · dimensiones opcionales (CLS-friendly)
+ */
+interface Props {
+  numero: string;
+  titulo: string;
+  subtitulo?: string;
+  imagen: string;
+  alt: string;
+  descripcion: string;
+  ancho?: number;
+  alto?: number;
+}
+
+const { numero, titulo, subtitulo, imagen, alt, descripcion, ancho, alto } = Astro.props;
+
+// Deriva paths AVIF y WebP del mismo basename · asume mismo directorio.
+// Si el path es /assets/obertura/figura-o-1.png → avif y webp en la misma carpeta.
+const baseSinExt = imagen.replace(/\.(png|jpg|jpeg)$/i, '');
+const avifSrc = `${baseSinExt}.avif`;
+const webpSrc = `${baseSinExt}.webp`;
+---
+
+<figure class="figura-tdv">
+  <header class="figura-tdv__encabezado">
+    <p class="figura-tdv__numero">Figura {numero}</p>
+    <h3 class="figura-tdv__titulo">{titulo}</h3>
+    {subtitulo && <p class="figura-tdv__subtitulo">{subtitulo}</p>}
+  </header>
+
+  <picture class="figura-tdv__picture">
+    <source srcset={avifSrc} type="image/avif" />
+    <source srcset={webpSrc} type="image/webp" />
+    <img
+      src={imagen}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      width={ancho ?? 1792}
+      height={alto ?? 1024}
+      class="figura-tdv__imagen"
+    />
+  </picture>
+
+  <figcaption class="figura-tdv__caption">
+    {descripcion}
+  </figcaption>
+</figure>
+
+<style>
+  /* ── Componente raíz ─────────────────────────────────────────────────────── */
+  .figura-tdv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: var(--gap-xl, 6rem) auto;
+    max-width: var(--col-wide, 52rem);
+    text-align: center;
+  }
+
+  /* ── Bloque editorial ARRIBA ─────────────────────────────────────────────── */
+  .figura-tdv__encabezado {
+    margin: 0 0 var(--gap-md, 2rem);
+    max-width: 65ch;
+  }
+
+  .figura-tdv__numero {
+    margin: 0 0 0.6rem;
+    font-family: var(--sans, 'Inter', system-ui, sans-serif);
+    font-size: var(--fs-eyebrow, 0.75rem);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--oro-suave, #B68914);
+  }
+
+  .figura-tdv__titulo {
+    margin: 0;
+    font-family: var(--serif, 'EB Garamond', Georgia, serif);
+    font-size: 1.6rem;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--tinta, #1A1A1A);
+  }
+
+  .figura-tdv__subtitulo {
+    margin: 0.5rem 0 0;
+    font-family: var(--serif, 'EB Garamond', Georgia, serif);
+    font-size: 1.15rem;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--oro-suave, #B68914);
+  }
+
+  /* ── Picture wrapper · transparente al layout ────────────────────────────── */
+  .figura-tdv__picture {
+    display: block;
+    width: 100%;
+  }
+
+  /* ── Imagen sin marco · sombra mínima ────────────────────────────────────── */
+  .figura-tdv__imagen {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(26, 26, 26, 0.04),
+                0 4px 12px rgba(26, 26, 26, 0.05);
+    /* aspect-ratio reserva el espacio para evitar CLS antes de cargar */
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background: transparent;
+  }
+
+  /* ── Caption DEBAJO ──────────────────────────────────────────────────────── */
+  .figura-tdv__caption {
+    margin: var(--gap-md, 2rem) 0 0;
+    max-width: 65ch;
+    font-family: var(--serif, 'EB Garamond', Georgia, serif);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--tinta-suave, #3A3530);
+    text-align: left;
+  }
+
+  /* ── Responsive · móvil ──────────────────────────────────────────────────── */
+  @media (max-width: 720px) {
+    .figura-tdv {
+      margin: var(--gap-lg, 4rem) auto;
+    }
+
+    .figura-tdv__titulo {
+      font-size: 1.3rem;
+    }
+
+    .figura-tdv__subtitulo {
+      font-size: 1rem;
+    }
+
+    .figura-tdv__caption {
+      font-size: 0.95rem;
+    }
+  }
+</style>
