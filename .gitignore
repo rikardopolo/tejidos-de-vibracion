@@ -47,3 +47,5 @@ $RECYCLE.BIN/
 
 # Temporales / backups scratch (no versionar)
 .tmp-*
+public/assets/**/backup-*/
+

@@ -1,12 +1,12 @@
 ---
 /**
- * FiguraEditorial · figura editorial genérica para capítulos del libro.
+ * FiguraEditorial · figura editorial (legacy) para capítulos del libro.
  *
- * Equivalente arquitectónico de `<FiguraObertura />` pero en el namespace
- * del libro (capítulos 1-10). Visualmente idéntico al de la Obertura pero
- * con nombres de clase propios (`.figura-editorial__*`) para que ambos
- * componentes puedan divergir editorialmente en el futuro sin tocar el
- * canon de la Obertura.
+ * NOTA · Componente legado del patrón "imagen-en-recuadro". El nuevo canon
+ * editorial es `FiguraTDV` (sin recuadro, encabezado arriba con número/título/
+ * subtítulo opcional, caption abajo). Este componente sigue activo en las
+ * secciones del Cap. 1 hasta que se migren al patrón nuevo en su propio sprint.
+ * Ver: src/components/FiguraTDV.astro
  *
  * Patrón del repo: <img> plain con paths absolutos desde `public/assets/`
  * (NO `astro:assets` · `imageService: false` en astro.config.mjs).
