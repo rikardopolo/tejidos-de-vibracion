@@ -1,0 +1,74 @@
+---
+/**
+ * MapaConceptual · caja semántica V2.1 (preview/chapters-1-2-3).
+ *
+ * Stub conservador creado para esta preview · sin definición canónica de
+ * componente todavía en main. Mantiene la sintaxis editorial y reserva
+ * el espacio visual para que los MDX de Cap. 1/2/3 que la referencien
+ * no rompan el build.
+ *
+ * Props:
+ *   - title     · encabezado breve (opcional)
+ *   - subtitle  · línea descriptiva (opcional)
+ */
+interface Props {
+  title?: string;
+  subtitle?: string;
+}
+const { title, subtitle } = Astro.props;
+---
+
+<aside class="mapa-conceptual" role="complementary" aria-label="Mapa conceptual">
+  <header class="mapa-conceptual__header">
+    <p class="mapa-conceptual__eyebrow">Mapa Conceptual</p>
+    {title && <h3 class="mapa-conceptual__title">{title}</h3>}
+    {subtitle && <p class="mapa-conceptual__subtitle">{subtitle}</p>}
+  </header>
+  <div class="mapa-conceptual__body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .mapa-conceptual {
+    margin: 3rem 0;
+    padding: 1.75rem 1.5rem 1.5rem;
+    border-left: 3px solid var(--oro-suave);
+    background: var(--pergamino-2);
+    border-radius: 2px;
+  }
+  .mapa-conceptual__header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dotted var(--reposo-claro);
+  }
+  .mapa-conceptual__eyebrow {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+    margin: 0 0 0.4rem;
+  }
+  .mapa-conceptual__title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--tinta);
+  }
+  .mapa-conceptual__subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--reposo);
+    margin: 0.3rem 0 0;
+  }
+  .mapa-conceptual__body {
+    font-family: var(--serif);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--tinta-suave);
+  }
+</style>

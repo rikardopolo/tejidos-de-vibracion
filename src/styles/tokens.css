@@ -24,8 +24,10 @@
   --verde:       #1D9E75;
 
   /* Tipografía */
-  --serif: 'EB Garamond', 'Garamond', Georgia, serif;
-  --sans:  'Inter', system-ui, -apple-system, sans-serif;
+  --serif:   'EB Garamond', 'Garamond', Georgia, serif;
+  --sans:    'Inter', system-ui, -apple-system, sans-serif;
+  --cornisa: 'DM Sans', 'Inter', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* Escala — cuerpo es el rey */
   --fs-body:     1.1875rem;   /* 19px */

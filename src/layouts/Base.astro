@@ -51,6 +51,11 @@ const schema = jsonLd ?? defaultJsonLd;
     <title>{title}</title>
     <meta name="description" content={description} />
 
+    {/* PREVIEW BRANCH ONLY · preview/chapters-1-2-3 · NO MERGE A MAIN.
+        Bloqueo global de indexación para revisión interna 18-jun-2026.
+        Quitar antes de cualquier merge a main. */}
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+
     <link rel="canonical" href={canonicalUrl} />
 
     <!-- Open Graph -->
