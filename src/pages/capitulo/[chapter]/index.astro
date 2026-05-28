@@ -55,8 +55,18 @@ const hasSections = sections.length > 0;
 // Fallback monolítico (sin chapter-sections): mismo comportamiento que el
 // antiguo [slug].astro. Cap. 1 con status 'fragmento-permanente' siempre
 // muestra BloquePuerta (esCap1Publicado=false). Cap. 2/3 idem.
-const esCap1Publicado = !hasSections && data.status === 'published' && chapterNum === 1;
-const verContenido = nivel >= 1 && esCap1Publicado;
+//
+// PREVIEW BRANCH ONLY (preview/chapters-1-2-3 · NO MERGE A MAIN):
+// en cualquier rama Vercel distinta de main relajamos chapterNum===1
+// para permitir revisar el contenido monolitico de Cap.2 y Cap.3 tal
+// como esta en main, sin migrar a chapter-sections.
+const branchRef = (typeof process !== 'undefined' && process.env)
+  ? (process.env.VERCEL_GIT_COMMIT_REF ?? '')
+  : '';
+const esPreviewBranch = branchRef !== '' && branchRef !== 'main';
+const esCapPublicadoMonolitico = !hasSections && data.status === 'published'
+  && (chapterNum === 1 || esPreviewBranch);
+const verContenido = nivel >= 1 && esCapPublicadoMonolitico;
 const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
 let Content: any = null;
