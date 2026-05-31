@@ -1,0 +1,492 @@
+---
+chapter: "cap-2-ciencia-escuchar"
+kind: "numbered"
+num: "2.10"
+title: "Cameo · Schrodinger y la Funcion de Onda"
+subtitle: "Dos semanas en Arosa · cuando la ecuacion de onda se volvio cuantica"
+order: 13
+headerLabel: "Cap. 2 · §2.10"
+publishedAt: 2026-05-09
+authors:
+  - "Ricardo Polo"
+tags:
+  - "cap-2"
+  - "schrodinger"
+  - "funcion-de-onda"
+  - "mecanica-cuantica"
+  - "atomo-hidrogeno"
+---
+
+import PausaCientifica from '@/components/book/PausaCientifica.astro';
+
+*De la cuerda vibrante a la materia que oscila como probabilidad*
+
+— ◇ —
+
+## La pieza que falta
+
+El Capítulo 2 ha trazado una arquitectura completa de las vibraciones
+físicas. Desde la cuerda de Galileo hasta los fonones cuantizados de
+Einstein y Debye. Desde la membrana basilar de Helmholtz hasta los
+espejos suspendidos de LIGO captando ondas del propio espacio-tiempo.
+Cada sección ha añadido una pieza al mosaico. Pero falta una pieza
+decisiva, la última que sostiene el puente al Capítulo 3.
+
+En la sección §2.3 vimos cómo Jean le Rond d'Alembert escribió en 1747
+la primera **ecuación de onda** de la historia, la ecuación diferencial
+parcial que describe matemáticamente cómo una perturbación se propaga
+por un medio elástico. Aquella ecuación —refinada por Euler en 1748 y
+enriquecida por Daniel Bernoulli en 1753 con el principio de
+superposición modal— gobierna las cuerdas vibrantes, las ondas sonoras,
+las ondas electromagnéticas y las ondas en el agua. Es la herramienta
+matemática central de toda la física clásica de las ondas.
+
+Pero las cuerdas, las ondas sonoras y las ondas electromagnéticas son
+**vibraciones de algo**. Algo material que oscila: la cuerda misma, las
+moléculas del aire, el campo electromagnético. ¿Qué pasaría si la propia
+materia —los electrones, los protones, los átomos— fuera, en algún
+sentido profundo, también una onda? ¿Tendría también su propia ecuación
+de onda?
+
+Esa pregunta, que parece absurda desde el sentido común newtoniano
+—¿cómo va a ser un electrón una onda?—, fue la que un físico vienés de
+mediana edad respondió afirmativamente durante una vacación de dos
+semanas en los Alpes suizos en las navidades de 1925 a 1926.
+
+— ◇ —
+
+**◆**
+
+## Dos semanas en Arosa
+
+**Erwin Schrödinger** tenía treinta y ocho años en diciembre de 1925,
+era profesor de física teórica en la Universidad de Zúrich, y arrastraba
+un historial intermitente de tuberculosis que lo había llevado durante
+años al pueblo alpino de **Arosa**, en el cantón suizo de los Grisones,
+donde el aire fino de los 1.800 metros de altitud era considerado
+terapéutico. Schrödinger no era todavía una figura de primer plano de la
+física cuántica. Sus contribuciones hasta entonces habían sido
+respetables pero secundarias. Sus colegas más jóvenes —Werner
+Heisenberg, Wolfgang Pauli, Pascual Jordan— estaban construyendo en
+Gotinga la mecánica de matrices que parecía estar resolviendo, por una
+ruta abstracta y formal, los problemas atómicos que habían desconcertado
+a la física durante un cuarto de siglo.
+
+Pero Schrödinger había leído una tesis doctoral francesa que la mayoría
+de los físicos europeos consideraban excéntrica. La tesis, defendida en
+1924 por **Louis de Broglie** en La Sorbona, proponía algo audaz: si la
+luz —tradicionalmente considerada onda— resultaba comportarse también
+como partícula (los fotones de Einstein 1905), entonces, por simetría,
+las partículas materiales —tradicionalmente consideradas corpúsculos—
+deberían comportarse también como **ondas**. De Broglie había asignado a
+cualquier partícula con momento p una longitud de onda λ = h/p, donde h
+es la constante de Planck que vimos en §2.6.
+
+Era una idea hermosa. Einstein la había leído y la había recomendado.
+Pero nadie sabía qué hacer con ella matemáticamente.
+
+A finales de noviembre de 1925, en un seminario que Peter Debye —el
+mismo Debye del modelo de fonones de §2.7— había organizado en Zúrich
+entre el departamento de física de la universidad y el de la ETH,
+Schrödinger presentó las ideas de De Broglie a la audiencia. Debye,
+escuchándole, lanzó un comentario que la historiografía recoge casi como
+un chiste sarcástico: *"Si las partículas son ondas, deberían satisfacer
+alguna clase de ecuación de onda."*
+
+Schrödinger se llevó el comentario a casa.
+
+A finales de diciembre, **arregló unas vacaciones de dos semanas en
+Arosa**, alojado en la Villa Frisa, sin su esposa Anny, en compañía
+—según los rumores de la época— de una mujer cuya identidad nunca ha
+sido aclarada con certeza. La estancia tenía dos propósitos: la salud y
+un problema teórico.
+
+El **27 de diciembre de 1925**, Schrödinger escribió desde Arosa una
+carta a Wilhelm Wien —editor de *Annalen der Physik* y físico respetado—
+anunciándole que había encontrado un modelo cuyas *"frecuencias
+propias"* coincidían con las del átomo de hidrógeno, construido *"de
+manera razonablemente natural y no por suposiciones ad hoc"*, y que
+pronto le enviaría los resultados, pero que primero necesitaba aprender
+las matemáticas necesarias para tratar la ecuación diferencial que había
+encontrado.**<sup>1</sup>**
+
+Esa ecuación, refinada durante las semanas siguientes con la ayuda
+matemática de su amigo **Hermann Weyl**, sería sometida a *Annalen der
+Physik* el **27 de enero de 1926** y publicada en marzo en el volumen
+79, páginas 361-376, con el título *"Quantisierung als Eigenwertproblem
+(Erste Mitteilung)"* — *"Cuantización como problema de valores propios
+(Primera comunicación)"*.
+
+La ecuación, en su forma escrita por Schrödinger, era una ecuación
+diferencial parcial **muy semejante en estructura matemática a la vieja
+ecuación de onda de D'Alembert de 1747**, pero aplicada a una entidad de
+naturaleza completamente nueva: la **función de onda**, simbolizada con
+la letra griega psi minúscula, **ψ**.
+
+— ◇ —
+
+**◆**
+
+**Figura 2.13** · **Función de onda compleja ψ vs onda clásica real**
+
+***[ F I G U R A E N P R E P A R A C I Ó N ]***
+
+*[ Espacio reservado para figura vectorial ]*
+
+> **Especificación para diagramación:** *Dos paneles paralelos. Panel
+> izquierdo · onda clásica real u(x): sinusoide simple en eje real (rojo
+> o azul indigo, una sola dimensión vertical), etiquetada "u(x) ∈ ℝ".
+> Panel derecho · función de onda cuántica ψ(x): representación 3D o
+> axonométrica con ψ_real (componente real, sinusoide en plano vertical)
+> y ψ_imag (componente imaginaria, sinusoide desfasada 90° en plano
+> horizontal). Etiquetar "ψ(x) ∈ ℂ". Bajo ambos paneles, indicar
+> |ψ(x)|² como segundo gráfico mostrando la densidad de probabilidad
+> (sinusoide al cuadrado, siempre positiva).*
+>
+> **Nota técnica:** *Crear figura nueva, vectorial. La figura es
+> CONCEPTUALMENTE EXIGENTE pero pedagógicamente decisiva: el lector
+> necesita ver la diferencia entre un campo real (u clásico) y un campo
+> complejo (ψ cuántico). Considerar añadir tooltip con la fórmula λ =
+> h/p (Fórmula 3.1 del Cap. 3) para la onda de De Broglie de la
+> partícula material.*
+>
+> **Figura 2.13.** La diferencia decisiva entre la onda clásica y la
+> función de onda cuántica. La onda clásica u(x) es una función real:
+> representa un desplazamiento físico observable directamente (la altura
+> de una cuerda, la presión del aire). La función de onda ψ(x) es una
+> función compleja: ψ(x) ∈ ℂ. Lo que se observa experimentalmente no es
+> ψ sino su módulo al cuadrado |ψ(x)|², que es la densidad de
+> probabilidad de encontrar la partícula en cada punto al medirla (regla
+> de Born, Fórmula 3.9 del Cap. 3).
+
+## La diferencia decisiva con la onda clásica
+
+Aquí está la clave arquitectónica que el Capítulo 2 entero ha estado
+preparando para entregar.
+
+Visualmente, la ecuación de Schrödinger se parece mucho a la ecuación de
+onda clásica de §2.3. Ambas son ecuaciones diferenciales parciales de
+segundo orden en el espacio. Ambas describen cómo una función matemática
+—llamada de la misma manera, *ψ*, en muchas formulaciones— evoluciona en
+el tiempo según el comportamiento de su distribución espacial.
+
+Pero hay tres diferencias decisivas que separan la onda clásica de la
+función de onda cuántica, y que el lector necesita sostener en la mente
+para entrar al Capítulo 3 con la herramienta correcta.
+
+**Primera diferencia · ¿Qué oscila?**
+
+En la ecuación de onda clásica, *ψ* representa una magnitud física
+directamente medible: el desplazamiento vertical de una cuerda en un
+instante dado, la presión local de aire en un punto durante el paso de
+un sonido, la intensidad del campo eléctrico en un punto del espacio.
+*ψ* es algo que existe **en el lugar** donde lo describe.
+
+En la ecuación de Schrödinger, *ψ* no es ningún desplazamiento físico
+medible directamente. Es una función matemática compleja —tiene parte
+real y parte imaginaria— que representa el **estado cuántico** del
+sistema. La función de onda no oscila *en el espacio*; oscila *en un
+espacio matemático abstracto* donde se codifica toda la información
+disponible sobre el sistema cuántico.
+
+**Segunda diferencia · ¿Qué significa la amplitud?**
+
+Pocos días después de que Schrödinger publicara su ecuación, **Max
+Born** —físico alemán de Gotinga que había sido uno de los arquitectos
+de la mecánica de matrices— propuso la interpretación que se convertiría
+en estándar y que le ganaría a Born el Premio Nobel en 1954.
+
+La amplitud de la función de onda en sí misma no tiene significado
+físico directo. Lo que sí tiene significado es **el cuadrado de su valor
+absoluto**, es decir, |ψ|². Y ese cuadrado representa una **densidad
+de probabilidad**: la probabilidad por unidad de volumen de encontrar la
+partícula en una región dada del espacio cuando se realiza una medición.
+
+Cuando Helmholtz medía la presión sonora en un punto del aire (§2.4),
+estaba midiendo una magnitud real con un valor definido. Cuando un
+físico hoy mide la posición de un electrón cuyo estado se describe por
+una función de onda *ψ*, la función no le dice dónde está el electrón;
+le dice **con qué probabilidad lo encontrará en cada lugar posible**. La
+probabilidad es la realidad. La certeza local es lo que ha desaparecido.
+
+Esto es revolucionario en el sentido más estricto. La física clásica
+describía un mundo determinista donde, dadas las condiciones iniciales,
+el futuro estaba fijado. La función de onda cuántica describe un mundo
+donde lo que existe son **distribuciones de probabilidad** que
+evolucionan deterministamente, pero las mediciones individuales arrojan
+resultados intrínsecamente aleatorios dentro de esas distribuciones.
+
+**Tercera diferencia · La superposición**
+
+Aquí está la pieza que más profundamente conecta con el Capítulo 3.
+
+En la ecuación de onda clásica, el principio de superposición de
+Bernoulli (§2.3) decía que la suma de soluciones de la ecuación es
+también una solución. Una cuerda puede vibrar simultáneamente en varios
+modos —tono fundamental más armónicos—, y la vibración total es la suma
+de los modos individuales.
+
+En la ecuación de Schrödinger, el principio de superposición se conserva
+con una consecuencia ontológica inquietante. Si *ψ₁* y *ψ₂* son dos
+estados cuánticos posibles de un sistema —por ejemplo, "el electrón está
+aquí" y "el electrón está allá"—, entonces cualquier combinación lineal
+ψ = α·ψ₁ + β·ψ₂ (donde α y β son números complejos con |α|² + |β|²
+= 1) también es un estado cuántico válido del sistema.
+
+Y aquí no estamos hablando de una superposición clásica de modos
+vibratorios. Estamos diciendo que **el sistema puede existir, antes de
+ser medido, en una combinación coherente de los dos estados al mismo
+tiempo**. No es que el electrón esté en uno de los dos lugares y
+nosotros no sepamos cuál; es que el electrón es, físicamente, un objeto
+cuya descripción matemática es la combinación. Solo cuando se realiza la
+medición, la función de onda **colapsa** a uno de los estados, con
+probabilidades dadas por |α|² y |β|².
+
+Esta superposición coherente es la que da lugar a todos los fenómenos
+genuinamente cuánticos que el libro entero explorará en el Capítulo 3 y
+siguientes: la coherencia cuántica en microtúbulos, la posibilidad de
+tunelamiento en proteínas, los efectos cuánticos en reacciones
+biológicas, la interferencia cuántica en sistemas mesoscópicos.
+
+— ◇ —
+
+**◆**
+
+## El triunfo del átomo de hidrógeno
+
+El primer paper de Schrödinger de enero de 1926 no se contentó con
+presentar la ecuación. La aplicó al problema más urgente que la física
+tenía sobre la mesa desde 1913: el **espectro del átomo de hidrógeno**,
+las líneas espectrales discretas que cualquier prisma muestra cuando
+descompone la luz emitida por hidrógeno excitado, y que Niels Bohr había
+explicado en 1913 mediante un modelo provisional de "órbitas
+cuantizadas" que nadie consideraba físicamente satisfactorio.
+
+Schrödinger trató al electrón del átomo de hidrógeno **como una onda**.
+Aplicó su ecuación al electrón sometido al potencial coulombiano del
+protón. Encontró que la ecuación admitía soluciones estables —*ondas
+estacionarias* en el espacio tridimensional, no muy diferentes en su
+lógica matemática a las ondas estacionarias de Mersenne en una cuerda—
+solo para ciertos valores discretos de la energía. **Esos valores
+reproducían exactamente las energías observadas en el espectro del
+hidrógeno**, sin necesidad de postular órbitas cuantizadas ad hoc como
+había hecho Bohr.
+
+Las energías permitidas del átomo de hidrógeno no eran misteriosas. Eran
+simplemente los modos resonantes —los autovalores, eigenvalues, valores
+propios— de la ecuación de onda del electrón en el potencial del protón.
+Igual que las frecuencias permitidas de una cuerda de violín son los
+modos resonantes de su ecuación de onda clásica.
+
+La cuantización, vista desde la ecuación de Schrödinger, no era una
+imposición externa misteriosa sobre la naturaleza. Era una consecuencia
+matemática inevitable de tratar al electrón como una onda confinada por
+un potencial. **Donde hay condiciones de frontera, hay modos discretos.
+Donde hay modos discretos, hay cuantización.** El cuanto de Planck del
+año 1900 quedaba al fin explicado, no como una hipótesis ad hoc, sino
+como propiedad estructural de la ecuación de onda de la materia.
+
+El Premio Nobel de Física de 1933 fue compartido entre Erwin Schrödinger
+y Paul Dirac *"por el descubrimiento de nuevas formas productivas de la
+teoría atómica"*.
+
+— ◇ —
+
+**◆**
+
+
+<PausaCientifica titulo="La función de onda como herramienta y como interrogación">
+
+
+**Nivel de evidencia: 1 (consenso experimental absoluto sobre la
+utilidad de la ecuación). Nivel 3 (debate filosófico abierto) sobre la
+interpretación ontológica de la función de onda.**
+
+✓ **Está documentado y forma parte del consenso científico actual:**
+
+— La ecuación de Schrödinger predice con precisión extraordinaria los
+espectros atómicos de hidrógeno, helio (con correcciones), y todos los
+átomos calculables. Predice los enlaces químicos, las energías de
+moléculas, las propiedades de los sólidos, la estructura electrónica de
+la materia entera.
+
+— La interpretación de Born de |ψ|² como densidad de probabilidad ha
+sido confirmada experimentalmente con precisión asombrosa en miles de
+experimentos durante un siglo.
+
+— La superposición cuántica es un fenómeno físico real, verificado en
+experimentos de doble rendija con electrones, neutrones, átomos
+completos, e incluso moléculas de buckminsterfullereno (C60) y
+biomoléculas más grandes.
+
+— Cien años después de su formulación, la ecuación de Schrödinger es la
+herramienta matemática central de la física atómica, molecular, del
+estado sólido, y la base de toda la química cuántica computacional
+moderna.
+
+⚠️ **Lo que requiere matización filosófica honesta:**
+
+— **Qué *es* exactamente la función de onda** —si representa una
+entidad física real, una herramienta epistémica para describir nuestro
+conocimiento, o algo intermedio— sigue siendo objeto de debate
+filosófico activo desde 1926 hasta hoy. Las principales interpretaciones
+(Copenhague, Muchos Mundos de Everett, De Broglie-Bohm, QBism, Rovelli
+relacional) hacen las mismas predicciones experimentales pero atribuyen
+significados ontológicos diferentes a *ψ*. Ninguna ha sido descartada
+experimentalmente.
+
+— El llamado **"problema de la medida"** —cómo y por qué la función de
+onda colapsa a un valor definido cuando se realiza una observación— es
+un problema abierto que conecta directamente con preguntas sobre el rol
+del observador, la consciencia, y la frontera entre lo cuántico y lo
+clásico. Algunas de estas preguntas serán retomadas en capítulos
+posteriores con marco epistémico apropiado.
+
+❌ **Lo que la evidencia no respalda y conviene marcar explícitamente:**
+
+— La ecuación de Schrödinger **no implica** automáticamente que "todo es
+onda" o que "la realidad es vibración" en sentido literal y universal.
+Lo que dice es que los sistemas cuánticos —típicamente sistemas
+microscópicos, aunque la frontera con lo macroscópico es ella misma
+objeto de investigación— están descritos por funciones de onda con
+propiedades específicas. La extensión filosófica de "todo es onda" como
+afirmación cosmológica universal es metáfora, no consecuencia derivable.
+
+— La superposición cuántica **no implica** que un electrón esté
+literalmente "en dos lugares al mismo tiempo" en el sentido del lenguaje
+cotidiano. Implica que el formalismo matemático que describe
+correctamente al electrón antes de la medición es una superposición
+coherente, cuya naturaleza ontológica precisa sigue siendo objeto de
+interpretación.
+
+— La función de onda no debe confundirse con un "campo de consciencia",
+una "vibración energética del alma", o cualquier otra extensión
+simbólica que la divulgación apresurada pretende derivar de ella. Esas
+son metáforas que pueden ser legítimas en su dominio simbólico, pero NO
+son consecuencias de la ecuación de Schrödinger.
+
+**Referencia primaria:** Schrödinger, E. (1926). «Quantisierung als
+Eigenwertproblem (Erste Mitteilung).» *Annalen der Physik*, 79(4),
+361–376. Sometido el 27 de enero de 1926, publicado en marzo de 1926.
+
+**Referencia primaria complementaria:** Schrödinger, E. (1926).
+«Quantisierung als Eigenwertproblem.» Comunicaciones segunda, tercera y
+cuarta. *Annalen der Physik*, 79, 489–527; 80, 437–490; 81, 109–139.
+
+**Referencia secundaria histórica:** Born, M. (1926). «Zur
+Quantenmechanik der Stoßvorgänge.» *Zeitschrift für Physik*, 37,
+863–867. (El paper donde Born propone la interpretación probabilística
+de |ψ|².)
+
+— ◇ —
+
+**◆**
+
+</PausaCientifica>
+
+## El puente está tendido
+
+El Capítulo 2 cierra aquí, con la herramienta matemática que el Capítulo
+3 desplegará en cada una de sus secciones.
+
+Cuatrocientos años nos separan de Galileo midiendo cuerdas en la villa
+de Arcetri. En el camino, la humanidad ha aprendido que las cuerdas
+obedecen leyes matemáticas precisas, que las ondas tienen una ecuación
+universal, que el oído humano es un piano biológico desenrollado, que la
+luz es campo electromagnético, que la radiación está cuantizada, que la
+materia mecánica también está cuantizada, que las células vivas oscilan
+a frecuencias audibles cuando un instrumento las amplifica, que el
+propio espacio-tiempo vibra cuando dos agujeros negros se fusionan en
+otra galaxia, y que la materia misma —los electrones, los átomos, las
+moléculas que forman cualquier ser vivo— se describe por una ecuación de
+onda donde lo que oscila no es ya una sustancia material sino una
+distribución de probabilidad.
+
+Esta es la herencia que el Cap. 2 entrega al Cap. 3. La biología
+cuántica que el Cap. 3 explorará no inventa un misticismo nuevo. Tiene
+sus raíces en cuatro siglos de física clásica y un siglo de física
+cuántica, anclados en ecuaciones, experimentos, papers revisados por
+pares, instrumentos cada vez más finos.
+
+Lo que cambia al cruzar al Cap. 3 es la escala biológica donde estas
+ecuaciones se aplican. Microtúbulos en neuronas. Biofotones en células.
+Coherencia cuántica en proteínas. Fonones organizados en redes
+celulares. Funciones de onda de electrones en cadenas respiratorias
+mitocondriales. Estados cuánticos en compases magnéticos de aves
+migratorias.
+
+La pregunta del Tejedor, al cruzar este umbral, ya no será *"¿es real lo
+cuántico?"* —el Cap. 2 ha establecido que sí lo es, con rigor
+experimental aplastante—. La pregunta será otra, más sutil y más bonita:
+*"¿hasta dónde llega lo cuántico en la vida?"*. Y la honestidad
+epistémica del libro, modelada en cada Pausa Científica de este
+capítulo, será la brújula que el lector llevará en la mano para
+distinguir lo que la ciencia ha establecido de lo que está investigando,
+y lo que sigue siendo legítima búsqueda contemplativa más allá de los
+límites actuales del conocimiento.
+
+El umbral está abierto. El Cap. 3 espera.
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+**Notas y referencias**
+
+**<sup>1</sup>** La carta de Schrödinger a Wilhelm Wien del 27 de
+diciembre de 1925, escrita desde Arosa, Suiza, está archivada en la
+correspondencia editorial de *Annalen der Physik* y citada en: Suslov,
+S. K. (2026). «Remarkable Dates and Place: One Hundred Years Ago.»
+*arXiv:2601.05337*. La cronología detallada del descubrimiento,
+incluyendo las dos semanas de vacaciones en la Villa Frisa de Arosa, el
+seminario previo en Zúrich organizado por Peter Debye, y el papel de
+Hermann Weyl como asesor matemático, ha sido reconstruida por Walter
+Moore en su biografía definitiva: Moore, W. (1989). *Schrödinger: Life
+and Thought*. Cambridge: Cambridge University Press. Para la aceptación
+inicial limitada y la posterior universalización de la ecuación, ver:
+Mehra, J., & Rechenberg, H. (1987). *The Historical Development of
+Quantum Theory, Vol. 5: Erwin Schrödinger and the Rise of Wave
+Mechanics*. New York: Springer-Verlag. Para una exposición moderna que
+enfatiza las cuatro comunicaciones sucesivas de 1926 y la transición de
+la versión relativista (que daría lugar a la ecuación de Klein-Gordon) a
+la versión no relativista, ver: Galileo Unbound Blog (enero 2026), *100
+Years of Quantum Physics: Schrödinger's Wave Mechanics (1926)*. El
+Premio Nobel de Física de 1933 fue otorgado conjuntamente a Erwin
+Schrödinger y Paul Adrien Maurice Dirac «for the discovery of new
+productive forms of atomic theory».
+
+**Figura 2.14** · **Línea de tiempo · cuatro siglos de la ciencia que
+aprendió a escuchar**
+
+***[ F I G U R A E N P R E P A R A C I Ó N ]***
+
+*[ Espacio reservado para figura vectorial ]*
+
+> **Especificación para diagramación:** *Línea horizontal con eje
+> temporal 1600-2020. Marcadores cronológicos con autor y descubrimiento
+> clave: 1636 Mersenne (frecuencia absoluta 84 Hz), 1638 Galileo
+> (Discorsi), 1747 D'Alembert (ecuación de onda), 1748 Euler, 1753
+> Bernoulli (modos normales), 1822 Fourier (análisis espectral), 1863
+> Helmholtz (cóclea como piano biológico), 1865 Maxwell (ecuaciones EM),
+> 1887 Hertz (transmisión inalámbrica), 1900 Planck (cuanto), 1905
+> Einstein (fotones), 1907 Einstein (sólidos cuánticos), 1912 Debye
+> (fonones), 1925-26 Schrödinger (función de onda), 1932 Tamm (acuña
+> «fonón»), 2004 Gimzewski (levadura vibrante), 2015 LIGO (GW150914).
+> Agrupación visual por fases: Fase I Galileo-Mersenne-Bernoulli
+> (clásica), Fase II Helmholtz-Maxwell-Hertz (electromagnética), Fase
+> III Planck-Einstein-Debye (cuántica), Fase IV Gimzewski-LIGO (frontera
+> contemporánea).*
+>
+> **Nota técnica:** *Crear figura nueva, vectorial. Es prima hermana de
+> la Figura 3.1 del Cap. 3 v5d ("La Avalancha 1900-1927") pero con marco
+> temporal más amplio (cuatro siglos vs 27 años) y diferente densidad de
+> hitos. Aplicar paleta TDV oficial. Coordinar el estilo visual entre
+> ambas figuras para coherencia entre capítulos.*
+>
+> **Figura 2.14.** Cuatro siglos de la ciencia que aprendió a escuchar.
+> La cascada de descubrimientos entre 1636 y 2015 transformó el oído
+> científico desde la cuerda vibrante hasta las ondas gravitacionales
+> del cosmos. Cada hito construyó sobre los anteriores y forzó los
+> siguientes. La velocidad fue desigual: cuatrocientos años para pasar
+> de Mersenne a LIGO, pero solo veintisiete años (1900-1927) para que la
+> mecánica cuántica tomara forma.

@@ -1,0 +1,715 @@
+---
+chapter: "cap-2-ciencia-escuchar"
+kind: "numbered"
+num: "2.6"
+title: "La Llegada de los Cuantos"
+subtitle: "Planck 1900 y Einstein 1905 · cuando la radiacion dejo de ser continua"
+order: 9
+headerLabel: "Cap. 2 · §2.6"
+publishedAt: 2026-05-09
+authors:
+  - "Ricardo Polo"
+tags:
+  - "cap-2"
+  - "planck"
+  - "einstein"
+  - "cuantizacion"
+  - "fotones"
+  - "efecto-fotoelectrico"
+---
+
+import VozTejido from '@/components/book/VozTejido.astro';
+import PausaCientifica from '@/components/book/PausaCientifica.astro';
+
+*Planck, Einstein y la grieta que abrió un mundo nuevo*
+
+— ◇ —
+
+## La grieta heredada de Maxwell
+
+Maxwell había unificado luz, electricidad y magnetismo en un solo campo.
+Sus cuatro ecuaciones describían la propagación de ondas
+electromagnéticas a cualquier frecuencia, desde ondas de radio hasta
+rayos gamma. La civilización del siglo XX —radio, televisión, telefonía
+móvil, WiFi— sería construida sobre ese edificio. Si tuviéramos que
+nombrar el cuerpo de física más completamente verificado del siglo XIX,
+las ecuaciones de Maxwell estarían entre las primeras candidatas.
+
+Y sin embargo, hacia el final del siglo, había aparecido un problema
+concreto, técnicamente preciso, que la física clásica no podía resolver.
+
+El problema era el **cuerpo negro**.
+
+Imagina un horno cerrado, calentado a temperatura constante. Las paredes
+interiores absorben y reemiten radiación electromagnética hasta alcanzar
+un equilibrio térmico. Si abres una pequeña ventana en el horno y mides
+cómo se distribuye la energía emitida en función de la frecuencia,
+obtienes una curva característica que depende solo de la temperatura, no
+del material del horno. Esta curva universal era el "cuerpo negro"
+idealizado de los físicos del siglo XIX.
+
+Cuando una barra de hierro al rojo emite luz, cuando el filamento de una
+bombilla incandescente brilla, cuando el Sol irradia su espectro
+completo desde el infrarrojo hasta el ultravioleta, lo que estás viendo
+es radiación de cuerpo negro. Cada uno de estos sistemas emite con una
+distribución de frecuencias característica de su temperatura. La
+pregunta era simple: ¿cuál es la fórmula que describe esa distribución?
+
+Las respuestas clásicas fallaban. La **ley de Wien**, formulada en 1896,
+ajustaba bien las frecuencias altas pero fallaba en las bajas. La **ley
+de Rayleigh-Jeans**, derivada rigurosamente desde la electrodinámica
+clásica de Maxwell aplicada a osciladores con energía continua, ajustaba
+bien las bajas pero predecía algo monstruoso en las altas: que cualquier
+cuerpo a cualquier temperatura debería emitir cantidades infinitas de
+energía en frecuencias ultravioletas. Si la teoría fuera correcta en ese
+régimen, abrir un horno tibio bombardearía a quien estuviera cerca con
+una catarata desintegradora de rayos UV.
+
+Once años después, en 1911, el físico austríaco Paul Ehrenfest acuñaría
+una frase pegadiza para nombrar este desastre teórico: la *catástrofe
+ultravioleta*. Pero el término no existía en 1900. Quien intentaba
+resolver el problema del cuerpo negro en Berlín, a comienzos del siglo
+XX, no se sentía enfrentando una catástrofe. Se sentía enfrentando una
+grieta técnica que esperaba un parche teórico.
+
+Ese alguien tenía cuarenta y dos años, era profesor en la Universidad de
+Berlín desde hacía once, y se llamaba **Max Planck**.**<sup>1</sup>**
+
+— ◇ —
+
+**◆**
+
+**Figura 2.7** · **Espectro del cuerpo negro · catástrofe ultravioleta y
+solución de Planck**
+
+***[ F I G U R A E N P R E P A R A C I Ó N ]***
+
+*[ Espacio reservado para figura vectorial ]*
+
+> **Especificación para diagramación:** *Gráfica comparativa: eje X
+> frecuencia ν (escala lineal o logarítmica), eje Y densidad espectral
+> u(ν,T). Tres curvas para una temperatura de cuerpo negro de 5000 K:
+> (1) Rayleigh-Jeans en línea roja punteada, divergiendo asintóticamente
+> al infinito en alta frecuencia (dibujar este "vuelo al infinito" como
+> flecha vertical y etiquetar «catástrofe ultravioleta»); (2) Wien en
+> línea verde punteada, ajustando bien en alta frecuencia pero fallando
+> en baja; (3) Planck en línea sólida indigo, reconciliando ambos
+> extremos con curvatura suave. Marcar la región visible del espectro
+> como banda arco iris en el eje X. Anotación clave: «E = nhν →
+> discreto».*
+>
+> **Nota técnica:** *Crear figura nueva, vectorial. Esta figura es prima
+> hermana de la Figura 3.17 del Cap. 3 v5d (mismo contenido conceptual).
+> Verificar consistencia visual entre ambas apariciones. Ajustar la
+> temperatura de referencia para que las curvas se vean nítidamente en
+> el rango graficado.*
+>
+> **Figura 2.7.** Comparación de las tres leyes que intentaron describir
+> la radiación del cuerpo negro a 5000 K. La ley clásica de
+> Rayleigh-Jeans diverge al infinito en altas frecuencias — la
+> "catástrofe ultravioleta". La ley de Wien ajusta bien solo en alta
+> frecuencia. La ley de Planck (14 de diciembre de 1900), introduciendo
+> la cuantización E = nhν (Fórmula 2.6), reconcilia ambos extremos y
+> reproduce el espectro experimental con precisión absoluta.
+
+## Octubre de 1900 · La fórmula sin teoría
+
+El 7 de octubre de 1900, Heinrich Rubens —físico experimental del
+Reichsanstalt de Berlín— visitó a Planck en su casa. Rubens y su
+colaborador Ferdinand Kurlbaum acababan de medir, con precisión sin
+precedentes, la radiación del cuerpo negro a longitudes de onda largas
+(infrarrojo lejano). Los datos no encajaban con la ley de Wien.
+Confirmaban en cambio la tendencia que Rayleigh-Jeans predecía para esas
+frecuencias bajas, pero el problema clásico en frecuencias altas seguía
+sin resolverse.
+
+Planck escuchó. Esa misma noche, después de la visita, se sentó a
+trabajar.
+
+Lo que encontró antes del amanecer fue una **fórmula matemática** que
+ajustaba todos los datos experimentales conocidos —los de Wien en
+frecuencias altas, los de Rubens y Kurlbaum en bajas, todos los puntos
+intermedios— con asombrosa precisión. Pero la fórmula era, en términos
+epistemológicos, un objeto extraño: una interpolación inteligente entre
+dos leyes existentes, sin derivación teórica desde principios físicos.
+Funcionaba, pero Planck no podía explicar **por qué** funcionaba.
+
+El 19 de octubre de 1900, Planck presentó la fórmula a la Sociedad
+Física Alemana, en una sesión que también incluyó la exposición de los
+datos experimentales de Rubens y Kurlbaum. La fórmula encajaba con todas
+las medidas conocidas. Pero Planck era un teórico riguroso, formado en
+la tradición clásica del siglo XIX. Una fórmula sin derivación teórica
+no le bastaba. Era, para él, casi una vergüenza intelectual.
+
+Pasó las siguientes ocho semanas buscando la base teórica de su propia
+fórmula.
+
+Y aquí, en esas ocho semanas de octubre y noviembre de 1900, ocurrió
+algo que Planck mismo describiría décadas después como *"un acto de
+desesperación"*. La única manera de derivar la fórmula consistía en
+aceptar dos ideas que Planck encontraba filosóficamente repugnantes.
+
+— ◇ —
+
+**◆**
+
+## 14 de diciembre de 1900 · El acto de desesperación
+
+La primera idea que Planck tuvo que aceptar fue la **interpretación
+estadística de la entropía** de Ludwig Boltzmann. Boltzmann había
+propuesto que la entropía de un sistema físico no era una propiedad
+continua y determinista, sino una medida estadística del número de
+microestados compatibles con un macroestado dado. Esto implicaba aceptar
+el atomismo —la idea de que la materia está compuesta de partículas
+discretas— y la naturaleza probabilística de los procesos
+termodinámicos.
+
+Planck rechazaba ambas cosas. Era un determinista clásico, formado en la
+tradición continuista de Maxwell y Helmholtz. Pero la única derivación
+que funcionaba para su fórmula era la basada en el método estadístico de
+Boltzmann.
+
+La segunda idea era todavía más radical. Para que el método de Boltzmann
+diera la fórmula correcta, había que postular que los **osciladores**
+—pequeños sistemas mecánicos hipotéticos en las paredes del cuerpo
+negro, que vibraban a distintas frecuencias y emitían/absorbían
+radiación— solo podían tener energías que fueran **múltiplos enteros**
+de un mínimo:
+
+**Fórmula 2.6** · **Cuantización del oscilador (Planck)**
+
+E = n · h · ν
+
+> **Donde:**
+>
+> ***E*** · energía permitida del oscilador (joules)
+>
+> ***n*** · número entero no negativo: 0, 1, 2, 3, ... (índice del nivel
+> cuántico)
+>
+> ***h*** · constante de Planck, h ≈ 6.626 × 10⁻³⁴ J·s
+>
+> ***ν*** · frecuencia de oscilación del oscilador (hercios). Léase
+> «nu».
+>
+> *Propuesta por Max Planck el 14 de diciembre de 1900 en la Sociedad
+> Física Alemana de Berlín, para resolver la catástrofe ultravioleta del
+> cuerpo negro. Es importante leerla con precisión histórica: Planck
+> cuantizó los osciladores que emiten y absorben radiación, no la
+> radiación misma. El campo electromagnético, en su propuesta original,
+> seguía siendo continuo en el sentido de Maxwell. La extensión de la
+> cuantización a la radiación electromagnética misma sería obra de
+> Einstein cinco años después, con los fotones del efecto fotoeléctrico.
+> La constante h se medirá experimentalmente por Millikan en 1914-1916
+> con cinco cifras significativas de precisión.*
+
+donde *n* es un entero (0, 1, 2, 3...), *ν* es la frecuencia de
+oscilación, y *h* es una nueva constante fundamental cuyo valor Planck
+calculó en aproximadamente 6,626 × 10⁻³⁴ joule·segundo.
+
+Conviene insistir en algo crucial, porque la divulgación habitual lo
+aplasta y queda mal contado. **Planck no cuantizó la radiación
+electromagnética**. Lo que cuantizó fueron los **osciladores** que la
+emiten y absorben. La radiación misma, según la propuesta de Planck de
+1900, seguía siendo una onda continua perfectamente clásica en el
+sentido de Maxwell. Lo discreto eran los osciladores; lo continuo seguía
+siendo el campo.
+
+Esta distinción parece sutil. Es decisiva. Y será la clave de por qué
+Einstein, cinco años después, hizo algo verdaderamente revolucionario.
+
+El 14 de diciembre de 1900, en una sesión de la Sociedad Física Alemana
+en Berlín, Planck presentó la derivación teórica completa. Esa fecha
+quedaría inscrita en los libros de historia de la ciencia como el
+nacimiento oficial de la teoría cuántica.**<sup>2</sup>**
+
+Pero Planck no se sentía nacido a una nueva era. Se sentía habiendo
+introducido un parche matemático del que esperaba poder deshacerse
+pronto. Durante los siguientes años intentaría sistemáticamente
+**eliminar** la cuantización de su propia derivación, buscando alguna
+manera de reducirla a la física clásica continua. Falló cada vez.
+
+Décadas después, escribiría con la sobriedad amarga que lo
+caracterizaba: *"Mis intentos infructuosos de reintegrar de algún modo
+el cuanto de acción a la teoría clásica se extendieron durante varios
+años y me causaron mucha angustia."*
+
+La constante *h* —que el mundo llamaría después *constante de Planck*—
+vale aproximadamente 6,62607015 × 10⁻³⁴ J·s. Es extraordinariamente
+pequeña comparada con cualquier escala de la experiencia humana. Por eso
+los efectos cuánticos no son visibles en escala macroscópica. Pero a
+escala atómica, donde las energías típicas son del orden de
+electrón-voltios y los tiempos del orden de femtosegundos, esa pequeñez
+se vuelve decisiva. La grieta que Planck había abierto a regañadientes
+solo se haría visible cuando alguien tuviera el valor de mirar a través
+de ella.
+
+— ◇ —
+
+**◆**
+
+## 1905 · Einstein toma a Planck literalmente
+
+A más de mil kilómetros al sur de Berlín, en una oficina de patentes en
+Berna, Suiza, un técnico de tercera clase de veintiséis años revisaba
+ocho horas al día solicitudes de patentes —especialmente sobre relojes y
+dispositivos de sincronización temporal. Su nombre era **Albert
+Einstein**. Su tesis doctoral había sido rechazada en una primera
+versión. No tenía posición académica. Era un físico amateur "de fines de
+semana" que hacía teoría en sus horas libres y en los huecos de la
+jornada laboral.
+
+En 1905, en lo que la posteridad llamaría su *annus mirabilis*, Einstein
+publicaría cinco papers extraordinarios. Tres son hoy célebres:
+relatividad especial, equivalencia masa-energía (E = mc²), movimiento
+browniano. Un cuarto era su tesis doctoral, finalmente aceptada por la
+Universidad de Zúrich. Pero el primero de los cinco —el que Einstein
+mismo consideraría toda su vida el más revolucionario, y por el que
+recibiría el Premio Nobel en 1921— fue otro, y trataba del fenómeno que
+Hertz había descubierto incidentalmente en 1887 mientras hacía sus
+experimentos sobre ondas electromagnéticas.
+
+El 17 de marzo de 1905, tres días después de su vigésimo sexto
+cumpleaños, Einstein envió a *Annalen der Physik* un paper con un título
+prudente:
+
+> Über einen die Erzeugung und Verwandlung des Lichtes betreffenden
+> heuristischen Gesichtspunkt. "Sobre un punto de vista heurístico
+> concerniente a la producción y transformación de la
+> luz."**<sup>3</sup>**
+
+La palabra **heurístico** es deliberada. Heurístico significa, en
+filosofía de la ciencia, "como método de descubrimiento útil aunque no
+necesariamente verdadero". Einstein sabía que su propuesta era radical y
+se cubría las espaldas filosóficamente. No afirmaba con certeza absoluta
+que la luz **fuera** partículas. Proponía esa visión como una
+herramienta heurística que explicaba mejor los datos experimentales del
+efecto fotoeléctrico que la teoría ondulatoria clásica.
+
+Lo que Einstein hizo fue lo que Planck había evitado cuidadosamente
+hacer durante cinco años: **extender la cuantización a la radiación
+electromagnética misma**. Si los osciladores emisores y absorbentes solo
+podían tener energías nhν, propuso Einstein, entonces la radiación
+electromagnética que emiten y absorben también debía consistir en
+paquetes discretos de energía hν. La luz no era únicamente onda
+continua; en sus interacciones con la materia se comportaba como
+compuesta de cuantos discretos —*Lichtquanten*, cuantos de luz, en el
+alemán de Einstein. (El término *fotón* lo acuñaría Gilbert Lewis
+veintiún años después, en 1926, en una carta a *Nature*. Einstein nunca
+lo usó.)
+
+Esta extensión resolvía elegantemente un fenómeno que la teoría
+ondulatoria de Maxwell no podía explicar.
+
+— ◇ —
+
+**◆**
+
+**Figura 2.8** · **El efecto fotoeléctrico · Einstein 1905**
+
+***[ F I G U R A E N P R E P A R A C I Ó N ]***
+
+*[ Espacio reservado para figura vectorial ]*
+
+> **Especificación para diagramación:** *Dos paneles. Panel izquierdo ·
+> esquema físico: superficie metálica horizontal (cesio o sodio)
+> bombardeada desde arriba por fotones representados como pequeños
+> paquetes ondulatorios de oro ámbar con frecuencia ν. Algunos fotones
+> liberan electrones (representados como bolitas azules) que escapan de
+> la superficie con energía cinética K_max. Etiquetar la "función
+> trabajo Φ" como una barrera de energía superficial. Panel derecho ·
+> gráfica K_max vs ν con línea recta de pendiente h, frecuencia umbral
+> ν₀ = Φ/h donde la línea cruza el eje horizontal. Bajo ν₀ no hay
+> emisión sin importar la intensidad de la luz.*
+>
+> **Nota técnica:** *Crear figura nueva, vectorial. La figura debe
+> transmitir simultáneamente lo conceptual (paquetes discretos de luz) y
+> lo cuantitativo (linealidad estricta entre energía y frecuencia,
+> pendiente h universal). Esta misma figura aparece como Figura 3.16 en
+> el Cap. 3 v5d — verificar consistencia.*
+>
+> **Figura 2.8.** El efecto fotoeléctrico explicado por Einstein en
+> 1905. Cada fotón incidente con frecuencia ν sobre el metal puede
+> liberar un electrón si su energía hν supera la función trabajo Φ del
+> material. La energía cinética máxima del electrón emitido es K_max =
+> hν − Φ. La pendiente de la recta es la constante de Planck h,
+> universal para todos los metales. Por debajo de la frecuencia umbral
+> ν₀ = Φ/h no hay emisión sin importar la intensidad luminosa — un
+> resultado imposible de explicar con la teoría ondulatoria clásica de
+> Maxwell.
+
+## El efecto fotoeléctrico explicado
+
+En 1887, Heinrich Hertz —el mismo Hertz que cerró el círculo de Maxwell
+en §2.5— había observado, mientras hacía sus experimentos sobre ondas
+electromagnéticas, que cuando la luz ultravioleta incide sobre una
+superficie metálica, la superficie emite electrones. Lo notó como una
+curiosidad colateral. Otros físicos, especialmente Philipp Lenard, lo
+estudiaron sistemáticamente durante los años siguientes y registraron
+tres observaciones que la teoría ondulatoria de Maxwell no podía
+explicar.
+
+**Primera observación.** La energía cinética de los electrones emitidos
+depende **únicamente de la frecuencia** de la luz incidente, no de su
+intensidad. Aumentar la intensidad de la luz aumenta el número de
+electrones emitidos, pero no la energía individual de cada uno.
+
+**Segunda observación.** Si la frecuencia de la luz es menor que cierto
+umbral característico del metal, **no salen electrones**, por intensa
+que sea la iluminación. Una luz roja muy brillante no arranca electrones
+de cierto metal; una luz ultravioleta muy débil sí los arranca.
+
+**Tercera observación.** Por encima del umbral, los electrones salen
+**inmediatamente**. La teoría ondulatoria predecía que un electrón
+debería tardar cierto tiempo en acumular suficiente energía de la onda
+incidente antes de poder escapar. Los experimentos mostraban que la
+emisión era instantánea.
+
+Las tres observaciones eran inexplicables desde Maxwell.
+
+La explicación de Einstein, propuesta en el paper de marzo de 1905, era
+de una elegancia desconcertante. Si la luz consiste en cuantos
+individuales E = hν, entonces:
+
+— Cada cuanto interactúa con un solo electrón, transfiriéndole su
+energía completa. — Si hν es menor que la **función trabajo** *W* del
+metal (la energía mínima necesaria para arrancar un electrón), no sale
+ningún electrón sin importar cuántos cuantos lleguen. Cada cuanto
+individual es demasiado débil. Tener muchos cuantos débiles no equivale
+a tener uno fuerte. — Si hν es mayor que *W*, el electrón sale
+inmediatamente, con energía cinética igual a hν − W. La emisión es
+instantánea porque cada cuanto individual lleva ya la energía
+suficiente; no hay que acumular nada.
+
+La predicción cuantitativa precisa: la energía cinética de los
+electrones emitidos varía **linealmente** con la frecuencia de la luz
+incidente, con una pendiente exactamente igual a la constante de Planck
+*h*.
+
+Robert Millikan, físico estadounidense de la Universidad de Chicago,
+pasó casi una década (1914-1916) intentando refutar experimentalmente
+esta predicción de Einstein. Millikan no creía en los cuantos de luz.
+Diseñó experimentos cada vez más precisos esperando demostrar que
+Einstein estaba equivocado. Falló sistemáticamente: los datos
+confirmaban la fórmula de Einstein con un error inferior al medio por
+ciento. La pendiente de la línea experimental que Millikan obtuvo
+coincidía con la constante de Planck con cinco cifras significativas.
+Millikan recibió el Premio Nobel en 1923 por estos experimentos.
+Einstein lo había recibido dos años antes, en 1921, **específicamente
+por el efecto fotoeléctrico** —no por la relatividad, como suele
+decirse.
+
+La citación oficial del Nobel a Einstein dice, en sus términos exactos:
+*"por sus servicios a la física teórica y, especialmente, por su
+descubrimiento de la ley del efecto fotoeléctrico."*
+
+Lo que la Academia Sueca consideró suficientemente verificado
+experimentalmente para premiar fue precisamente el paper que abrió la
+grieta cuántica, no la teoría que reescribió el espacio y el tiempo.
+
+— ◇ —
+
+
+<VozTejido titulo="Max Planck (1858–1947)">
+
+
+*El revolucionario reluctante que abrió accidentalmente un mundo nuevo*
+
+Max Karl Ernst Ludwig Planck nació en Kiel, Schleswig-Holstein, el 23 de
+abril de 1858. Hijo de Julius Wilhelm Planck, profesor de Derecho
+Constitucional en la Universidad de Kiel y posteriormente en Gotinga,
+descendiente de varias generaciones de juristas y clérigos prusianos. La
+familia inculcaba en sus hijos un profundo respeto por la ley, el orden,
+la tradición y el deber moral —rasgos que marcarían toda la vida
+personal y profesional de Max.
+
+Estudió en las universidades de Múnich y Berlín. Entre sus profesores
+estuvieron **Hermann von Helmholtz** —el mismo Helmholtz de §2.4— y
+Gustav Kirchhoff. La continuidad humana es directa: Helmholtz, que había
+entendido el oído como instrumento físico de precisión, formó al
+estudiante que abriría la puerta a la mecánica cuántica. Doctorado en
+Múnich en 1879, con apenas veintiún años, con una tesis sobre el segundo
+principio de la termodinámica.
+
+Tras una década en Kiel y Múnich, en 1889 fue nombrado sucesor de
+Kirchhoff en la cátedra de Física Teórica de la Universidad de Berlín.
+Ocuparía esa cátedra durante treinta y siete años, hasta su retiro en
+1926.
+
+El **Acto Primero** de su vida científica —el problema histórico que
+enfrentó— fue el cuerpo negro. La física clásica del siglo XIX, en su
+apogeo aparente, parecía no necesitar más que pulir detalles. Maxwell
+había unificado el electromagnetismo. La termodinámica funcionaba. La
+mecánica newtoniana describía con precisión los movimientos celestes y
+terrestres. Pero en el fondo de las ecuaciones de Maxwell aplicadas a la
+radiación térmica había un agujero que nadie podía cerrar. Planck dedicó
+la primera mitad de su carrera a intentar cerrarlo.
+
+El **Acto Segundo** —el insight que aportó— ocurrió, como hemos visto,
+el 14 de diciembre de 1900. Pero la ironía que caracterizó toda la vida
+de Planck fue que él mismo no creía en su descubrimiento como
+descripción de la realidad física. Lo consideraba un truco matemático.
+Durante años intentó eliminar la cuantización de su propia derivación.
+Falló cada vez.
+
+Aquí entra el cameo de Einstein. Cuando el patentador suizo desconocido
+envió en 1905 su paper sobre los cuantos de luz a *Annalen der Physik*,
+el editor responsable era el propio Planck. Planck reconoció
+inmediatamente la calidad del trabajo y lo publicó. Pero estaba
+profundamente incómodo con la extensión que Einstein hacía de su propia
+idea. Para Planck, su cuantización de los osciladores era ya un mal
+necesario; cuantizar la luz misma le parecía ir demasiado lejos.
+**Planck rechazó la hipótesis de los cuantos de luz durante casi dos
+décadas**. No fue hasta que el efecto Compton, en 1922, demostró sin
+ambigüedades que los cuantos de luz transportan momento como partículas,
+que la comunidad física en general aceptó plenamente la propuesta de
+Einstein. Hasta entonces, la mayoría de físicos —Planck el primero—
+prefería ver la cuantización como propiedad de la materia que interactúa
+con la luz, no de la luz misma.
+
+El padre de la teoría cuántica fue, durante décadas, su más reluctante
+defensor.
+
+El **Acto Tercero** —el legado— es vasto y trágico en proporciones
+equivalentes. Planck vivió una de las vidas personales más duras de toda
+la historia de la ciencia. En 1909, su primera esposa Marie Merck murió
+de tuberculosis tras veintidós años de matrimonio feliz, dejándolo con
+dos hijos y dos hijas mellizas. En 1916, su hijo mayor Karl murió en
+combate en la Primera Guerra Mundial. En 1917, su hija Margarete murió
+en parto. En 1919, su hija Emma murió también en parto. Ambas bebés
+sobrevivieron.
+
+Planck siguió trabajando. Recibió el Nobel en 1918, retroactivamente por
+su descubrimiento de 1900. Asistió como figura ya histórica al primer
+Congreso Solvay de 1927 donde Bohr, Heisenberg, Schrödinger y Einstein
+debatieron los fundamentos de la mecánica cuántica que Planck había
+abierto sin proponérselo.
+
+Durante el régimen nazi, Planck —ya en sus setenta años— mantuvo una
+integridad moral excepcional dentro de los límites de su carácter
+conservador. Se entrevistó personalmente con Hitler en mayo de 1933 para
+intentar revertir las políticas raciales contra los científicos judíos.
+Hitler lo escuchó y rechazó cualquier modificación. Planck siguió en
+Alemania, intentando preservar lo que pudiera de la ciencia alemana,
+mientras muchos de sus colegas más célebres —Einstein incluido—
+emigraban.
+
+El final fue terrible. En febrero de 1944, su casa de Berlín-Grunewald
+fue completamente destruida por un bombardeo aliado. Toda su biblioteca
+—miles de volúmenes— y todos sus manuscritos personales se perdieron. El
+3 de enero de 1945, su hijo menor Erwin Planck, implicado en el complot
+del 20 de julio de 1944 contra Hitler, fue ejecutado por la Gestapo.
+Planck había escrito personalmente a Hitler pidiendo clemencia. Hitler
+no respondió.
+
+Cuando los oficiales estadounidenses tomaron Berlín en 1945, evacuaron a
+Planck —ya con ochenta y siete años, viudo de su segunda esposa, que
+había muerto poco antes— a Gotinga. Allí pasó sus últimos dos años de
+vida. Murió el 4 de octubre de 1947, a los ochenta y nueve años. James
+Franck, físico judío al que Planck había protegido, escribió que la
+muerte llegó a Planck *"como una redención"*.
+
+**Frase-puente al capítulo presente:** *"Una nueva verdad científica no
+triunfa convenciendo a sus oponentes y haciéndoles ver la luz, sino más
+bien porque sus oponentes finalmente mueren, y una nueva generación
+crece familiarizada con ella."***<sup>4</sup>**
+
+Esta frase, escrita por Planck en su autobiografía científica que
+apareció póstumamente en 1948, hoy conocida como *el principio de
+Planck*, es de una sabiduría amarga que reverbera más allá de la
+ciencia. Resume la lentitud con la que su propia teoría fue aceptada,
+primero por la comunidad científica, luego —y esta es la ironía más
+profunda— por él mismo.
+
+— ◇ —
+
+**◆**
+
+</VozTejido>
+
+
+<PausaCientifica titulo="Lo que Planck cuantizó y lo que NO cuantizó">
+
+
+**Nivel de evidencia: 1 (consenso establecido) sobre el contenido
+físico.**
+
+✓ **Está documentado y forma parte del consenso científico actual:**
+
+— La energía de los osciladores cuánticos solo puede tener valores
+discretos E = nhν, donde *n* es un entero no negativo. Esto es consenso
+absoluto desde 1900.
+
+— La constante de Planck h ≈ 6,62607015 × 10⁻³⁴ J·s es una de las
+constantes fundamentales del universo. Su valor está fijado actualmente
+por definición exacta en el Sistema Internacional de Unidades (desde la
+redefinición del kilogramo en 2019).
+
+— La hipótesis de Einstein de 1905 sobre cuantos de luz está
+experimentalmente confirmada. El efecto Compton (Arthur Compton,
+1922-23) demostró sin ambigüedades que los cuantos de luz transportan
+momento como partículas. La óptica cuántica del siglo XX y XXI ha
+verificado innumerables veces la realidad física de los fotones
+individuales.
+
+— Einstein recibió el Premio Nobel de Física en 1921 específicamente por
+el descubrimiento de la ley del efecto fotoeléctrico, no por la teoría
+de la relatividad.
+
+⚠️ **Requiere cautela o matización:**
+
+— Planck **no cuantizó la radiación electromagnética**. Cuantizó los
+osciladores cargados que la emiten y absorben en las paredes del cuerpo
+negro. La extensión de la cuantización a la radiación misma fue obra de
+Einstein cinco años después. Esta distinción, frecuentemente borrada en
+literatura divulgativa, es históricamente decisiva.
+
+— El término *catástrofe ultravioleta* lo acuñó Paul Ehrenfest en 1911.
+No formaba parte del vocabulario de Planck en 1900. La narrativa
+simplificada de los libros de texto —*"Planck resolvió la catástrofe
+ultravioleta el 14 de diciembre de 1900"*— es históricamente inexacta.
+Planck llegó a la cuantización a regañadientes, en lo que él mismo
+llamaría *"un acto de desesperación"*, y pasó los siguientes años
+intentando deshacerse de ella.
+
+— La luz es **ondulatoria y corpuscular simultáneamente**. La dualidad
+onda-partícula no es una contradicción sino una descripción más completa
+que la teoría clásica. En diferentes experimentos, la luz manifiesta
+diferentes aspectos. Esto se explorará con detalle en el Capítulo 3.
+
+❌ **Lo que la evidencia no respalda:**
+
+— No hay base física para interpretar la cuantización de Planck como
+evidencia de que *"la realidad es discreta"* en sentido metafísico
+amplio. La cuantización es propiedad específica de la energía en
+sistemas físicos cuánticos. No es propiedad ontológica del universo
+entero. Las afirmaciones divulgativas que extienden la cuantización a
+categorías filosóficas o espirituales generales son metáforas, no
+consecuencias derivables de la física.
+
+— No hay base para extender literalmente E = hν a fenómenos
+macroscópicos como la conciencia humana, las emociones o las relaciones
+interpersonales. Estas extensiones, frecuentes en literatura divulgativa
+pseudo-científica, son metáforas que pueden ser útiles como tales, pero
+**no son ciencia derivada de Planck o de Einstein**. La constante *h* es
+tan pequeña que en cualquier sistema macroscópico —incluyendo el cerebro
+humano y sus procesos— sus efectos cuantizadores son imperceptibles.
+
+**Referencia primaria:** Planck, M. (1900). «Zur Theorie des Gesetzes
+der Energieverteilung im Normalspektrum.» *Verhandlungen der Deutschen
+Physikalischen Gesellschaft*, 2, 237–245.
+
+**Referencia primaria:** Einstein, A. (1905). «Über einen die Erzeugung
+und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt.»
+*Annalen der Physik*, 17(6), 132–148.
+
+**Referencia académica:** Kuhn, T. S. (1978). *Black-Body Theory and the
+Quantum Discontinuity, 1894-1912*. Oxford: Oxford University Press.
+
+**Referencia académica:** Pais, A. (1982). *Subtle is the Lord: The
+Science and the Life of Albert Einstein*. Oxford: Oxford University
+Press.
+
+— ◇ —
+
+**◆**
+
+</PausaCientifica>
+
+## La grieta abierta · puente a §2.7
+
+Planck había cuantizado los osciladores en las paredes del cuerpo negro.
+Einstein había cuantizado la luz misma. La grieta abierta en el edificio
+de la física clásica se había ensanchado durante el primer lustro del
+siglo XX hasta convertirse en un umbral por el que pronto entraría una
+imagen completamente nueva del cosmos.
+
+Pero quedaba una pregunta natural, técnicamente precisa, que el propio
+Einstein se hizo en 1907. Si los osciladores que emiten luz en el cuerpo
+negro están cuantizados, ¿qué pasa con los osciladores que **no emiten
+luz** pero que vibran de todos modos? ¿Qué pasa con las vibraciones
+mecánicas dentro de los sólidos —los átomos vibrando alrededor de sus
+posiciones de equilibrio en una red cristalina— que almacenan energía
+térmica sin emitir radiación electromagnética?
+
+La física clásica de los sólidos predecía un valor específico, el
+llamado *límite de Dulong-Petit*, para la capacidad calorífica de los
+cristales a cualquier temperatura. La predicción funcionaba bien a
+temperaturas ambiente y altas. Pero a temperaturas bajas —cerca del cero
+absoluto— las medidas experimentales mostraban algo extraño: la
+capacidad calorífica caía a cero, no permanecía constante. Otra grieta
+clásica.
+
+Einstein, en 1907, propuso una solución natural. Si las vibraciones de
+los osciladores de Planck en las paredes del cuerpo negro están
+cuantizadas, **las vibraciones de los átomos en un sólido también
+deberían estar cuantizadas**. La energía vibratoria mecánica vendría,
+igual que la radiación electromagnética, en paquetes discretos de tamaño
+hν. A temperaturas bajas, esos paquetes mínimos se vuelven demasiado
+grandes comparados con la energía térmica disponible, y los modos
+vibratorios "se congelan": dejan de absorber energía. La capacidad
+calorífica colapsa.
+
+Cinco años después, en 1912, el físico holandés-alemán **Peter Debye**
+refinaría el modelo de Einstein incorporando un espectro continuo de
+frecuencias vibratorias en lugar de una única frecuencia. El resultado,
+conocido como *modelo de Debye*, ajustaba los datos experimentales con
+precisión extraordinaria a todas las temperaturas. Esa propuesta
+—vibraciones cuantizadas de la materia misma— daría origen al concepto
+de **fonón**: el cuanto de vibración mecánica.
+
+La materia, no solo la luz, vibra cuánticamente.
+
+Esta hipótesis, aparentemente técnica y restringida al estudio de los
+sólidos a temperaturas bajas, contiene algo que reverberará a lo largo
+de todo el resto del libro. Si los átomos de un cristal vibran en
+paquetes discretos de energía, ¿qué hay de los átomos de una proteína?
+¿De una membrana celular? ¿De una neurona? ¿Hay, en algún rincón de la
+biología, lugar donde la cuantización de la vibración mecánica se vuelva
+relevante a escalas que el ser humano puede sentir?
+
+A esa pregunta —y al concepto de fonón que la hace formulable— está
+dedicada la siguiente sección. Allí termina, oficialmente, el cruce
+desde la física clásica hacia el corazón cuántico del libro.
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+**Notas y referencias**
+
+**<sup>1</sup>** Para una exposición moderna del problema del cuerpo
+negro y su contexto histórico, ver: Kuhn, T. S. (1978). *Black-Body
+Theory and the Quantum Discontinuity, 1894-1912*. Oxford: Oxford
+University Press. Para la relación de Planck con Helmholtz y Kirchhoff
+durante su formación en Berlín, ver: Heilbron, J. L. (1986). *The
+Dilemmas of an Upright Man: Max Planck and the Fortunes of German
+Science*. Berkeley: University of California Press.
+
+**<sup>2</sup>** Planck, M. (1900). «Zur Theorie des Gesetzes der
+Energieverteilung im Normalspektrum.» *Verhandlungen der Deutschen
+Physikalischen Gesellschaft*, 2, 237–245. La derivación completa fue
+presentada el 14 de diciembre de 1900 ante la Sociedad Física Alemana en
+Berlín. Una versión ampliada apareció en *Annalen der Physik* en marzo
+de 1901. La fecha del 14 de diciembre se considera convencionalmente la
+fecha de nacimiento de la teoría cuántica, aunque, como la
+historiografía moderna ha mostrado, la cuantización completa solo fue
+claramente reconocida como tal en años posteriores.
+
+**<sup>3</sup>** Einstein, A. (1905). «Über einen die Erzeugung und
+Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt.»
+*Annalen der Physik*, 17(6), 132–148. Recibido por la revista el 17 de
+marzo de 1905, publicado el 9 de junio de 1905. El término *fotón* para
+los cuantos de luz fue introducido por el químico estadounidense Gilbert
+N. Lewis en una carta a *Nature* en 1926.
+
+**<sup>4</sup>** Planck, M. (1948). *Wissenschaftliche Selbstbiographie.
+Mit der von Max von Laue gehaltenen Traueransprache*. Leipzig: J. A.
+Barth Verlag. Edición inglesa: *Scientific Autobiography and Other
+Papers* (1949), New York: Philosophical Library. La frase original
+alemana es: *"Eine neue wissenschaftliche Wahrheit pflegt sich nicht in
+der Weise durchzusetzen, daß ihre Gegner überzeugt werden und sich als
+belehrt erklären, sondern vielmehr dadurch, daß ihre Gegner allmählich
+aussterben und daß die heranwachsende Generation von vornherein mit der
+Wahrheit vertraut gemacht ist."* Hoy se conoce como *el principio de
+Planck*.

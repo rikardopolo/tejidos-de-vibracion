@@ -1,0 +1,84 @@
+---
+/**
+ * UmbralPoetico · bloque editorial de apertura literaria del capítulo.
+ *
+ * Aparece despues del Anclaje Experiencial y antes de las §-secciones
+ * canonicas. Es preludio narrativo, no cita corta — por eso no es
+ * variant de <Pullquote>. Tipografia italic ancha, eyebrow propio,
+ * margenes generosos, divisor inferior.
+ *
+ * Hermano semantico de <AnclajeExperiencial /> y <CierreVibracional />
+ * pero NO ritual: aqui no hay ejercicio corporal, solo encuadre
+ * literario que predispone la lectura del capitulo.
+ *
+ * Props:
+ *   titulo: opcional · ej. "Cuando el silencio se hace forma"
+ *           (Cap. 2 v2.2 lo titula simplemente "Umbral Poetico" sin subtitulo)
+ */
+interface Props {
+  titulo?: string;
+}
+
+const { titulo } = Astro.props;
+---
+
+<section class="umbral-poetico" aria-label="Umbral poetico del capitulo">
+  <p class="umbral-poetico__eyebrow">Umbral Poetico</p>
+  {titulo && <h2 class="umbral-poetico__title">{titulo}</h2>}
+  <div class="umbral-poetico__body">
+    <slot />
+  </div>
+  <div class="umbral-poetico__flourish" aria-hidden="true">&#9674;</div>
+</section>
+
+<style>
+  .umbral-poetico {
+    margin: 3.5rem auto 4rem;
+    padding: 0 1rem;
+    max-width: 34rem;
+    text-align: center;
+  }
+  .umbral-poetico__eyebrow {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+    margin: 0 0 1.5rem;
+  }
+  .umbral-poetico__title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.4rem;
+    line-height: 1.4;
+    color: var(--tinta);
+    margin: 0 0 1.75rem;
+  }
+  .umbral-poetico__body {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: var(--tinta-suave);
+    text-align: left;
+  }
+  .umbral-poetico__body :global(p) {
+    margin: 0 0 1.1rem;
+  }
+  .umbral-poetico__body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .umbral-poetico__flourish {
+    margin: 2.5rem auto 0;
+    color: var(--oro-suave);
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  @media (max-width: 640px) {
+    .umbral-poetico { margin: 2.5rem auto 3rem; }
+    .umbral-poetico__title { font-size: 1.2rem; }
+    .umbral-poetico__body { font-size: 1rem; }
+  }
+</style>

@@ -1,0 +1,748 @@
+---
+chapter: "cap-2-ciencia-escuchar"
+kind: "numbered"
+num: "2.3"
+title: "La Ecuacion de Onda"
+subtitle: "D'Alembert, Euler, Bernoulli · el siglo en que la onda aprendio a calcularse"
+order: 6
+headerLabel: "Cap. 2 · §2.3"
+publishedAt: 2026-05-09
+authors:
+  - "Ricardo Polo"
+tags:
+  - "cap-2"
+  - "ecuacion-onda"
+  - "d-alembert"
+  - "euler"
+  - "bernoulli"
+  - "superposicion-modal"
+---
+
+import VozTejido from '@/components/book/VozTejido.astro';
+import PausaCientifica from '@/components/book/PausaCientifica.astro';
+
+*Tres mentes en disputa por la forma de la vibración*
+
+— ◇ —
+
+## El problema que Mersenne dejó abierto
+
+Mersenne había resuelto la cuerda. Su fórmula f = (1/2L)·√(T/μ) permitía
+calcular la frecuencia fundamental de cualquier cuerda tensa antes de
+pulsarla. Cuatrocientos años después, todos los lutieres del mundo
+siguen construyendo instrumentos sobre esa ecuación.
+
+Pero algo seguía sin explicar.
+
+Si tomas dos cuerdas afinadas a la misma frecuencia fundamental —una en
+un violín, otra en una guitarra— y las pulsas con la misma intensidad,
+suenan completamente distintas. El violín tiene una calidez sostenida
+que la guitarra no produce. La guitarra tiene un ataque percusivo y un
+decaimiento que el violín no consigue. Y sin embargo, según Mersenne,
+*deberían sonar igual*. La fórmula es idéntica para ambas: misma
+longitud, misma tensión, misma masa por unidad de longitud darían como
+resultado la misma nota.
+
+Algo estaba escapando a la ecuación.
+
+Ese algo —los músicos lo sabían desde Pitágoras, pero nadie lo había
+matematizado— eran los **armónicos**. Cuando una cuerda real vibra, no
+produce un solo tono puro. Produce una superposición simultánea de
+muchos tonos: el fundamental, que el oído percibe como nota dominante, y
+una serie infinita de tonos secundarios cuyas frecuencias son múltiplos
+enteros del fundamental. El segundo armónico vibra al doble de
+frecuencia. El tercero, al triple. El cuarto, al cuádruple. Y así hasta
+el límite del oído humano y más allá.
+
+La proporción exacta entre las amplitudes de estos armónicos es lo que
+llamamos **timbre**. Es la firma acústica de cada instrumento. Es por
+eso que distinguimos un violín de una guitarra incluso cuando tocan la
+misma nota. Es por eso que reconocemos la voz de un ser querido en una
+llamada telefónica antes de que haya dicho su nombre.
+
+Para describir esta complejidad, la fórmula de Mersenne no bastaba. Se
+necesitaba una herramienta matemática completamente nueva. Una
+herramienta capaz de capturar, no un objeto vibrando, sino **la
+vibración misma como entidad**, en cada punto de la cuerda y en cada
+instante del tiempo, simultáneamente.
+
+Esa herramienta tardaría casi un siglo en aparecer. Y cuando apareció,
+tres mentes europeas se enzarzaron durante cuarenta años en una disputa
+tan fértil que terminó refundando, no solo la física del sonido, sino el
+concepto matemático mismo de **función**.
+
+— ◇ —
+
+**◆**
+
+**Fórmula 2.3** · **Solución general de D'Alembert · ondas viajeras**
+
+u(x,t) = f(x − ct) + g(x + ct)
+
+> **Donde:**
+>
+> ***u(x,t)*** · desplazamiento total en posición x e instante t
+>
+> ***f(x − ct)*** · onda viajera hacia la derecha con perfil arbitrario
+> f, propagándose con velocidad c
+>
+> ***g(x + ct)*** · onda viajera hacia la izquierda con perfil
+> arbitrario g, propagándose con velocidad c
+>
+> ***c*** · velocidad de propagación de la onda
+>
+> *Solución general de la ecuación de onda (Fórmula 2.2). Cualquier
+> perturbación en una cuerda extendida se descompone en dos ondas
+> viajeras independientes propagándose en sentidos opuestos. En una
+> cuerda con extremos fijos, las dos ondas viajeras se generan por
+> reflexiones en los extremos y se superponen continuamente. El
+> resultado de esa superposición es lo que el oído percibe como nota
+> sostenida. La solución es válida para perfiles arbitrarios — esta
+> libertad funcional fue precisamente la que abriría la disputa de cinco
+> años entre D'Alembert y Euler sobre qué cuenta como una función
+> legítima.*
+
+## 1747 · D'Alembert escribe la primera ecuación diferencial parcial de la historia
+
+En 1717, una madrugada de noviembre, una recién nacida fue abandonada en
+las escaleras de la iglesia parisina de Saint-Jean-le-Rond. Su madre era
+Madame de Tencin, aristócrata libertina y novelista; su padre, un
+oficial de artillería llamado Destouches. La aristócrata no podía
+permitirse el escándalo de una hija ilegítima. El oficial, en cambio,
+asumió responsabilidad financiera anónima: pagó a una mujer de
+cristalero para que criara al niño, y financió su educación cuando este
+mostró aptitudes notables para las matemáticas.
+
+El expósito recibió, por la iglesia donde fue encontrado, el nombre de
+**Jean le Rond**. Más tarde añadiría el apellido D'Alembert por razones
+que sus biógrafos aún discuten. Y a los treinta años, en 1747, era ya
+uno de los matemáticos más respetados de Europa, miembro de la Academia
+de París, futuro coeditor con Diderot de la *Encyclopédie* —obra cumbre
+del pensamiento ilustrado.
+
+Ese año publicó en las memorias de la Academia de Berlín un paper
+aparentemente modesto: *Recherches sur la courbe que forme une corde
+tendue mise en vibration* —*Investigaciones sobre la curva que forma una
+cuerda tensa puesta en vibración*.**<sup>1</sup>** Sus contemporáneos no
+lo notaron de inmediato, pero acababa de inaugurar una rama entera de
+las matemáticas.
+
+D'Alembert hizo algo que ningún ser humano había hecho antes. Aplicó el
+cálculo diferencial —recién inventado por Newton hacia 1665 y por
+Leibniz hacia 1675— a un objeto extendido **simultáneamente en el
+espacio y en el tiempo**. Hasta entonces, las ecuaciones diferenciales
+describían cómo cambia una variable respecto a otra: cómo cambia la
+posición respecto al tiempo, cómo cambia la velocidad respecto al
+tiempo. D'Alembert necesitaba algo más exigente: cómo cambia el
+desplazamiento de cada punto de la cuerda respecto al tiempo *y*
+respecto a su posición a lo largo de la cuerda, ambas cosas a la vez.
+
+El resultado fue la primera **ecuación diferencial parcial** de la
+historia matemática:**<sup>2</sup>**
+
+**Fórmula 2.2** · **Ecuación de onda unidimensional (D'Alembert)**
+
+∂²u/∂t² = c² · ∂²u/∂x²
+
+> **Donde:**
+>
+> ***u(x,t)*** · desplazamiento de la cuerda en posición x e instante t
+> (metros)
+>
+> ***∂²/∂t²*** · derivada parcial segunda respecto al tiempo
+> (aceleración local del punto)
+>
+> ***∂²/∂x²*** · derivada parcial segunda respecto al espacio (curvatura
+> local de la cuerda)
+>
+> ***c*** · velocidad de propagación de la onda en el medio, c = √(T/μ)
+> (metros por segundo)
+>
+> *Publicada por Jean le Rond D'Alembert en Recherches sur la courbe que
+> forme une corde tendue mise en vibration (Berlín, 1747). Primera
+> ecuación diferencial parcial de la historia de la física. Maxwell
+> escribiría sus ecuaciones del campo electromagnético en este lenguaje,
+> Schrödinger su ecuación cuántica en este lenguaje, Einstein las
+> ecuaciones del campo gravitacional en este lenguaje. Toda la física
+> teórica posterior es descendiente del expósito de Saint-Jean-le-Rond.
+> La constante c que aparece aquí, derivable de Mersenne (Fórmula 2.1)
+> como c = √(T/μ), es la velocidad a la que las perturbaciones se
+> propagan a lo largo de la cuerda.*
+
+No te asustes de los símbolos. La idea, traducida a lenguaje natural, es
+asombrosamente simple:
+
+> La aceleración vertical de cada punto de la cuerda es proporcional a
+> la curvatura de la cuerda en ese punto.
+
+Imagina la cuerda en reposo, recta y horizontal. Ahora desplaza un solo
+punto hacia arriba. Ese punto está, instantáneamente, más curvado que
+sus vecinos. La curvatura local genera una fuerza restauradora que lo
+empuja hacia abajo. Mientras desciende, transmite el desplazamiento a
+sus vecinos, que también se curvan, también son empujados, también
+empujan a los suyos. La perturbación se propaga.
+
+La solución que D'Alembert encontró para su propia ecuación es de una
+elegancia que sigue dando escalofríos a los estudiantes de física:
+
+u(x,t) = f(x − ct) + g(x + ct)
+
+Cualquier perturbación en una cuerda se descompone en exactamente **dos
+ondas viajeras**: una que se mueve hacia la derecha a velocidad c, otra
+que se mueve hacia la izquierda a la misma velocidad. La velocidad c no
+es arbitraria: es exactamente √(T/μ), la misma combinación de tensión y
+densidad que aparece en la fórmula de Mersenne. La cuerda de Mersenne y
+la cuerda de D'Alembert son la misma cuerda. Pero D'Alembert capturó
+algo que Mersenne no podía: el **proceso temporal completo** de la
+vibración.
+
+Imagen mental: tirar dos piedras en un estanque alargado, una desde cada
+extremo. Cada piedra genera una onda circular que se propaga hacia el
+centro. Cuando ambas ondas se encuentran, sus oscilaciones se suman
+punto por punto. En la cuerda con extremos fijos, las dos ondas viajeras
+—generadas por las reflexiones en los extremos— se superponen
+continuamente. El resultado de esa superposición es lo que el oído
+percibe como nota sostenida.
+
+D'Alembert acababa de inventar el lenguaje matemático con el que toda la
+física teórica posterior se escribiría. Maxwell escribiría sus
+ecuaciones del campo electromagnético en este lenguaje. Schrödinger
+escribiría su ecuación cuántica en este lenguaje. Einstein escribiría
+las ecuaciones del campo gravitacional en este lenguaje. Cada vez que un
+físico moderno modela un fenómeno que cambia en el espacio y en el
+tiempo —desde el clima hasta las ondas gravitacionales— está escribiendo
+una ecuación diferencial parcial. Todas son nietas del expósito de
+Saint-Jean-le-Rond.
+
+— ◇ —
+
+**◆**
+
+## 1748 · Euler entra al ruedo
+
+A más de mil kilómetros de París, en la corte de Federico el Grande de
+Prusia, otro matemático leyó el paper de D'Alembert con una mezcla de
+admiración y escepticismo. **Leonhard Euler** tenía cuarenta años, era
+suizo de nacimiento y berlinés por contrato, y publicaba con tal
+velocidad que sus colegas bromeaban diciendo que Euler escribía papers
+con la misma facilidad con que otros respiraban. A lo largo de su vida
+produciría más de ochocientas publicaciones —cifra que ningún
+matemático, antes ni después, ha igualado.
+
+En 1748, Euler publicó su propia versión del problema: *De vibratione
+chordarum exercitatio* —*Ejercicio sobre la vibración de las
+cuerdas*.**<sup>3</sup>** Aceptaba la ecuación de D'Alembert sin
+reservas, pero discrepaba en un punto sutil y decisivo: las
+**condiciones iniciales** que la ecuación admite.
+
+D'Alembert exigía que la forma inicial de la cuerda fuera una función
+matemáticamente suave —derivable en todas partes, sin esquinas. Para él,
+una "función" digna de ese nombre era una expresión analítica única,
+elegante, sin discontinuidades.
+
+Euler protestó. Cuando un guitarrista pulsa una cuerda con la uña,
+decía, la cuerda adopta una forma triangular —dos segmentos rectos que
+se encuentran en un ángulo agudo en el punto de pulsación. Esa forma
+tiene una **derivada discontinua** justo en el vértice. Si la matemática
+de D'Alembert no admitía esa cuerda real, peor para la matemática.
+
+La disputa parecía técnica. Era, en realidad, profundamente filosófica.
+Euler y D'Alembert no estaban discutiendo sobre cuerdas: estaban
+discutiendo sobre **qué es una función**. La pregunta era seria: ¿una
+función debe ser una expresión analítica única, o puede definirse pieza
+a pieza, con saltos y esquinas? La respuesta determinaría qué clase de
+fenómenos físicos la matemática podía describir.
+
+La discusión epistolar entre ambos —ambos respetuosos, ambos brillantes,
+ambos terriblemente tercos— ocupó cinco años. Hasta que en 1753 alguien
+irrumpió con una propuesta que ninguno de los dos había contemplado.
+
+— ◇ —
+
+**◆**
+
+**Figura 2.2** · **★ Modos normales de la cuerda · superposición de
+armónicos**
+
+***[ F I G U R A E N P R E P A R A C I Ó N ]***
+
+*[ Espacio reservado para figura vectorial ]*
+
+> **Especificación para diagramación:** *Cinco paneles apilados
+> verticalmente o en columna estrecha, cada uno mostrando un modo normal
+> de una cuerda con extremos fijos: k=1 (fundamental, sin nodos
+> internos), k=2 (un nodo central), k=3 (dos nodos), k=4 (tres nodos),
+> k=5 (cuatro nodos). En cada panel, dibujar la sinusoide del modo en
+> líneas indigo, marcar los nodos como puntos azul nocturno, y etiquetar
+> la frecuencia f_k = kc/2L. Sexto panel inferior mostrando la
+> superposición ponderada: u(x,t) = Σ aₖ · sin(kπx/L) con aₖ
+> representativas para sugerir un timbre real (por ejemplo a₁=1.0,
+> a₂=0.5, a₃=0.3, a₄=0.15, a₅=0.05).*
+>
+> **Nota técnica:** *Crear figura nueva, vectorial. Esta figura es
+> pedagógicamente irrenunciable porque visualiza simultáneamente la
+> fórmula de Bernoulli (Fórmula 2.4) y el concepto físico del timbre.
+> Considerar añadir, al pie del sexto panel, una pequeña etiqueta de
+> "timbre resultante" sugiriendo que la suma de modos es lo que
+> distingue un piano de un violín de una guitarra.*
+>
+> **Figura 2.2.** Los primeros cinco modos normales de una cuerda con
+> extremos fijos. Cada modo k oscila a una frecuencia f_k = kc/2L
+> (Fórmula 2.4). El sexto panel muestra la superposición ponderada:
+> cualquier vibración real de una cuerda es suma de todos los modos con
+> amplitudes determinadas por las condiciones iniciales. Esa
+> superposición ponderada es lo que el oído percibe como timbre del
+> instrumento.
+
+## 1753 · Bernoulli y la superposición modal
+
+**Daniel Bernoulli** tenía cincuenta y tres años, había crecido entre
+matemáticos —su padre Johann y su tío Jakob eran las figuras dominantes
+de la matemática europea de la generación anterior— y era, contra toda
+expectativa familiar, **físico antes que matemático puro**. Mientras
+D'Alembert y Euler peleaban sobre la naturaleza analítica de las
+funciones, Bernoulli observaba cuerdas reales con oído de músico y mente
+de físico.
+
+Y veía algo que ellos pasaban por alto.
+
+Una cuerda real, cuando vibra, no produce *una* forma. Produce muchas
+formas simultáneas, superpuestas. La fundamental es solo la más visible:
+una sinusoide simple que va y vuelve entre los dos extremos fijos. Pero
+detrás de la fundamental, oscilando al doble de frecuencia, hay una
+segunda sinusoide con un nodo en el centro. Detrás de esta, oscilando al
+triple, hay una tercera con dos nodos. Y así sucesivamente. La cuerda
+completa es la **suma simultánea** de todas estas vibraciones modales.
+
+Bernoulli propuso, en su paper de 1753, una solución radicalmente
+distinta a la de D'Alembert:**<sup>4</sup>**
+
+∞
+
+**Fórmula 2.4** · **Solución modal de Bernoulli · superposición de
+armónicos**
+
+u(x,t) = Σ aₖ · sin(kπx/L) · cos(kπct/L)
+
+> **Donde:**
+>
+> ***Σ*** · sumatoria sobre todos los modos k = 1, 2, 3, ... hasta
+> infinito
+>
+> ***aₖ*** · amplitud del k-ésimo modo (depende de las condiciones
+> iniciales de la cuerda)
+>
+> ***sin(kπx/L)*** · perfil espacial del k-ésimo modo, con k − 1 nodos
+> internos en (0, L)
+>
+> ***cos(kπct/L)*** · evolución temporal del k-ésimo modo, oscilando con
+> frecuencia f_k = kc/2L
+>
+> ***L*** · longitud de la cuerda
+>
+> ***c*** · velocidad de propagación, c = √(T/μ)
+>
+> *Propuesta por Daniel Bernoulli en su paper de 1753 a la Academia de
+> Berlín. Una cuerda real produce simultáneamente todos los armónicos:
+> la fundamental (k=1, sin nodos internos), el primer sobretono (k=2, un
+> nodo central), el segundo sobretono (k=3, dos nodos), y así
+> sucesivamente. La superposición ponderada de estos modos define el
+> timbre del instrumento. Esta fórmula precede en cincuenta años a
+> Fourier (1807) y contiene implícitamente la idea fundamental del
+> análisis espectral: cualquier vibración compleja se descompone en suma
+> de oscilaciones puras.*
+
+No te asustes de la sumatoria infinita. Lo que dice es esto: el
+desplazamiento de la cuerda en cualquier punto y en cualquier instante
+es la suma de infinitos modos sinusoidales, cada uno con su amplitud
+propia aₖ, cada uno vibrando a un múltiplo entero de la frecuencia
+fundamental.
+
+Imagen pedagógica: un coro donde muchas voces cantan simultáneamente
+notas distintas pero matemáticamente relacionadas. La cuerda no canta
+una nota: canta una **sinfonía interna** donde el oído percibe la
+fundamental como tono dominante y los armónicos como timbre. La
+proporción exacta entre las amplitudes aₖ —cuánta energía tiene cada
+armónico— es lo que distingue un violín de una guitarra, una flauta de
+una voz humana, un piano de un sintetizador.
+
+Esta solución, modesta en apariencia, capturaba lo que la solución de
+D'Alembert no podía: el **timbre**. Y abría la puerta a algo aún más
+profundo: cualquier vibración compleja —no solo la de una cuerda, sino
+la de cualquier sistema oscilante— podía analizarse como suma de modos
+simples.
+
+Cualquier sintetizador musical contemporáneo opera sobre el principio de
+Bernoulli. Cualquier ecualizador. Cualquier banco de sonido digital.
+Cualquier algoritmo de compresión MP3. La música electrónica entera,
+desde Stockhausen hasta el último álbum producido en un estudio, es
+aplicación práctica de la solución de un físico suizo de 1753.
+
+Pero D'Alembert y Euler **rechazaron** la propuesta. Y aquí la historia
+se vuelve filosóficamente fascinante.
+
+— ◇ —
+
+**◆**
+
+## La controversia oculta · ¿Qué es una función?
+
+D'Alembert y Euler aceptaban que la solución de Bernoulli funcionaba
+para casos particulares. Lo que negaban era que fuera **general**: que
+toda forma posible de cuerda inicial pudiera representarse como suma
+infinita de senos.
+
+«Una sinusoide es una curva muy específica —argumentaba Euler—. ¿Cómo va
+una suma de sinusoides a producir, por ejemplo, una cuerda con punta
+angular en el centro?»
+
+D'Alembert iba más lejos: «Aunque matemáticamente la suma converja,
+físicamente no puede ser real. La superposición de vibraciones de alta
+frecuencia sobre las de baja frecuencia produciría —usando un término
+que el siglo XX llamará *distorsión por intermodulación*— ruidos que el
+oído debería percibir y no percibe.»
+
+Bernoulli respondió con una frase que se conserva en sus papers de 1755
+y que los historiadores citan como inicio simbólico del divorcio entre
+matemática pura y física experimental:
+
+> «Hermosa matemática, ¿pero qué tiene que ver con cuerdas vibrantes?»
+
+La frase iba dirigida contra las soluciones puramente analíticas de
+D'Alembert. Bernoulli la escribía con la frustración del físico que ve a
+los matemáticos perderse en formalismos elegantes y olvidar el fenómeno
+real que motivó la pregunta.
+
+La pelea, aparentemente sobre cuerdas, era en realidad sobre **qué es
+una función**:
+
+— **D'Alembert:** una función debe ser una expresión analítica única,
+suave, derivable en todas partes. — **Euler:** una función puede tener
+derivadas discontinuas; admitamos cuerdas con puntas angulares. —
+**Bernoulli:** una función puede ser una suma infinita de funciones más
+simples.
+
+Las tres posturas eran irreconciliables con las herramientas del siglo
+XVIII. Ninguno de los tres podía probar formalmente que el otro estaba
+equivocado. Y ninguno podía abandonar su postura sin renunciar a una
+intuición que sentía como verdadera.
+
+La controversia obligó a la matemática del siglo XIX a refundar el
+concepto de función desde sus cimientos. Augustin-Louis Cauchy, Bernhard
+Riemann, Karl Weierstrass, Peter Gustav Lejeune Dirichlet —cada uno
+amplió el concepto en respuesta directa o indirecta a la grieta abierta
+por la cuerda vibrante. La función moderna, esa entidad abstracta que
+cualquier estudiante de cálculo manipula sin pensarlo, nació de tres
+matemáticos peleando durante cuarenta años por una cuerda.
+
+La vindicación retrospectiva de Bernoulli llegó en 1822, casi setenta
+años después de su disputa con Euler. **Joseph Fourier**, estudiando la
+conducción del calor —un problema completamente distinto al de la
+cuerda— demostró que cualquier función razonable puede representarse
+como suma infinita de senos y cosenos. Bernoulli tenía razón. Solo que
+la matemática necesaria para probarlo no existía aún en su tiempo.
+
+Hoy llamamos a esa demostración **análisis de Fourier**, y es una de las
+herramientas más poderosas de toda la ciencia. Cada vez que un teléfono
+móvil descompone una señal de voz en sus componentes espectrales antes
+de transmitirla, está aplicando el principio de Bernoulli vindicado por
+Fourier. La cuerda vibrante de tres ilustrados europeos vive, hoy,
+dentro de cada llamada telefónica del planeta.
+
+— ◇ —
+
+
+<VozTejido titulo="Daniel Bernoulli (1700–1782)">
+
+
+*El físico suizo que escuchó la cuerda completa*
+
+Daniel Bernoulli nació en Groninga, en los Países Bajos, el 8 de febrero
+de 1700. La fecha y el lugar son menos importantes que el apellido.
+Pertenecía a la dinastía matemática más célebre de Europa: hijo de
+Johann Bernoulli, sobrino de Jakob Bernoulli, y miembro de una familia
+que durante tres generaciones dominaría —y a veces avergonzaría con sus
+disputas internas— la matemática europea.
+
+Su padre Johann había sido alumno de Leibniz y se había hecho un nombre
+desarrollando el cálculo infinitesimal en problemas concretos: la curva
+de la cadena colgante, el problema de la braquistócrona, el cálculo de
+variaciones. Era brillante, ambicioso y, según todos los testimonios,
+profundamente competitivo —incluso con sus propios hijos.
+
+El joven Daniel mostró pronto talento matemático. Su padre, sin embargo,
+le prohibió dedicarse a la matemática como carrera, argumentando que no
+daba para vivir. Lo presionó para estudiar medicina. Daniel obedeció: se
+doctoró en Basilea con una tesis sobre la respiración. Pero seguía
+haciendo matemáticas en secreto, y en 1724, a los veinticuatro años,
+publicó *Exercitationes mathematicae* —*Ejercicios matemáticos*—, su
+primer libro científico.
+
+El libro le valió una invitación a la nueva Academia de Ciencias de San
+Petersburgo, fundada por Pedro el Grande. Daniel viajó a Rusia con su
+hermano Nicolás —que moriría poco después de fiebre, dejando al joven
+Bernoulli devastado— y allí coincidió con un amigo de la infancia que
+también había sido alumno de Johann Bernoulli en Basilea: **Leonhard
+Euler**.
+
+San Petersburgo durante la década de 1720 fue uno de los lugares más
+extraordinarios de la historia de la ciencia. En esa academia recién
+fundada, en una ciudad apenas construida sobre los pantanos del Báltico,
+dos jóvenes suizos —Daniel y Leonhard— sentaron las bases de la mecánica
+de fluidos, la teoría cinética de gases, la mecánica de oscilaciones.
+Trabajaron juntos, vivieron en habitaciones contiguas, discutieron
+problemas hasta la madrugada. Era una colaboración que ninguno
+olvidaría, ni siquiera décadas después, cuando se enfrentarían en lados
+opuestos de la disputa por la cuerda vibrante.
+
+El **Acto Primero** de la vida científica de Bernoulli —el problema
+histórico que enfrentó— fue la dificultad de hacerse oír como físico en
+un mundo que reservaba el prestigio para los matemáticos puros. Daniel
+no veía las matemáticas como un fin en sí mismas: las veía como un
+instrumento para describir la naturaleza. Cuando estudiaba un péndulo
+doble, una cuerda con masas distribuidas, un fluido en movimiento, un
+gas comprimido, no buscaba la elegancia formal: buscaba la **estructura
+física** del fenómeno. Esa preferencia le costó respeto en círculos
+donde la matemática pura era considerada superior.
+
+El **Acto Segundo** —el insight que aportó— fue una de las intuiciones
+más fecundas de toda la física clásica. Bernoulli comprendió, ya en sus
+trabajos sobre péndulo doble entre 1733 y 1742, que cualquier sistema
+oscilante complejo puede descomponerse en **modos normales**:
+vibraciones simples superpuestas, cada una con su frecuencia propia.
+Esta idea, nacida del estudio de masas conectadas por resortes, se
+generalizaba a la cuerda continua, a las membranas, a las columnas de
+aire, a cualquier sistema vibrante.
+
+Cuando aplicó la idea a la cuerda vibrante en 1753, su intuición física
+estaba casi cien años más avanzada que las herramientas matemáticas
+disponibles para justificarla rigurosamente. Por eso D'Alembert y Euler
+la rechazaron: su intuición física superaba su demostración matemática.
+Bernoulli no se ofendió ni cedió. Mantuvo su postura con la calma del
+físico que confía en lo que sus oídos y sus instrumentos le dicen,
+aunque la matemática tarde en alcanzarlo.
+
+El **Acto Tercero** —el legado— excede en mucho la cuerda vibrante.
+
+Bernoulli es también el autor del **principio que lleva su apellido** en
+hidrodinámica: la relación entre velocidad y presión en un fluido en
+movimiento, base teórica de la sustentación aerodinámica. Cada avión que
+vuela hoy, cada pájaro que planea, cada vela que captura el viento,
+opera sobre el principio de Bernoulli. Su libro *Hydrodynamica*,
+publicado en 1738 mientras aún estaba en San Petersburgo, contiene
+también la primera formulación de la **teoría cinética de gases**: la
+idea de que la presión de un gas resulta del impacto de millones de
+partículas microscópicas en movimiento. Esa intuición tendría que
+esperar a Maxwell y Boltzmann, un siglo después, para ser desarrollada
+plenamente.
+
+Murió en Basilea el 17 de marzo de 1782, a los ochenta y dos años, sin
+ver vindicada su solución de la cuerda vibrante. Fourier publicaría su
+demostración cuarenta años después de la muerte de Bernoulli.
+
+Pero el legado más profundo de Bernoulli, para los efectos de este
+libro, es otro. La idea de que un sistema físico puede existir
+simultáneamente en **superposición de muchos modos vibratorios** —cada
+uno con su amplitud propia— es exactamente la idea que la mecánica
+cuántica adoptaría en 1926.
+
+Cuando un electrón existe en superposición de estados cuánticos
+—fenómeno que veremos con detalle en el Capítulo 3 y que es uno de los
+hechos más extraños de toda la física moderna— está haciendo, a escala
+atómica, lo mismo que la cuerda de un violín a escala humana: vibrar en
+muchos modos a la vez, cada modo con su amplitud propia, todos
+simultáneos. La cuerda tiene fundamental + armónicos. El electrón tiene
+estados base + estados excitados.
+
+**Frase-puente al capítulo presente:** *Bernoulli no resolvió la cuerda.
+Resolvió, sin saberlo, la estructura matemática del universo cuántico.
+Cada vez que la mecánica cuántica describe una partícula como
+superposición de estados, está usando la gramática que un físico suizo
+escribió, en 1753, para describir cómo vibra la cuerda de un violín.*
+
+— ◇ —
+
+**◆**
+
+</VozTejido>
+
+
+<PausaCientifica titulo="La ecuación de onda y sus límites">
+
+
+**Nivel de evidencia: 1 (consenso científico establecido).**
+
+✓ **Está documentado y forma parte del consenso científico:**
+
+— La ecuación de onda clásica ∂²u/∂t² = c²·∂²u/∂x², formulada por
+D'Alembert en 1747, es la primera ecuación diferencial parcial de la
+historia matemática. Se sigue usando hoy sin modificación para describir
+vibraciones en cuerdas, membranas, columnas de aire, ondas
+electromagnéticas (vía Maxwell, §2.5), ondas sísmicas, ondas
+gravitacionales (LIGO, §2.9) y muchos otros fenómenos físicos.
+
+— La solución de D'Alembert (ondas viajeras f(x − ct) + g(x + ct)) y la
+solución de Bernoulli (superposición modal sinusoidal) son
+**matemáticamente equivalentes** para el caso de cuerdas con extremos
+fijos. La equivalencia, intuida desde el siglo XVIII, fue probada
+rigurosamente por Fourier en 1822 mediante el análisis que hoy lleva su
+nombre.
+
+— La ecuación de Schrödinger (1926) es estructuralmente análoga a la
+ecuación de onda clásica. Su descubrimiento fue conscientemente guiado
+por esta analogía: Schrödinger buscaba lo que él mismo llamó
+*Wellenmechanik* —mecánica ondulatoria— inspirado por la hipótesis de
+Louis de Broglie (1924) sobre el comportamiento ondulatorio de la
+materia.
+
+⚠️ **Requiere cautela o matización:**
+
+— La equivalencia matemática entre las soluciones de D'Alembert y
+Bernoulli **solo se cumple para condiciones de frontera específicas**.
+Para condiciones más generales, la equivalencia requiere herramientas
+matemáticas que solo aparecieron en el siglo XX: teoría de
+distribuciones, espacios de Hilbert, convergencia en sentido débil. El
+siglo XVIII intuyó la verdad pero no podía demostrarla.
+
+— La controversia D'Alembert-Euler-Bernoulli no fue ni una pelea técnica
+menor ni una anécdota anecdótica. Fue una discusión filosófica de fondo
+sobre **qué es una función**, que obligó a la matemática del siglo XIX a
+refundar uno de sus conceptos centrales. La función moderna —esa entidad
+abstracta que cualquier estudiante de cálculo manipula— nació de esta
+disputa.
+
+❌ **Lo que la evidencia no respalda:**
+
+— La analogía entre ecuación de onda clásica y ecuación de Schrödinger
+es **histórica y matemática**, no ontológica. La función u(x,t) de la
+cuerda vibrante representa un desplazamiento físico real en el espacio
+tridimensional ordinario. La función de onda ψ de Schrödinger, en
+cambio, **no vive en el espacio físico ordinario**: para sistemas
+multipartícula, ψ es una función en espacio de configuración con 3N
+dimensiones, donde N es el número de partículas. Es un objeto matemático
+que codifica probabilidades, no una vibración material.
+
+— No hay base, por tanto, para interpretar la ecuación de onda clásica
+como "evidencia científica" de que el universo entero sea, en sentido
+literal, una vibración. La ecuación describe perturbaciones en medios
+físicos específicos. Su universalidad es matemática (la misma ecuación
+describe muchos fenómenos), no metafísica.
+
+— La frase atribuida a Bernoulli «hermosa matemática, ¿pero qué tiene
+que ver con cuerdas vibrantes?» (1755) está documentada en la literatura
+académica reciente, pero su forma exacta y contexto son objeto de
+discusión historiográfica. Lo que no se discute es la postura de fondo
+que la frase resume: el divorcio creciente, ya en el siglo XVIII, entre
+matemática pura y física aplicada.
+
+**Referencia primaria:** D'Alembert, J. L. R. (1749). «Recherches sur la
+courbe que forme une corde tendue mise en vibration.» *Histoire de
+l'Académie Royale des Sciences et Belles-Lettres de Berlin*, 3(1747),
+214–229.
+
+**Referencia primaria:** Bernoulli, D. (1755). «Reflexions et
+éclaircissements sur les nouvelles vibrations des cordes exposées dans
+les mémoires de l'académie de 1747 et 1748.» *Hist. Acad. sc. Berlin*,
+9(1753), 147–172.
+
+**Referencia académica:** Cannon, J. T., & Dostrovsky, S. (1981). *The
+Evolution of Dynamics: Vibration Theory from 1687 to 1742*. New York:
+Springer-Verlag.
+
+**Referencia académica:** Oliveira, A. R. E. (2020). «D'Alembert and the
+Wave Equation: Its Disputes and Controversies.» *Advances in Historical
+Studies*, 9(4), 226–242.
+
+— ◇ —
+
+**◆**
+
+</PausaCientifica>
+
+## Lo que la disputa le entregó al Tejedor
+
+Tres mentes europeas pelearon durante cuarenta años por la forma
+matemática de una cuerda vibrante. Ninguna de las tres ganó la disputa
+en su propio tiempo. Y sin embargo, las tres tenían razón.
+
+D'Alembert tenía razón en que la perturbación se propaga como dos ondas
+viajeras en sentidos opuestos. Euler tenía razón en que la matemática
+debía expandirse para admitir funciones con discontinuidades. Bernoulli
+tenía razón en que toda vibración compleja es superposición de modos
+simples. Tres verdades parciales que la matemática del siglo XIX
+—Cauchy, Dirichlet, Riemann, Weierstrass, Fourier— tendría que coser
+pacientemente en una verdad mayor.
+
+Lo que el Meta-Observador puede sostener al final de esta sección es
+algo más fino que el contenido de las ecuaciones. Es una postura ante el
+conocimiento. **La ciencia no avanza por consenso instantáneo, sino por
+disputas largas entre intuiciones parciales que solo el tiempo y
+herramientas más finas pueden reconciliar.** Tres genios peleando es, a
+veces, más fructífero que tres genios de acuerdo. La grieta es
+generadora.
+
+Y hay algo más, una semilla que esta sección planta y que el Capítulo 3
+hará germinar.
+
+La idea de Bernoulli —que cualquier vibración real es superposición
+simultánea de muchos modos vibratorios, cada uno con su amplitud propia,
+todos coexistiendo— no fue solo la solución de la cuerda. Fue, sin que
+nadie en 1753 pudiera saberlo, la **prefiguración matemática de la
+mecánica cuántica**. Cuando Schrödinger escriba su ecuación en 1926, su
+función de onda ψ describirá un sistema cuántico exactamente como
+Bernoulli describió la cuerda: como suma simultánea de muchos estados,
+cada uno con su coeficiente complejo, todos coexistiendo hasta que una
+medición fuerce uno de ellos.
+
+La diferencia, decisiva, es ontológica: la cuerda de Bernoulli vibra en
+el espacio físico tridimensional. La función de onda de Schrödinger
+vibra en un espacio matemático abstracto que no es el espacio físico. La
+analogía es estructural, no literal. Pero la estructura ya estaba ahí,
+latente, en una ecuación que un físico suizo escribió leyendo a Newton y
+discutiendo con su amigo de juventud.
+
+Una vez resuelta la cuerda matemáticamente, la siguiente pregunta
+natural era inevitable: ¿qué hace **el oído humano** con esta
+complejidad? Si una cuerda real envía al aire una superposición infinita
+de armónicos, ¿cómo es que el cerebro percibe una nota dominante y un
+timbre, en lugar de un caos de frecuencias simultáneas?
+
+La respuesta exigiría dejar de mirar la cuerda y empezar a mirar hacia
+adentro: hacia la cóclea, hacia las células ciliadas, hacia la
+arquitectura biológica que descompone la onda compuesta en sus armónicos
+componentes en tiempo real. Esa investigación —que convertiría al oído
+humano en el primer **analizador de Fourier biológico** documentado de
+la historia— fue obra de un médico-físico-fisiólogo alemán que en 1863
+publicaría uno de los libros más asombrosos del siglo XIX.
+
+Su nombre era **Hermann von Helmholtz**. Y a él está dedicada la
+siguiente sección.
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+**Notas y referencias**
+
+**<sup>1</sup>** D'Alembert, J. L. R. (1749). «Recherches sur la courbe
+que forme une corde tendue mise en vibration.» *Histoire de l'Académie
+Royale des Sciences et Belles-Lettres de Berlin*, 3(1747), 214–229. La
+fecha de presentación a la Academia fue 1747; la publicación efectiva en
+las memorias data de 1749.
+
+**<sup>2</sup>** Para una historia detallada del nacimiento de la
+ecuación de onda como primera EDP de la historia, ver: Wheeler, G. F., &
+Crummett, W. P. (1987). «The Vibrating String Controversy.» *American
+Journal of Physics*, 55(1), 33–37; y Oliveira, A. R. E. (2020).
+«D'Alembert and the Wave Equation: Its Disputes and Controversies.»
+*Advances in Historical Studies*, 9(4), 226–242.
+
+**<sup>3</sup>** Euler, L. (1750). «De vibratione chordarum
+exercitatio.» *Nova Acta Eruditorum*, 512–527; reimpreso con extensiones
+en *Histoire de l'Académie Royale des Sciences et Belles-Lettres de
+Berlin*, 4(1748), 69–85.
+
+**<sup>4</sup>** Bernoulli, D. (1755). «Reflexions et éclaircissements
+sur les nouvelles vibrations des cordes exposées dans les mémoires de
+l'académie de 1747 et 1748.» *Histoire de l'Académie Royale des Sciences
+et Belles-Lettres de Berlin*, 9(1753), 147–172.
