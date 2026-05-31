@@ -322,6 +322,23 @@ const ogImage = `${SITE}/og/og-libro.png`;
   .obertura-main strong,
   .obertura-main b { font-weight: 600; color: var(--obertura-ink); }
 
+  /* ─── Separadores .flourish ───────────────────────────────────
+     Emitidos por remark-separators.mjs (B.2) al gildar los literales
+     standalone (— ◇ —, ◆, ◇ ◆ ◇). En oro vía --obertura-thread.
+     Capítulos define lo mismo en system.css · misma apariencia. */
+  .flourish {
+    text-align: center;
+    font-family: var(--obertura-serif);
+    color: var(--obertura-thread);
+    font-size: 1.25rem;
+    letter-spacing: 0.6em;
+    margin: 3rem 0;
+    user-select: none;
+  }
+  .flourish--diamond::before { content: '◆'; }
+  .flourish--triple::before  { content: '◇   ◆   ◇'; }
+  .flourish--rule::before    { content: '— ◇ —'; letter-spacing: 0.3em; }
+
   /* ─── Encabezados ────────────────────────────────────── */
   .obertura-main h1.book-title {
     font-family: var(--obertura-serif);
