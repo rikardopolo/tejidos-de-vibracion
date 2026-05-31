@@ -280,6 +280,16 @@ const hasBreadcrumb = Boolean(breadcrumbText);
       .capitulo-body .prose > p { text-align: left; }
     }
 
+    /* ── Divisores de sección (h2 del cuerpo) · sub-tarea 3.5 ──────
+       system.css aplica `.measure h2 { text-transform: lowercase }` con
+       inicial mayúscula · estética de divisor en minúsculas. Pero eso
+       baja los NOMBRES PROPIOS ("Mersenne" → "mersenne", "D'Alembert"
+       → "d'alembert", "Schrödinger" → "schrödinger"). En capítulos el
+       texto fuente ya viene en caja correcta desde el DOCX · respetarlo.
+       Scoped a `.capitulo-body` · NO afecta Obertura ni otras páginas. */
+    .capitulo-body .measure h2 { text-transform: none; }
+    .capitulo-body .measure h2::first-letter { text-transform: none; }
+
     /* ── Reader panel · dropdown desde la pill LECTURA ───────────── */
     .cap-reader.reader-controls {
       position: fixed;
