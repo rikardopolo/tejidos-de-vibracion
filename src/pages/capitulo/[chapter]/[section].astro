@@ -17,12 +17,17 @@
  *
  * Bot allowlist replicada del Obertura/[slug] · search engines + LLM
  * crawlers + social unfurlers bypasean el gating.
+ *
+ * Sprint shell-redesign (preview/chapters-1-2-3): usa CapituloLayout
+ * (header minimalista + breadcrumb dinámico + LECTURA) y PaginacionCards.
  */
 import { getCollection, getEntry } from 'astro:content';
-import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
+import PaginacionCards from '@/components/book/PaginacionCards.astro';
 import { getNivel, gatingActivo } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
+import { pieceOrnament, type PieceKind } from '@/lib/piece-num';
 
 export const prerender = false;
 
@@ -74,23 +79,47 @@ if (tieneAcceso) {
 
 const { title, subtitle, headerLabel, kind, num } = entry.data;
 
-// Resolver prev/next entre piezas visibles del mismo capítulo.
+// Resolver prev/next entre piezas del mismo capítulo.
+//
+// NO se filtra por `status` de la pieza · la visibilidad la decide el
+// status del CAPÍTULO PADRE (igual que en index.astro · biblioteca).
+// El campo status por pieza es tracking editorial interno y las piezas
+// se crean en 'draft' por defecto; filtrarlo aquí dejaba prev/next vacío
+// y rompía la navegación. Alineado con el query de la biblioteca.
 const allSections = await getCollection('chapter-sections', ({ data: d }) =>
-  d.chapter === chapter &&
-  (d.status === 'published' || d.status === 'fragmento-permanente')
+  d.chapter === chapter
 );
 const sorted = allSections.sort((a, b) => a.data.order - b.data.order);
 const idx = sorted.findIndex(s => s.slug === entry.slug);
-const prev = idx > 0 ? sorted[idx - 1] : null;
-const next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
+const prevEntry = idx > 0 ? sorted[idx - 1] : null;
+const nextEntry = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
+
+const leaf = (slug: string) => slug.split('/').pop() ?? slug;
+const toAdjacent = (e: typeof entry | null) =>
+  e ? { slug: leaf(e.slug), kind: e.data.kind as PieceKind, num: e.data.num, title: e.data.title } : null;
+const prev = toAdjacent(prevEntry);
+const next = toAdjacent(nextEntry);
+
+// Breadcrumb central del header · "◆ §2.1 · Cap. 2" (decisiones 2+3).
+const ornament = pieceOrnament(kind as PieceKind);
+const pieceLabel = kind === 'numbered' && num
+  ? `§${num}`
+  : ({ portada: 'Portada', umbral: 'Umbral', anclaje: 'Anclaje', cierre: 'Cierre' } as Record<string, string>)[kind] ?? '';
+const breadcrumbText = `${pieceLabel} · Cap. ${chapterNum}`;
 ---
 
-<LecturaLarga
+<CapituloLayout
   title={`${title} · Cap. ${romanChapter} · Tejidos de Vibración`}
   description={subtitle ?? `${headerLabel} · Capítulo ${romanChapter}`}
+  chapter={chapter}
+  chapterLabel={capitulo}
+  currentSlug={section}
+  breadcrumbOrnament={ornament}
+  breadcrumbText={breadcrumbText}
+  nivel={nivel}
   pageId={`capitulo-${chapterNum}-${section}`}
 >
-  <article class="measure pt-5">
+  <article class="measure">
     <header class="stack-sm">
       <p class="eyebrow">{capitulo} · {headerLabel}</p>
       <h1 class="title-1">{title}</h1>
@@ -107,76 +136,6 @@ const next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
       <BloquePuerta tipo={tipoBloquePuerta} capitulo={capitulo} />
     )}
 
-    {tieneAcceso && (
-      <nav class="cap-prev-next" aria-label="Navegación entre piezas">
-        {prev ? (
-          <a class="cap-prev-next__link cap-prev-next__prev" href={`/capitulo/${chapter}/${prev.slug.split('/').pop()}`}>
-            <span class="cap-prev-next__dir">← Anterior</span>
-            <span class="cap-prev-next__title">{prev.data.title}</span>
-          </a>
-        ) : (
-          <a class="cap-prev-next__link cap-prev-next__back" href={`/capitulo/${chapter}`}>
-            <span class="cap-prev-next__dir">← Índice</span>
-          </a>
-        )}
-
-        {next ? (
-          <a class="cap-prev-next__link cap-prev-next__next" href={`/capitulo/${chapter}/${next.slug.split('/').pop()}`}>
-            <span class="cap-prev-next__dir">Siguiente →</span>
-            <span class="cap-prev-next__title">{next.data.title}</span>
-          </a>
-        ) : (
-          <a class="cap-prev-next__link cap-prev-next__back" href={`/capitulo/${chapter}`}>
-            <span class="cap-prev-next__dir">Índice →</span>
-          </a>
-        )}
-      </nav>
-    )}
+    {tieneAcceso && <PaginacionCards chapter={chapter} prev={prev} next={next} />}
   </article>
-</LecturaLarga>
-
-<style>
-  .cap-prev-next {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin: 5rem 0 6rem;
-    padding-top: 3rem;
-    border-top: 1px solid var(--pergamino-2);
-  }
-  .cap-prev-next__link {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 1.2rem 1rem;
-    text-decoration: none;
-    border: 1px solid var(--pergamino-2);
-    color: var(--tinta);
-    transition: border-color 180ms ease, background 180ms ease;
-  }
-  .cap-prev-next__link:hover {
-    border-color: var(--oro-suave);
-    background: var(--pergamino-2);
-  }
-  .cap-prev-next__prev { text-align: left; }
-  .cap-prev-next__next { text-align: right; }
-  .cap-prev-next__back { text-align: center; }
-  .cap-prev-next__dir {
-    font-family: var(--cornisa, var(--sans));
-    font-size: 0.7rem;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--oro-suave);
-  }
-  .cap-prev-next__title {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 1.05rem;
-    color: var(--tinta);
-    line-height: 1.2;
-  }
-
-  @media (max-width: 540px) {
-    .cap-prev-next { grid-template-columns: 1fr; }
-  }
-</style>
+</CapituloLayout>

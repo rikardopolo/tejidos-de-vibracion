@@ -1,0 +1,325 @@
+---
+/**
+ * CapituloLayout · shell de lectura de los capítulos del libro.
+ *
+ * Sprint shell-redesign (preview/chapters-1-2-3). Porta el lenguaje visual
+ * de OberturaLayout (header minimalista, reading-progress, thread-strip,
+ * paper-grain, modo lectura) a los capítulos, pero CONSERVANDO la paleta
+ * oro del libro (tokens.css) en lugar del carmesí de la Obertura.
+ *
+ * Standalone (<!doctype html> propio) como OberturaLayout, pero importa
+ * `global.css` (fonts + tokens + system) para que el contenido MDX
+ * renderizado (.prose, marginalia, VozTejido, etc.) funcione idéntico.
+ *
+ * Chrome del header (3 slots):
+ *   ☰ ÍNDICE (izq · CapituloToc)  ·  ◆ breadcrumb (centro)  ·  ⊕ LECTURA (der)
+ *
+ * El reader (LECTURA) reutiliza /libro-reader.js: el panel #reader-controls
+ * y el trigger #reader-controls-trigger conservan sus IDs; el trigger se
+ * reestiliza como pill del header. NO se renderiza el FAB flotante "Aa".
+ *
+ * Comportamiento de chrome (outside-click/ESC del TOC, reading-progress,
+ * header is-scrolled) en /capitulo-chrome.js.
+ */
+import '@/styles/global.css';
+import CapituloToc from '@/components/book/CapituloToc.astro';
+
+interface Props {
+  /** Título HTML del <head>. */
+  title: string;
+  /** Descripción meta. */
+  description: string;
+  /** Slug del capítulo (para CapituloToc). */
+  chapter: string;
+  /** Etiqueta del capítulo (ej. "Capítulo II") · título del panel TOC. */
+  chapterLabel?: string;
+  /** Slug-hoja de la pieza actual · highlight en el TOC. */
+  currentSlug?: string;
+  /** Breadcrumb central del header · omitir en el índice del capítulo. */
+  breadcrumbOrnament?: string;
+  breadcrumbText?: string;
+  /** Nivel de acceso (gating) · propagado a body[data-nivel]. */
+  nivel?: 0 | 1 | 2;
+  pageId?: string;
+}
+
+const {
+  title,
+  description,
+  chapter,
+  chapterLabel,
+  currentSlug,
+  breadcrumbOrnament,
+  breadcrumbText,
+  nivel = 1,
+  pageId,
+} = Astro.props;
+
+const siteUrl = 'https://tejidosdevibracion.com';
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
+const hasBreadcrumb = Boolean(breadcrumbText);
+---
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+
+  {/* PREVIEW BRANCH ONLY · preview/chapters-1-2-3 · NO MERGE A MAIN.
+      Bloqueo global de indexación para revisión interna. Quitar antes
+      de cualquier merge a main. (Heredado de Base.astro.) */}
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+
+  <link rel="canonical" href={canonicalUrl} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:site_name" content="Tejidos de Vibración" />
+
+  <!-- Preload fonts (subset hints) -->
+  <link rel="preload" as="font" type="font/woff2"
+    href="/fonts/eb-garamond-latin-400-normal.woff2" crossorigin="anonymous" />
+  <link rel="preload" as="font" type="font/woff2"
+    href="/fonts/inter-latin-400-normal.woff2" crossorigin="anonymous" />
+
+  <!-- Reader prefs (size/mode) aplicadas antes del primer paint para evitar FOUC -->
+  <script is:inline>
+    (function () {
+      try {
+        var s = localStorage.getItem('tdv-reader-size') || 'default';
+        var m = localStorage.getItem('tdv-reader-mode') || 'day';
+        document.documentElement.setAttribute('data-reader-size', s);
+        document.documentElement.setAttribute('data-reader-mode', m);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="capitulo-body" data-page={pageId} data-nivel={nivel}>
+  <a href="#main-content" class="skip-link">Saltar al contenido</a>
+
+  <!-- Reading progress bar · top del viewport -->
+  <div class="cap-progress" id="cap-progress" aria-hidden="true"></div>
+  <!-- Thread strip lateral · hilo del Tejedor en oro -->
+  <div class="cap-thread" aria-hidden="true"></div>
+
+  <!-- ── Header chrome · ÍNDICE · breadcrumb · LECTURA ───────────── -->
+  <header class="cap-chrome" id="cap-chrome">
+    <div class="cap-chrome__slot cap-chrome__slot--left">
+      <CapituloToc chapter={chapter} current={currentSlug} chapterLabel={chapterLabel} />
+    </div>
+
+    <div class="cap-chrome__slot cap-chrome__slot--center">
+      {hasBreadcrumb && (
+        <span class="cap-breadcrumb">
+          {breadcrumbOrnament && <span class="cap-breadcrumb__orn" aria-hidden="true">{breadcrumbOrnament}</span>}
+          <span class="cap-breadcrumb__text">{breadcrumbText}</span>
+        </span>
+      )}
+    </div>
+
+    <div class="cap-chrome__slot cap-chrome__slot--right">
+      <button id="reader-controls-trigger" class="cap-chrome__btn" aria-label="Controles de lectura" aria-expanded="false">
+        <span class="cap-chrome__btn-icon" aria-hidden="true">⊕</span>
+        <span class="cap-chrome__btn-label">Lectura</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Reader panel · #reader-controls cableado por /libro-reader.js -->
+  <aside id="reader-controls" class="reader-controls cap-reader" hidden>
+    <p class="reader-controls__title">Lectura</p>
+    <div class="reader-controls__group">
+      <span class="reader-controls__label">Tamaño</span>
+      <button data-action="text-smaller" aria-label="Texto más pequeño">A-</button>
+      <button data-action="text-default" aria-label="Texto tamaño normal">A</button>
+      <button data-action="text-larger" aria-label="Texto más grande">A+</button>
+    </div>
+    <div class="reader-controls__group">
+      <span class="reader-controls__label">Modo</span>
+      <button data-action="mode-day" aria-label="Modo día">☀</button>
+      <button data-action="mode-night" aria-label="Modo noche">☾</button>
+    </div>
+  </aside>
+
+  <main id="main-content" class="cap-main" tabindex="-1">
+    <slot />
+  </main>
+
+  <script src="/libro-reader.js" defer></script>
+  <script src="/capitulo-chrome.js" defer></script>
+
+  <style is:global>
+    /* ── Paper grain · radial gradients sutiles en oro/índigo ─────── */
+    .capitulo-body { position: relative; }
+    .capitulo-body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 18% 8%, rgba(212, 160, 23, 0.025) 0%, transparent 55%),
+        radial-gradient(ellipse at 82% 82%, rgba(45, 27, 105, 0.018) 0%, transparent 55%);
+      z-index: 0;
+    }
+
+    /* ── Reading progress bar ─────────────────────────────────────── */
+    .cap-progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 100%;
+      background: var(--oro-suave);
+      z-index: 100;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.1s ease-out;
+    }
+
+    /* ── Thread strip lateral · hilo en oro ───────────────────────── */
+    .cap-thread {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(182, 137, 20, 0.12) 10%,
+        rgba(182, 137, 20, 0.22) 50%,
+        rgba(182, 137, 20, 0.12) 90%,
+        transparent 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── Header chrome ────────────────────────────────────────────── */
+    .cap-chrome {
+      position: sticky;
+      top: 0;
+      z-index: 80;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1.4rem;
+      background: linear-gradient(180deg, var(--pergamino) 0%, var(--pergamino) 72%, transparent 100%);
+      backdrop-filter: blur(3px);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      border-bottom: 1px solid transparent;
+    }
+    .cap-chrome.is-scrolled {
+      border-bottom-color: var(--pergamino-2);
+      box-shadow: 0 2px 14px rgba(26, 22, 18, 0.05);
+    }
+    .cap-chrome__slot { display: flex; align-items: center; min-width: 0; }
+    .cap-chrome__slot--left { justify-content: flex-start; }
+    .cap-chrome__slot--center { justify-content: center; }
+    .cap-chrome__slot--right { justify-content: flex-end; }
+
+    /* Pills ÍNDICE / LECTURA */
+    .cap-chrome__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.95rem;
+      background: rgba(242, 234, 213, 0.6);
+      border: 1px solid var(--oro-fantasma);
+      border-radius: 3px;
+      color: var(--tinta);
+      font-family: var(--cornisa, var(--sans));
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .cap-chrome__btn:hover {
+      border-color: var(--oro-suave);
+      background: var(--pergamino);
+    }
+    .cap-chrome__btn-icon { color: var(--oro-suave); font-size: 0.9rem; line-height: 1; }
+
+    /* Breadcrumb central · ornamento dinámico + texto */
+    .cap-breadcrumb {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.55rem;
+      font-family: var(--cornisa, var(--sans));
+      font-size: 0.7rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--reposo);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .cap-breadcrumb__orn { color: var(--oro-suave); letter-spacing: 0; }
+
+    /* ── Main · columna de lectura ───────────────────────────────── */
+    .cap-main {
+      position: relative;
+      z-index: 1;
+      padding: 2.5rem 1.5rem 6rem;
+    }
+
+    /* ── Justify + hyphens · SOLO cuerpo .prose (decisión 4) ──────── */
+    .capitulo-body .prose > p {
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+    /* No justificar la última línea suelta de párrafos cortos en mobile */
+    @media (max-width: 480px) {
+      .capitulo-body .prose > p { text-align: left; }
+    }
+
+    /* ── Reader panel · dropdown desde la pill LECTURA ───────────── */
+    .cap-reader.reader-controls {
+      position: fixed;
+      top: 3.6rem;
+      right: 1.4rem;
+      bottom: auto;
+      left: auto;
+      z-index: 91;
+    }
+
+    /* ── Móvil ───────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .cap-chrome { padding: 0.7rem 1rem; gap: 0.5rem; }
+      .cap-chrome__btn-label { display: none; }
+      .cap-breadcrumb { font-size: 0.62rem; letter-spacing: 0.18em; }
+      .cap-main { padding: 2rem 1.2rem 5rem; }
+      .cap-reader.reader-controls { right: 1rem; top: 3.4rem; }
+    }
+
+    /* ── Reduced motion ──────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .cap-progress { transition: none; }
+    }
+  </style>
+
+  <script is:inline>
+    /* Reading progress · scaleX según scroll (CSP: inline permitido,
+       mismo patrón que OberturaLayout). */
+    (function () {
+      var bar = document.getElementById('cap-progress');
+      if (!bar) return;
+      var update = function () {
+        var h = document.documentElement;
+        var max = h.scrollHeight - h.clientHeight;
+        var ratio = max > 0 ? h.scrollTop / max : 0;
+        bar.style.transform = 'scaleX(' + ratio + ')';
+      };
+      document.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+  </script>
+</body>
+</html>
