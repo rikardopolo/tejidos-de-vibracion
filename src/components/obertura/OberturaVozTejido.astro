@@ -1,103 +1,73 @@
 ---
 /**
- * <VozTejido> · semblanza biográfica de un autor citado en el libro.
+ * <VozTejido> · semblanza biográfica de un autor citado (Obertura).
  *
- * Bloque con gradiente vertical sobre paper-deep, borde superior carmesí,
- * pequeño rombo decorativo arriba, retrato con iniciales, nombre y fechas
- * centrados, prosa narrativa.
+ * Sprint unificación de estilo · decisión 3 (B3a · restyle in-place).
+ * Migrado del formato ELABORADO (avatar circular de iniciales + panel
+ * gradiente + centrado + borde carmesí) al formato SOBRIO de Capítulos
+ * (border-left + eyebrow con color semántico), para unificar el look.
  *
- * Doctrina: matchea `.voz-tejido` (styles.css · líneas 449-492).
+ * El eyebrow conserva su color semántico (verde/teal · Voz del Tejido).
+ * El borde izquierdo va en oro como el resto de las cajas del libro.
+ *
+ * Compat: `portrait` se mantiene en la interfaz (las piezas la pasan)
+ * pero ya NO se renderiza el avatar · el nombre + fechas pasan al título.
  */
 
 interface Props {
-  /** Iniciales del autor para el retrato (ej. "W·J", "F·V"). */
-  portrait: string;
+  /** Iniciales del autor · CONSERVADO por compat · ya no se renderiza. */
+  portrait?: string;
   /** Nombre completo. */
   name: string;
   /** Fechas de vida (ej. "1842 — 1910"). */
-  dates: string;
+  dates?: string;
 }
 
-const { portrait, name, dates } = Astro.props;
+const { name, dates } = Astro.props;
+const titulo = dates ? `${name} (${dates})` : name;
 ---
 
 <aside class="voz-tejido">
-  <div class="label">Voz del Tejido</div>
-  <div class="portrait" aria-hidden="true">{portrait}</div>
-  <p class="name">{name}</p>
-  <p class="dates">{dates}</p>
-  <div class="content">
+  <p class="voz-tejido__kind">Voz del Tejido</p>
+  <h3 class="voz-tejido__title">{titulo}</h3>
+  <div class="voz-tejido__body">
     <slot />
   </div>
 </aside>
 
 <style>
+  /* Formato sobrio · espejo de .marginalia / .marginalia--voz (system.css).
+     Borde oro; eyebrow verde (semantico de Voz). Tokens obertura para
+     funcionar bajo OberturaLayout (standalone, sin system.css). */
   .voz-tejido {
-    margin: 4rem -0.5rem;
-    padding: 2.2rem 1.8rem 1.8rem;
-    background: linear-gradient(180deg, var(--obertura-paper-deep) 0%, transparent 100%);
-    border-top: 1px solid var(--obertura-thread);
-    position: relative;
+    border-left: 2px solid var(--obertura-thread);
+    padding: 1.5rem 0 1.5rem 1.75rem;
+    margin: 2.5rem 0;
+    background: transparent;
   }
-  .voz-tejido::before {
-    content: "";
-    position: absolute;
-    top: -6px;
-    left: 50%;
-    transform: translateX(-50%) rotate(45deg);
-    width: 10px;
-    height: 10px;
-    background: var(--obertura-paper);
-    border-top: 1px solid var(--obertura-thread);
-    border-left: 1px solid var(--obertura-thread);
-  }
-  .label {
-    font-family: var(--obertura-sans);
+  .voz-tejido__kind {
+    font-family: 'DM Sans', var(--obertura-sans);
     font-weight: 500;
-    font-size: 0.7rem;
-    letter-spacing: 0.32em;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--obertura-thread);
-    margin-bottom: 0.6rem;
-    text-align: center;
+    color: #1D9E75; /* verde/teal · color semantico de Voz (decision 1) */
+    margin: 0 0 0.25rem 0;
   }
-  .portrait {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--obertura-thread-mark);
-    border: 1.5px solid var(--obertura-thread);
-    color: var(--obertura-thread);
-    font-family: var(--obertura-serif);
-    font-weight: 600;
-    font-size: 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    letter-spacing: 0.05em;
-  }
-  .name {
-    font-family: var(--obertura-serif);
-    font-weight: 600;
-    font-size: 1.55rem;
-    margin: 0 0 0.2rem;
-    text-align: center;
-    color: var(--obertura-ink);
-    line-height: 1.15;
-  }
-  .dates {
+  .voz-tejido__title {
     font-family: var(--obertura-serif);
     font-style: italic;
-    font-size: 0.95rem;
-    color: var(--obertura-ink-faded);
-    text-align: center;
-    margin: 0 0 1.8rem;
+    font-weight: 500;
+    font-size: 1.375rem;
+    line-height: 1.3;
+    color: var(--obertura-ink);
+    margin: 0 0 1rem 0;
   }
-  .content :global(p) {
-    margin-block: 0 1.2em;
+  .voz-tejido__body {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--obertura-ink-soft);
   }
-  .content :global(p:last-child) {
-    margin-bottom: 0;
-  }
+  .voz-tejido__body :global(p) { margin: 0 0 1em 0; }
+  .voz-tejido__body :global(p:last-child) { margin-bottom: 0; }
 </style>
