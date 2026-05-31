@@ -142,7 +142,7 @@ body {
 .book-header__nav {
   display: flex;
   gap: 1.75rem;
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.8125rem;
   font-weight: 500;
 }
@@ -218,7 +218,7 @@ main {
 
 /* eyebrow — versalitas suaves, sans */
 .eyebrow {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: var(--fs-eyebrow);
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -303,7 +303,7 @@ main {
 
 /* metadata — Inter pequeño, gris */
 .meta {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-weight: 400;
   font-size: var(--fs-meta);
   color: var(--reposo);
@@ -470,7 +470,7 @@ main {
   background: transparent;
 }
 .marginalia__kind {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.22em;
@@ -593,7 +593,7 @@ main {
 }
 .form-inline__submit:hover { color: var(--tinta); }
 .form-microcopy {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.75rem;
   color: var(--reposo);
   margin: 0.75rem 0 0 0;
@@ -617,7 +617,7 @@ main {
 }
 .chapter-nav__item { text-decoration: none; color: var(--tinta); display: block; }
 .chapter-nav__cue {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.2em;
@@ -654,7 +654,7 @@ main {
   margin: 5rem 0 3rem 0;
 }
 .toc-act__cue {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.24em;
@@ -773,7 +773,7 @@ main {
   background: rgba(212, 160, 23, 0.04);
 }
 .toc-preventa__eyebrow {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -827,7 +827,7 @@ main {
 }
 .book-footer__mark span {
   display: block;
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.75rem;
   font-weight: 400;
   color: var(--reposo);
@@ -838,7 +838,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem 1.75rem;
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -926,7 +926,7 @@ main {
   border-radius: 50%;
   background: var(--pergamino);
   border: 1px solid var(--pergamino-2);
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 1.25rem;
   color: var(--tinta-suave);
   cursor: pointer;
@@ -964,7 +964,7 @@ main {
 }
 .book-toc__close:hover { color: var(--tinta); }
 .book-toc__title {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.2em;
@@ -1033,7 +1033,7 @@ main {
 }
 .reader-controls[hidden] { display: none; }
 .reader-controls__title {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.2em;
@@ -1048,7 +1048,7 @@ main {
   margin: 0.5rem 0;
 }
 .reader-controls__label {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.75rem;
   color: var(--reposo);
   flex: 1;
@@ -1154,7 +1154,7 @@ body[data-nivel="0"] .bloque-registro {
 }
 
 .form-registro__label {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -1205,7 +1205,7 @@ body[data-nivel="0"] .bloque-registro {
 .form-registro__submit:disabled { opacity: 0.6; cursor: wait; }
 
 .form-registro__nota {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.75rem;
   line-height: 1.55;
   color: var(--reposo);
@@ -1259,7 +1259,7 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
 }
 
 .form-tejedor__label {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -1325,7 +1325,7 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
 .form-tejedor__submit:disabled { opacity: 0.6; cursor: wait; }
 
 .form-tejedor__nota {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.75rem;
   line-height: 1.55;
   color: var(--reposo);
@@ -1397,7 +1397,7 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
 }
 
 .bloque-puerta__eyebrow {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.22em;
@@ -1431,7 +1431,7 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
 }
 
 .bloque-puerta__nota {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.75rem;
   line-height: 1.55;
   color: var(--reposo);
@@ -1552,7 +1552,7 @@ body[data-nivel="0"] .banner-umbral-cruzado { display: none; }
 }
 
 .ritual-block__eyebrow {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.32em;
@@ -1563,7 +1563,7 @@ body[data-nivel="0"] .banner-umbral-cruzado { display: none; }
 }
 
 .ritual-block__duracion {
-  font-family: var(--sans);
+  font-family: var(--cornisa, var(--sans));
   font-size: 0.7rem;
   font-weight: 400;
   letter-spacing: 0.12em;
