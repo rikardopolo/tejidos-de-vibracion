@@ -7,8 +7,8 @@
  * (no los headings de la página actual · eso era el viejo BookToc).
  *
  * El summary "☰ ÍNDICE" vive en el slot izquierdo del header del
- * CapituloLayout. El panel abre fixed bajo el header. Cierre por
- * outside-click / ESC vía /capitulo-chrome.js.
+ * BookReader. El panel abre bajo el header. Cierre por
+ * outside-click / ESC vía /book-chrome.js.
  *
  * Patrón <details>+<summary>: toggle nativo sin JS framework.
  */
@@ -34,9 +34,9 @@ function leaf(slug: string): string {
 ---
 
 <details class="cap-toc" id="cap-toc">
-  <summary class="cap-chrome__btn cap-toc__toggle" aria-label="Abrir índice del capítulo">
-    <span class="cap-chrome__btn-icon" aria-hidden="true">☰</span>
-    <span class="cap-chrome__btn-label">Índice</span>
+  <summary class="book-chrome__btn cap-toc__toggle" aria-label="Abrir índice del capítulo">
+    <span class="book-chrome__btn-icon" aria-hidden="true">☰</span>
+    <span class="book-chrome__btn-label">Índice</span>
   </summary>
   <nav class="cap-toc__panel" aria-label="Índice del capítulo">
     <p class="cap-toc__title">{chapterLabel ?? 'Capítulo'} · {all.length} piezas</p>
