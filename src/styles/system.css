@@ -493,6 +493,20 @@ main {
   color: var(--tinta-suave);
 }
 .marginalia__body p { margin: 0 0 1em 0; }
+
+/* Cajas Marginalia · ragged-right sin guiones automáticos.
+   El texto principal usa justify + hyphens:auto (CapituloLayout);
+   dentro del ancho reducido de una caja eso resulta hiperjustificado
+   e ilegible. Las cajas van ragged-right. */
+.marginalia .marginalia__body p,
+.marginalia .marginalia__body li,
+.marginalia .marginalia__content p,
+.marginalia .marginalia__content li {
+  text-align: left;
+  hyphens: manual;
+  -webkit-hyphens: manual;
+}
+
 .marginalia__body p.step {
   text-indent: 0;
   padding-left: 0;

@@ -191,70 +191,29 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   .flourish--triple::before  { content: '◇   ◆   ◇'; }
   .flourish--rule::before    { content: '— ◇ —'; letter-spacing: 0.3em; }
 
-  /* ─── Cajas sobrias · Voz del Tejido / Pausa Científica ───────────
-     Espejo de .marginalia / --voz / --cientifica (system.css). Viven en
-     el GLOBAL del layout, NO en el <style> scoped del componente: el
-     estilo scoped de un .astro usado dentro de MDX genera un selector
-     `[data-astro-cid-…]` que el build de producción NO aplica al elemento
-     (works-in-dev, breaks-in-prod). En global no hay requisito de cid →
-     siempre aplica. Mismo patrón que .flourish (B.2). Border oro; eyebrow
-     con color semántico (verde Voz · índigo Pausa · decisión 1). */
-  .voz-tejido,
-  .pausa-cientifica {
-    border-left: 2px solid var(--obertura-thread);
-    padding: 1.5rem 0 1.5rem 1.75rem;
-    margin: 2.5rem 0;
-    background: transparent;
+  /* ─── Cajas · base Marginalia (system.css global · prod-safe) ──────
+     Refactor de deduplicación: las 3 cajas de la Obertura (Voz del Tejido,
+     Pausa Científica, Pausa Reflexiva) son adaptadores sobre <Marginalia>.
+     El markup `.marginalia*` se estila en system.css (GLOBAL → sin el bug
+     de scoped-styles-en-MDX que rompía en prod). Aquí sólo se preserva la
+     paleta paper-and-ink de la Obertura:
+       - borde oro-suave (#B68914 día / #d9b24a noche) vs --oro del libro
+       - eyebrow índigo propio de la Obertura (#1f2547 día / #8b95c4 noche)
+     El eyebrow verde de Voz (#1D9E75) ya coincide con --verde (sin override).
+     La Pausa Reflexiva adopta el formato sobrio (sin fondo ni disco). */
+  .obertura-body .marginalia { border-left-color: var(--obertura-thread); }
+  .obertura-body .marginalia--cientifica .marginalia__kind { color: var(--obertura-indigo); }
+
+  /* Cajas Marginalia en la Obertura · ragged-right sin guiones automáticos.
+     Mismo patrón que el bloque en system.css (que no se importa aquí). */
+  .marginalia .marginalia__body p,
+  .marginalia .marginalia__body li,
+  .marginalia .marginalia__content p,
+  .marginalia .marginalia__content li {
+    text-align: left;
+    hyphens: manual;
+    -webkit-hyphens: manual;
   }
-  .voz-tejido__kind,
-  .pausa-cientifica__kind {
-    font-family: 'DM Sans', var(--obertura-sans);
-    font-weight: 500;
-    font-size: 0.6875rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin: 0 0 0.25rem 0;
-  }
-  .voz-tejido__kind        { color: #1D9E75; }            /* verde/teal · Voz */
-  .pausa-cientifica__kind  { color: var(--obertura-indigo); } /* índigo · carril científico */
-  .voz-tejido__title,
-  .pausa-cientifica__title {
-    font-family: var(--obertura-serif);
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.375rem;
-    line-height: 1.3;
-    color: var(--obertura-ink);
-    margin: 0 0 1rem 0;
-  }
-  .voz-tejido__body,
-  .pausa-cientifica__body {
-    font-size: 1.0625rem;
-    line-height: 1.65;
-    color: var(--obertura-ink-soft);
-  }
-  .voz-tejido__body p,
-  .pausa-cientifica__body p { margin: 0 0 1em 0; }
-  .voz-tejido__body p:last-child,
-  .pausa-cientifica__body p:last-child { margin-bottom: 0; }
-  .pausa-cientifica__body ul { font-size: 0.95em; padding-left: 1.2rem; margin: 1rem 0; }
-  .pausa-cientifica__body ul li { margin-bottom: 0.5rem; }
-  .pausa-cientifica__body .ref {
-    font-size: 0.85em;
-    color: var(--obertura-ink-faded);
-    font-style: italic;
-    border-left: 1px solid var(--obertura-rule);
-    padding-left: 0.9rem;
-    margin: 1.2rem 0;
-  }
-  .pausa-cientifica__body .limit {
-    font-size: 0.92em;
-    margin-top: 1rem;
-    padding-top: 0.9rem;
-    border-top: 1px dashed var(--obertura-rule);
-    color: var(--obertura-ink-soft);
-  }
-  .pausa-cientifica__body .limit strong { color: var(--obertura-indigo); }
 
   /* ─── Encabezados ────────────────────────────────────────────── */
   .obertura-main h1.book-title {
