@@ -1,18 +1,17 @@
 ---
 /**
- * <VozTejido> · semblanza biográfica de un autor citado (Obertura).
+ * <VozTejido> (Obertura) · adaptador delgado sobre <Marginalia>.
  *
- * Sprint unificación de estilo · decisión 3 (B3a · restyle in-place).
- * Migrado del formato ELABORADO (avatar circular de iniciales + panel
- * gradiente + centrado + borde carmesí) al formato SOBRIO de Capítulos
- * (border-left + eyebrow con color semántico), para unificar el look.
+ * Refactor de deduplicación (2026-05-31): UNA sola base de cajas para todo
+ * el libro (Marginalia · estilada en system.css GLOBAL → prod-safe, sin el
+ * problema de scoped-styles-en-MDX). Mapea la API histórica de la pieza
+ * (name/dates/portrait) al kind 'voz-del-tejido'.
  *
- * El eyebrow conserva su color semántico (verde/teal · Voz del Tejido).
- * El borde izquierdo va en oro como el resto de las cajas del libro.
- *
- * Compat: `portrait` se mantiene en la interfaz (las piezas la pasan)
- * pero ya NO se renderiza el avatar · el nombre + fechas pasan al título.
+ * La paleta paper-and-ink de la Obertura (borde oro-suave #B68914 · eyebrow
+ * verde) se preserva con overrides scoped a `.obertura-body .marginalia`
+ * en OberturaLayout `<style is:global>`. `portrait` se ignora (compat).
  */
+import Marginalia from '@/components/book/Marginalia.astro';
 
 interface Props {
   /** Iniciales del autor · CONSERVADO por compat · ya no se renderiza. */
@@ -27,15 +26,6 @@ const { name, dates } = Astro.props;
 const titulo = dates ? `${name} (${dates})` : name;
 ---
 
-<aside class="voz-tejido">
-  <p class="voz-tejido__kind">Voz del Tejido</p>
-  <h3 class="voz-tejido__title">{titulo}</h3>
-  <div class="voz-tejido__body">
-    <slot />
-  </div>
-</aside>
-
-{/* Estilos en el GLOBAL de OberturaLayout (.voz-tejido*), NO scoped aquí:
-    el <style> scoped de un .astro usado dentro de MDX genera un selector
-    [data-astro-cid-…] que el build de producción no aplica → caja sin
-    estilo en prod. Ver OberturaLayout `<style is:global>`. */}
+<Marginalia kind="voz-del-tejido" titulo={titulo} label="Voz del Tejido">
+  <slot />
+</Marginalia>

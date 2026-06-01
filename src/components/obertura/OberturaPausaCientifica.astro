@@ -1,20 +1,17 @@
 ---
 /**
- * <PausaCientifica> · contenido científico citable (Obertura).
+ * <PausaCientifica> (Obertura) · adaptador delgado sobre <Marginalia>.
  *
- * Sprint unificación de estilo · decisión 3 (B3a · restyle in-place).
- * Migrado del formato ELABORADO (doble borde índigo arriba/abajo + panel
- * + label mono con ▸ + badge de nivel de evidencia) al formato SOBRIO de
- * Capítulos (border-left + eyebrow índigo), para unificar el look.
+ * Refactor de deduplicación (2026-05-31): UNA sola base de cajas
+ * (Marginalia · system.css GLOBAL → prod-safe). Mapea la API histórica
+ * (title/level/levelLabel) al kind 'pausa-cientifica' (eyebrow índigo).
  *
- * El eyebrow conserva su color semántico (índigo · carril científico).
- * El badge "Nivel N · …" se RETIRA · coherente con la limpieza de
- * andamiaje epistémico (la línea "Nivel de evidencia" se elimino del
- * contenido en la tarea previa).
- *
- * Compat: `level`/`levelLabel` se mantienen en la interfaz (las piezas
- * los pasan) pero ya NO se renderiza el badge.
+ * El índigo propio de la Obertura (#1f2547) se preserva con un override
+ * scoped a `.obertura-body .marginalia--cientifica .marginalia__kind` en
+ * OberturaLayout. `level`/`levelLabel` se ignoran (compat · ya no se
+ * renderizaba el badge). Ningún MDX usa `.ref`/`.limit` (verificado).
  */
+import Marginalia from '@/components/book/Marginalia.astro';
 
 interface Props {
   /** Título del bloque científico. */
@@ -28,15 +25,6 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<aside class="pausa-cientifica">
-  <p class="pausa-cientifica__kind">Pausa Científica</p>
-  <h3 class="pausa-cientifica__title">{title}</h3>
-  <div class="pausa-cientifica__body">
-    <slot />
-  </div>
-</aside>
-
-{/* Estilos en el GLOBAL de OberturaLayout (.pausa-cientifica*), NO scoped
-    aquí: el <style> scoped de un .astro usado dentro de MDX genera un
-    selector [data-astro-cid-…] que el build de producción no aplica →
-    caja sin estilo en prod. Ver OberturaLayout `<style is:global>`. */}
+<Marginalia kind="pausa-cientifica" titulo={title} label="Pausa Científica">
+  <slot />
+</Marginalia>

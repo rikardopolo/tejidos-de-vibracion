@@ -72,5 +72,33 @@ verificar paridad antes/después. Valores = `getComputedStyle`.
 - thread-strip Obertura 4px → 3px (chrome unificado al del Capítulo).
 - Header Obertura → barra 3 slots · panel lectura → patrón libro · reset prefs lectura.
 
-## Pendiente de baselinar (capturar en verificación): night/dark de ambas páginas,
-## índices /obertura y /capitulo/<cap>, móvil 375.
+---
+
+## Verificación POST-refactor (2026-05-31 · dev :4322 · 1280×800)
+
+Refactor completado: BookReader base + wrappers (commit 1edf42a) + consolidación de
+cajas a Marginalia + limpieza (working tree). Resultado por superficie:
+
+**Capítulo (Cap.1 §pieza · Cap.2 §2.2 · índices)** — paridad EXACTA con baseline:
+body 19px · measure 672px · `.marginalia` borde #D4A017 (sin tocar) · chrome 3-slot ·
+breadcrumb · night OK (screenshot). Las cajas del capítulo NO cambian (override sólo
+afecta `.obertura-body`).
+
+**Obertura (`/obertura/02-meta-observador`)** — tipografía/columna EXACTAS (body 21px,
+main 34rem, h2.chapter 38.4px, h3.sub 29.82px, h4 #B68914). Cajas consolidadas:
+- Voz: borde #B68914 · eyebrow #1D9E75 "Voz del Tejido" · título 22px italic → EXACTO ✓
+- Científica: borde #B68914 · eyebrow #1F2547 "Pausa Científica" → EXACTO ✓
+- Reflexiva: sobria (sin fondo tintado ni disco) → cambio ACEPTADO ✓
+- night: bg #14110d · voz borde #d9b24a · científica eyebrow #8b95c4 (legible) → paridad ✓
+
+**Build de producción** (`pnpm build`): ✓ Complete. `.marginalia` (14) en CSS estático ·
+chrome (`book-chrome`/`book-progress`/`book-thread`) inlined en server chunks · clases
+viejas `.voz-tejido`/`.pausa-reflexiva`/`.pausa-cientifica` = **0** (bug de scoped-en-MDX
+RESUELTO) · `astro check`: 0 errores nuevos (1 pre-existente en TocEntry.astro, ajeno).
+
+**Cleanup**: borrados OberturaReaderControls.astro + obertura-init/reader/toc.js (muertos).
+Neto: +54 / −465 líneas.
+
+> Cap.3 no existe aún como `chapter-sections` → no enruta por CapituloLayout (fuera de alcance).
+> Nota: el plan preveía consolidar vía override `.obertura-piece .marginalia`; la implementación
+> usa `.obertura-body .marginalia` (la clase real del <body>, no del <article>).

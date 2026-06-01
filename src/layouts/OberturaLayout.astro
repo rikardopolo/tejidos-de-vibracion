@@ -118,7 +118,8 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     --obertura-sans: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, sans-serif;
     --obertura-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
 
-    --obertura-col: 34rem;
+    /* measure unificado al Capítulo (--col 42rem · ~72ch). Era 34rem. */
+    --obertura-col: 42rem;
     --obertura-rhythm: 1.5rem;
   }
 
@@ -129,8 +130,11 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     background: var(--obertura-paper);
     color: var(--obertura-ink);
     font-family: var(--obertura-serif);
-    font-size: 21px;                /* default · = data-reader-size="default" */
-    line-height: 1.62;
+    /* Unificado al Capítulo: misma base (19px / 1.7) vía tokens del libro.
+       El reader-size lo maneja html[data-reader-size] → --fs-body (system.css),
+       idéntico a Capítulos. Era 21px / 1.62 propio. */
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
     font-feature-settings: "kern", "liga", "onum";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -142,12 +146,17 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     z-index: 1;
     max-width: var(--obertura-col);
     margin: 0 auto;
-    padding: 4rem 1.5rem 8rem;
+    /* padding unificado a .cap-main (era 4rem/8rem). */
+    padding: 2.5rem 1.5rem 6rem;
   }
 
-  /* ─── Tipografía base ────────────────────────────────────────── */
+  /* ─── Tipografía base ──────────────────────────────────────────
+     Párrafo justificado + hyphens auto, idéntico al cuerpo .prose del
+     Capítulo. Las cajas Marginalia lo revierten a ragged-right (abajo). */
   .obertura-main p {
     margin: 0 0 var(--obertura-rhythm);
+    text-align: justify;
+    text-justify: inter-word;
     text-wrap: pretty;
     hyphens: auto;
     -webkit-hyphens: auto;
@@ -478,11 +487,9 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   }
 
   /* ─── Reader font-size scaler ─────────────────────────
-     Migrado al sistema del libro: html[data-reader-size] (libro-reader.js).
-     La Obertura conserva su escala propia (19/21/23px · default 21px ·
-     sin XL · "reset prefs" aceptado en measurements.md). */
-  html[data-reader-size="small"] body.obertura-body { font-size: 19px; }
-  html[data-reader-size="large"] body.obertura-body { font-size: 23px; }
+     Unificado al Capítulo: el body usa --fs-body, que html[data-reader-size]
+     (system.css · libro-reader.js) reescala 17/19/21px · misma escala que
+     los Capítulos. Sin overrides propios. */
 
   /* ─── Modo noche · paleta paper-and-ink invertida ─────
      Migrado de body[data-theme="dark"] a html[data-reader-mode="night"]
@@ -505,11 +512,10 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     --obertura-rule-soft:  rgba(232, 222, 201, 0.08);
   }
 
-  /* ─── Móvil ──────────────────────────────────────────── */
+  /* ─── Móvil ────────────────────────────────────────────
+     El body conserva --fs-body (igual que Capítulo · no cambia en móvil).
+     Sólo se ajusta el padding, idéntico a .cap-main móvil. */
   @media (max-width: 640px) {
-    body.obertura-body { font-size: 19px; }
-    html[data-reader-size="small"] body.obertura-body { font-size: 17px; }
-    html[data-reader-size="large"] body.obertura-body { font-size: 21px; }
-    .obertura-main { padding: 3rem 1.2rem 6rem; }
+    .obertura-main { padding: 2rem 1.2rem 5rem; }
   }
 </style>
