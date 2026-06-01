@@ -146,6 +146,25 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
     })();
   </script>
 
+  <!-- Scroll al top en CADA carga · cada pieza empieza desde el inicio.
+       INLINE en <head> (no deferred): corre en toda carga, sin depender de
+       book-chrome.js. Cubre: 1) scrollRestoration='manual' desactiva la
+       restauración automática del navegador; 2) 'pageshow' fuerza top en
+       carga normal Y en restauración desde bfcache (back/forward), donde
+       los scripts defer NO se re-ejecutan. Maneja Capítulos y Obertura. -->
+  <script is:inline>
+    (function () {
+      if ('scrollRestoration' in history) {
+        try { history.scrollRestoration = 'manual'; } catch (e) {}
+      }
+      var toTop = function () { window.scrollTo(0, 0); };
+      // Antes del primer paint (si ya hay layout) + tras cargar + bfcache.
+      toTop();
+      window.addEventListener('pageshow', toTop);
+      window.addEventListener('DOMContentLoaded', toTop);
+    })();
+  </script>
+
   <slot name="head" />
 </head>
 <body class={bodyClass} data-page={pageId} data-nivel={nivel}>
