@@ -21,6 +21,7 @@ tags:
 import VozTejido from '@/components/book/VozTejido.astro';
 import PausaCientifica from '@/components/book/PausaCientifica.astro';
 import FiguraTDV from '@/components/FiguraTDV.astro';
+import Formula from '@/components/book/Formula.astro';
 
 *Planck, Einstein y la grieta que abrió un mundo nuevo*
 
@@ -153,32 +154,25 @@ negro, que vibraban a distintas frecuencias y emitían/absorbían
 radiación— solo podían tener energías que fueran **múltiplos enteros**
 de un mínimo:
 
-**Fórmula 2.6** · **Cuantización del oscilador (Planck)**
+<Formula num="2.6" titulo="Cuantización del oscilador (Planck)">
 
 E = n · h · ν
 
-> **Donde:**
->
-> ***E*** · energía permitida del oscilador (joules)
->
-> ***n*** · número entero no negativo: 0, 1, 2, 3, ... (índice del nivel
-> cuántico)
->
-> ***h*** · constante de Planck, h ≈ 6.626 × 10⁻³⁴ J·s
->
-> ***ν*** · frecuencia de oscilación del oscilador (hercios). Léase
-> «nu».
->
-> *Propuesta por Max Planck el 14 de diciembre de 1900 en la Sociedad
-> Física Alemana de Berlín, para resolver la catástrofe ultravioleta del
-> cuerpo negro. Es importante leerla con precisión histórica: Planck
-> cuantizó los osciladores que emiten y absorben radiación, no la
-> radiación misma. El campo electromagnético, en su propuesta original,
-> seguía siendo continuo en el sentido de Maxwell. La extensión de la
-> cuantización a la radiación electromagnética misma sería obra de
-> Einstein cinco años después, con los fotones del efecto fotoeléctrico.
-> La constante h se medirá experimentalmente por Millikan en 1914-1916
-> con cinco cifras significativas de precisión.*
+<Fragment slot="donde">
+
+**E** · energía permitida del oscilador (joules)
+
+**n** · número entero no negativo: 0, 1, 2, 3, ... (índice del nivel cuántico)
+
+**h** · constante de Planck, h ≈ 6.626 × 10⁻³⁴ J·s
+
+**ν** · frecuencia de oscilación del oscilador (hercios). Léase «nu».
+
+*Propuesta por Max Planck el 14 de diciembre de 1900 en la Sociedad Física Alemana de Berlín, para resolver la catástrofe ultravioleta del cuerpo negro. Es importante leerla con precisión histórica: Planck cuantizó los osciladores que emiten y absorben radiación, no la radiación misma. El campo electromagnético, en su propuesta original, seguía siendo continuo en el sentido de Maxwell. La extensión de la cuantización a la radiación electromagnética misma sería obra de Einstein cinco años después, con los fotones del efecto fotoeléctrico. La constante h se medirá experimentalmente por Millikan en 1914-1916 con cinco cifras significativas de precisión.*
+
+</Fragment>
+
+</Formula>
 
 donde *n* es un entero (0, 1, 2, 3...), *ν* es la frecuencia de
 oscilación, y *h* es una nueva constante fundamental cuyo valor Planck

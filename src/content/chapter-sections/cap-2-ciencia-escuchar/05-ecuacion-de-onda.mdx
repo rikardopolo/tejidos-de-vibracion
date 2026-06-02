@@ -21,6 +21,7 @@ tags:
 import VozTejido from '@/components/book/VozTejido.astro';
 import PausaCientifica from '@/components/book/PausaCientifica.astro';
 import FiguraTDV from '@/components/FiguraTDV.astro';
+import Formula from '@/components/book/Formula.astro';
 
 *Tres mentes en disputa por la forma de la vibración*
 
@@ -76,32 +77,25 @@ concepto matemático mismo de **función**.
 
 **◆**
 
-**Fórmula 2.3** · **Solución general de D'Alembert · ondas viajeras**
+<Formula num="2.3" titulo="Solución general de D'Alembert · ondas viajeras">
 
 u(x,t) = f(x − ct) + g(x + ct)
 
-> **Donde:**
->
-> ***u(x,t)*** · desplazamiento total en posición x e instante t
->
-> ***f(x − ct)*** · onda viajera hacia la derecha con perfil arbitrario
-> f, propagándose con velocidad c
->
-> ***g(x + ct)*** · onda viajera hacia la izquierda con perfil
-> arbitrario g, propagándose con velocidad c
->
-> ***c*** · velocidad de propagación de la onda
->
-> *Solución general de la ecuación de onda (Fórmula 2.2). Cualquier
-> perturbación en una cuerda extendida se descompone en dos ondas
-> viajeras independientes propagándose en sentidos opuestos. En una
-> cuerda con extremos fijos, las dos ondas viajeras se generan por
-> reflexiones en los extremos y se superponen continuamente. El
-> resultado de esa superposición es lo que el oído percibe como nota
-> sostenida. La solución es válida para perfiles arbitrarios — esta
-> libertad funcional fue precisamente la que abriría la disputa de cinco
-> años entre D'Alembert y Euler sobre qué cuenta como una función
-> legítima.*
+<Fragment slot="donde">
+
+**u(x,t)** · desplazamiento total en posición x e instante t
+
+**f(x − ct)** · onda viajera hacia la derecha con perfil arbitrario f, propagándose con velocidad c
+
+**g(x + ct)** · onda viajera hacia la izquierda con perfil arbitrario g, propagándose con velocidad c
+
+**c** · velocidad de propagación de la onda
+
+*Solución general de la ecuación de onda (Fórmula 2.2). Cualquier perturbación en una cuerda extendida se descompone en dos ondas viajeras independientes propagándose en sentidos opuestos. En una cuerda con extremos fijos, las dos ondas viajeras se generan por reflexiones en los extremos y se superponen continuamente. El resultado de esa superposición es lo que el oído percibe como nota sostenida. La solución es válida para perfiles arbitrarios — esta libertad funcional fue precisamente la que abriría la disputa de cinco años entre D'Alembert y Euler sobre qué cuenta como una función legítima.*
+
+</Fragment>
+
+</Formula>
 
 ## 1747 · D'Alembert escribe la primera ecuación diferencial parcial de la historia
 
@@ -141,34 +135,25 @@ respecto a su posición a lo largo de la cuerda, ambas cosas a la vez.
 El resultado fue la primera **ecuación diferencial parcial** de la
 historia matemática:**<sup>2</sup>**
 
-**Fórmula 2.2** · **Ecuación de onda unidimensional (D'Alembert)**
+<Formula num="2.2" titulo="Ecuación de onda unidimensional (D'Alembert)">
 
 ∂²u/∂t² = c² · ∂²u/∂x²
 
-> **Donde:**
->
-> ***u(x,t)*** · desplazamiento de la cuerda en posición x e instante t
-> (metros)
->
-> ***∂²/∂t²*** · derivada parcial segunda respecto al tiempo
-> (aceleración local del punto)
->
-> ***∂²/∂x²*** · derivada parcial segunda respecto al espacio (curvatura
-> local de la cuerda)
->
-> ***c*** · velocidad de propagación de la onda en el medio, c = √(T/μ)
-> (metros por segundo)
->
-> *Publicada por Jean le Rond D'Alembert en Recherches sur la courbe que
-> forme une corde tendue mise en vibration (Berlín, 1747). Primera
-> ecuación diferencial parcial de la historia de la física. Maxwell
-> escribiría sus ecuaciones del campo electromagnético en este lenguaje,
-> Schrödinger su ecuación cuántica en este lenguaje, Einstein las
-> ecuaciones del campo gravitacional en este lenguaje. Toda la física
-> teórica posterior es descendiente del expósito de Saint-Jean-le-Rond.
-> La constante c que aparece aquí, derivable de Mersenne (Fórmula 2.1)
-> como c = √(T/μ), es la velocidad a la que las perturbaciones se
-> propagan a lo largo de la cuerda.*
+<Fragment slot="donde">
+
+**u(x,t)** · desplazamiento de la cuerda en posición x e instante t (metros)
+
+**∂²/∂t²** · derivada parcial segunda respecto al tiempo (aceleración local del punto)
+
+**∂²/∂x²** · derivada parcial segunda respecto al espacio (curvatura local de la cuerda)
+
+**c** · velocidad de propagación de la onda en el medio, c = √(T/μ) (metros por segundo)
+
+*Publicada por Jean le Rond D'Alembert en Recherches sur la courbe que forme une corde tendue mise en vibration (Berlín, 1747). Primera ecuación diferencial parcial de la historia de la física. Maxwell escribiría sus ecuaciones del campo electromagnético en este lenguaje, Schrödinger su ecuación cuántica en este lenguaje, Einstein las ecuaciones del campo gravitacional en este lenguaje. Toda la física teórica posterior es descendiente del expósito de Saint-Jean-le-Rond. La constante c que aparece aquí, derivable de Mersenne (Fórmula 2.1) como c = √(T/μ), es la velocidad a la que las perturbaciones se propagan a lo largo de la cuerda.*
+
+</Fragment>
+
+</Formula>
 
 No te asustes de los símbolos. La idea, traducida a lenguaje natural, es
 asombrosamente simple:
@@ -296,38 +281,29 @@ distinta a la de D'Alembert:**<sup>4</sup>**
 
 ∞
 
-**Fórmula 2.4** · **Solución modal de Bernoulli · superposición de
-armónicos**
+<Formula num="2.4" titulo="Solución modal de Bernoulli · superposición de armónicos">
 
 u(x,t) = Σ aₖ · sin(kπx/L) · cos(kπct/L)
 
-> **Donde:**
->
-> ***Σ*** · sumatoria sobre todos los modos k = 1, 2, 3, ... hasta
-> infinito
->
-> ***aₖ*** · amplitud del k-ésimo modo (depende de las condiciones
-> iniciales de la cuerda)
->
-> ***sin(kπx/L)*** · perfil espacial del k-ésimo modo, con k − 1 nodos
-> internos en (0, L)
->
-> ***cos(kπct/L)*** · evolución temporal del k-ésimo modo, oscilando con
-> frecuencia f_k = kc/2L
->
-> ***L*** · longitud de la cuerda
->
-> ***c*** · velocidad de propagación, c = √(T/μ)
->
-> *Propuesta por Daniel Bernoulli en su paper de 1753 a la Academia de
-> Berlín. Una cuerda real produce simultáneamente todos los armónicos:
-> la fundamental (k=1, sin nodos internos), el primer sobretono (k=2, un
-> nodo central), el segundo sobretono (k=3, dos nodos), y así
-> sucesivamente. La superposición ponderada de estos modos define el
-> timbre del instrumento. Esta fórmula precede en cincuenta años a
-> Fourier (1807) y contiene implícitamente la idea fundamental del
-> análisis espectral: cualquier vibración compleja se descompone en suma
-> de oscilaciones puras.*
+<Fragment slot="donde">
+
+**Σ** · sumatoria sobre todos los modos k = 1, 2, 3, ... hasta infinito
+
+**aₖ** · amplitud del k-ésimo modo (depende de las condiciones iniciales de la cuerda)
+
+**sin(kπx/L)** · perfil espacial del k-ésimo modo, con k − 1 nodos internos en (0, L)
+
+**cos(kπct/L)** · evolución temporal del k-ésimo modo, oscilando con frecuencia f_k = kc/2L
+
+**L** · longitud de la cuerda
+
+**c** · velocidad de propagación, c = √(T/μ)
+
+*Propuesta por Daniel Bernoulli en su paper de 1753 a la Academia de Berlín. Una cuerda real produce simultáneamente todos los armónicos: la fundamental (k=1, sin nodos internos), el primer sobretono (k=2, un nodo central), el segundo sobretono (k=3, dos nodos), y así sucesivamente. La superposición ponderada de estos modos define el timbre del instrumento. Esta fórmula precede en cincuenta años a Fourier (1807) y contiene implícitamente la idea fundamental del análisis espectral: cualquier vibración compleja se descompone en suma de oscilaciones puras.*
+
+</Fragment>
+
+</Formula>
 
 No te asustes de la sumatoria infinita. Lo que dice es esto: el
 desplazamiento de la cuerda en cualquier punto y en cualquier instante

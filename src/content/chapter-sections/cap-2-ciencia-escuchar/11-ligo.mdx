@@ -19,6 +19,7 @@ tags:
 
 import PausaCientifica from '@/components/book/PausaCientifica.astro';
 import FiguraTDV from '@/components/FiguraTDV.astro';
+import Formula from '@/components/book/Formula.astro';
 
 *Cuando la humanidad aprendió a escuchar el espacio-tiempo*
 
@@ -115,32 +116,23 @@ misma respondiera la pregunta.
 
 **◆**
 
-**Fórmula 2.8** · **Deformación gravitacional medida por LIGO**
+<Formula num="2.8" titulo="Deformación gravitacional medida por LIGO">
 
 h = ΔL / L
 
-> **Donde:**
->
-> ***h*** · amplitud de deformación gravitacional adimensional (sin
-> unidades)
->
-> ***ΔL*** · variación instantánea de la longitud de un brazo del
-> interferómetro (metros)
->
-> ***L*** · longitud nominal del brazo del interferómetro (4.000 metros
-> en LIGO Hanford y Livingston)
->
-> *Definición operativa de la magnitud que LIGO mide. Una onda
-> gravitacional propagándose a través de la Tierra estira y comprime
-> alternativamente el espacio. Para la primera detección directa, el
-> evento GW150914 del 14 de septiembre de 2015 (fusión de dos agujeros
-> negros a 1.300 millones de años luz), el valor pico fue h ≈ 1.0 ×
-> 10⁻²¹. En los brazos de 4 km de LIGO, esto significa una variación de
-> longitud ΔL ≈ 4 × 10⁻¹⁸ m — aproximadamente una diezmilésima parte del
-> diámetro del protón. La sensibilidad requerida para detectar esta
-> señal está al límite absoluto de lo que la mecánica cuántica permite
-> (ruido cuántico de Heisenberg). Premio Nobel de Física 2017 a Rainer
-> Weiss, Barry Barish y Kip Thorne.*
+<Fragment slot="donde">
+
+**h** · amplitud de deformación gravitacional adimensional (sin unidades)
+
+**ΔL** · variación instantánea de la longitud de un brazo del interferómetro (metros)
+
+**L** · longitud nominal del brazo del interferómetro (4.000 metros en LIGO Hanford y Livingston)
+
+*Definición operativa de la magnitud que LIGO mide. Una onda gravitacional propagándose a través de la Tierra estira y comprime alternativamente el espacio. Para la primera detección directa, el evento GW150914 del 14 de septiembre de 2015 (fusión de dos agujeros negros a 1.300 millones de años luz), el valor pico fue h ≈ 1.0 × 10⁻²¹. En los brazos de 4 km de LIGO, esto significa una variación de longitud ΔL ≈ 4 × 10⁻¹⁸ m — aproximadamente una diezmilésima parte del diámetro del protón. La sensibilidad requerida para detectar esta señal está al límite absoluto de lo que la mecánica cuántica permite (ruido cuántico de Heisenberg). Premio Nobel de Física 2017 a Rainer Weiss, Barry Barish y Kip Thorne.*
+
+</Fragment>
+
+</Formula>
 
 ## La paradoja de la sensibilidad imposible
 

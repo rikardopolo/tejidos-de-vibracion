@@ -21,6 +21,7 @@ tags:
 import VozTejido from '@/components/book/VozTejido.astro';
 import PausaCientifica from '@/components/book/PausaCientifica.astro';
 import FiguraTDV from '@/components/FiguraTDV.astro';
+import Formula from '@/components/book/Formula.astro';
 
 *Cuando la luz se reveló como vibración*
 
@@ -242,31 +243,23 @@ aspectos de una sola física.
 
 **◆**
 
-**Fórmula 2.5** · **Velocidad de la luz desde las ecuaciones de
-Maxwell**
+<Formula num="2.5" titulo="Velocidad de la luz desde las ecuaciones de Maxwell">
 
 c = 1 / √(ε₀ · μ₀)
 
-> **Donde:**
->
-> ***c*** · velocidad de la luz en el vacío (metros por segundo)
->
-> ***ε₀*** · permitividad eléctrica del vacío, ε₀ ≈ 8.854 × 10⁻¹² F/m.
-> Léase «épsilon cero».
->
-> ***μ₀*** · permeabilidad magnética del vacío, μ₀ = 4π × 10⁻⁷ T·m/A.
-> Léase «mu cero».
->
-> *Derivada por James Clerk Maxwell en A Dynamical Theory of the
-> Electromagnetic Field (Royal Society, 1865). Las dos constantes ε₀ y
-> μ₀ habían sido medidas en laboratorios eléctricos por Weber y
-> Kohlrausch en 1856 sin que nadie sospechara su relación con la luz.
-> Sustituyendo los valores experimentales, Maxwell obtuvo c ≈
-> 310.740.000 m/s, en perfecta concordancia con las medidas ópticas de
-> Fizeau (313 millones, 1849) y Foucault (298 millones, 1862). La luz
-> era electromagnetismo, propagado a través del campo según leyes
-> electromagnéticas. Dos siglos de debate sobre la naturaleza de la luz
-> quedaron resueltos por una sola ecuación.*
+<Fragment slot="donde">
+
+**c** · velocidad de la luz en el vacío (metros por segundo)
+
+**ε₀** · permitividad eléctrica del vacío, ε₀ ≈ 8.854 × 10⁻¹² F/m. Léase «épsilon cero».
+
+**μ₀** · permeabilidad magnética del vacío, μ₀ = 4π × 10⁻⁷ T·m/A. Léase «mu cero».
+
+*Derivada por James Clerk Maxwell en A Dynamical Theory of the Electromagnetic Field (Royal Society, 1865). Las dos constantes ε₀ y μ₀ habían sido medidas en laboratorios eléctricos por Weber y Kohlrausch en 1856 sin que nadie sospechara su relación con la luz. Sustituyendo los valores experimentales, Maxwell obtuvo c ≈ 310.740.000 m/s, en perfecta concordancia con las medidas ópticas de Fizeau (313 millones, 1849) y Foucault (298 millones, 1862). La luz era electromagnetismo, propagado a través del campo según leyes electromagnéticas. Dos siglos de debate sobre la naturaleza de la luz quedaron resueltos por una sola ecuación.*
+
+</Fragment>
+
+</Formula>
 
 <FiguraTDV
   imagen="/assets/cap-2/figura-2-5.png"

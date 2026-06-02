@@ -18,6 +18,7 @@ tags:
 
 import VozTejido from '@/components/book/VozTejido.astro';
 import PausaCientifica from '@/components/book/PausaCientifica.astro';
+import Formula from '@/components/book/Formula.astro';
 
 *El fraile que convirtió la proporción en número*
 
@@ -155,31 +156,25 @@ Reunidas en una sola fórmula, las tres leyes producen lo que cualquier
 estudiante de física aprende hoy bajo el nombre de **frecuencia
 fundamental de una cuerda tensa:**
 
-**Fórmula 2.1** · **Frecuencia fundamental de la cuerda tensa (ley de
-Mersenne)**
+<Formula num="2.1" titulo="Frecuencia fundamental de la cuerda tensa (ley de Mersenne)">
 
 f = (1 / 2L) · √(T / μ)
 
-> **Donde:**
->
-> ***f*** · frecuencia fundamental de la cuerda en hercios (ciclos por
-> segundo)
->
-> ***L*** · longitud útil de la cuerda en metros
->
-> ***T*** · tensión aplicada a la cuerda en newtons
->
-> ***μ*** · densidad lineal de la cuerda en kilogramos por metro (masa
-> por unidad de longitud). Léase «mu».
->
-> *Publicada por Marin Mersenne en Harmonie universelle (París, 1636),
-> dos años antes de los Discorsi de Galileo. Es la primera ecuación de
-> la ciencia del sonido y permanece exacta hasta hoy: la afinación de
-> cualquier instrumento de cuerda obedece a esta fórmula. Cuando un
-> guitarrista gira una clavija modifica T, cuando pulsa un traste
-> modifica L, cuando elige una cuerda más gruesa modifica μ. El La
-> estándar (440 Hz) que un afinador electrónico nombra es eco directo de
-> esta ecuación.*
+<Fragment slot="donde">
+
+**f** · frecuencia fundamental de la cuerda en hercios (ciclos por segundo)
+
+**L** · longitud útil de la cuerda en metros
+
+**T** · tensión aplicada a la cuerda en newtons
+
+**μ** · densidad lineal de la cuerda en kilogramos por metro (masa por unidad de longitud). Léase «mu».
+
+*Publicada por Marin Mersenne en Harmonie universelle (París, 1636), dos años antes de los Discorsi de Galileo. Es la primera ecuación de la ciencia del sonido y permanece exacta hasta hoy: la afinación de cualquier instrumento de cuerda obedece a esta fórmula. Cuando un guitarrista gira una clavija modifica T, cuando pulsa un traste modifica L, cuando elige una cuerda más gruesa modifica μ. El La estándar (440 Hz) que un afinador electrónico nombra es eco directo de esta ecuación.*
+
+</Fragment>
+
+</Formula>
 
 Donde *f* es la frecuencia en hercios, *L* la longitud en metros, *T* la
 tensión en newtons y *μ* la masa por unidad de longitud en kilogramos
