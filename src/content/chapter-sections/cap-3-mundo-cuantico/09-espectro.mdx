@@ -20,6 +20,7 @@ tags:
 
 import LaboratorioInterior from '@/components/book/LaboratorioInterior.astro';
 import Formula from '@/components/book/Formula.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
 
 *La unificación clásica de Maxwell, leída ahora desde la mecánica
 cuántica*
@@ -146,52 +147,21 @@ cuantizados de energía y no flujos continuos.
 
 **◆**
 
-**Figura 3.12** · **El espectro electromagnético completo**
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-12.png"
+  numero="3.12"
+  titulo="El espectro electromagnético completo"
+  alt="Espectro electromagnético en escala logarítmica desde ondas de radio hasta rayos gamma con la ventana visible humana destacada como franja minúscula"
+  descripcion="El espectro electromagnético abarca aproximadamente 24 órdenes de magnitud en frecuencia. La ventana visible humana (380-700 nm) corresponde a menos de una octava — minúscula comparada con el espectro completo. Lo que llamamos 'luz' en sentido cotidiano es solo una franja muy estrecha de la realidad electromagnética que el cosmos sostiene continuamente."
+/>
 
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Espectro completo en escala
-> logarítmica desde radio (kilómetros) hasta gamma (femtómetros). Bandas
-> etiquetadas: radio, microondas, IR, visible (380-700 nm marcado con
-> franja arco iris), UV, rayos X, gamma. Marcación destacada de la
-> "ventana visible humana" como región minúscula. Anotaciones con
-> frecuencias y longitudes de onda características. Aplicar paleta de
-> marca TDV.*
->
-> **Nota técnica:** *Crear figura nueva vectorial. EVITAR fuentes con
-> derechos restringidos (Wikipedia, NASA). Generar desde cero con paleta
-> TDV.*
->
-> **Figura 3.12.** El espectro electromagnético abarca aproximadamente
-> 24 órdenes de magnitud en frecuencia. La ventana visible humana
-> (380-700 nm) corresponde a menos de una octava — minúscula comparada
-> con el espectro completo. Lo que llamamos "luz" en sentido cotidiano
-> es solo una franja muy estrecha de la realidad electromagnética que el
-> cosmos sostiene continuamente.
-
-**Figura 3.13** · **Patrón visual del experimento del punto ciego**
-
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Figura simple de alta calidad
-> con dos elementos: un punto sólido (•) a la izquierda y una cruz (+) a
-> la derecha, separados aproximadamente 10 cm en el plano impreso.
-> Indicación gráfica del ojo a cubrir (ej. silueta del ojo izquierdo
-> cubierto) y dirección de mirada (flecha apuntando al punto
-> correspondiente). Fondo blanco, contraste máximo.*
->
-> **Nota técnica:** *Crear figura simple precisa con separación correcta
-> entre los dos elementos.*
->
-> **Figura 3.13.** Patrón visual para ejecutar el ejercicio del punto
-> ciego. Cubrir el ojo izquierdo, mirar fijo el punto izquierdo, acercar
-> la página gradualmente: a cierta distancia la cruz desaparece. La cruz
-> cae sobre el disco óptico de la retina derecha, donde no hay
-> fotorreceptores. El cerebro completa la imagen automáticamente.
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-13.png"
+  numero="3.13"
+  titulo="Patrón visual del experimento del punto ciego"
+  alt="Patrón visual del experimento del punto ciego con un punto sólido a la izquierda y una cruz a la derecha para demostrar el disco óptico de la retina"
+  descripcion="Patrón visual para ejecutar el ejercicio del punto ciego. Cubrir el ojo izquierdo, mirar fijo el punto izquierdo, acercar la página gradualmente: a cierta distancia la cruz desaparece. La cruz cae sobre el disco óptico de la retina derecha, donde no hay fotorreceptores. El cerebro completa la imagen automáticamente."
+/>
 
 ## **La ventana visible y la sintonización evolutiva**
 
@@ -320,75 +290,29 @@ de realidad.
 
 **◆**
 
-**Figura 3.14** · **Series espectrales del hidrógeno**
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-14.png"
+  numero="3.14"
+  titulo="Series espectrales del hidrógeno"
+  alt="Series espectrales del hidrógeno (Lyman, Balmer, Paschen, Brackett) como líneas verticales coloreadas en escala logarítmica de longitud de onda"
+  descripcion="El espectro discreto del hidrógeno es la firma experimental directa de la cuantización atómica. Cada línea corresponde a una transición electrónica específica entre niveles cuantizados. La serie de Balmer (1885), descubierta empíricamente antes de la mecánica cuántica, fue el dato que Bohr explicó por primera vez con su modelo de 1913."
+/>
 
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-15.png"
+  numero="3.15"
+  titulo="Relación Energía-Frecuencia del fotón (E = hν)"
+  alt="Gráfica de la relación lineal E = hν entre energía y frecuencia del fotón, con la constante de Planck como pendiente y puntos representativos de cada banda del espectro"
+  descripcion="La energía de cada fotón es estrictamente proporcional a su frecuencia, con la constante de Planck h como factor de proporcionalidad. La línea recta hace visible que la cuantización es proporcionalidad absoluta: cada fotón individual tiene una energía dictada solo por su frecuencia, sin valores intermedios posibles."
+/>
 
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Eje horizontal: longitud de
-> onda λ desde UV (~100 nm) hasta IR cercano (~5 μm), escala
-> logarítmica. Líneas verticales coloreadas representando las
-> transiciones de cada serie: serie de Lyman (UV, transiciones a n=1),
-> serie de Balmer (visible, transiciones a n=2 — Hα 656 nm rojo, Hβ 486
-> nm azul-verde, Hγ 434 nm violeta), serie de Paschen (IR cercano,
-> transiciones a n=3), serie de Brackett (IR medio, transiciones a n=4).
-> Agrupación visual por serie.*
->
-> **Nota técnica:** *Crear figura comparativa con eje logarítmico.*
->
-> **Figura 3.14.** El espectro discreto del hidrógeno es la firma
-> experimental directa de la cuantización atómica. Cada línea
-> corresponde a una transición electrónica específica entre niveles
-> cuantizados. La serie de Balmer (1885), descubierta empíricamente
-> antes de la mecánica cuántica, fue el dato que Bohr explicó por
-> primera vez con su modelo de 1913.
-
-**Figura 3.15** · **Relación Energía-Frecuencia del fotón (E = hν)**
-
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Gráfica E vs ν con escala
-> logarítmica en eje y. Línea recta de pendiente h pasando por el
-> origen. Marcar puntos representativos: fotón infrarrojo (~10⁻²⁰ J),
-> fotón visible verde (~3 × 10⁻¹⁹ J), fotón ultravioleta (~10⁻¹⁸ J),
-> fotón rayos X (~10⁻¹⁵ J). Anotaciones de las bandas del espectro
-> electromagnético en el eje horizontal.*
->
-> **Nota técnica:** *Crear figura nueva, vectorial. La figura del
-> manuscrito original tenía problemas de unidades y legibilidad.*
->
-> **Figura 3.15.** La energía de cada fotón es estrictamente
-> proporcional a su frecuencia, con la constante de Planck h como factor
-> de proporcionalidad. La línea recta hace visible que la cuantización
-> es proporcionalidad absoluta: cada fotón individual tiene una energía
-> dictada solo por su frecuencia, sin valores intermedios posibles.
-
-**Figura 3.16** · **Energía cinética vs función trabajo en el efecto
-fotoeléctrico**
-
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Gráfica K_max vs ν con varias
-> rectas paralelas (una por metal: cesio Φ=2.1 eV, sodio Φ=2.4 eV, zinc
-> Φ=4.3 eV, oro Φ=5.1 eV). Todas las rectas tienen la misma pendiente
-> (h, constante universal). Cada recta cruza el eje ν en su frecuencia
-> umbral ν₀ = Φ/h específica. Eje x: frecuencia ν en Hz × 10¹⁴. Eje y:
-> energía cinética máxima en eV.*
->
-> **Nota técnica:** *Redibujar mostrando varias rectas paralelas para
-> distintos metales.*
->
-> **Figura 3.16.** La gráfica de Einstein 1905 que desafió la teoría
-> ondulatoria clásica. La energía cinética máxima de los electrones
-> emitidos depende linealmente de la frecuencia (no de la intensidad), y
-> la pendiente es h (universal para todos los metales). Cada metal tiene
-> su propia frecuencia umbral, por debajo de la cual no hay emisión sin
-> importar cuánta luz se aplique.
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-16.png"
+  numero="3.16"
+  titulo="Energía cinética vs función trabajo en el efecto fotoeléctrico"
+  alt="Gráfica del efecto fotoeléctrico con rectas paralelas de energía cinética máxima frente a frecuencia para distintos metales, cada uno con su frecuencia umbral y la misma pendiente h"
+  descripcion="La gráfica de Einstein 1905 que desafió la teoría ondulatoria clásica. La energía cinética máxima de los electrones emitidos depende linealmente de la frecuencia (no de la intensidad), y la pendiente es h (universal para todos los metales). Cada metal tiene su propia frecuencia umbral, por debajo de la cual no hay emisión sin importar cuánta luz se aplique."
+/>
 
 <Formula num="3.7" titulo="Ecuación del efecto fotoeléctrico de Einstein">
 
@@ -829,34 +753,13 @@ inmediata con realidad objetiva — disciplina transferible a muchos otros
 dominios, incluido el cuántico, donde la diferencia entre lo que parece
 ser y lo que es se vuelve aún más radical.
 
-**Figura 3.17** · **Comparación de las Leyes de Rayleigh-Jeans, Wien y
-Planck**
-
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Gráfica comparativa de tres
-> curvas de densidad espectral u(ν,T) vs frecuencia ν, para un cuerpo
-> negro a temperatura T fija (sugerencia: 5000 K). Curva 1
-> (Rayleigh-Jeans, línea roja punteada): diverge al infinito en alta
-> frecuencia — "catástrofe ultravioleta". Curva 2 (Wien, línea verde
-> punteada): se ajusta a alta frecuencia pero falla en baja. Curva 3
-> (Planck, línea sólida indigo): reconcilia ambos extremos con curvatura
-> suave. Eje x: frecuencia ν en Hz × 10¹⁴. Eje y: densidad espectral
-> u(ν,T) en J/m³·Hz. Marcar región visible en el espectro.*
->
-> **Nota técnica:** *Redibujar como vectorial. Verificar que la
-> temperatura del cuerpo negro de referencia sea coherente con el rango
-> espectral mostrado.*
->
-> **Figura 3.17.** Comparación de las tres leyes que intentaron
-> describir la radiación del cuerpo negro. La ley de Rayleigh-Jeans
-> (clásica) diverge al infinito en altas frecuencias, generando la
-> "catástrofe ultravioleta". La ley de Wien funciona bien solo en alta
-> frecuencia. La ley de Planck (1900), introduciendo la cuantización E =
-> hν, reconcilia ambos extremos y reproduce el espectro experimental con
-> precisión absoluta.
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-17.png"
+  numero="3.17"
+  titulo="Comparación de las Leyes de Rayleigh-Jeans, Wien y Planck"
+  alt="Gráfico comparativo de las curvas de Rayleigh-Jeans divergente, Wien incompleta y Planck perfecta para el espectro del cuerpo negro"
+  descripcion="Comparación de las tres leyes que intentaron describir la radiación del cuerpo negro. La ley de Rayleigh-Jeans (clásica) diverge al infinito en altas frecuencias, generando la 'catástrofe ultravioleta'. La ley de Wien funciona bien solo en alta frecuencia. La ley de Planck (1900), introduciendo la cuantización E = hν, reconcilia ambos extremos y reproduce el espectro experimental con precisión absoluta."
+/>
 
 <Formula num="3.5" titulo="Ley de radiación del cuerpo negro de Planck">
 

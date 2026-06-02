@@ -20,6 +20,7 @@ tags:
 import VozTejido from '@/components/book/VozTejido.astro';
 import PausaReflexiva from '@/components/book/PausaReflexiva.astro';
 import Formula from '@/components/book/Formula.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
 
 *Cómo la naturaleza inscribe límites estructurales en el conocimiento
 mismo*
@@ -86,31 +87,13 @@ ambas variables conjugadas.*
 
 </Formula>
 
-**Figura 3.5** · **Distribuciones conjugadas del Principio de
-Incertidumbre**
-
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Tres pares de distribuciones
-> gaussianas conjugadas (posición vs momento), eje horizontal
-> compartido. Caso A: σx pequeña / σp grande (partícula localizada
-> espacialmente, momento difuso). Caso B: balanceado (σx ≈ σp). Caso C:
-> σx grande / σp pequeña (momento bien definido, posición difusa).
-> Mostrar el área del producto Δx · Δp como un "rectángulo de
-> incertidumbre" que tiene tamaño constante igual o mayor a ℏ/2 en todos
-> los casos.*
->
-> **Nota técnica:** *Crear figura comparativa con tres paneles de
-> distribuciones gaussianas.*
->
-> **Figura 3.5.** Visualización del Principio de Incertidumbre.
-> Estrechar la distribución en una variable expande necesariamente la
-> conjugada. El "rectángulo de incertidumbre" tiene tamaño mínimo
-> absoluto ℏ/2 ≈ 5.27 × 10⁻³⁵ J·s, derivable matemáticamente del
-> formalismo cuántico (Robertson 1929). No es limitación instrumental:
-> es estructura de la realidad cuántica.
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-5.png"
+  numero="3.5"
+  titulo="Distribuciones conjugadas del Principio de Incertidumbre"
+  alt="Tres pares de distribuciones gaussianas conjugadas de posición y momento ilustrando que estrechar una variable ensancha la conjugada, con el rectángulo de incertidumbre de tamaño mínimo ℏ/2"
+  descripcion="Visualización del Principio de Incertidumbre. Estrechar la distribución en una variable expande necesariamente la conjugada. El 'rectángulo de incertidumbre' tiene tamaño mínimo absoluto ℏ/2 ≈ 5.27 × 10⁻³⁵ J·s, derivable matemáticamente del formalismo cuántico (Robertson 1929). No es limitación instrumental: es estructura de la realidad cuántica."
+/>
 
 donde σx es la desviación estándar de las mediciones de posición sobre
 un conjunto idéntico de sistemas preparados en el mismo estado, σp es la
