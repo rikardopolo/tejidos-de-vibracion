@@ -23,8 +23,17 @@ interface Props {
   subtitulo: string;
   /** Línea de fecha · romana. Default: la del Volumen I. */
   fecha?: string;
+  /**
+   * Renderizar el bloque legal (colofón + ISBN + datos de registro).
+   * El ISBN identifica el Volumen I completo, no cada capítulo, por lo que
+   * el bloque va UNA sola vez por libro · en la apertura del volumen.
+   * Default `false`: los capítulos abren con página-título sobria sin
+   * datos de edición. La Obertura mantiene su legal inline en MDX (no usa
+   * este componente), pero el prop queda disponible si se migra.
+   */
+  legal?: boolean;
 }
-const { seccion, subtitulo, fecha = '19 · iv · mmxxvi' } = Astro.props;
+const { seccion, subtitulo, fecha = '19 · iv · mmxxvi', legal = false } = Astro.props;
 
 const ISBN = '978-628-01-8624-5';
 const CODIGO_REGISTRO = '2604275409285';
@@ -40,16 +49,18 @@ const CODIGO_REGISTRO = '2604275409285';
   <p class="frontis__date">{fecha}</p>
 </header>
 
-<section class="frontis__legal" aria-label="Datos de registro y copyright">
-  <p class="frontis__legal-title">Tejidos de Vibración, Volumen I — {seccion}: {subtitulo}</p>
-  <p>© 2026 Ricardo Polo (Orion)</p>
-  <p>Obra registrada en SafeCreative.</p>
-  <p>Código de registro: <span class="frontis__code-num">{CODIGO_REGISTRO}</span></p>
-  <p>ISBN: <span class="frontis__code-num">{ISBN}</span></p>
-  <p>Portal: <a href="https://tejidosderealidad.com">tejidosderealidad.com</a></p>
-  <p class="frontis__rights">Prohibida la reproducción total o parcial sin permiso del autor.</p>
-  <p class="frontis__edition">Primera edición digital · 2026</p>
-</section>
+{legal && (
+  <section class="frontis__legal" aria-label="Datos de registro y copyright">
+    <p class="frontis__legal-title">Tejidos de Vibración, Volumen I — {seccion}: {subtitulo}</p>
+    <p>© 2026 Ricardo Polo (Orion)</p>
+    <p>Obra registrada en SafeCreative.</p>
+    <p>Código de registro: <span class="frontis__code-num">{CODIGO_REGISTRO}</span></p>
+    <p>ISBN: <span class="frontis__code-num">{ISBN}</span></p>
+    <p>Portal: <a href="https://tejidosderealidad.com">tejidosderealidad.com</a></p>
+    <p class="frontis__rights">Prohibida la reproducción total o parcial sin permiso del autor.</p>
+    <p class="frontis__edition">Primera edición digital · 2026</p>
+  </section>
+)}
 
 <style is:global>
   .frontis {

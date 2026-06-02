@@ -122,13 +122,22 @@ const breadcrumbText = `${pieceLabel} · Cap. ${chapterNum}`;
   <article class="measure">
     {/* Eyebrow del cuerpo eliminado (sub-tarea 3.5): el breadcrumb sticky
         del CapituloLayout ya comunica "◆ §N · Cap. N" de forma persistente.
-        El index biblioteca SÍ conserva su eyebrow (no tiene breadcrumb). */}
-    <header class="stack-sm">
-      <h1 class="title-1">{title}</h1>
-      {subtitle && <p class="title-1__sub">{subtitle}</p>}
-    </header>
+        El index biblioteca SÍ conserva su eyebrow (no tiene breadcrumb).
 
-    <div class="flourish flourish--rule"></div>
+        Portadas (kind='portada') omiten el header h1/subtitle/flourish:
+        su contenido MDX ya renderiza <Frontispicio> con el título de la
+        sección, y duplicar el h1 estructural producía un doble título
+        editorialmente indeseado. Las demás piezas conservan su header. */}
+    {kind !== 'portada' && (
+      <>
+        <header class="stack-sm">
+          <h1 class="title-1">{title}</h1>
+          {subtitle && <p class="title-1__sub">{subtitle}</p>}
+        </header>
+
+        <div class="flourish flourish--rule"></div>
+      </>
+    )}
 
     {tieneAcceso && Content ? (
       <section class="prose dropcap section-gap">
