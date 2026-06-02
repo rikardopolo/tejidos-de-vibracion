@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" aria-labelledby="t24">
+  <title id="t24">Cinco resonadores de Helmholtz de tamaños decrecientes que descomponen experimentalmente los armónicos del sonido</title>
+  <defs>
+    <radialGradient id="brass" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#E5C76A"/>
+      <stop offset="60%" stop-color="#B68914"/>
+      <stop offset="100%" stop-color="#7A5C0E"/>
+    </radialGradient>
+  </defs>
+
+  <text x="360" y="28" font-family="Georgia, serif" font-size="17" fill="#1A1A1A" text-anchor="middle">Resonadores de Helmholtz</text>
+  <text x="360" y="48" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#3A3530" text-anchor="middle">análisis espectral mecánico · cada esfera amplifica selectivamente una frecuencia</text>
+
+  <!-- Cinco esferas con radio decreciente; centros equiespaciados -->
+  <!-- r5=58, r4=48, r3=40, r2=32, r1=24 -->
+  <g>
+    <!-- Resonador 1: 100 Hz (grande) -->
+    <g transform="translate(110,180)">
+      <circle cx="0" cy="0" r="58" fill="url(#brass)" stroke="#1A1A1A" stroke-width="1"/>
+      <!-- Apertura ancha (frente) -->
+      <ellipse cx="-58" cy="0" rx="6" ry="14" fill="#1A1A1A"/>
+      <!-- Apertura estrecha (atrás) -->
+      <ellipse cx="58" cy="0" rx="3" ry="7" fill="#1A1A1A"/>
+      <text x="0" y="86" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#B68914" text-anchor="middle">~100 Hz</text>
+      <text x="0" y="102" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">grave</text>
+    </g>
+
+    <!-- Resonador 2: 300 Hz -->
+    <g transform="translate(240,180)">
+      <circle cx="0" cy="0" r="48" fill="url(#brass)" stroke="#1A1A1A" stroke-width="1"/>
+      <ellipse cx="-48" cy="0" rx="5" ry="12" fill="#1A1A1A"/>
+      <ellipse cx="48" cy="0" rx="2.5" ry="6" fill="#1A1A1A"/>
+      <text x="0" y="76" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#B68914" text-anchor="middle">~300 Hz</text>
+    </g>
+
+    <!-- Resonador 3: 700 Hz -->
+    <g transform="translate(360,180)">
+      <circle cx="0" cy="0" r="40" fill="url(#brass)" stroke="#1A1A1A" stroke-width="1"/>
+      <ellipse cx="-40" cy="0" rx="4" ry="10" fill="#1A1A1A"/>
+      <ellipse cx="40" cy="0" rx="2" ry="5" fill="#1A1A1A"/>
+      <text x="0" y="68" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#B68914" text-anchor="middle">~700 Hz</text>
+    </g>
+
+    <!-- Resonador 4: 1500 Hz -->
+    <g transform="translate(460,180)">
+      <circle cx="0" cy="0" r="32" fill="url(#brass)" stroke="#1A1A1A" stroke-width="1"/>
+      <ellipse cx="-32" cy="0" rx="3.5" ry="8" fill="#1A1A1A"/>
+      <ellipse cx="32" cy="0" rx="2" ry="4" fill="#1A1A1A"/>
+      <text x="0" y="60" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#B68914" text-anchor="middle">~1500 Hz</text>
+    </g>
+
+    <!-- Resonador 5: 3000 Hz (con oído) -->
+    <g transform="translate(560,180)">
+      <circle cx="0" cy="0" r="24" fill="url(#brass)" stroke="#1A1A1A" stroke-width="1"/>
+      <ellipse cx="-24" cy="0" rx="3" ry="6" fill="#1A1A1A"/>
+      <ellipse cx="24" cy="0" rx="1.5" ry="3" fill="#1A1A1A"/>
+      <text x="0" y="52" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#B68914" text-anchor="middle">~3000 Hz</text>
+      <text x="0" y="68" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">agudo</text>
+
+      <!-- Oído humano estilizado -->
+      <g transform="translate(70,-10)">
+        <path d="M0 10 C 0 0, 8 -8, 18 -6 C 28 -4, 32 6, 28 14 C 26 22, 18 26, 12 22 C 6 18, 4 14, 6 10 C 8 6, 14 6, 14 10"
+              fill="#F2EAD5" stroke="#1A1A1A" stroke-width="1.2"/>
+        <path d="M14 14 C 16 16, 18 18, 16 22" fill="none" stroke="#1A1A1A" stroke-width="0.8"/>
+      </g>
+      <!-- Linea de acople apertura pequeña → oído -->
+      <line x1="25" y1="0" x2="68" y2="0" stroke="#1A1A1A" stroke-width="0.6" stroke-dasharray="2 3"/>
+    </g>
+  </g>
+
+  <!-- Etiqueta: sonido complejo entrante -->
+  <g transform="translate(40,300)">
+    <path d="M0 0 Q 20 -12 40 0 Q 60 12 80 0 Q 100 -8 120 0" stroke="#2D1B69" stroke-width="1.5" fill="none"/>
+    <text x="60" y="22" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#2D1B69" text-anchor="middle">sonido complejo</text>
+  </g>
+
+  <text x="360" y="335" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#3A3530" text-anchor="middle">
+    cada apertura grande capta el sonido externo · la pequeña se aplica al conducto auditivo
+  </text>
+  <text x="360" y="358" font-family="Georgia, serif" font-size="11" fill="#8A8A8A" text-anchor="middle">
+    Helmholtz hizo audibles los armónicos individuales décadas antes del análisis espectral electrónico
+  </text>
+</svg>

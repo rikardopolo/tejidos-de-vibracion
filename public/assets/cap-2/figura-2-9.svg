@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 540" role="img" aria-labelledby="t29">
+  <title id="t29">Curva de dispersión de fonones en una cadena lineal de átomos — modelo de Debye 1912</title>
+
+  <text x="360" y="28" font-family="Georgia, serif" font-size="17" fill="#1A1A1A" text-anchor="middle">Curva de dispersión de fonones · modelo de Debye</text>
+  <text x="360" y="48" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#3A3530" text-anchor="middle">cuantos de vibración mecánica en una cadena cristalina</text>
+
+  <!-- ============ PANEL SUPERIOR: cadena de átomos-resortes ============ -->
+  <text x="80" y="90" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#2D1B69">cadena lineal de átomos</text>
+
+  <!-- Átomos como esferas, resortes en zigzag entre ellos -->
+  <g transform="translate(60,130)">
+    <!-- Posiciones de equilibrio: x = 0,80,160,240,320,400,480,560,640 -->
+    <!-- Onda de desplazamiento longitudinal: dispalzar cada átomo según sin(2πx/λ) -->
+    <!-- λ ≈ 320, amplitud 12 -->
+
+    <!-- Resortes (zigzag) -->
+    <g stroke="#1A1A1A" stroke-width="1" fill="none">
+      <path d="M14 0 l 8 -6 l 8 12 l 8 -12 l 8 12 l 8 -12 l 8 12 l 8 -6"/>
+      <path d="M94 0 l 8 -6 l 8 12 l 8 -12 l 8 12 l 8 -12 l 8 12 l 8 -6"/>
+      <path d="M174 0 l 8 -6 l 8 12 l 8 -12 l 8 12 l 8 -12 l 8 12 l 8 -6"/>
+      <path d="M254 0 l 8 -6 l 8 12 l 8 -12 l 8 12 l 8 -12 l 8 12 l 8 -6"/>
+      <path d="M334 0 l 8 -6 l 8 12 l 8 -12 l 8 12 l 8 -12 l 8 12 l 8 -6"/>
+      <path d="M414 0 l 8 -6 l 8 12 l 8 -12 l 8 12 l 8 -12 l 8 12 l 8 -6"/>
+      <path d="M494 0 l 8 -6 l 8 12 l 8 -12 l 8 12 l 8 -12 l 8 12 l 8 -6"/>
+      <path d="M574 0 l 8 -6 l 8 12 l 8 -12 l 8 12 l 8 -12 l 8 12 l 8 -6"/>
+    </g>
+
+    <!-- Átomos (con leve desplazamiento longitudinal) -->
+    <g fill="#2D1B69" stroke="#1A1A1A" stroke-width="0.8">
+      <circle cx="0"   cy="0" r="9"/>
+      <circle cx="84"  cy="0" r="9"/> <!-- +4 desplazado -->
+      <circle cx="166" cy="0" r="9"/> <!-- +6 -->
+      <circle cx="246" cy="0" r="9"/> <!-- +6 -->
+      <circle cx="324" cy="0" r="9"/> <!-- +4 -->
+      <circle cx="396" cy="0" r="9"/> <!-- -4 -->
+      <circle cx="474" cy="0" r="9"/> <!-- -6 -->
+      <circle cx="554" cy="0" r="9"/> <!-- -6 -->
+      <circle cx="634" cy="0" r="9"/>
+    </g>
+
+    <!-- Marca del espaciamiento a -->
+    <line x1="0"  y1="32" x2="0"  y2="38" stroke="#8A8A8A" stroke-width="0.6"/>
+    <line x1="80" y1="32" x2="80" y2="38" stroke="#8A8A8A" stroke-width="0.6"/>
+    <line x1="0"  y1="35" x2="80" y2="35" stroke="#8A8A8A" stroke-width="0.6"/>
+    <text x="40" y="50" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#8A8A8A" text-anchor="middle">a · espaciamiento atómico</text>
+
+    <!-- Onda envolvente -->
+    <path d="M0 -30 Q 80 -50 160 -30 Q 240 -10 320 -30 Q 400 -50 480 -30 Q 560 -10 640 -30"
+          stroke="#B68914" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/>
+    <text x="610" y="-44" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#B68914">onda</text>
+  </g>
+
+  <!-- Separador -->
+  <line x1="60" y1="220" x2="660" y2="220" stroke="#B8B3AB" stroke-width="0.6" stroke-dasharray="4 6"/>
+
+  <!-- ============ PANEL INFERIOR: gráfica ω(k) vs k ============ -->
+  <text x="80" y="260" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#2D1B69">curva de dispersión ω(k)</text>
+
+  <!-- Ejes -->
+  <line x1="360" y1="285" x2="360" y2="490" stroke="#1A1A1A" stroke-width="1.2"/>
+  <line x1="90" y1="465" x2="640" y2="465" stroke="#1A1A1A" stroke-width="1.2"/>
+
+  <!-- Curva ω = ω_max · |sin(ka/2)|, simétrica en torno a k=0 -->
+  <!-- Mapeo: k=-π/a → x=110, k=0 → x=360, k=π/a → x=610 -->
+  <!-- ω_max = 165 (y=300 al pico) -->
+  <path d="M110 465
+           Q 175 350 235 297
+           Q 297 268 360 465"
+        stroke="#2D1B69" stroke-width="2.6" fill="none"/>
+  <path d="M360 465
+           Q 423 268 485 297
+           Q 545 350 610 465"
+        stroke="#2D1B69" stroke-width="2.6" fill="none"/>
+
+  <!-- Regimen lineal acústico (tangente a baja k) -->
+  <line x1="320" y1="465" x2="385" y2="320" stroke="#B68914" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="305" y="335" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#B68914" text-anchor="end">régimen lineal</text>
+  <text x="305" y="349" font-family="Georgia, serif" font-size="9" fill="#8A8A8A" text-anchor="end">(sonido clásico)</text>
+
+  <!-- Zona de Brillouin -->
+  <line x1="110" y1="285" x2="110" y2="475" stroke="#8A8A8A" stroke-width="0.8" stroke-dasharray="3 4"/>
+  <line x1="610" y1="285" x2="610" y2="475" stroke="#8A8A8A" stroke-width="0.8" stroke-dasharray="3 4"/>
+  <text x="110" y="490" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#3A3530" text-anchor="middle">−π/a</text>
+  <text x="360" y="490" font-family="Georgia, serif" font-size="11" fill="#3A3530" text-anchor="middle">0</text>
+  <text x="610" y="490" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#3A3530" text-anchor="middle">+π/a</text>
+  <text x="650" y="478" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#1A1A1A">k</text>
+
+  <!-- ω_max -->
+  <line x1="355" y1="294" x2="365" y2="294" stroke="#1A1A1A" stroke-width="1"/>
+  <text x="350" y="298" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#1A1A1A" text-anchor="end">ω_max</text>
+
+  <text x="350" y="285" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#1A1A1A" text-anchor="end">ω</text>
+
+  <!-- Etiqueta zona Brillouin con corchete -->
+  <path d="M110 510 L 110 506 L 610 506 L 610 510" stroke="#8A8A8A" stroke-width="0.8" fill="none"/>
+  <text x="360" y="525" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#8A8A8A" text-anchor="middle">zona de Brillouin</text>
+
+  <!-- Caja fórmula -->
+  <rect x="475" y="285" width="170" height="46" rx="3" fill="#E5DBBE" stroke="#B68914" stroke-width="0.8"/>
+  <text x="560" y="305" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#1A1A1A" text-anchor="middle">E = ℏω</text>
+  <text x="560" y="323" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#1A1A1A" text-anchor="middle">p = ℏk</text>
+</svg>

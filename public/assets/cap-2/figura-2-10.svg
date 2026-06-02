@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 480" role="img" aria-labelledby="t210">
+  <title id="t210">Microscopía de fuerza atómica de Gimzewski y Pelling — escuchando la vibración mecánica de una levadura viva</title>
+  <defs>
+    <marker id="ar210" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B68914"/>
+    </marker>
+  </defs>
+
+  <text x="360" y="28" font-family="Georgia, serif" font-size="17" fill="#1A1A1A" text-anchor="middle">Cantilever AFM sobre una levadura viva</text>
+  <text x="360" y="48" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#3A3530" text-anchor="middle">Pelling, Gimzewski et al. · UCLA 2004 · Science 305</text>
+
+  <!-- ============ Bloque experimental ============ -->
+
+  <!-- Soporte del cantilever (izquierda) -->
+  <rect x="60" y="180" width="50" height="50" fill="#3A3530" stroke="#1A1A1A" stroke-width="1"/>
+  <text x="85" y="248" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#8A8A8A" text-anchor="middle">soporte</text>
+
+  <!-- Cantilever de silicio: triángulo alargado horizontal -->
+  <path d="M110 200 L 410 215 L 410 220 L 110 215 Z" fill="#B8B3AB" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="245" y="195" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#3A3530" text-anchor="middle">cantilever de silicio · 200 μm × 50 μm × 1 μm</text>
+
+  <!-- Punta del cantilever (extremo libre) -->
+  <path d="M408 218 L 416 232 L 410 226 Z" fill="#1A1A1A"/>
+
+  <!-- LEVADURA (Saccharomyces cerevisiae) -->
+  <g transform="translate(440,235)">
+    <ellipse cx="0" cy="0" rx="35" ry="30" fill="#E5C76A" opacity="0.85" stroke="#1A1A1A" stroke-width="1"/>
+    <!-- Pequeña yema (gemación) -->
+    <circle cx="28" cy="-22" r="10" fill="#E5C76A" opacity="0.7" stroke="#1A1A1A" stroke-width="0.8"/>
+    <!-- Núcleo sugerido -->
+    <ellipse cx="-5" cy="0" rx="10" ry="8" fill="#B68914" opacity="0.3"/>
+    <text x="0" y="60" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#3A3530" text-anchor="middle">levadura · ~5 μm Ø</text>
+  </g>
+
+  <!-- Láser incidente (haz oro) -->
+  <line x1="150" y1="80" x2="380" y2="208" stroke="#E5B628" stroke-width="2"/>
+  <line x1="380" y1="208" x2="290" y2="350" stroke="#E5B628" stroke-width="2"/>
+  <text x="190" y="90" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#B68914">haz láser</text>
+
+  <!-- Diodo láser fuente -->
+  <rect x="120" y="65" width="30" height="20" fill="#9B2A2A" stroke="#1A1A1A" stroke-width="0.8"/>
+  <text x="135" y="60" font-family="Georgia, serif" font-size="10" fill="#1A1A1A" text-anchor="middle">láser</text>
+
+  <!-- Fotodetector cuádruple -->
+  <g transform="translate(265,355)">
+    <rect x="-25" y="-25" width="50" height="50" fill="#F2EAD5" stroke="#1A1A1A" stroke-width="1"/>
+    <line x1="0" y1="-25" x2="0" y2="25" stroke="#1A1A1A" stroke-width="0.8"/>
+    <line x1="-25" y1="0" x2="25" y2="0" stroke="#1A1A1A" stroke-width="0.8"/>
+    <!-- 4 cuadrantes etiquetados -->
+    <text x="-12" y="-10" font-family="Georgia, serif" font-size="9" fill="#8A8A8A" text-anchor="middle">A</text>
+    <text x="12" y="-10" font-family="Georgia, serif" font-size="9" fill="#8A8A8A" text-anchor="middle">B</text>
+    <text x="-12" y="14" font-family="Georgia, serif" font-size="9" fill="#8A8A8A" text-anchor="middle">C</text>
+    <text x="12" y="14" font-family="Georgia, serif" font-size="9" fill="#8A8A8A" text-anchor="middle">D</text>
+    <text x="0" y="44" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#3A3530" text-anchor="middle">fotodetector cuádruple</text>
+  </g>
+
+  <!-- Cable hacia osciloscopio (derecha) -->
+  <path d="M290 360 C 380 380, 470 380, 530 360" stroke="#1A1A1A" stroke-width="1" fill="none"/>
+
+  <!-- OSCILOSCOPIO -->
+  <g transform="translate(530,300)">
+    <rect x="0" y="0" width="160" height="100" rx="4" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1"/>
+    <rect x="8" y="10" width="144" height="65" fill="#0A1F1A"/>
+    <!-- Traza oscilante verde a ~1.6 kHz, ~3 nm amplitud -->
+    <path d="M12 42
+             q 4 -15 8 0 q 4 15 8 0 q 4 -15 8 0 q 4 15 8 0
+             q 4 -15 8 0 q 4 15 8 0 q 4 -15 8 0 q 4 15 8 0
+             q 4 -15 8 0 q 4 15 8 0 q 4 -15 8 0 q 4 15 8 0
+             q 4 -15 8 0 q 4 15 8 0 q 4 -15 8 0 q 4 15 8 0"
+          stroke="#1D9E75" stroke-width="1.3" fill="none"/>
+    <text x="80" y="92" font-family="Georgia, serif" font-size="10" fill="#E5DBBE" text-anchor="middle">analizador de espectro</text>
+  </g>
+
+  <!-- Inset espectral -->
+  <g transform="translate(80,350)">
+    <rect x="0" y="0" width="160" height="80" fill="#F2EAD5" stroke="#1A1A1A" stroke-width="0.6"/>
+    <line x1="10" y1="70" x2="150" y2="70" stroke="#1A1A1A" stroke-width="0.6"/>
+    <line x1="10" y1="10" x2="10" y2="70" stroke="#1A1A1A" stroke-width="0.6"/>
+    <!-- Pico estrecho a ~1.6 kHz -->
+    <path d="M10 70 L 60 70 L 70 18 L 80 70 L 150 70" stroke="#2D1B69" stroke-width="1.4" fill="none"/>
+    <text x="70" y="14" font-family="Georgia, serif" font-size="9" font-style="italic" fill="#2D1B69" text-anchor="middle">~1.6 kHz</text>
+    <text x="80" y="86" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#3A3530" text-anchor="middle">huella espectral de la levadura</text>
+  </g>
+
+  <!-- Datos clave al pie -->
+  <rect x="280" y="430" width="290" height="36" rx="3" fill="#E5DBBE" stroke="#B68914" stroke-width="0.6"/>
+  <text x="425" y="447" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#1A1A1A" text-anchor="middle">amplitud ~3 nm · frecuencia 0.8–1.6 kHz · fuerza ~10 nN</text>
+  <text x="425" y="461" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">cesa con inhibidor metabólico → vibración activa, no Browniana</text>
+</svg>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" aria-labelledby="t26">
+  <title id="t26">Aparato experimental de Heinrich Hertz en Karlsruhe (1886-87) — primera transmisión inalámbrica</title>
+
+  <text x="360" y="28" font-family="Georgia, serif" font-size="17" fill="#1A1A1A" text-anchor="middle">Aparato de Hertz · Karlsruhe, 1886–1887</text>
+  <text x="360" y="48" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#3A3530" text-anchor="middle">primera demostración experimental directa de las predicciones de Maxwell</text>
+
+  <!-- TRANSMISOR (izquierda) -->
+  <g transform="translate(60,180)">
+    <!-- Esfera izquierda -->
+    <circle cx="0" cy="0" r="28" fill="#B8B3AB" stroke="#1A1A1A" stroke-width="1.2"/>
+    <ellipse cx="-8" cy="-8" rx="6" ry="4" fill="#F2EAD5" opacity="0.6"/>
+    <!-- Esfera derecha -->
+    <circle cx="120" cy="0" r="28" fill="#B8B3AB" stroke="#1A1A1A" stroke-width="1.2"/>
+    <ellipse cx="112" cy="-8" rx="6" ry="4" fill="#F2EAD5" opacity="0.6"/>
+    <!-- Alambre con spark gap central -->
+    <line x1="28" y1="0" x2="55" y2="0" stroke="#1A1A1A" stroke-width="1.5"/>
+    <line x1="65" y1="0" x2="92" y2="0" stroke="#1A1A1A" stroke-width="1.5"/>
+    <!-- Chispas (rayos amarillos) -->
+    <path d="M55 0 L58 -3 L56 -1 L60 -4 L57 0 L60 3 L57 1 L58 4 L55 0 Z" fill="#E5B628" stroke="#B68914" stroke-width="0.4"/>
+    <path d="M65 0 L62 3 L64 1 L60 4 L63 0 L60 -3 L63 -1 L62 -4 L65 0 Z" fill="#E5B628" stroke="#B68914" stroke-width="0.4"/>
+    <!-- Alto voltaje -->
+    <line x1="60" y1="20" x2="60" y2="55" stroke="#1A1A1A" stroke-width="0.8"/>
+    <rect x="40" y="55" width="40" height="22" fill="#E5DBBE" stroke="#1A1A1A" stroke-width="0.8"/>
+    <text x="60" y="70" font-family="Georgia, serif" font-size="10" fill="#1A1A1A" text-anchor="middle">A.V.</text>
+
+    <!-- Etiquetas -->
+    <text x="60" y="-50" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#2D1B69" text-anchor="middle">Transmisor</text>
+    <text x="60" y="-35" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">2 esferas Zn · ⌀30 cm · separación 3 m</text>
+    <text x="60" y="100" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">spark gap central</text>
+  </g>
+
+  <!-- ONDAS EM (curvas onduladas entre transmisor y receptor) -->
+  <g transform="translate(255,180)" stroke="#B68914" fill="none">
+    <!-- Tres frentes de onda concéntricos sutiles -->
+    <path d="M0 0 Q 50 -30 100 0 Q 150 30 200 0" stroke-width="1.5"/>
+    <path d="M0 12 Q 50 -18 100 12 Q 150 42 200 12" stroke-width="1.2" opacity="0.7"/>
+    <path d="M0 -12 Q 50 -42 100 -12 Q 150 18 200 -12" stroke-width="1.2" opacity="0.7"/>
+    <path d="M0 24 Q 50 -6 100 24 Q 150 54 200 24" stroke-width="1" opacity="0.4"/>
+    <path d="M0 -24 Q 50 -54 100 -24 Q 150 6 200 -24" stroke-width="1" opacity="0.4"/>
+  </g>
+  <text x="355" y="120" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#B68914" text-anchor="middle">ondas electromagnéticas</text>
+  <text x="355" y="136" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">propagación a velocidad c (Maxwell, 1865)</text>
+
+  <!-- RECEPTOR (derecha) -->
+  <g transform="translate(490,180)">
+    <!-- Rectángulo de cobre 120x80 -->
+    <rect x="0" y="-40" width="160" height="80" fill="none" stroke="#B68914" stroke-width="2.4"/>
+    <!-- Spark gap diminuto en lado derecho -->
+    <line x1="80" y1="-40" x2="80" y2="-12" stroke="#B68914" stroke-width="2.4"/>
+    <line x1="80" y1="-8" x2="80" y2="40" stroke="#B68914" stroke-width="2.4"/>
+    <!-- Chispa pequeña -->
+    <circle cx="80" cy="-10" r="2" fill="#E5B628"/>
+    <line x1="80" y1="-12" x2="80" y2="-8" stroke="#E5B628" stroke-width="0.6"/>
+
+    <text x="80" y="-58" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#2D1B69" text-anchor="middle">Receptor</text>
+    <text x="80" y="-44" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">alambre Cu · 120 × 80 cm</text>
+
+    <text x="120" y="-6" font-family="Georgia, serif" font-size="10" fill="#1A1A1A">⟵ chispa</text>
+    <text x="120" y="6" font-family="Georgia, serif" font-size="10" fill="#1A1A1A">  diminuta</text>
+  </g>
+
+  <!-- Distancia indicada -->
+  <line x1="200" y1="320" x2="525" y2="320" stroke="#3A3530" stroke-width="0.6" stroke-dasharray="3 4"/>
+  <text x="362" y="335" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#3A3530" text-anchor="middle">hasta 18 m de separación</text>
+
+  <text x="360" y="375" font-family="Georgia, serif" font-size="12" fill="#1A1A1A" text-anchor="middle">
+    «Es solo un experimento que prueba que el Maestro Maxwell tenía razón.»
+  </text>
+  <text x="360" y="395" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#8A8A8A" text-anchor="middle">
+    — Heinrich Hertz, ante la pregunta de un alumno sobre la utilidad del descubrimiento
+  </text>
+</svg>
