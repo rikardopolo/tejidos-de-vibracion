@@ -32,11 +32,18 @@ Corre esto sobre el PDF generado (y, donde aplique, sobre el HTML de impresión)
 ## D · Regla de entrega (la más importante)
 
 - [ ] **Cero** menciones del Manual de Estilo (cualquier versión).
-- [ ] **Cero** etiquetas internas: "Nivel 1/2/3/4", "Carril A/B", nombres de agentes.
-- [ ] **Cero** checklists, reportes de verificación o meta-comentario editorial en el PDF.
+- [ ] **Cero** andamiaje de fábrica que el lector nunca debería ver: nombres de agentes,
+      "Test del Lector Triple", notas crudas de autor/QA, meta-comentario de proceso.
+- [ ] **Cero** checklists o reportes de verificación en el PDF.
 - [ ] El registro es español neutro colombiano con **tuteo** (tú/puedes/eres). Sin voseo.
 
+> **`Nivel N` y `Carril A/B` NO se filtran — son vocabulario reader-facing.** El libro los
+> introduce y enseña explícitamente: la Obertura (`08-niveles`) los presenta como «el código
+> de honestidad del libro» y «cuatro niveles, cada uno señalizado explícitamente»; `11-cierre`
+> los nombra («no son jerga, son llaves»). Igual que `Velos`, `Territorios` o `Meta-Observador`:
+> léxico de la obra, no andamiaje interno. Prohibirlos era un falso positivo.
+
 > Sugerencia de automatización: un grep sobre el HTML/PDF de impresión para
-> `Nivel [1-4]`, `Carril [AB]`, `Manual de Estilo`, `Meta-Observador` (donde no
-> corresponda), y patrones de voseo (`podés|tenés|querés|sos\b`). Cualquier acierto
-> bloquea la entrega hasta revisión.
+> `Manual de Estilo`, `Test del Lector`, patrones de voseo (`podés|tenés|querés|sos\b`) y
+> azules de Office (`#2E74B5|#1F4D78|#5B9BD5`). Cualquier acierto bloquea la entrega
+> hasta revisión.

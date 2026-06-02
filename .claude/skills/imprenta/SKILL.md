@@ -41,13 +41,16 @@ una sesión de maquetación, y respeta su jerarquía:
 El PDF final es para el lector. Por tanto, en el documento entregable:
 
 - **Cero** menciones del Manual de Estilo (cualquier versión).
-- **Cero** etiquetas internas: nada de "Nivel 1/2/3/4", "Carril A/B", nombres de
-  agentes, ni andamiaje epistémico explícito.
-- **Cero** checklists, reportes de verificación o meta-comentario editorial.
+- **Cero** andamiaje **no introducido al lector**: nombres de agentes, "Test del Lector
+  Triple", notas crudas de autor/QA, meta-comentario de proceso editorial.
+- **Cero** checklists o reportes de verificación.
 
-El rigor se queda; el rigor vive en las decisiones de contenido, no en el vocabulario.
-Los niveles de evidencia, por ejemplo, se comunican con el lenguaje cuidadoso del texto
-(«en física se describe como…», «esto sugiere, no demuestra…»), no con una etiqueta.
+El vocabulario que **el propio libro enseña explícitamente al lector** es contenido
+legítimo, no andamiaje: los **Niveles** de evidencia (presentados en la Obertura como
+«el código de honestidad del libro»), los **Carriles** A/B, los **Velos**, los
+**Territorios**, el **Meta-Observador**. Aparecen en el PDF porque la obra los nombra y
+los usa como llaves de lectura. Lo que nunca aparece es el proceso de fábrica detrás del
+texto: el Manual, los agentes, los tests.
 
 ## Pipeline
 

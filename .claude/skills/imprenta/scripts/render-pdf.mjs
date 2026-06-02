@@ -85,12 +85,16 @@ console.log(`PDF generado: ${out}`);
 
 // 2 · Preflight mínimo: la Regla de entrega no es negociable.
 //    (Sobre HTML de origen si es archivo local; sobre PDF se hace inspección visual.)
+// `Nivel N` y `Carril A/B` NO se prohíben: son vocabulario reader-facing que el
+// libro introduce y enseña explícitamente (Obertura · 08-niveles "el código de
+// honestidad del libro" · 11-cierre "no son jerga, son llaves"). Igual que Velos,
+// Territorios o Meta-Observador. Solo se bloquea el andamiaje de fábrica que el
+// lector nunca debería ver.
 const PROHIBIDO = [
-  /Nivel\s*[1-4]/i,
-  /Carril\s*[AB]\b/,
   /Manual de Estilo/i,
-  /\b(pod[eé]s|ten[eé]s|quer[eé]s|sos)\b/i, // voseo
-  /#2E74B5|#1F4D78|#5B9BD5/i,               // azules de Office
+  /Test del Lector/i,                        // andamiaje de proceso (no reader-facing)
+  /\b(pod[eé]s|ten[eé]s|quer[eé]s|sos)\b/i,  // voseo
+  /#2E74B5|#1F4D78|#5B9BD5/i,                // azules de Office
 ];
 try {
   const text = await readFile(src.replace(/^file:\/\//, ""), "utf8");
