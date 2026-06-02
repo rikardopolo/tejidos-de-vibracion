@@ -2,6 +2,8 @@
 dist/
 .vercel/
 .astro/
+# PDFs de imprenta generados (skill imprenta · artefactos de prueba)
+out/
 
 # Dependencies
 node_modules/

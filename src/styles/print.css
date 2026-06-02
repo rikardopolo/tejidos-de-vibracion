@@ -1,0 +1,393 @@
+/* ==========================================================================
+   TEJIDOS DE VIBRACIÓN · print.css
+   Capa de impresión ADITIVA sobre el sistema existente (system.css / tokens.css).
+   NO redefine la paleta ni la tipografía base: añade la geometría @page de la
+   Guía de Maquetación V2.1, neutraliza los tratamientos de PANTALLA que no
+   sirven en papel, y fija las reglas de quiebre (recuadros, figuras, fórmulas
+   y separadores no se parten).
+
+   Se carga DESPUÉS de global.css (fonts + tokens + system) desde PrintLayout.astro,
+   por lo que sus selectores se escopan a `.print-body` para ganar especificidad
+   donde system.css define el mismo elemento (p. ej. `.measure h2`).
+
+   Geometría: .claude/skills/imprenta/reference/geometria-pagina.md (Guía V2.1).
+   Recuadros: .claude/skills/imprenta/reference/recuadros.md.
+   ========================================================================== */
+
+@import "./tokens.css";
+
+/* DM Sans ya está cargada (fonts.css) y tokenizada (--cornisa) en este repo;
+   el "hueco de fuente" descrito en la Guía V2.1 ya está cerrado. La cornisa y
+   el folio usan --cornisa (DM Sans) directamente. */
+
+/* ── Página, cornisas y folio (Guía V2.1 §10) ───────────────────────────── */
+@page {
+  size: 8.5in 11in;            /* US Letter */
+  margin: 1in;                 /* caja de texto 6.5 × 9 in */
+
+  @top-center {
+    content: "TEJIDOS DE VIBRACIÓN · VOL. I · " string(seccion);
+    font: 9pt var(--cornisa);
+    letter-spacing: 0.18em;
+    color: #6B7280;
+  }
+  @bottom-center {
+    content: counter(page);
+    font: 10pt var(--cornisa);
+    color: #555555;
+  }
+}
+
+/* Portada de sección: sin cornisa ni folio (Guía §9). */
+@page portada {
+  @top-center { content: none; }
+  @bottom-center { content: none; }
+}
+
+/* La SECCIÓN de la cornisa se alimenta por pieza desde un origen oculto que
+   sigue generando caja (string-set requiere caja; display:none no sirve). */
+.print-cornisa-source {
+  string-set: seccion content();
+  display: block;
+  height: 0;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 0;
+  color: transparent;
+}
+
+/* ── Supresión defensiva del cromo de pantalla ──────────────────────────────
+   PrintLayout no emite el chrome de BookReader/OberturaLayout, así que estas
+   reglas son cinturón-y-tirantes por si un componente arrastra alguno. ────── */
+.skip-link,
+.book-progress,
+.book-thread,
+.book-chrome,
+.book-reader,
+.reader-controls,
+.reader-controls-trigger,
+.book-toc,
+.book-toc-trigger,
+.paginacion-cards,
+.prev-next,
+.chapter-nav,
+.corte-tejedor,
+.bloque-registro,
+.bloque-puerta,
+nav[aria-label*="Índice"],
+nav[aria-label*="Navegación"] { display: none !important; }
+
+body::before,
+body::after { display: none !important; }   /* paper-grain decorativo de pantalla */
+
+/* ── Cuerpo: unidades de papel, fondo blanco, paleta día forzada ─────────── */
+.print-body {
+  background: #fff;
+  color: var(--tinta);
+  margin: 0;
+  font-family: var(--serif);
+}
+
+/* El <main> de impresión no necesita el padding de pantalla: la caja la fija
+   @page. Anula también los anchos máximos de columna de pantalla. */
+.print-body main { padding: 0; }
+.print-main,
+.print-body .cap-main,
+.print-body .obertura-main { padding: 0; max-width: none; margin: 0; }
+
+/* ── Piezas y quiebres de página ────────────────────────────────────────── */
+.print-piece { break-before: page; }
+.print-piece:first-child { break-before: avoid; }     /* sin página en blanco inicial */
+
+/* Portadas de sección estrenan página propia, sin cornisa ni folio. */
+.print-piece[data-kind="portada"],
+.print-piece[data-kind="frontispicio"] { page: portada; }
+
+/* ── Columna de lectura (capítulos · DOM real: article.measure > section.prose)
+   Sobrescribe la escala de pantalla (19px/1.7) por la de papel (11pt/1.35). ── */
+.print-body .measure,
+.print-body .prose {
+  max-width: none;
+  font-size: 11pt;
+  line-height: 1.35;
+  color: var(--tinta);
+}
+.print-body .prose { font-family: var(--serif); }
+
+/* Párrafos: justificado con guionado, viudas/huérfanas controladas, sangría de
+   continuación al estilo libro (la primera y las marcadas .no-indent sin sangría). */
+.print-body .prose > p {
+  margin: 0;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  text-indent: 1.25em;
+  widows: 2;
+  orphans: 2;
+}
+.print-body .prose > p:first-child,
+.print-body .prose > p.no-indent,
+.print-body .prose > h2 + p,
+.print-body .prose > h3 + p { text-indent: 0; }
+
+/* Encabezados de sección dentro del cuerpo (## / ###).
+   FIX (skill task 4): system.css define `.measure h2` (italic, oro, centrado,
+   minúsculas). En capítulos eso es incorrecto; la pantalla lo corrige en
+   CapituloLayout (`.capitulo-body .measure h2`), que el layout mínimo NO carga.
+   Replicamos aquí con especificidad suficiente para ganar (0,2,1 > 0,1,1). */
+.print-body .prose h2,
+.print-body .measure h2 {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-style: normal;
+  font-size: 15pt;
+  line-height: 1.2;
+  color: var(--indigo);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  margin: 1.5em 0 0.5em;
+  break-after: avoid;
+  widows: 3;
+  orphans: 3;
+}
+.print-body .prose h2::first-letter,
+.print-body .measure h2::first-letter { text-transform: none; }
+
+.print-body .prose h3,
+.print-body .measure h3 {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-style: normal;
+  font-size: 12.5pt;
+  line-height: 1.25;
+  color: var(--verde);
+  text-align: left;
+  text-transform: none;
+  margin: 1.2em 0 0.4em;
+  break-after: avoid;
+}
+
+/* Header de pieza (article.measure > header.stack-sm > h1.title-1 + .title-1__sub).
+   En pantalla el .title-1 es de 3rem en oro; en papel se escala y entinta indigo. */
+.print-body .title-1 {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 22pt;
+  line-height: 1.12;
+  color: var(--indigo);
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.005em;
+  break-after: avoid;
+}
+.print-body .title-1__sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13pt;
+  line-height: 1.35;
+  color: var(--tinta-suave);
+  margin: 0;
+  break-after: avoid;
+}
+
+/* Enlaces: en papel se entintan como texto (sin subrayado de pantalla). */
+.print-body .prose a {
+  color: var(--tinta);
+  text-decoration: none;
+}
+
+/* Marcadores de nota (<sup>N</sup>) y bloque de notas al final de la pieza.
+   GANCHO · la decisión footnotes-por-página vs endnotes está abierta
+   (ver reference/figuras-formulas.md). Hoy se respeta el autorado actual:
+   marcadores volados + sección "Notas y referencias" al pie de la pieza. */
+.print-body .prose sup {
+  font-size: 0.66em;
+  line-height: 0;
+  vertical-align: super;
+}
+
+/* ── Separadores: centrados, en oro, nunca huérfanos al pie ──────────────── */
+.print-body .flourish {
+  margin: 1.1em 0;
+  font-size: 12pt;
+  color: var(--oro);
+  break-after: avoid;
+  break-inside: avoid;
+}
+.print-body .diamond {
+  margin: 0.8em 0;
+  color: var(--oro-suave);
+  break-after: avoid;
+  break-inside: avoid;
+}
+
+/* ── Recuadros (Marginalia y variantes) · no se parten (Guía §8.3) ──────────
+   Anatomía de borde de la Guía: acento izquierdo grueso en el color del tipo
+   + bordes finos + fondo semántico sutil. Los colores reusan los del eyebrow
+   ya canónico en system.css (indigo científica/cuántica · verde voz · oro). */
+.print-body .marginalia,
+.print-body [class*="marginalia--"] {
+  break-inside: avoid;
+  border-left: 3pt solid var(--oro-suave);
+  border-top: 0.5pt solid var(--oro-fantasma);
+  border-right: 0.5pt solid var(--oro-fantasma);
+  border-bottom: 0.5pt solid var(--oro-fantasma);
+  padding: 0.7em 1em;
+  margin: 1.2em 0;
+  background: rgba(212, 160, 23, 0.035);
+}
+.print-body .marginalia--cientifica { border-left-color: var(--indigo); }
+.print-body .marginalia--voz { border-left-color: var(--verde); }
+
+.print-body .marginalia__kind {
+  font-family: var(--cornisa);
+  font-size: 7.5pt;
+  letter-spacing: 0.18em;
+  margin: 0 0 0.2rem;
+}
+.print-body .marginalia__title { font-size: 13pt; margin: 0 0 0.6rem; }
+.print-body .marginalia__body { font-size: 10pt; line-height: 1.4; }
+.print-body .marginalia__body p { margin: 0 0 0.6em; }
+
+/* ── Figuras y fórmulas · no se parten, caption junto a su gráfico ────────── */
+.print-body figure,
+.print-body figcaption,
+.print-body .formula,
+.print-body .figura-tdv,
+.print-body .figura-editorial,
+.print-body .pullquote { break-inside: avoid; }
+
+.print-body figure { margin: 1.4em auto; }
+
+/* Caption en EB Garamond italic, cuerpo menor (figuras-formulas.md). */
+.print-body .figura-tdv__caption,
+.print-body .figura-editorial__caption,
+.print-body figcaption {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 9.5pt;
+  line-height: 1.4;
+  color: var(--tinta-suave);
+}
+
+/* Fórmula (figure.formula · estilos base is:global del componente). */
+.print-body .formula { margin: 1.4em auto; }
+.print-body .formula__body { font-size: 12pt; line-height: 1.5; }
+.print-body .formula__kicker { font-family: var(--cornisa); font-size: 7.5pt; }
+.print-body .formula__donde-body { font-size: 9pt; }
+
+/* ── Bloques rituales (Anclaje / Cierre) · no se parten ──────────────────── */
+.print-body .ritual-block {
+  break-inside: avoid;
+  margin: 1.6em auto;
+  padding: 1em 1.2em;
+}
+.print-body .ritual-block__body { font-size: 10.5pt; line-height: 1.45; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   OBERTURA · port de la tipografía de lectura para impresión.
+   La columna de la Obertura (`.obertura-main`) tiene su tipografía propia en
+   OberturaLayout (sub-paleta paper-and-ink encapsulada), que el layout mínimo
+   NO carga. Aquí se reponen las variables --obertura-* (paleta día) y las
+   reglas esenciales en unidades de papel. (Validar aparte de los capítulos.)
+   ══════════════════════════════════════════════════════════════════════════ */
+.print-body {
+  --obertura-paper: #f2ead5;
+  --obertura-ink: #1a1a1a;
+  --obertura-ink-soft: #3a3530;
+  --obertura-ink-faded: #6b5f4d;
+  --obertura-thread: #B68914;
+  --obertura-indigo: #1f2547;
+  --obertura-rule: rgba(26, 22, 18, 0.18);
+  --obertura-rule-soft: rgba(26, 22, 18, 0.08);
+  --obertura-serif: 'EB Garamond', Georgia, serif;
+  --obertura-sans: 'Inter', system-ui, sans-serif;
+  --obertura-mono: 'JetBrains Mono', monospace;
+}
+
+.print-body .obertura-main {
+  font-family: var(--obertura-serif);
+  font-size: 11pt;
+  line-height: 1.35;
+  color: var(--obertura-ink);
+}
+.print-body .obertura-main p {
+  margin: 0 0 0.6em;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+.print-body .obertura-main h2.chapter {
+  font-family: var(--obertura-serif);
+  font-weight: 500;
+  font-size: 18pt;
+  line-height: 1.15;
+  margin: 1.4em 0 0.6em;
+  break-after: avoid;
+}
+.print-body .obertura-main h2.chapter .num {
+  display: block;
+  font-family: var(--obertura-sans);
+  font-size: 8pt;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--obertura-thread);
+  margin-bottom: 0.4rem;
+}
+.print-body .obertura-main h3.sub {
+  font-family: var(--obertura-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 13.5pt;
+  margin: 1.2em 0 0.5em;
+  break-after: avoid;
+}
+.print-body .obertura-main h3.sub .num {
+  font-family: var(--obertura-sans);
+  font-style: normal;
+  font-size: 0.78em;
+  color: var(--obertura-ink-faded);
+  margin-right: 0.5em;
+}
+.print-body .obertura-main h4.sub-sub {
+  font-family: var(--obertura-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 11pt;
+  color: var(--obertura-thread);
+  margin: 1em 0 0.4em;
+  break-after: avoid;
+}
+.print-body .obertura-main blockquote.cita {
+  margin: 1em 0 1em 0.4rem;
+  padding: 0.3rem 0 0.3rem 1rem;
+  border-left: 2pt solid var(--obertura-indigo);
+  font-style: italic;
+  font-size: 10.5pt;
+  color: var(--obertura-indigo);
+  break-inside: avoid;
+}
+.print-body .obertura-main .frontispiece { break-inside: avoid; text-align: center; }
+.print-body .obertura-main ul.bullet,
+.print-body .obertura-main ul:not([class]) { list-style: none; padding: 0; margin: 0.8em 0; }
+.print-body .obertura-main ul.bullet li,
+.print-body .obertura-main ul:not([class]) li {
+  position: relative;
+  padding-left: 1.4rem;
+  margin-bottom: 0.4rem;
+}
+.print-body .obertura-main ul.bullet li::before,
+.print-body .obertura-main ul:not([class]) li::before {
+  content: "\25C7";   /* ◇ */
+  position: absolute;
+  left: 0;
+  color: var(--obertura-thread);
+  font-size: 0.8em;
+}
+
+/* ── Higiene de color ────────────────────────────────────────────────────────
+   Ningún azul de Office (#2E74B5 / #1F4D78 / #5B9BD5) debe aparecer. No es una
+   regla CSS sino una verificación de preflight (reference/preflight.md). ───── */
