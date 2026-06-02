@@ -1,0 +1,836 @@
+---
+chapter: "cap-3-mundo-cuantico"
+kind: "numbered"
+num: "3.6.1"
+title: "El Parlamento Cuántico · primera parte"
+subtitle: "Copenhague, Muchos Mundos, De Broglie-Bohm · tres voces fundadoras"
+order: 11
+headerLabel: "Cap. 3 · §3.6.1"
+publishedAt: 2026-06-01
+authors:
+  - "Ricardo Polo"
+tags:
+  - "cap-3"
+  - "parlamento"
+  - "interpretaciones"
+  - "copenhague"
+  - "muchos-mundos"
+  - "bohm"
+---
+
+import VozTejido from '@/components/book/VozTejido.astro';
+import PausaReflexiva from '@/components/book/PausaReflexiva.astro';
+
+*Las cinco interpretaciones serias de la mecánica cuántica que la física
+contemporánea sostiene, y por qué ninguna ha sido refutada todavía*
+
+— ◇ —
+
+## **Apertura · El umbral del Parlamento**
+
+Las §§3.1 a 3.5 desplegaron una mecánica cuántica madura. Dualidad
+onda-partícula, superposición, entrelazamiento, incertidumbre, átomo
+como geometría de probabilidad, espectro como escala de fotones
+cuantizados. Todo lo presentado hasta aquí es **consenso experimental**:
+predicciones verificadas con precisión asombrosa, formalismo matemático
+compartido por toda la comunidad de físicos del siglo XX y XXI,
+tecnologías que funcionan —láser, transistor, resonancia magnética,
+computación cuántica, GPS, criptografía cuántica— porque la teoría es
+correcta.
+
+Lo que la sección §3.6 abre es un territorio distinto. Distinto no en el
+sentido de menos riguroso, sino en el sentido de **menos cerrado**. La
+pregunta que aquí entra no es *qué predice la mecánica cuántica* —eso ya
+está decidido—; la pregunta es **qué significa**, ontológicamente, lo
+que la mecánica cuántica predice. ¿Qué es la función de onda? ¿Existe
+como entidad física real, o es una representación matemática de
+información subjetiva del observador? ¿Hay variables ocultas guiando los
+procesos cuánticos por debajo del azar aparente? ¿Se ramifica el
+universo en cada medición creando ramas paralelas? ¿Es la mecánica
+cuántica una teoría sobre propiedades absolutas de los sistemas, o solo
+sobre relaciones entre observador y observado?
+
+Estas preguntas no tienen una respuesta única en la física actual.
+Tienen **cinco respuestas serias** que cohabitan en la disciplina,
+sostenidas cada una por físicos profesionales activos, defendidas en
+revistas técnicas con argumentos rigurosos, y —este es el punto crucial—
+**ninguna refutada experimentalmente**. Las cinco hacen exactamente las
+mismas predicciones medibles. Cualquier experimento que haya sido
+realizado en un laboratorio de física desde 1927 hasta hoy es compatible
+con las cinco. La pregunta sobre cuál es "la verdadera" interpretación
+de la mecánica cuántica es, en el momento presente, **una pregunta
+filosóficamente activa que la física no ha resuelto**.
+
+El Parlamento Cuántico es la presentación honesta de esas cinco
+respuestas en sus propios términos. La estructura de las dos
+sub-secciones que componen el §3.6 obedece a un orden
+histórico-conceptual: la sección §3.6.1 que ahora abre presenta las tres
+interpretaciones más antiguas y más debatidas —**Copenhague**, **Muchos
+Mundos** y **De Broglie-Bohm**— junto con la Voz del Tejido formal de
+los dos físicos cuyas vidas y propuestas son más decisivas para entender
+este debate, David Bohm y Hugh Everett. La sección §3.6.2 completará el
+Parlamento con las dos interpretaciones más recientes —**QBism** y la
+**interpretación relacional de Carlo Rovelli**— y cerrará con la
+síntesis filosófica del debate entero.
+
+El compromiso editorial es claro y no se va a relajar: cada
+interpretación se presenta en sus propios términos, sin caricatura, sin
+colapso prematuro a favor de ninguna, sin etiquetar a las disidentes
+como "menos científicas". La honestidad consiste en sostener la
+pluralidad sin disolverla. No hay aquí, todavía, una respuesta única.
+
+— ◇ —
+
+**◆**
+
+## **Una nota previa · qué significa "interpretación"**
+
+Antes de entrar al Parlamento conviene aclarar qué quiere decir,
+técnicamente, **interpretación de la mecánica cuántica**. La palabra
+puede confundir si no se acota.
+
+La mecánica cuántica como **formalismo matemático** está completamente
+especificada y es la misma para todos los físicos. Hay un espacio de
+Hilbert. Hay vectores de estado en ese espacio que evolucionan según la
+ecuación de Schrödinger. Hay observables representados por operadores
+hermitianos. Hay una regla —la regla de Born— que dice que la
+probabilidad de obtener cierto resultado al medir un observable es el
+módulo al cuadrado de la proyección del vector de estado sobre el
+subespacio correspondiente al resultado. Este aparato matemático es
+universalmente compartido: todo físico cuántico, sea cual sea su
+filosofía, escribe las mismas ecuaciones y obtiene las mismas
+predicciones numéricas.
+
+Lo que **no** está especificado por el formalismo es qué entidades
+físicas reales corresponden a las entidades matemáticas del formalismo.
+¿La función de onda es algo real que existe en el mundo, o es una
+herramienta de cálculo que vive solamente en el papel del físico? ¿La
+medición es un proceso físico distinto de la evolución unitaria, o es
+solo evolución unitaria del sistema acoplado al aparato? ¿El "colapso"
+de la función de onda es un evento físico o un artefacto del formalismo?
+¿Hay una sola realidad o muchas?
+
+Una **interpretación** de la mecánica cuántica es una respuesta
+articulada a estas preguntas. Dos interpretaciones distintas pueden
+compartir exactamente el mismo formalismo matemático y, por tanto, hacer
+exactamente las mismas predicciones experimentales, pero diferir
+radicalmente en qué dicen sobre la realidad subyacente. Esta es la razón
+por la cual el debate entre interpretaciones no se resuelve por
+experimento: si dos interpretaciones predicen los mismos números, ningún
+experimento puede decidir entre ellas. La decisión, si la hay, ocurre en
+otro plano: claridad conceptual, parsimonia ontológica, capacidad de
+iluminar problemas relacionados, fertilidad para nuevas teorías.
+
+Mantener viva esta distinción es fundamental para leer el resto de este
+capítulo sin colapso epistémico. Cuando alguien dice *"la mecánica
+cuántica demuestra que..."*, conviene preguntarse si está hablando del
+formalismo (y entonces sí hay demostración) o de una interpretación (y
+entonces hay propuesta filosófica defendible pero no demostrada). El
+error más común en la divulgación cuántica popular es presentar las
+afirmaciones interpretativas de una de las cinco escuelas como si fueran
+consenso científico. No lo son. Son tomas de posición filosófica dentro
+de un debate que la física no ha cerrado.
+
+— ◇ —
+
+**◆**
+
+## **La interpretación de Copenhague (1927)**
+
+La interpretación de Copenhague es históricamente la primera y, durante
+la mayor parte del siglo XX, la **interpretación estándar** enseñada en
+los cursos de física cuántica. Se desarrolló entre 1925 y 1927 en el
+Instituto de Física Teórica que Niels Bohr dirigía en Copenhague, en
+diálogo intenso entre Bohr y Werner Heisenberg, con contribuciones de
+Max Born, Wolfgang Pauli, y otros miembros del círculo. La formulación
+canónica suele situarse en la conferencia Solvay de octubre de 1927,
+donde Bohr presentó por primera vez el principio de complementariedad
+—que el §3.2 de este capítulo ya desarrolló— en su forma madura.
+
+La tesis central de Copenhague tiene cuatro componentes principales que
+conviene articular con precisión.
+
+**Primero**, el formalismo matemático de la mecánica cuántica es
+**completo** en el sentido de que predice todos los resultados
+experimentales medibles. No hay variables ocultas que la teoría haya
+dejado fuera. La indeterminación cuántica —el hecho de que el resultado
+individual de una medición no se pueda predecir con certeza, sino solo
+con probabilidad— es **fundamental e irreducible**, no un artefacto de
+nuestra ignorancia.
+
+**Segundo**, la función de onda **no es una entidad física real** que
+viva en el espacio. Es una representación matemática del conocimiento
+que un observador tiene sobre un sistema. Cuando ese conocimiento se
+actualiza al realizar una medición, la función de onda "colapsa": pasa
+de describir una superposición de posibilidades a describir el resultado
+específico obtenido. El colapso es un cambio en el estado de información
+del observador, no un cambio físico en algún campo real.
+
+**Tercero**, la frontera entre el sistema cuántico y el aparato de
+medición es esencial para la teoría. Sistema y aparato deben describirse
+en lenguajes diferentes: el sistema cuántico con superposiciones y
+amplitudes complejas; el aparato de medición con valores clásicos
+definidos. Esta separación —el llamado *Heisenberg cut* o "corte de
+Heisenberg"— es un postulado interpretativo, no un teorema demostrable.
+Define dónde termina lo cuántico y comienza lo clásico.
+
+**Cuarto**, las propiedades físicas de un sistema cuántico **no existen
+previamente a la medición**. No es que la medición revele un valor
+preexistente; la medición **actualiza** una de las posibilidades
+superpuestas en realidad concreta. Antes de medir el espín de un
+electrón, no hay un valor de espín "ahí afuera" esperando ser detectado:
+hay una superposición de posibilidades, y la medición concreta una de
+ellas. Esta tesis es lo que más enfureció a Einstein durante los debates
+Solvay.
+
+La interpretación de Copenhague tiene la ventaja histórica de haber sido
+la base conceptual sobre la cual se construyó toda la física cuántica
+del siglo XX. Casi todas las tecnologías que dependen de mecánica
+cuántica fueron desarrolladas por físicos que pensaban en términos de
+Copenhague. La objeción más común contra ella —que el "corte de
+Heisenberg" entre cuántico y clásico es arbitrario y filosóficamente
+insatisfactorio— sigue siendo el principal motor de las interpretaciones
+alternativas.
+
+— ◇ —
+
+**◆**
+
+## **La interpretación de Muchos Mundos (1957)**
+
+En la primavera de 1957, un joven físico de veintiséis años llamado Hugh
+Everett III defendió en Princeton una tesis doctoral que proponía
+resolver los problemas de la interpretación de Copenhague mediante un
+giro tan radical que pocos contemporáneos lo tomaron en serio. La idea,
+expresada en su forma más simple, es la siguiente: **el colapso de la
+función de onda no ocurre nunca**.
+
+Si esto suena imposible —después de todo, parece evidente que cuando
+medimos algo obtenemos un resultado definido, no una superposición de
+resultados—, la propuesta de Everett es exactamente que esa apariencia
+de resultado único es una ilusión local. Cuando un aparato de medición
+interactúa con un sistema cuántico en superposición, el aparato mismo
+entra en superposición. Y cuando un observador humano lee el aparato, el
+observador también entra en superposición. Y así sucesivamente. La
+función de onda nunca colapsa. Lo que ocurre, según Everett, es que cada
+uno de los términos de la superposición se convierte en una **rama
+autónoma de la realidad** que no interactúa con las demás. En una rama,
+el aparato marcó "arriba" y el observador vio "arriba". En otra rama, el
+aparato marcó "abajo" y el observador vio "abajo". Ambas ramas existen.
+Ambos observadores existen. Cada uno percibe su propia rama como la
+única realidad porque las ramas son cuánticamente independientes y
+mutuamente inaccesibles.
+
+El nombre *interpretación de Muchos Mundos* fue acuñado posteriormente
+por Bryce DeWitt en un artículo de *Physics Today* en 1970 que rescató
+del olvido la propuesta original de Everett. Everett la había llamado
+más sobriamente **formulación de estado relativo**. La idea matemática
+es elegante en su simplicidad: si se aplica la ecuación de Schrödinger
+consistentemente a sistema más aparato más observador más entorno, sin
+postular ningún colapso adicional, lo que sale es exactamente el
+universo ramificado que Everett propuso.
+
+La interpretación tiene dos virtudes técnicas que sus defensores
+subrayan. **Primera**, elimina el problema del corte de Heisenberg: no
+hay frontera arbitraria entre cuántico y clásico, todo es cuántico, la
+apariencia clásica emerge de la decoherencia (un proceso cuántico bien
+estudiado desde 1970) que vuelve las ramas mutuamente inaccesibles.
+**Segunda**, preserva el determinismo y la localidad de la ecuación de
+Schrödinger: el universo entero evoluciona unitariamente, sin azar
+fundamental, sin acción a distancia.
+
+Las objeciones son igualmente serias. **Primera**, postular un número
+astronómico —en realidad continuo y no numerable— de universos paralelos
+para evitar postular el colapso parece, según muchos críticos,
+multiplicar entidades sin necesidad. La interpretación viola lo que
+algunos llaman la navaja de Occam ontológica. **Segunda**, la
+interpretación tiene dificultades técnicas con el origen de las
+probabilidades de Born: si todos los resultados ocurren en alguna rama,
+¿en qué sentido es más probable un resultado que otro? El llamado
+*problema de la probabilidad* en Muchos Mundos es objeto de debate
+técnico activo.
+
+David Deutsch, físico de la Universidad de Oxford y uno de los
+fundadores de la computación cuántica, es hoy uno de los defensores más
+visibles de la interpretación de Muchos Mundos. Deutsch sostiene que el
+patrón de interferencia del experimento de doble rendija con un solo
+fotón es **directamente una huella experimental de la interferencia
+entre fotones del mismo evento en universos vecinos**. Esta lectura
+sigue siendo controvertida pero ilustra que la interpretación de Muchos
+Mundos no es solo metafísica: tiene defensores que la consideran la
+lectura literal del formalismo cuántico.
+
+Una advertencia editorial importante: la divulgación popular ha llevado
+la interpretación de Muchos Mundos hacia formulaciones que
+**distorsionan su contenido real**. Frases como *"existe una versión de
+ti viviendo todas las posibilidades no realizadas"*, *"todo lo que pudo
+haber sido es en algún lugar del multiverso"*, o *"no necesitas cargar
+el peso de tus errores porque en otro universo elegiste mejor"* —que
+abundan en libros de autoayuda new-age— son extrapolaciones que la
+teoría no respalda. La ramificación cuántica de Everett es una
+consecuencia matemática de la ecuación de Schrödinger, **no es elección
+voluntaria**, **no permite acceso entre ramas**, y **no implica que toda
+posibilidad imaginable se realice**. Solo se realizan los resultados que
+la mecánica cuántica permite, y cada uno con la frecuencia que la regla
+de Born predice. La lectura espiritual sentimental de Everett es una
+proyección del lector, no una afirmación de la teoría.
+
+— ◇ —
+
+**◆**
+
+## **La interpretación de De Broglie-Bohm · la onda piloto (1952)**
+
+La tercera interpretación que el Parlamento presenta tiene una historia
+editorial peculiar. Fue propuesta originalmente por Louis de Broglie en
+la conferencia Solvay de 1927 —el mismo año en que Bohr y Heisenberg
+presentaron Copenhague— bajo el nombre de **teoría de la onda piloto**.
+Pauli criticó la propuesta con argumentos técnicos que en aquel momento
+parecieron decisivos, y De Broglie la abandonó. La interpretación quedó
+en el olvido durante un cuarto de siglo, hasta que en 1952 David Bohm la
+rescató, la extendió, la corrigió en los puntos donde Pauli había
+objetado, y la publicó en dos artículos seminales en *Physical Review*.
+
+La idea central de la interpretación de De Broglie-Bohm es la siguiente:
+existen **dos cosas reales** en cualquier proceso cuántico, no una.
+Existe la **partícula** —un objeto puntual con posición bien definida en
+todo momento, exactamente como en la física clásica—; y existe la **onda
+piloto** —la función de onda, que para Bohm sí es físicamente real—. La
+onda piloto guía el movimiento de la partícula a través de una ecuación
+adicional que Bohm derivó —llamada *ecuación guía*— y que determina la
+trayectoria efectiva de la partícula como función de la geometría del
+campo cuántico que la rodea.
+
+En esta interpretación **no hay azar fundamental**. La indeterminación
+aparente de la mecánica cuántica proviene del hecho de que no conocemos
+las posiciones iniciales exactas de las partículas: **son variables
+ocultas** que en principio existen pero que están más allá de nuestro
+acceso experimental. Si conociéramos las condiciones iniciales
+completas, podríamos predecir cada resultado con certeza absoluta. La
+probabilidad cuántica es probabilidad clásica disfrazada: probabilidad
+por ignorancia, no por azar irreducible.
+
+La interpretación tiene varias virtudes que sus defensores subrayan.
+**Primera**, restaura el realismo clásico: las partículas tienen
+posiciones bien definidas en todo momento, las trayectorias existen, no
+hay colapso, no hay azar fundamental. **Segunda**, no hay ningún "corte
+de Heisenberg" arbitrario: todo es físicamente real, la transición entre
+cuántico y clásico es un fenómeno emergente bien definido. **Tercera**,
+reproduce exactamente todas las predicciones experimentales de la
+mecánica cuántica estándar: ningún experimento la distingue de
+Copenhague o de Muchos Mundos.
+
+Las objeciones también son sustantivas. **Primera**, la teoría es
+**explícitamente no local**: la onda piloto se extiende instantáneamente
+por todo el espacio, y un cambio en una región puede afectar
+instantáneamente a una partícula en otra región arbitrariamente lejana.
+Esto contradice el espíritu de la relatividad especial, aunque no
+produce señales superlumínicas detectables (la no localidad está
+"oculta" precisamente porque las predicciones experimentales son las
+mismas que las de la mecánica cuántica estándar). **Segunda**, la teoría
+privilegia la posición sobre otras variables: las posiciones de las
+partículas son ontológicamente fundamentales, mientras que momentos,
+energías, espines, etc., son propiedades derivadas. Esta asimetría
+parece arbitraria a sus críticos. **Tercera**, la extensión de la teoría
+a teoría cuántica de campos —el formalismo que describe partículas
+relativistas y la estructura del modelo estándar— es técnicamente
+difícil y sigue siendo objeto de investigación activa.
+
+La interpretación de De Broglie-Bohm es, hoy, una de las cinco vías
+serias del Parlamento. No tiene la mayoría de votos en la comunidad de
+físicos, pero tiene defensores articulados y activos, y ha ganado
+terreno desde los años 1990 a medida que las dificultades filosóficas de
+Copenhague se han hecho más evidentes y las exigencias de claridad
+ontológica han aumentado.
+
+— ◇ —
+
+**◆**
+
+**Figura 3.18** · **Mapa de las cinco interpretaciones canónicas**
+
+***[ F I G U R A E N P R E P A R A C I Ó N ]***
+
+*[ Espacio reservado para figura vectorial ]*
+
+> **Especificación para diagramación:** *Diseño en matriz 5×4: cinco
+> filas (una por interpretación: Copenhague-Bohr 1927, Muchos
+> Mundos-Everett 1957, De Broglie-Bohm 1952, QBism-Fuchs 2002,
+> Relacional-Rovelli 1996) y cuatro columnas (Año + autor / Postulado
+> clave en una frase / Qué resuelve bien / Qué deja abierto). Diseño
+> visual claro, paleta TDV, sin privilegiar ninguna interpretación.
+> Aplicar disciplina §3.8 Manual V5.2: las cinco como serias y
+> comparables.*
+>
+> **Nota técnica:** *Crear figura nueva: matriz comparativa con paleta
+> TDV.*
+>
+> **Figura 3.18.** Las cinco interpretaciones canónicas de la mecánica
+> cuántica presentadas como serias y comparables, sin que ninguna sea
+> presentada como "la correcta". Cada una resuelve algunas dificultades
+> y deja otras abiertas. La elección entre ellas es, hoy por hoy,
+> decisión filosófica, no experimental — los experimentos confirman las
+> predicciones cuánticas con precisión absoluta independientemente de la
+> interpretación adoptada.
+
+<VozTejido titulo="DAVID BOHM Y HUGH EVERETT · una díada del exilio intelectual">
+
+*Dos físicos americanos que abandonaron la corriente principal de la
+disciplina, cada uno por razones distintas, y cuyas propuestas
+alternativas a Copenhague fueron ignoradas en vida solo para ser
+reconocidas como serias décadas después*
+
+> **«La interpretación de Copenhague es desesperadamente incompleta
+> debido a su dependencia a priori de la física clásica... así como una
+> monstruosidad filosófica con un concepto de "realidad" para el mundo
+> macroscópico y la negación del mismo para el microcosmos.»* — Hugh
+> Everett III, carta a Bryce DeWitt, mayo de 1957.*
+>
+> **«El pensamiento crea problemas constantemente y luego intenta
+> resolverlos. Pero al intentar resolverlos los empeora porque no se da
+> cuenta de que los está creando, y mientras más piensa, más problemas
+> crea.»* — David Bohm, *On Dialogue* (1996).*
+
+**Primer acto · Dos exilios paralelos**
+
+David Joseph Bohm nació el 20 de diciembre de 1917 en Wilkes-Barre,
+Pensilvania, hijo de un mercader inmigrante húngaro. Estudió física en
+la Universidad Estatal de Pensilvania, completó el doctorado en la
+Universidad de California Berkeley en 1943 bajo la dirección de Robert
+Oppenheimer, y trabajó durante la guerra en cálculos de plasma para el
+Manhattan Project en Berkeley. Su tesis doctoral resultó tan sensible
+para la seguridad nacional —discutía colisiones de plasma con
+aplicaciones a la separación isotópica del uranio— que fue clasificada
+como secreta antes de ser defendida; Bohm tuvo que sustentar el
+doctorado sin poder leer su propia tesis. En 1946 fue contratado como
+profesor asistente en Princeton.
+
+Hugh Everett III nació trece años después, el 11 de noviembre de 1930,
+en Washington D.C., en una familia de tradición militar —su padre era
+oficial del ejército—. Estudió ingeniería química en la Universidad
+Católica de América, recibió en 1953 una beca de la National Science
+Foundation que le permitió ingresar a Princeton, e inicialmente trabajó
+en el departamento de matemáticas con Albert W. Tucker en el campo
+emergente de la teoría de juegos. En 1953 tomó su primer curso de física
+—Mecánica Cuántica Introductoria con Robert Dicke— y poco a poco se
+desplazó hacia la física teórica. En 1955 cambió a su director de tesis
+a John Archibald Wheeler, físico legendario que había trabajado con Bohr
+en Copenhague durante los años 1930.
+
+Las trayectorias de Bohm y Everett, separadas por más de una década,
+comparten un patrón estructural: ambos llegaron a Princeton en momentos
+cruciales, ambos formularon una alternativa radical a la interpretación
+de Copenhague, ambos fueron empujados fuera de la academia americana por
+circunstancias políticas y personales que la historia de la física rara
+vez nombra, y ambos vieron su trabajo ignorado durante décadas antes de
+que generaciones posteriores lo reconocieran como serio.
+
+**Segundo acto · Bohm, McCarthy, y el exilio brasileño**
+
+En el invierno de 1949, Bohm fue subpoenado por el **Comité de
+Actividades Antinorteamericanas** del Congreso (HUAC, House Un-American
+Activities Committee), que estaba investigando supuestas filtraciones
+comunistas en el Manhattan Project. Bohm había sido miembro durante sus
+años de Berkeley de varias organizaciones de izquierda que J. Edgar
+Hoover había etiquetado como "frentes comunistas". Cuando el comité le
+exigió declarar contra sus colegas, Bohm invocó la Quinta Enmienda. En
+1950 fue arrestado por desacato al Congreso. Aunque fue absuelto en
+juicio en 1951, perdió su posición en Princeton; la universidad lo
+suspendió mientras el caso estaba abierto y no renovó su contrato cuando
+fue absuelto.
+
+Albert Einstein, que en aquellos años trabajaba en el cercano Institute
+for Advanced Study, intervino personalmente para apoyar a Bohm. Le
+escribió una carta de recomendación para la Universidad de São Paulo,
+donde un grupo de físicos brasileños —Jayme Tiomno, José Leite Lopes,
+Walter Schützer, todos antiguos estudiantes de doctorado en Princeton—
+le ofrecieron una posición. En octubre de 1951 Bohm dejó Estados Unidos
+y voló a São Paulo. Al llegar al consulado estadounidense en Brasil, le
+confiscaron el pasaporte. Pasó los siguientes cuatro años sin papeles
+válidos para regresar a su país. En 1954 obtuvo la ciudadanía brasileña.
+
+Fue precisamente en este período —los meses anteriores a su salida de
+Estados Unidos— cuando Bohm escribió y publicó los dos artículos que lo
+harían inmortal en la historia de la mecánica cuántica. *"A Suggested
+Interpretation of the Quantum Theory in Terms of 'Hidden' Variables"*,
+publicado en dos partes en *Physical Review* en enero de 1952,
+recuperaba la idea de la onda piloto que De Broglie había abandonado en
+1927, la corregía en los puntos donde Pauli había objetado, y la
+presentaba como interpretación matemáticamente consistente de toda la
+mecánica cuántica.
+
+La recepción del paper fue gélida. Pauli volvió a objetar; Heisenberg lo
+descartó; Oppenheimer dijo en privado: *"si no podemos refutar a Bohm,
+debemos al menos acordar ignorarlo"*. La comunidad de físicos —que en
+plena guerra fría tenía buenas razones para mantener distancia con un
+colega arrestado por desacato y exiliado en Sudamérica— hizo exactamente
+eso. Bohm continuó trabajando desde São Paulo, luego desde el Technion
+de Haifa entre 1955 y 1957, y finalmente desde el Reino Unido —Bristol
+primero, Birkbeck College de la Universidad de Londres desde 1961—,
+donde permaneció hasta su jubilación en 1987.
+
+**Tercer acto · Everett, el Pentágono, y el silencio de Copenhague**
+
+La historia de Everett en Princeton tiene un sabor distinto. No fue la
+persecución política la que lo empujó fuera de la física académica; fue
+una combinación de azar institucional y elección estratégica.
+
+En 1956, mientras Everett terminaba su tesis sobre la interpretación de
+muchos mundos —titulada originalmente *The Theory of the Universal Wave
+Function*—, John Wheeler viajó a Copenhague para presentar el trabajo de
+su estudiante personalmente a Niels Bohr. Wheeler había sido alumno de
+Bohr en los años 1930 y mantenía la convicción de que cualquier nueva
+interpretación de la mecánica cuántica necesitaba la bendición del
+fundador de Copenhague. Bohr y su círculo recibieron el manuscrito de
+Wheeler con frialdad y luego con rechazo. La tesis de Everett —en su
+forma extensa original, de aproximadamente 137 páginas— era, según Bohr,
+fundamentalmente incompatible con los presupuestos epistemológicos que
+Copenhague había establecido. Wheeler regresó de Europa con
+instrucciones para Everett: comprimir la tesis a una cuarta parte de su
+extensión, eliminar las secciones más radicales sobre las "ramas" del
+universo, y presentar el trabajo como complemento a Copenhague, no como
+sustituto.
+
+Mientras tanto, Everett tenía un problema más urgente. En 1956, durante
+el proceso de revisión de la tesis, estaba a punto de perder su exención
+del servicio militar de estudiante de doctorado. Estados Unidos seguía
+manteniendo el draft —el reclutamiento obligatorio— y un físico recién
+graduado sin posición académica era candidato directo a ser enviado a
+entrenamiento militar. Para evitar el draft, Everett aceptó un trabajo
+en el **Weapons Systems Evaluation Group (WSEG)** del Pentágono en junio
+de 1956. Su primer proyecto fue calcular las tasas potenciales de
+mortalidad por *fallout* radiactivo en escenarios de guerra nuclear a
+gran escala. En octubre de 1956 asistió a un curso de orientación sobre
+armas nucleares en los laboratorios Sandia en Albuquerque, donde se
+aficionó al uso de computadoras para modelado matemático.
+
+En abril de 1957 regresó brevemente a Princeton para defender la versión
+abreviada de su tesis. El comité examinador —Wheeler, Valentine
+Bargmann, H. W. Wyld y Robert Dicke— lo evaluó positivamente: *"El
+candidato pasó un examen muy bueno. Trató un tema muy difícil y defendió
+sus conclusiones con firmeza, claridad y lógica."* La versión corta de
+la tesis fue publicada tres meses después en *Reviews of Modern Physics*
+bajo el título *'Relative State' Formulation of Quantum Mechanics*,
+acompañada por un artículo del propio Wheeler que la respaldaba
+favorablemente. El paper pasó casi completamente desapercibido. Everett
+se desencantó. En sus propias palabras posteriores: *"me lavé las manos
+del asunto en 1956"*. No publicó nada más sobre mecánica cuántica
+durante el resto de su vida.
+
+En marzo y abril de 1959 Everett visitó Copenhague, a invitación de
+Wheeler, con la esperanza de convencer personalmente a Bohr de la
+validez de su propuesta. Bohr no se dejó impresionar. Everett regresó a
+Estados Unidos profundamente abatido. En su hotel en Copenhague, sin
+embargo, comenzó a trabajar en una idea distinta —una aplicación
+computacional de los multiplicadores de Lagrange en optimización— que
+más tarde lo convertiría en multimillonario como consultor de
+operaciones en Lambda Corporation.
+
+**Coda · El reconocimiento póstumo y las dos descendencias**
+
+Las descendencias de Bohm y Everett son distintas en textura pero
+paralelas en estructura.
+
+David Bohm, ya establecido en Birkbeck College en Londres, encontró en
+1959 los textos del filósofo indio **Jiddu Krishnamurti** y reconoció
+paralelismos entre sus propias preocupaciones científicas sobre la
+fragmentación de la realidad y las preocupaciones contemplativas de
+Krishnamurti sobre la fragmentación del pensamiento. En 1961 los dos
+hombres se conocieron en persona. Mantuvieron diálogos durante tres
+décadas, registrados en libros como *The Ending of Time* (1985) y en
+docenas de horas de conversaciones grabadas. La obra tardía de Bohm
+—*Wholeness and the Implicate Order* (1980), *Science, Order, and
+Creativity* (1987), *On Dialogue* (1996, póstumo)— extiende la
+interpretación de la onda piloto hacia una visión más amplia que Bohm
+llamó **el orden implicado**: la idea de que la realidad cuántica revela
+una totalidad subyacente plegada que se despliega en las apariencias
+separadas que percibimos. Esta línea de trabajo es **explícitamente
+filosófico-contemplativa**, declarada como tal por Bohm, y debe
+distinguirse cuidadosamente del paper técnico de 1952 que sigue siendo
+física estándar dentro de su escuela. El Dalai Lama llamó a Bohm "mi
+gurú científico". Bohm murió el 27 de octubre de 1992 en Londres, a los
+74 años.
+
+Hugh Everett tuvo otra trayectoria. Después de Copenhague 1959, no
+regresó nunca a la física académica. Durante los años 1960 y 1970
+trabajó como consultor estratégico de la Guerra Fría, fundó dos empresas
+tecnológicas, se hizo multimillonario, y fumó y bebió hasta arruinar su
+salud. En **1970** Bryce DeWitt, un físico de la Universidad de Carolina
+del Norte que había correspondido con Everett en 1957, publicó un
+artículo en *Physics Today* titulado *Quantum Mechanics and Reality* que
+rescató del olvido la propuesta de Everett y la rebautizó *Many Worlds
+Interpretation*. En **1973** DeWitt editó una antología, *The
+Many-Worlds Interpretation of Quantum Mechanics*, que finalmente publicó
+la versión extensa original de la tesis de Everett —*The Theory of the
+Universal Wave Function*— por primera vez. La antología agotó su tirada
+inicial. En **1977** Wheeler y DeWitt invitaron a Everett a dar una
+charla en una conferencia en la Universidad de Texas en Austin. Everett
+asistió con un traje negro arrugado, fumó durante toda la presentación,
+y descubrió por primera vez que tenía admiradores —entre ellos un joven
+David Deutsch que se convertiría en uno de los principales defensores
+actuales de Muchos Mundos y en uno de los fundadores de la computación
+cuántica—. Murió de un ataque cardíaco el 19 de julio de 1982 a los 51
+años, en McLean, Virginia. **Su hijo Mark Oliver Everett —Mr. E, líder
+de la banda Eels— dirigió en 2007 un documental sobre su padre titulado
+*Parallel Worlds, Parallel Lives*.**
+
+En 1980, ocho años antes de la muerte de Everett, John Wheeler —que
+había sido el director de tesis del joven Hugh y su único defensor en la
+academia durante años— **renunció públicamente a la interpretación**.
+Escribió que la teoría *"crea una carga demasiado grande de equipaje
+metafísico para llevar consigo"*. Para entonces, sin embargo, Bryce
+DeWitt, David Deutsch, Max Tegmark y otros físicos jóvenes habían
+adoptado la interpretación de muchos mundos como su propia postura, y la
+propuesta había alcanzado una vida intelectual independiente de su
+autor.
+
+**Frase-puente al §3.6.2**
+
+> **Bohm y Everett representan dos exilios paralelos del consenso de
+> Copenhague. Bohm fue empujado fuera por el macartismo y desarrolló
+> desde el exilio una interpretación realista que recuperaba el
+> determinismo clásico al precio de la no localidad explícita. Everett
+> fue empujado fuera por la coincidencia entre el draft militar y el
+> rechazo de Bohr, y desarrolló desde el Pentágono una interpretación
+> realista que mantenía el determinismo y la localidad al precio de un
+> universo ramificado en infinitas ramas paralelas. Ninguno fue tomado
+> en serio en su tiempo. Ambos lo son hoy. La sección §3.6.2 que cerrará
+> el Parlamento Cuántico va a presentar las dos interpretaciones más
+> recientes —QBism y la propuesta relacional de Carlo Rovelli— que en
+> lugar de buscar realismo abandonan la pregunta misma sobre si la
+> función de onda es real o no, y la reformulan radicalmente.**
+
+**[ P A U S A C I E N T Í F I C A ]**
+
+**Lo que el Parlamento Cuántico sí establece y lo que no**
+
+**Está documentado y forma parte del consenso científico actual:**
+
+— El **formalismo matemático de la mecánica cuántica** —espacio de
+Hilbert, ecuación de Schrödinger, observables como operadores
+hermitianos, regla de Born para probabilidades— es universalmente
+compartido por toda la comunidad de físicos cuánticos. No hay debate
+alguno sobre el formalismo. Es uno de los aparatos matemáticos mejor
+verificados experimentalmente en toda la historia de la ciencia.
+
+— Las **cinco interpretaciones canónicas** —Copenhague (Bohr-Heisenberg
+1927), Muchos Mundos (Everett 1957, popularizada por DeWitt 1970), De
+Broglie-Bohm (1927/1952), QBism (Caves-Fuchs-Schack 2002, Fuchs 2010),
+Rovelli relacional (Rovelli 1996)— **hacen exactamente las mismas
+predicciones experimentales**. Esta es una afirmación técnica fuerte:
+cualquier experimento que se haya realizado en un laboratorio de física
+cuántica desde 1927 hasta hoy es compatible con las cinco. **Ningún
+experimento ha refutado a ninguna**.
+
+— La **ramificación de la función de onda** propuesta por Everett es una
+consecuencia matemática de aplicar la ecuación de Schrödinger
+consistentemente a sistema, aparato, observador y entorno sin postular
+colapso. La **decoherencia cuántica** —proceso por el cual las
+superposiciones macroscópicas se vuelven mutuamente inaccesibles debido
+al entrelazamiento con el entorno— es un fenómeno bien estudiado
+experimentalmente desde los años 1970, y es lo que hace que la
+interpretación de Muchos Mundos sea técnicamente consistente sin
+necesidad de postular colapso adicional.
+
+— La **no localidad** de la interpretación de De Broglie-Bohm está
+rigurosamente formulada en la ecuación guía y es matemáticamente
+consistente con la no localidad observada en violaciones de Bell (Aspect
+1982, premio Nobel 2022). La interpretación reproduce todas las
+predicciones cuánticas estándar.
+
+**Requiere matización filosófica honesta:**
+
+— La pregunta sobre **cuál es "la verdadera" interpretación** de la
+mecánica cuántica es, en el momento presente, una pregunta
+filosóficamente activa que la física no ha resuelto. Encuestas a físicos
+profesionales muestran distribuciones distintas según la generación y la
+escuela, sin que ninguna interpretación tenga mayoría aplastante. Es
+honesto presentarla como pregunta abierta.
+
+— La **distinción entre formalismo e interpretación** es esencial.
+Cuando alguien dice *"la mecánica cuántica demuestra X"* sobre temas
+ontológicos, conviene preguntarse si está hablando del formalismo
+(verificado) o de una interpretación (debatible). Las afirmaciones del
+tipo *"la mecánica cuántica demuestra que la realidad es información"* o
+*"la mecánica cuántica demuestra que existen universos paralelos"* o
+*"la mecánica cuántica demuestra que la conciencia colapsa la función de
+onda"* son afirmaciones interpretativas, NO consenso científico.
+
+— La **dimensión filosófica** de la interpretación de Bohm —en
+particular su desarrollo posterior como "orden implicado" en *Wholeness
+and the Implicate Order* (1980)— es **declarada como tal por Bohm**, no
+presentada como física estándar. Debe distinguirse cuidadosamente del
+paper técnico de 1952 que sigue siendo parte del corpus físico legítimo.
+
+**Lo que la evidencia no respalda y conviene marcar explícitamente:**
+
+— La afirmación de que **"existe una versión de ti viviendo todas las
+posibilidades no realizadas"** o **"todo lo que pudo haber sido es en
+algún lugar del multiverso"** es una **distorsión divulgativa** de la
+interpretación de Muchos Mundos. La ramificación cuántica de Everett es
+matemática, no es elección voluntaria, no permite acceso entre ramas, no
+implica que toda posibilidad imaginable se realice. Solo se realizan los
+resultados que la mecánica cuántica permite, con las frecuencias que la
+regla de Born predice.
+
+— La afirmación de que **"no necesitas cargar el peso de tus errores
+porque en otro universo elegiste mejor"** es una **lectura sentimental**
+que la interpretación de Muchos Mundos NO respalda. Es proyección del
+lector new-age, no afirmación de la teoría.
+
+— La presentación de la interpretación de Copenhague como **"la mecánica
+cuántica demuestra que la conciencia crea la realidad"** es una
+**distorsión severa**. Copenhague establece que el observador es
+esencial para la teoría, pero "observador" en el sentido técnico es
+cualquier sistema clásico macroscópico que registre información del
+sistema cuántico —un detector de partículas funciona como observador, no
+necesita conciencia humana—. La afirmación de que la conciencia humana
+específicamente colapsa la función de onda es una posición minoritaria
+asociada con Wigner y Stapp, NO la interpretación estándar de
+Copenhague.
+
+— La presentación del **"orden implicado de Bohm"** como física
+verificada es una **confusión categorial**. El paper técnico de 1952
+sobre la onda piloto sí es física rigurosa. *Wholeness and the Implicate
+Order* (1980) es **filosofía de la naturaleza** declarada como tal por
+el propio Bohm, escrita en diálogo con Krishnamurti, NO física estándar
+verificada. Las dos cosas son legítimas pero pertenecen a registros
+distintos.
+
+**Referencia primaria sobre Copenhague:** Bohr, N. (1928). «The Quantum
+Postulate and the Recent Development of Atomic Theory.» *Nature*,
+121(3050), 580-590.
+
+**Referencia primaria sobre Muchos Mundos:** Everett, H. (1957).
+«'Relative State' Formulation of Quantum Mechanics.» *Reviews of Modern
+Physics*, 29(3), 454-462.
+
+**Referencia primaria sobre De Broglie-Bohm:** Bohm, D. (1952). «A
+Suggested Interpretation of the Quantum Theory in Terms of 'Hidden'
+Variables, I and II.» *Physical Review*, 85(2), 166-179 y 180-193.
+
+**Referencia académica sobre Everett biografía:** Byrne, P. (2010). *The
+Many Worlds of Hugh Everett III: Multiple Universes, Mutual Assured
+Destruction, and the Meltdown of a Nuclear Family*. Oxford: Oxford
+University Press.
+
+**Referencia académica sobre Bohm biografía:** Freire Junior, O. (2019).
+*David Bohm: A Life Dedicated to Understanding the Quantum World*. Cham:
+Springer.
+
+**Referencia académica sobre la popularización de Muchos Mundos:**
+DeWitt, B. S. (1970). «Quantum Mechanics and Reality.» *Physics Today*,
+23(9), 30-35.
+
+**Referencia académica sobre Bohm filosófico:** Bohm, D. (1980).
+*Wholeness and the Implicate Order*. London: Routledge & Kegan Paul.
+
+**Referencia académica sobre encuestas de interpretaciones:**
+Schlosshauer, M., Kofler, J., & Zeilinger, A. (2013). «A snapshot of
+foundational attitudes toward quantum mechanics.» *Studies in History
+and Philosophy of Modern Physics*, 44(3), 222-230.
+
+**◆**
+
+</VozTejido>
+
+<PausaReflexiva titulo="La resonancia y la certeza">
+
+> *◆ *PRÁCTICA CONTEMPLATIVA* *Lo que sigue es una invitación a notar
+> tu propia resonancia con las interpretaciones presentadas,
+> distinguiéndola explícitamente de cualquier afirmación de que esa
+> resonancia constituya evidencia. La práctica entrena la disciplina
+> central del Parlamento: sostener pluralidad sin colapsarla.**
+
+Pausa.
+
+Has leído tres de las cinco interpretaciones canónicas del Parlamento
+Cuántico: Copenhague, Muchos Mundos, De Broglie-Bohm.
+
+Te ofreceré ahora una pregunta y una distinción.
+
+**La pregunta**: ¿alguna de las tres te resonó más que las otras? ¿Hubo
+alguna que, al leerla, te hizo asentir interiormente, sentir *"sí, eso
+es cómo es"*?
+
+Si la respuesta es sí — que probablemente lo es, porque las mentes
+humanas tendemos a preferir alguna lectura sobre las otras — entonces
+escucha bien la distinción que viene.
+
+**La distinción**: que una interpretación resuene contigo **no es
+evidencia de que sea correcta**. La resonancia es información sobre ti,
+no sobre el cosmos. Te dice algo sobre tu temperamento intelectual, tu
+historia personal, tus afinidades filosóficas, tu necesidad psicológica
+de cierto tipo de orden o cierto tipo de apertura. No te dice cuál de
+las cinco interpretaciones es físicamente más fiel a la realidad
+cuántica.
+
+Esa información — sobre cuál es más fiel — la física no la tiene
+todavía. Quizás nunca la tenga, si las cinco efectivamente predicen lo
+mismo.
+
+La disciplina madura es esta: **puedes tener tu interpretación favorita,
+y al mismo tiempo reconocer que tu favoritismo no es argumento**.
+
+Una pregunta más, antes de seguir:
+
+*¿Puedo permitirme tener una preferencia interior sin convertirla en
+certeza pública?*
+
+No respondas. Solo nota la pregunta.
+
+La pluralidad del Parlamento es ejercicio de humildad epistémica
+genuina. Conservarla es uno de los regalos más sutiles que la mecánica
+cuántica le ha hecho al pensamiento contemporáneo.
+
+Vuelve al texto.
+
+</PausaReflexiva>
+## **Cierre del §3.6.1 y puente al §3.6.2**
+
+Las tres interpretaciones presentadas en esta sub-sección comparten una
+característica filosófica que conviene nombrar antes de cerrar. Las tres
+son, en distinto grado, **interpretaciones realistas** de la mecánica
+cuántica: las tres asumen que hay alguna realidad objetiva subyacente al
+formalismo, y proponen distintas respuestas sobre qué es esa realidad.
+Copenhague la concibe como información objetiva del observador clásico
+sobre el sistema cuántico, con un corte ontológicamente real entre lo
+cuántico y lo clásico. Muchos Mundos la concibe como una función de onda
+universal objetivamente real que se ramifica en realidades paralelas. De
+Broglie-Bohm la concibe como dos entidades reales —partículas con
+posiciones definidas y onda piloto que las guía— que coexisten en el
+mismo espacio.
+
+Las dos interpretaciones que la sección §3.6.2 va a presentar son, en
+distintos grados, **anti-realistas** en un sentido específico: en lugar
+de buscar qué entidades físicas reales corresponden al formalismo
+cuántico, abandonan la pregunta misma sobre si la función de onda es
+"real" y la reformulan radicalmente. **QBism** sostiene que la función
+de onda no representa ninguna entidad física objetiva: representa el
+grado de creencia subjetiva de un agente sobre los resultados que espera
+obtener al medir un sistema. La probabilidad cuántica es probabilidad
+bayesiana: subjetiva, personalista, irreducible a probabilidad objetiva.
+**La interpretación relacional de Carlo Rovelli** sostiene que las
+propiedades cuánticas no pertenecen a sistemas individuales sino a
+relaciones entre sistemas: un sistema cuántico no tiene propiedades
+absolutas que existan independientemente, solo propiedades relativas a
+otros sistemas que interactúan con él.
+
+Estas dos interpretaciones son más recientes —QBism desde 2002, Rovelli
+desde 1996— y representan una respuesta filosófica distinta al problema
+interpretativo. En lugar de buscar realismo a costa de complejidad
+ontológica (Muchos Mundos) o de no localidad (De Broglie-Bohm), proponen
+revisar qué tipo de teoría es la mecánica cuántica.
+
+La sección §3.6.2 cerrará el Parlamento Cuántico con la presentación de
+QBism y Rovelli, la Voz del Tejido formal de Carlo Rovelli, y la
+síntesis filosófica del debate entero: lo que tener cinco
+interpretaciones serias coexistiendo sin posibilidad de decisión
+experimental significa para la postura epistémica del Tejedor frente al
+cosmos cuántico.
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+— ◇ —
