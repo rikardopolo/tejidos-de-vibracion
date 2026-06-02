@@ -21,6 +21,13 @@ import { getCollection, getEntry } from 'astro:content';
 import PrintLayout from '@/layouts/PrintLayout.astro';
 import { romanize } from '@/lib/utils';
 
+// SSR (no prerender): Astro exige que `prerender` sea un literal, así que no se
+// puede condicionar por env. Se deja en `false` y NUNCA se prerenderiza /print en
+// el build de producción (eso lo desplegaría a Vercel y filtraría el contenido
+// completo, saltándose el gating). Para un PDF estático reproducible de imprenta,
+// el skill documenta un flip LOCAL y transitorio a `prerender = true` (ver SKILL.md
+// · "Render estático de imprenta"), que no se commitea.
+const PRINT_BUILD = process.env.IMPRENTA_PRINT === '1';
 export const prerender = false;
 
 type Piece = {
@@ -35,6 +42,12 @@ type Piece = {
 
 const { slug } = Astro.params;
 const parts = (slug ?? '').split('/').filter(Boolean);
+
+// Seguridad: /print no debe servir contenido completo en producción (saltaría
+// el gating). Solo en desarrollo o en el build de impresión (IMPRENTA_PRINT=1).
+if (!import.meta.env.DEV && !PRINT_BUILD) {
+  return new Response('Not found', { status: 404 });
+}
 
 // Secuencia canónica del volumen (Índice Maestro v3 · igual que build-print-html.mjs).
 const CHAPTER_SEQUENCE = [

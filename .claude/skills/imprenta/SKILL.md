@@ -131,3 +131,26 @@ Decisión de diseño adicional (divergencia consciente respecto a pantalla, conf
   `--executable-browser` (o `IMPRENTA_BROWSER`) para no depender de la descarga propia.
 - Render de prueba validado: `/print/cap-2-ciencia-escuchar/03-galileo` → `out/galileo.pdf`
   (cornisa, folio, recuadros, separadores y caja 6.5×9 correctos).
+
+### Seguridad de la ruta /print
+
+`/print` renderiza el contenido **completo sin gating** (es para generar el PDF). Por eso
+la ruta es SSR con guardia: solo responde en **desarrollo** o cuando `IMPRENTA_PRINT=1`;
+en el deploy de producción (Vercel) responde **404**. Nunca se prerenderiza /print en el
+build normal — eso publicaría el libro entero saltándose el muro del tejedor.
+
+### Render estático de imprenta (flip LOCAL · para PDFs grandes/reproducibles)
+
+Astro exige que `export const prerender` sea un literal, así que no se puede condicionar
+por env. Para un PDF reproducible (p. ej. Acto I / volumen completo, ~300 pp) sin depender
+del dev server (que puede caerse en el compile en frío bajo la carga de Vivliostyle), se
+hace un flip **local y transitorio** que NO se commitea:
+
+1. En `src/pages/print/[...slug].astro`: cambia `export const prerender = false` → `true`
+   y añade un `getStaticPaths()` que enumere los alcances a paginar
+   (`volumen-i`, `obertura`, `cap-1…`, `cap-2…`, `cap-3…`).
+2. `IMPRENTA_PRINT=1 pnpm build` (la guardia pasa con ese flag; emite estáticos a
+   `.vercel/output/static/print/…` con el CSS ya empacado, sin URLs de dev).
+3. Sirve esa carpeta: `npx serve .vercel/output/static -l 4399`.
+4. `node .claude/skills/imprenta/scripts/render-pdf.mjs http://localhost:4399/print/volumen-i out/volumen-i.pdf`.
+5. **Revierte el flip:** `git checkout -- "src/pages/print/[...slug].astro"`.
