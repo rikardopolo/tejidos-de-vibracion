@@ -18,6 +18,7 @@ tags:
 ---
 
 import PausaCientifica from '@/components/book/PausaCientifica.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
 
 *De la cuerda vibrante a la materia que oscila como probabilidad*
 
@@ -127,37 +128,13 @@ la letra griega psi minúscula, **ψ**.
 
 **◆**
 
-**Figura 2.13** · **Función de onda compleja ψ vs onda clásica real**
-
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Dos paneles paralelos. Panel
-> izquierdo · onda clásica real u(x): sinusoide simple en eje real (rojo
-> o azul indigo, una sola dimensión vertical), etiquetada "u(x) ∈ ℝ".
-> Panel derecho · función de onda cuántica ψ(x): representación 3D o
-> axonométrica con ψ_real (componente real, sinusoide en plano vertical)
-> y ψ_imag (componente imaginaria, sinusoide desfasada 90° en plano
-> horizontal). Etiquetar "ψ(x) ∈ ℂ". Bajo ambos paneles, indicar
-> |ψ(x)|² como segundo gráfico mostrando la densidad de probabilidad
-> (sinusoide al cuadrado, siempre positiva).*
->
-> **Nota técnica:** *Crear figura nueva, vectorial. La figura es
-> CONCEPTUALMENTE EXIGENTE pero pedagógicamente decisiva: el lector
-> necesita ver la diferencia entre un campo real (u clásico) y un campo
-> complejo (ψ cuántico). Considerar añadir tooltip con la fórmula λ =
-> h/p (Fórmula 3.1 del Cap. 3) para la onda de De Broglie de la
-> partícula material.*
->
-> **Figura 2.13.** La diferencia decisiva entre la onda clásica y la
-> función de onda cuántica. La onda clásica u(x) es una función real:
-> representa un desplazamiento físico observable directamente (la altura
-> de una cuerda, la presión del aire). La función de onda ψ(x) es una
-> función compleja: ψ(x) ∈ ℂ. Lo que se observa experimentalmente no es
-> ψ sino su módulo al cuadrado |ψ(x)|², que es la densidad de
-> probabilidad de encontrar la partícula en cada punto al medirla (regla
-> de Born, Fórmula 3.9 del Cap. 3).
+<FiguraTDV
+  imagen="/assets/cap-2/figura-2-13.png"
+  numero="2.13"
+  titulo="Función de onda compleja ψ vs onda clásica real"
+  alt="Comparación entre la onda clásica real y la función de onda cuántica compleja ψ con partes real e imaginaria y densidad de probabilidad |ψ|²"
+  descripcion="La diferencia decisiva entre la onda clásica y la función de onda cuántica. La onda clásica u(x) es una función real: representa un desplazamiento físico observable directamente (la altura de una cuerda, la presión del aire). La función de onda ψ(x) es una función compleja: ψ(x) ∈ ℂ. Lo que se observa experimentalmente no es ψ sino su módulo al cuadrado |ψ(x)|², que es la densidad de probabilidad de encontrar la partícula en cada punto al medirla (regla de Born, Fórmula 3.9 del Cap. 3)."
+/>
 
 ## La diferencia decisiva con la onda clásica
 
@@ -449,38 +426,10 @@ Premio Nobel de Física de 1933 fue otorgado conjuntamente a Erwin
 Schrödinger y Paul Adrien Maurice Dirac «for the discovery of new
 productive forms of atomic theory».
 
-**Figura 2.14** · **Línea de tiempo · cuatro siglos de la ciencia que
-aprendió a escuchar**
-
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Línea horizontal con eje
-> temporal 1600-2020. Marcadores cronológicos con autor y descubrimiento
-> clave: 1636 Mersenne (frecuencia absoluta 84 Hz), 1638 Galileo
-> (Discorsi), 1747 D'Alembert (ecuación de onda), 1748 Euler, 1753
-> Bernoulli (modos normales), 1822 Fourier (análisis espectral), 1863
-> Helmholtz (cóclea como piano biológico), 1865 Maxwell (ecuaciones EM),
-> 1887 Hertz (transmisión inalámbrica), 1900 Planck (cuanto), 1905
-> Einstein (fotones), 1907 Einstein (sólidos cuánticos), 1912 Debye
-> (fonones), 1925-26 Schrödinger (función de onda), 1932 Tamm (acuña
-> «fonón»), 2004 Gimzewski (levadura vibrante), 2015 LIGO (GW150914).
-> Agrupación visual por fases: Fase I Galileo-Mersenne-Bernoulli
-> (clásica), Fase II Helmholtz-Maxwell-Hertz (electromagnética), Fase
-> III Planck-Einstein-Debye (cuántica), Fase IV Gimzewski-LIGO (frontera
-> contemporánea).*
->
-> **Nota técnica:** *Crear figura nueva, vectorial. Es prima hermana de
-> la Figura 3.1 del Cap. 3 v5d ("La Avalancha 1900-1927") pero con marco
-> temporal más amplio (cuatro siglos vs 27 años) y diferente densidad de
-> hitos. Aplicar paleta TDV oficial. Coordinar el estilo visual entre
-> ambas figuras para coherencia entre capítulos.*
->
-> **Figura 2.14.** Cuatro siglos de la ciencia que aprendió a escuchar.
-> La cascada de descubrimientos entre 1636 y 2015 transformó el oído
-> científico desde la cuerda vibrante hasta las ondas gravitacionales
-> del cosmos. Cada hito construyó sobre los anteriores y forzó los
-> siguientes. La velocidad fue desigual: cuatrocientos años para pasar
-> de Mersenne a LIGO, pero solo veintisiete años (1900-1927) para que la
-> mecánica cuántica tomara forma.
+<FiguraTDV
+  imagen="/assets/cap-2/figura-2-14.png"
+  numero="2.14"
+  titulo="Línea de tiempo · cuatro siglos de la ciencia que aprendió a escuchar"
+  alt="Línea de tiempo desde Mersenne 1636 hasta LIGO 2015 con los diez hitos principales del capítulo"
+  descripcion="Cuatro siglos de la ciencia que aprendió a escuchar. La cascada de descubrimientos entre 1636 y 2015 transformó el oído científico desde la cuerda vibrante hasta las ondas gravitacionales del cosmos. Cada hito construyó sobre los anteriores y forzó los siguientes. La velocidad fue desigual: cuatrocientos años para pasar de Mersenne a LIGO, pero solo veintisiete años (1900-1927) para que la mecánica cuántica tomara forma."
+/>

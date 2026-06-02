@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" role="img" aria-labelledby="t212">
+  <title id="t212">GW150914 — primera detección directa de ondas gravitacionales, 14 de septiembre de 2015</title>
+
+  <text x="360" y="28" font-family="Georgia, serif" font-size="17" fill="#1A1A1A" text-anchor="middle">GW150914 · primera onda gravitacional detectada</text>
+  <text x="360" y="48" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#3A3530" text-anchor="middle">fusión de dos agujeros negros a 1 300 millones de años luz · 09:50:45 UTC · 14-sept-2015</text>
+
+  <!-- ============ PANEL 1: Hanford ============ -->
+  <g transform="translate(0,90)">
+    <text x="80" y="14" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#2D1B69">Hanford (Washington)</text>
+    <!-- Marco -->
+    <rect x="80" y="22" width="560" height="90" fill="#F2EAD5" stroke="#B8B3AB" stroke-width="0.6"/>
+    <line x1="80" y1="67" x2="640" y2="67" stroke="#B8B3AB" stroke-width="0.4"/>
+    <!-- Chirp Hanford: frecuencia crece, amplitud crece, después ringdown -->
+    <path d="M80 67
+             q 6 -1 12 1.5  q 6 2.5 12 -1.5  q 6 -4 12 4  q 6 -4 12 4
+             q 6 -5 12 5  q 6 -5 12 5  q 6 -6 12 6  q 6 -7 12 7
+             q 5 -8 10 8  q 5 -10 10 10  q 5 -12 10 12  q 5 -14 10 14
+             q 4 -18 8 18  q 4 -22 8 22  q 4 -26 8 26  q 3 -32 6 30
+             q 3 -22 6 22  q 3 -12 6 12  q 3 -6 6 6  q 3 -3 6 3 q 3 -1 6 1"
+          stroke="#2D1B69" stroke-width="1.6" fill="none"/>
+  </g>
+
+  <!-- ============ PANEL 2: Livingston ============ -->
+  <g transform="translate(0,220)">
+    <text x="80" y="14" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#2D1B69">Livingston (Luisiana) · 6.9 ms antes</text>
+    <rect x="80" y="22" width="560" height="90" fill="#F2EAD5" stroke="#B8B3AB" stroke-width="0.6"/>
+    <line x1="80" y1="67" x2="640" y2="67" stroke="#B8B3AB" stroke-width="0.4"/>
+    <!-- Mismo chirp con desfase 7ms hacia la izquierda (~10 px) -->
+    <path d="M70 67
+             q 6 -1 12 1.5  q 6 2.5 12 -1.5  q 6 -4 12 4  q 6 -4 12 4
+             q 6 -5 12 5  q 6 -5 12 5  q 6 -6 12 6  q 6 -7 12 7
+             q 5 -8 10 8  q 5 -10 10 10  q 5 -12 10 12  q 5 -14 10 14
+             q 4 -18 8 18  q 4 -22 8 22  q 4 -26 8 26  q 3 -32 6 30
+             q 3 -22 6 22  q 3 -12 6 12  q 3 -6 6 6  q 3 -3 6 3 q 3 -1 6 1"
+          stroke="#2D1B69" stroke-width="1.6" fill="none" opacity="0.85" transform="translate(10,0)"/>
+  </g>
+
+  <!-- ============ PANEL 3: Superposición con teoría ============ -->
+  <g transform="translate(0,350)">
+    <text x="80" y="14" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#2D1B69">superposición con predicción de la relatividad general</text>
+    <rect x="80" y="22" width="560" height="90" fill="#F2EAD5" stroke="#B8B3AB" stroke-width="0.6"/>
+    <line x1="80" y1="67" x2="640" y2="67" stroke="#B8B3AB" stroke-width="0.4"/>
+
+    <!-- Datos -->
+    <path d="M80 67
+             q 6 -1 12 1.5  q 6 2.5 12 -1.5  q 6 -4 12 4  q 6 -4 12 4
+             q 6 -5 12 5  q 6 -5 12 5  q 6 -6 12 6  q 6 -7 12 7
+             q 5 -8 10 8  q 5 -10 10 10  q 5 -12 10 12  q 5 -14 10 14
+             q 4 -18 8 18  q 4 -22 8 22  q 4 -26 8 26  q 3 -32 6 30
+             q 3 -22 6 22  q 3 -12 6 12  q 3 -6 6 6  q 3 -3 6 3 q 3 -1 6 1"
+          stroke="#2D1B69" stroke-width="1.6" fill="none"/>
+
+    <!-- Teoría (oro punteada superpuesta) -->
+    <path d="M80 67
+             q 6 -1 12 1.5  q 6 2.5 12 -1.5  q 6 -4 12 4  q 6 -4 12 4
+             q 6 -5 12 5  q 6 -5 12 5  q 6 -6 12 6  q 6 -7 12 7
+             q 5 -8 10 8  q 5 -10 10 10  q 5 -12 10 12  q 5 -14 10 14
+             q 4 -18 8 18  q 4 -22 8 22  q 4 -26 8 26  q 3 -32 6 30
+             q 3 -22 6 22  q 3 -12 6 12  q 3 -6 6 6  q 3 -3 6 3 q 3 -1 6 1"
+          stroke="#B68914" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/>
+
+    <!-- Etiquetas de fases -->
+    <g font-family="Georgia, serif" font-size="11" font-style="italic" fill="#3A3530" text-anchor="middle">
+      <text x="190" y="142">inspiral</text>
+      <text x="410" y="142">merger</text>
+      <text x="540" y="142">ringdown</text>
+    </g>
+
+    <!-- Líneas verticales que separan las fases -->
+    <line x1="320" y1="22" x2="320" y2="127" stroke="#8A8A8A" stroke-width="0.4" stroke-dasharray="2 4"/>
+    <line x1="480" y1="22" x2="480" y2="127" stroke="#8A8A8A" stroke-width="0.4" stroke-dasharray="2 4"/>
+
+    <!-- Frecuencias -->
+    <text x="100" y="-2" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#B68914">~35 Hz</text>
+    <text x="450" y="-2" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#B68914">~250 Hz</text>
+  </g>
+
+  <!-- Eje tiempo común -->
+  <line x1="80" y1="490" x2="640" y2="490" stroke="#1A1A1A" stroke-width="1"/>
+  <g font-family="Georgia, serif" font-size="10" fill="#3A3530" text-anchor="middle">
+    <text x="80" y="505">0</text>
+    <text x="220" y="505">0.05 s</text>
+    <text x="360" y="505">0.10 s</text>
+    <text x="500" y="505">0.15 s</text>
+    <text x="640" y="505">0.20 s</text>
+  </g>
+
+  <!-- Etiqueta de amplitud pico -->
+  <text x="640" y="100" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#B68914" text-anchor="end">h_pico ≈ 1.0 × 10⁻²¹</text>
+
+  <!-- Datos del sistema fuente -->
+  <text x="50" y="72" font-family="Georgia, serif" font-size="11" fill="#1A1A1A">36 M☉ + 29 M☉ → 62 M☉ · 3 M☉ irradiadas en ondas gravitacionales</text>
+</svg>

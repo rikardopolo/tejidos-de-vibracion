@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 480" role="img" aria-labelledby="t211">
+  <title id="t211">Esquema funcional del interferómetro láser de LIGO con cavidades Fabry-Pérot</title>
+  <defs>
+    <marker id="ar211" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B68914"/>
+    </marker>
+  </defs>
+
+  <text x="360" y="28" font-family="Georgia, serif" font-size="17" fill="#1A1A1A" text-anchor="middle">Interferómetro LIGO · esquema funcional</text>
+  <text x="360" y="48" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#3A3530" text-anchor="middle">brazos perpendiculares de 4 km · sensibilidad de una diezmilésima del diámetro del protón</text>
+
+  <!-- ============ DISPOSICIÓN EN L ============ -->
+  <!-- Centro divisor en (220,300) -->
+  <!-- Brazo Norte: hacia arriba (220,300) → (220,90) -->
+  <!-- Brazo Este: hacia la derecha (220,300) → (620,300) -->
+
+  <!-- LÁSER -->
+  <g transform="translate(80,290)">
+    <rect x="0" y="0" width="60" height="20" fill="#9B2A2A" stroke="#1A1A1A" stroke-width="1"/>
+    <text x="30" y="14" font-family="Georgia, serif" font-size="11" fill="#F2EAD5" text-anchor="middle">láser</text>
+    <text x="30" y="-6" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#3A3530" text-anchor="middle">alta potencia</text>
+  </g>
+  <line x1="140" y1="300" x2="208" y2="300" stroke="#E5B628" stroke-width="2"/>
+
+  <!-- DIVISOR DE HAZ -->
+  <g transform="translate(220,300)">
+    <rect x="-12" y="-12" width="24" height="24" fill="#B8B3AB" stroke="#1A1A1A" stroke-width="1" transform="rotate(45)"/>
+    <text x="0" y="36" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#3A3530" text-anchor="middle">divisor de haz</text>
+  </g>
+
+  <!-- BRAZO NORTE (vertical) -->
+  <line x1="220" y1="288" x2="220" y2="100" stroke="#E5B628" stroke-width="2"/>
+  <!-- Cavidad Fabry-Perot: dos espejos próximos en la entrada -->
+  <line x1="208" y1="260" x2="232" y2="260" stroke="#2D1B69" stroke-width="2.4"/>
+  <text x="245" y="265" font-family="Georgia, serif" font-size="9" font-style="italic" fill="#2D1B69">esp. entrada</text>
+
+  <!-- Espejo de prueba final (Norte) — suspendido como péndulo -->
+  <g transform="translate(220,90)">
+    <line x1="-30" y1="-25" x2="-30" y2="0" stroke="#1A1A1A" stroke-width="0.6"/>
+    <line x1="30" y1="-25" x2="30" y2="0" stroke="#1A1A1A" stroke-width="0.6"/>
+    <line x1="0" y1="-25" x2="0" y2="0" stroke="#1A1A1A" stroke-width="0.6" stroke-dasharray="2 3"/>
+    <rect x="-32" y="0" width="64" height="16" fill="#2D1B69" stroke="#1A1A1A" stroke-width="1"/>
+    <text x="0" y="-32" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#3A3530" text-anchor="middle">espejo de prueba · 40 kg</text>
+    <text x="0" y="-44" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">suspendido como péndulo</text>
+  </g>
+
+  <!-- Etiqueta brazo Norte -->
+  <text x="170" y="200" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#B68914" text-anchor="middle" transform="rotate(-90 170 200)">brazo · 4 km</text>
+
+  <!-- BRAZO ESTE (horizontal) -->
+  <line x1="232" y1="300" x2="600" y2="300" stroke="#E5B628" stroke-width="2"/>
+  <!-- Cavidad Fabry-Perot entrada brazo Este -->
+  <line x1="280" y1="288" x2="280" y2="312" stroke="#2D1B69" stroke-width="2.4"/>
+  <text x="288" y="284" font-family="Georgia, serif" font-size="9" font-style="italic" fill="#2D1B69">esp. entrada</text>
+
+  <!-- Espejo de prueba final (Este) -->
+  <g transform="translate(610,300)">
+    <line x1="22" y1="-30" x2="-2" y2="-30" stroke="#1A1A1A" stroke-width="0.6"/>
+    <line x1="22" y1="30" x2="-2" y2="30" stroke="#1A1A1A" stroke-width="0.6"/>
+    <line x1="22" y1="0" x2="-2" y2="0" stroke="#1A1A1A" stroke-width="0.6" stroke-dasharray="2 3"/>
+    <rect x="0" y="-32" width="16" height="64" fill="#2D1B69" stroke="#1A1A1A" stroke-width="1"/>
+    <text x="48" y="0" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#3A3530" text-anchor="middle">espejo</text>
+    <text x="48" y="14" font-family="Georgia, serif" font-size="10" fill="#8A8A8A" text-anchor="middle">40 kg</text>
+  </g>
+
+  <!-- Etiqueta brazo Este -->
+  <text x="410" y="288" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#B68914" text-anchor="middle">brazo · 4 km</text>
+
+  <!-- Múltiples reflexiones simbólicas (líneas curvas sutiles) -->
+  <g stroke="#E5B628" stroke-width="0.4" fill="none" opacity="0.4">
+    <line x1="216" y1="290" x2="216" y2="120"/>
+    <line x1="224" y1="120" x2="224" y2="290"/>
+    <line x1="280" y1="296" x2="600" y2="296"/>
+    <line x1="280" y1="304" x2="600" y2="304"/>
+  </g>
+
+  <!-- FOTODETECTOR (abajo del divisor) -->
+  <line x1="220" y1="312" x2="220" y2="380" stroke="#E5B628" stroke-width="2"/>
+  <g transform="translate(220,380)">
+    <rect x="-25" y="0" width="50" height="22" fill="#1A1A1A" stroke="#1A1A1A" stroke-width="1"/>
+    <text x="0" y="14" font-family="Georgia, serif" font-size="10" fill="#F2EAD5" text-anchor="middle">fotodetector</text>
+  </g>
+
+  <!-- Caja datos clave -->
+  <rect x="380" y="380" width="290" height="60" rx="3" fill="#E5DBBE" stroke="#B68914" stroke-width="0.8"/>
+  <text x="525" y="400" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#1A1A1A" text-anchor="middle">h = ΔL / L</text>
+  <text x="525" y="418" font-family="Georgia, serif" font-size="11" fill="#3A3530" text-anchor="middle">ΔL ≈ 10⁻¹⁸ m · L = 4 000 m</text>
+  <text x="525" y="432" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#8A8A8A" text-anchor="middle">camino óptico efectivo ~1 120 km · Fabry-Pérot ×280</text>
+
+  <!-- Inset sitios LIGO -->
+  <g transform="translate(50,400)" font-family="Georgia, serif" font-size="9" fill="#3A3530">
+    <text x="0" y="0" font-style="italic">dos sitios redundantes</text>
+    <text x="0" y="14">· Hanford (Washington)</text>
+    <text x="0" y="26">· Livingston (Luisiana)</text>
+    <text x="0" y="38" font-style="italic" fill="#8A8A8A">separados 3 002 km</text>
+  </g>
+
+  <text x="360" y="465" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#8A8A8A" text-anchor="middle">
+    interferómetro Michelson (1881) llevado a escala kilométrica · Premio Nobel 2017
+  </text>
+</svg>

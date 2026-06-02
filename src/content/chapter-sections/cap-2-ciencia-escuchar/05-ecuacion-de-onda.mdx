@@ -20,6 +20,7 @@ tags:
 
 import VozTejido from '@/components/book/VozTejido.astro';
 import PausaCientifica from '@/components/book/PausaCientifica.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
 
 *Tres mentes en disputa por la forma de la vibración*
 
@@ -261,38 +262,13 @@ irrumpió con una propuesta que ninguno de los dos había contemplado.
 
 **◆**
 
-**Figura 2.2** · **★ Modos normales de la cuerda · superposición de
-armónicos**
-
-***[ F I G U R A E N P R E P A R A C I Ó N ]***
-
-*[ Espacio reservado para figura vectorial ]*
-
-> **Especificación para diagramación:** *Cinco paneles apilados
-> verticalmente o en columna estrecha, cada uno mostrando un modo normal
-> de una cuerda con extremos fijos: k=1 (fundamental, sin nodos
-> internos), k=2 (un nodo central), k=3 (dos nodos), k=4 (tres nodos),
-> k=5 (cuatro nodos). En cada panel, dibujar la sinusoide del modo en
-> líneas indigo, marcar los nodos como puntos azul nocturno, y etiquetar
-> la frecuencia f_k = kc/2L. Sexto panel inferior mostrando la
-> superposición ponderada: u(x,t) = Σ aₖ · sin(kπx/L) con aₖ
-> representativas para sugerir un timbre real (por ejemplo a₁=1.0,
-> a₂=0.5, a₃=0.3, a₄=0.15, a₅=0.05).*
->
-> **Nota técnica:** *Crear figura nueva, vectorial. Esta figura es
-> pedagógicamente irrenunciable porque visualiza simultáneamente la
-> fórmula de Bernoulli (Fórmula 2.4) y el concepto físico del timbre.
-> Considerar añadir, al pie del sexto panel, una pequeña etiqueta de
-> "timbre resultante" sugiriendo que la suma de modos es lo que
-> distingue un piano de un violín de una guitarra.*
->
-> **Figura 2.2.** Los primeros cinco modos normales de una cuerda con
-> extremos fijos. Cada modo k oscila a una frecuencia f_k = kc/2L
-> (Fórmula 2.4). El sexto panel muestra la superposición ponderada:
-> cualquier vibración real de una cuerda es suma de todos los modos con
-> amplitudes determinadas por las condiciones iniciales. Esa
-> superposición ponderada es lo que el oído percibe como timbre del
-> instrumento.
+<FiguraTDV
+  imagen="/assets/cap-2/figura-2-2.png"
+  numero="2.2"
+  titulo="Modos normales de la cuerda · superposición de armónicos"
+  alt="Cinco paneles con los modos normales k=1 a k=5 de una cuerda y un sexto panel con la superposición ponderada que produce el timbre"
+  descripcion="Los primeros cinco modos normales de una cuerda con extremos fijos. Cada modo k oscila a una frecuencia f_k = kc/2L (Fórmula 2.4). El sexto panel muestra la superposición ponderada: cualquier vibración real de una cuerda es suma de todos los modos con amplitudes determinadas por las condiciones iniciales. Esa superposición ponderada es lo que el oído percibe como timbre del instrumento."
+/>
 
 ## 1753 · Bernoulli y la superposición modal
 
