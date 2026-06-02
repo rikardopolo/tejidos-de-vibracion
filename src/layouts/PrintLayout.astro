@@ -1,0 +1,42 @@
+---
+/**
+ * PrintLayout · shell MÍNIMO de impresión (skill `imprenta`).
+ *
+ * Contraparte de papel de BookReader: documento standalone que carga SOLO el
+ * sistema de diseño (global.css → fonts + tokens + system) y la capa de
+ * impresión (print.css), SIN el cromo de pantalla de BookReader/OberturaLayout
+ * (header sticky, reading-progress, thread-strip, reader-controls, TOC,
+ * paginación, paper-grain, scripts). Vivliostyle pagina el HTML que produce
+ * la ruta /print y respeta la geometría @page de print.css.
+ *
+ * Orden de carga deliberado: global.css PRIMERO, print.css DESPUÉS, para que
+ * los overrides de papel (escopados a `.print-body`) ganen a system.css.
+ *
+ * robots=noindex,nofollow · el artefacto de impresión no se indexa.
+ */
+import '@/styles/global.css';
+import '@/styles/print.css';
+
+interface Props {
+  /** Título del <head> (no aparece en el PDF, solo en el documento). */
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light only" />
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>{title}</title>
+</head>
+<body class="print-body">
+  <main class="print-main">
+    <slot />
+  </main>
+</body>
+</html>

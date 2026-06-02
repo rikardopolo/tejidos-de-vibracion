@@ -1,0 +1,116 @@
+/* ==========================================================================
+   TEJIDOS DE VIBRACIÓN · print.css
+   Capa de impresión sobre el sistema existente. Importa tokens.css y NO
+   redefine paleta/tipografía: solo añade geometría @page, suprime el cromo
+   de pantalla y reajusta el cuerpo a unidades de papel.
+   Geometría: Guía de Maquetación V2.1. Selectores: BookReader / CapituloLayout
+   / OberturaLayout (.cap-main, .prose, .measure, .marginalia).
+   ========================================================================== */
+
+@import "../../../src/styles/tokens.css"; /* ajustar ruta al integrar en el repo */
+
+/* DM Sans aún no está en el proyecto: fallback a --sans (Inter) hasta decidir
+   (ver reference/geometria-pagina.md · "Hueco de fuente"). */
+:root { --cornisa: var(--cornisa, var(--sans)); }
+
+/* ── Página y cornisas ─────────────────────────────────────────────────── */
+@page {
+  size: 8.5in 11in;
+  margin: 1in;
+  @top-center {
+    content: "TEJIDOS DE VIBRACIÓN · VOL. I · " string(seccion);
+    font: 9pt var(--cornisa);
+    letter-spacing: 0.18em;
+    color: #6B7280;
+  }
+  @bottom-center {
+    content: counter(page);
+    font: 10pt var(--cornisa);
+    color: #555555;
+  }
+}
+
+/* Portada de sección: sin cornisa ni folio (Guía §9) */
+@page portada { @top-center { content: none; } @bottom-center { content: none; } }
+
+/* La sección de la cornisa se alimenta desde el header de cada pieza */
+.cap-cornisa-source { string-set: seccion content(); }
+
+/* ── Suprimir el cromo de pantalla (vive en BookReader / OberturaLayout) ── */
+.book-chrome,
+.book-progress,
+.book-thread,
+.reader-controls,
+.book-reader,
+.skip-link,
+.obertura-toc,
+#reader-controls,
+#book-progress,
+nav[aria-label*="Índice"],
+.paginacion-cards { display: none !important; }
+
+body::before, body:before { display: none !important; } /* paper-grain de pantalla */
+
+/* ── Cuerpo: unidades de papel (sobrescribe los valores de pantalla) ────── */
+body { background: #fff; color: var(--tinta); }
+
+.cap-main, .obertura-main {
+  padding: 0;
+  max-width: none;
+}
+
+.prose, .measure {
+  font: 11pt/1.35 var(--serif);   /* papel: 11pt / 1.35 · NO el 19px/1.7 de pantalla */
+  max-width: none;                 /* la caja la define @page, no --col */
+  color: var(--tinta);
+}
+
+.prose > p {
+  text-align: justify;
+  hyphens: auto;
+  widows: 2;
+  orphans: 2;
+  margin: 0 0 0.6em;
+}
+
+h1, h2, h3 { font-family: var(--sans); font-weight: 700; break-after: avoid; }
+h2 { color: var(--indigo); font-size: 16pt; margin-top: 1.4em; }
+h3 { color: var(--verde);  font-size: 13pt; margin-top: 1.1em; }
+
+/* ── Inicios de página ─────────────────────────────────────────────────── */
+.cap-portada, .frontispicio, [data-kind="portada"] { page: portada; break-before: page; }
+.cap-portada *, [data-kind="portada"] * { /* estilos de portada §9 se aplican aquí */ }
+
+/* ── Recuadros: no se parten (Guía §8.3) ───────────────────────────────── */
+.marginalia,
+[class*="marginalia--"],
+figure, figcaption,
+.formula, .pullquote,
+.checkpoint, .ventana-cuantica, .anclaje, .laboratorio,
+.cierre-vibracional {
+  break-inside: avoid;
+}
+
+/* Anatomía de borde (acento izquierdo grueso + bordes finos del color del tipo).
+   El color concreto lo aporta cada variante .marginalia--<kind> vía tokens. */
+.marginalia {
+  border-left: 4pt solid var(--oro-suave);
+  border-top: 0.5pt solid var(--oro-fantasma);
+  border-right: 0.5pt solid var(--oro-fantasma);
+  border-bottom: 0.5pt solid var(--oro-fantasma);
+  padding: 0.8em 1em;
+  margin: 1em 0;
+}
+
+/* ── Separadores: centrados, en oro, no huérfanos ──────────────────────── */
+.diamond, .flourish, .ornament {
+  text-align: center;
+  color: var(--oro);
+  break-after: avoid;
+}
+
+/* ── Notas al pie (gancho listo · activar según decisión) ──────────────── */
+/* .footnote { float: footnote; }  ← Vivliostyle · ver reference/figuras-formulas.md */
+
+/* ── Higiene de color: ningún azul de Office debe sobrevivir ───────────── */
+/* (verificación en preflight.md · esto es recordatorio, no regla CSS) */

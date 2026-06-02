@@ -1,0 +1,175 @@
+---
+/**
+ * /print/[...slug] · ruta de IMPRESIÓN (skill `imprenta`).
+ *
+ * Capa aditiva sobre el contenido MDX: enumera las piezas en orden canónico y
+ * las renderiza con sus COMPONENTES REALES (getCollection/getEntry + <Content/>)
+ * dentro de PrintLayout (shell mínimo de papel · print.css · sin cromo).
+ * Vivliostyle pagina el HTML resultante a PDF de imprenta.
+ *
+ * Alcances soportados por el slug:
+ *   /print/cap-2-ciencia-escuchar/03-galileo   · una pieza (proofing)
+ *   /print/cap-2-ciencia-escuchar              · un capítulo completo
+ *   /print/obertura/02-meta-observador         · una pieza de la Obertura
+ *   /print/obertura                            · Obertura completa (publicadas)
+ *   /print/volumen-i  ·  /print                · volumen completo (manifiesto)
+ *
+ * Bypass de gating: el PDF es el artefacto completo para el lector; renderiza
+ * el contenido íntegro, sin BloquePuerta ni cookies. robots=noindex (PrintLayout).
+ */
+import { getCollection, getEntry } from 'astro:content';
+import PrintLayout from '@/layouts/PrintLayout.astro';
+import { romanize } from '@/lib/utils';
+
+// SSR (no prerender): Astro exige que `prerender` sea un literal, así que no se
+// puede condicionar por env. Se deja en `false` y NUNCA se prerenderiza /print en
+// el build de producción (eso lo desplegaría a Vercel y filtraría el contenido
+// completo, saltándose el gating). Para un PDF estático reproducible de imprenta,
+// el skill documenta un flip LOCAL y transitorio a `prerender = true` (ver SKILL.md
+// · "Render estático de imprenta"), que no se commitea.
+const PRINT_BUILD = process.env.IMPRENTA_PRINT === '1';
+export const prerender = false;
+
+type Piece = {
+  type: 'chapter' | 'obertura';
+  kind: string;
+  title: string;
+  subtitle?: string;
+  seccion: string;            // texto de la cornisa (string-set)
+  key: string;
+  Content: any;
+};
+
+const { slug } = Astro.params;
+const parts = (slug ?? '').split('/').filter(Boolean);
+
+// Seguridad: /print no debe servir contenido completo en producción (saltaría
+// el gating). Solo en desarrollo o en el build de impresión (IMPRENTA_PRINT=1).
+if (!import.meta.env.DEV && !PRINT_BUILD) {
+  return new Response('Not found', { status: 404 });
+}
+
+// Secuencia canónica del volumen (Índice Maestro v3 · igual que build-print-html.mjs).
+const CHAPTER_SEQUENCE = [
+  'cap-1-universo-sinfonia',
+  'cap-2-ciencia-escuchar',
+  'cap-3-mundo-cuantico',
+];
+
+const chapterNumOf = (chapterSlug: string): number => {
+  const m = chapterSlug.match(/^cap-(\d+)-/);
+  return m ? Number(m[1]) : 0;
+};
+const chapterSeccion = (chapterSlug: string): string =>
+  `Capítulo ${romanize(chapterNumOf(chapterSlug))}`;
+
+async function chapterPiece(entry: any): Promise<Piece> {
+  const { Content } = await entry.render();
+  return {
+    type: 'chapter',
+    kind: entry.data.kind,
+    title: entry.data.title,
+    subtitle: entry.data.subtitle,
+    seccion: chapterSeccion(entry.data.chapter),
+    key: entry.slug,
+    Content,
+  };
+}
+
+async function oberturaPiece(entry: any): Promise<Piece> {
+  const { Content } = await entry.render();
+  return {
+    type: 'obertura',
+    kind: entry.data.kind,
+    title: entry.data.title,
+    subtitle: entry.data.subtitle,
+    seccion: 'Obertura',
+    key: entry.slug,
+    Content,
+  };
+}
+
+const bySortOrder = (a: any, b: any) => a.data.order - b.data.order;
+
+const pieces: Piece[] = [];
+let scopeTitle = 'Tejidos de Vibración · Volumen I';
+
+if (parts[0] === 'obertura') {
+  if (parts[1]) {
+    const entry = await getEntry('obertura', parts[1]);
+    if (entry) {
+      pieces.push(await oberturaPiece(entry));
+      scopeTitle = `${entry.data.title} · Obertura`;
+    }
+  } else {
+    const all = (await getCollection('obertura', ({ data }) => data.status === 'published')).sort(bySortOrder);
+    for (const e of all) pieces.push(await oberturaPiece(e));
+    scopeTitle = 'Obertura · Volumen I';
+  }
+} else if (parts[0]?.startsWith('cap-')) {
+  if (parts[1]) {
+    const entry = await getEntry('chapter-sections', `${parts[0]}/${parts[1]}`);
+    if (entry && entry.data.chapter === parts[0]) {
+      pieces.push(await chapterPiece(entry));
+      scopeTitle = `${entry.data.title} · ${chapterSeccion(parts[0])}`;
+    }
+  } else {
+    const all = (await getCollection('chapter-sections', ({ data }) => data.chapter === parts[0])).sort(bySortOrder);
+    for (const e of all) pieces.push(await chapterPiece(e));
+    scopeTitle = `${chapterSeccion(parts[0])} · Volumen I`;
+  }
+} else {
+  // Volumen completo (parts vacío o "volumen-i"): Obertura publicada + capítulos
+  // cuyo capítulo padre (colección `book`) está publicado.
+  const oberturaAll = (await getCollection('obertura', ({ data }) => data.status === 'published')).sort(bySortOrder);
+  for (const e of oberturaAll) pieces.push(await oberturaPiece(e));
+
+  for (const chapterSlug of CHAPTER_SEQUENCE) {
+    const parent = await getEntry('book', chapterSlug);
+    if (!parent || parent.data.status !== 'published') continue;
+    const sections = (await getCollection('chapter-sections', ({ data }) => data.chapter === chapterSlug)).sort(bySortOrder);
+    for (const e of sections) pieces.push(await chapterPiece(e));
+  }
+  scopeTitle = 'Tejidos de Vibración · Volumen I';
+}
+
+if (pieces.length === 0) {
+  return new Response('Sin piezas para imprimir en este alcance.', { status: 404 });
+}
+---
+
+<PrintLayout title={scopeTitle}>
+  {pieces.map((piece) => {
+    const PieceContent = piece.Content;
+
+    if (piece.type === 'obertura') {
+      return (
+        <div class="print-piece obertura-main" data-kind={piece.kind}>
+          <p class="print-cornisa-source">{piece.seccion}</p>
+          <article class={`obertura-piece kind-${piece.kind}`}>
+            <PieceContent />
+          </article>
+        </div>
+      );
+    }
+
+    // Capítulo · espejo del DOM de pantalla (CapituloLayout) sin su cromo.
+    return (
+      <article class="print-piece measure" data-kind={piece.kind}>
+        <p class="print-cornisa-source">{piece.seccion}</p>
+        {piece.kind !== 'portada' && (
+          <>
+            <header class="stack-sm">
+              <h1 class="title-1">{piece.title}</h1>
+              {piece.subtitle && <p class="title-1__sub">{piece.subtitle}</p>}
+            </header>
+            <div class="flourish flourish--rule"></div>
+          </>
+        )}
+        <section class="prose">
+          <PieceContent />
+        </section>
+      </article>
+    );
+  })}
+</PrintLayout>
