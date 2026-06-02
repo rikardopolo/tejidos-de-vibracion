@@ -97,6 +97,30 @@ referencia histórica con `status: 'draft'` y nota de deprecación.
 
 ---
 
+## Impresión · recuadros (Marginalia)
+
+**Decisión:** 2026-06-02 · skill `imprenta`
+
+En impresión los recuadros siguen **el mismo canon que pantalla**: **borde izquierdo oro
+uniforme** (`var(--oro)`), **fondo transparente**, y **solo el *eyebrow* diferenciado por
+tipo** (`--indigo` para Pausa Científica / Ventana Cuántica · `--verde` para Voz del Tejido,
+ya canónico en `system.css`). El borde **no** cambia de color por tipo. `print.css` no
+introduce marcos ni tintes de fondo propios de impresión.
+
+---
+
+## Impresión · portada de sección
+
+**Decisión:** 2026-06-02 · skill `imprenta`
+
+La portada de cada sección (Obertura, capítulos) se renderiza con el **componente
+`Frontispicio`** real, no con la geometría DXA literal de la Guía de Maquetación V2.1 §9.
+El componente cumple el brief de "reusar componentes" y la geometría §9 queda superada por
+él (ver `.claude/skills/imprenta/reference/geometria-pagina.md`). La portada usa `@page
+portada` (sin cornisa ni folio).
+
+---
+
 ## Cómo actualizar este canon
 
 Cualquier cambio que afecte:

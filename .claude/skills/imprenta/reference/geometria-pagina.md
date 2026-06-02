@@ -64,6 +64,12 @@ Cada sección mayor (Obertura, cada capítulo, Anexos) abre con portada dedicada
 La portada usa una `@page` nombrada sin cornisa ni folio (`@page portada { ... }`),
 aplicada vía `page: portada` a la pieza `00-portada` / `00-frontispicio`.
 
+> **Decisión (2026-06-02):** la portada **se renderiza con el componente `Frontispicio`
+> real** (título "TEJIDOS *de* VIBRACIÓN" en EB Garamond), no con la geometría DXA literal
+> de esta tabla §9 (36 pt Inter Bold, posiciones a 2.5/7 in). El componente cumple el brief
+> ("reusar componentes") y se ve impecable; la geometría DXA de la Guía V2.1 §9 **queda
+> superada por el componente**. Esta tabla se conserva como referencia histórica. Ver `CANON.md`.
+
 ## Quiebres
 
 - Cada pieza-portada y cada capítulo empieza en página nueva: `break-before: page;`.

@@ -230,16 +230,13 @@ body::after { display: none !important; }   /* paper-grain decorativo de pantall
 .print-body .marginalia,
 .print-body [class*="marginalia--"] {
   break-inside: avoid;
-  border-left: 3pt solid var(--oro-suave);
-  border-top: 0.5pt solid var(--oro-fantasma);
-  border-right: 0.5pt solid var(--oro-fantasma);
-  border-bottom: 0.5pt solid var(--oro-fantasma);
-  padding: 0.7em 1em;
+  border-left: 1.5pt solid var(--oro);   /* CANON: borde oro uniforme (= 2px pantalla) */
+  background: transparent;                /* CANON: sin tinte de fondo */
+  padding: 0.4em 0 0.4em 1.1em;
   margin: 1.2em 0;
-  background: rgba(212, 160, 23, 0.035);
 }
-.print-body .marginalia--cientifica { border-left-color: var(--indigo); }
-.print-body .marginalia--voz { border-left-color: var(--verde); }
+/* El color por tipo vive SOLO en el eyebrow (.marginalia__kind), ya canónico en
+   system.css (--indigo científica/cuántica · --verde voz). El borde NO cambia por tipo. */
 
 .print-body .marginalia__kind {
   font-family: var(--cornisa);
