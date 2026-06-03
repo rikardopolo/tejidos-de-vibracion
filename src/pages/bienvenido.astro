@@ -2,6 +2,7 @@
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import { verifyAccessToken } from '@/lib/token';
 import { addContactToList } from '@/lib/brevo';
+import { getServerClient } from '@/lib/supabase';
 
 export const prerender = false;
 
@@ -15,46 +16,118 @@ const readEnv = (key: string): string | undefined => {
   return undefined;
 };
 
-const token = Astro.url.searchParams.get('t');
+// El token llega por query (GET, desde el correo) o por el form (POST, clic humano).
+// SOLO el POST sella la confirmación. Así un prefetch del cliente de correo o un
+// escáner corporativo (que hacen GET sobre el enlace) nunca confirma sin un cruce
+// de umbral deliberado · `confirmed_at` nace de un gesto humano real.
+const isPost = Astro.request.method === 'POST';
+let token = Astro.url.searchParams.get('t') ?? '';
+if (isPost) {
+  try {
+    const form = await Astro.request.formData();
+    token = String(form.get('t') ?? '') || token;
+  } catch {
+    /* token se queda como el de query si lo hubiera */
+  }
+}
+
 const secret = readEnv('ACCESS_TOKEN_SECRET');
-const apiKey = readEnv('BREVO_API_KEY');
-const listIdRaw = readEnv('BREVO_LISTA_LIBRO');
-let confirmado = false;
-let emailConfirmado: string | undefined;
+const tokenResult =
+  token && secret
+    ? verifyAccessToken(token, secret)
+    : ({ valid: false, reason: 'malformed' } as const);
 
-if (token && secret) {
-  const result = verifyAccessToken(token, secret);
-  if (result.valid) {
-    Astro.cookies.set('tejedor-access', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 30 * 24 * 60 * 60, // 30 días
-    });
-    confirmado = true;
-    emailConfirmado = result.email;
+type Estado = 'pending' | 'confirmado' | 'caducado';
+const estado: Estado = tokenResult.valid ? (isPost ? 'confirmado' : 'pending') : 'caducado';
 
-    // Añadir contacto a la lista #9 → dispara workflow → envía template #7 (bienvenida)
-    if (apiKey && listIdRaw && emailConfirmado) {
-      const listId = Number(listIdRaw);
-      if (!Number.isNaN(listId)) {
-        const added = await addContactToList({ email: emailConfirmado, listId, apiKey });
-        if (!added.ok) {
-          console.error('[bienvenido] addContactToList failed:', added);
-        }
+// ── Sellado · SOLO en POST con token válido ───────────────────────────────
+if (estado === 'confirmado' && tokenResult.valid) {
+  const emailConfirmado = tokenResult.email;
+
+  Astro.cookies.set('tejedor-access', token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 30 * 24 * 60 * 60, // 30 días
+  });
+
+  // Sellar la confirmación del DOI en la Supabase unificada (best-effort, idempotente).
+  // `is confirmed_at null` evita re-sellar o duplicar el evento si reenvía el form.
+  const supabase = getServerClient();
+  if (supabase) {
+    try {
+      const { data: confirmedLead } = await supabase
+        .from('leads')
+        .update({ confirmed_at: new Date().toISOString() })
+        .eq('email', emailConfirmado)
+        .is('confirmed_at', null)
+        .select('id')
+        .maybeSingle();
+      if (confirmedLead?.id) {
+        await supabase.from('events').insert({
+          lead_id: confirmedLead.id,
+          type: 'confirmed',
+          source: 'api',
+          metadata: { endpoint: 'bienvenido', issuedAt: tokenResult.issuedAt },
+        });
+      }
+    } catch (err) {
+      console.error('[bienvenido] supabase confirm stamp threw:', err);
+    }
+  }
+
+  // Alta en la lista del libro → dispara el workflow de bienvenida en Brevo.
+  const apiKey = readEnv('BREVO_API_KEY');
+  const listIdRaw = readEnv('BREVO_LISTA_LIBRO');
+  if (apiKey && listIdRaw) {
+    const listId = Number(listIdRaw);
+    if (!Number.isNaN(listId)) {
+      const added = await addContactToList({ email: emailConfirmado, listId, apiKey });
+      if (!added.ok) {
+        console.error('[bienvenido] addContactToList failed:', added);
       }
     }
   }
 }
+
+const TITLE: Record<Estado, string> = {
+  pending: 'Confirma tu correo · Tejidos de Vibración',
+  confirmado: 'La puerta se abrió · Tejidos de Vibración',
+  caducado: 'Enlace caducado · Tejidos de Vibración',
+};
+const DESC: Record<Estado, string> = {
+  pending: 'Un gesto más para cruzar el umbral y abrir la Obertura.',
+  confirmado: 'Tu correo está confirmado. La Obertura está abierta.',
+  caducado: 'Tu enlace de confirmación no coincidió.',
+};
 ---
-<LecturaLarga
-  title={confirmado ? "La puerta se abrió · Tejidos de Vibración" : "Enlace caducado · Tejidos de Vibración"}
-  description={confirmado ? "Tu correo está confirmado. La Obertura está abierta." : "Tu enlace de confirmación no coincidió."}
-  pageId="bienvenido"
->
+<LecturaLarga title={TITLE[estado]} description={DESC[estado]} pageId="bienvenido">
   <article class="measure pt-5">
-    {confirmado ? (
+    {estado === 'pending' && (
+      <>
+        <header class="center">
+          <p class="eyebrow eyebrow--gold">Estás a un paso</p>
+          <h1 class="title-1" style="font-style: italic;">El umbral del tejido</h1>
+        </header>
+
+        <div class="flourish flourish--triple mt-2h"></div>
+
+        <div class="prose">
+          <p class="no-indent">
+            Tu enlace es válido. Falta un gesto tuyo — el que cruza el umbral. Al confirmar, la Obertura
+            del libro se abre para ti, y la primera carta del Tejedor se pone en camino.
+          </p>
+        </div>
+
+        <form method="POST" action="/bienvenido" class="confirm-form center mt-4 mb-6">
+          <input type="hidden" name="t" value={token} />
+          <button type="submit" class="confirm-cta">Confirmar · Entrar al tejido →</button>
+        </form>
+      </>
+    )}
+
+    {estado === 'confirmado' && (
       <>
         <header class="center">
           <p class="eyebrow eyebrow--gold">Bienvenido al tejido</p>
@@ -82,7 +155,9 @@ if (token && secret) {
           <a class="lit-link" href="/sobre-el-libro">Conocer el libro →</a>
         </div>
       </>
-    ) : (
+    )}
+
+    {estado === 'caducado' && (
       <>
         <header class="center">
           <p class="eyebrow">Tejidos de Vibración</p>
@@ -109,3 +184,27 @@ if (token && secret) {
     )}
   </article>
 </LecturaLarga>
+
+<style>
+  .confirm-form { margin-inline: auto; }
+  .confirm-cta {
+    font-family: var(--sans, 'Inter', sans-serif);
+    font-size: 0.78rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 0.9rem 1.9rem;
+    background: var(--tinta, #1a1a1a);
+    color: var(--pergamino, #f2ead5);
+    border: 1px solid var(--tinta, #1a1a1a);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .confirm-cta:hover {
+    background: transparent;
+    color: var(--tinta, #1a1a1a);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .confirm-cta { transition: none; }
+  }
+</style>
