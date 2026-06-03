@@ -22,7 +22,13 @@
  * Estilos en <style is:global> con namespace `formula__*` para sobrevivir el uso
  * dentro de MDX en producción (los <style> scoped generan selector data-astro-cid
  * que el build de prod no aplica a elementos provenientes de MDX).
+ *
+ * Tipografía matemática: el cuerpo acepta LaTeX vía `$$...$$` (remark-math +
+ * rehype-katex, configurados en astro.config.mjs). El CSS de KaTeX se importa
+ * aquí para que cargue donde haya fórmulas; basta `import` (Astro lo empaqueta).
  */
+import 'katex/dist/katex.min.css';
+
 interface Props {
   /** Número de la fórmula · ej. "3.2". */
   num: string;
