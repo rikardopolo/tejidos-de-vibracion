@@ -125,12 +125,6 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
     </>
   )}
 
-  <!-- Preload fonts (subset hints) · self-hosted @fontsource -->
-  <link rel="preload" as="font" type="font/woff2"
-    href="/fonts/eb-garamond-latin-400-normal.woff2" crossorigin="anonymous" />
-  <link rel="preload" as="font" type="font/woff2"
-    href="/fonts/inter-latin-400-normal.woff2" crossorigin="anonymous" />
-
   <!-- JSON-LD · SSR -->
   {schemas.map((s) => <SchemaJsonLd schema={s} />)}
 
