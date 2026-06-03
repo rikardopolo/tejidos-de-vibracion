@@ -73,22 +73,6 @@ const schema = jsonLd ?? defaultJsonLd;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
 
-    <!-- Preload fonts (subset hints) -->
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/fonts/eb-garamond-latin-400-normal.woff2"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/fonts/inter-latin-400-normal.woff2"
-      crossorigin="anonymous"
-    />
-
     <!-- JSON-LD -->
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>

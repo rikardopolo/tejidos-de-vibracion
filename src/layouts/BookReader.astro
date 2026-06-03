@@ -125,26 +125,11 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
     </>
   )}
 
-  <!-- Preload fonts (subset hints) · self-hosted @fontsource -->
-  <link rel="preload" as="font" type="font/woff2"
-    href="/fonts/eb-garamond-latin-400-normal.woff2" crossorigin="anonymous" />
-  <link rel="preload" as="font" type="font/woff2"
-    href="/fonts/inter-latin-400-normal.woff2" crossorigin="anonymous" />
-
   <!-- JSON-LD · SSR -->
   {schemas.map((s) => <SchemaJsonLd schema={s} />)}
 
-  <!-- Reader prefs aplicadas antes del primer paint (evita FOUC) -->
-  <script is:inline>
-    (function () {
-      try {
-        var s = localStorage.getItem('tdv-reader-size') || 'default';
-        var m = localStorage.getItem('tdv-reader-mode') || 'day';
-        document.documentElement.setAttribute('data-reader-size', s);
-        document.documentElement.setAttribute('data-reader-mode', m);
-      } catch (e) {}
-    })();
-  </script>
+  <!-- Reader prefs aplicadas antes del primer paint (evita FOUC) · externalizado (CSP script-src 'self') -->
+  <script is:inline src="/js/book-prefs-init.js"></script>
 
   <!-- Scroll al top en CADA carga · cada pieza empieza desde el inicio.
        INLINE en <head> (no deferred): corre en toda carga, sin depender de
@@ -152,18 +137,7 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
        restauración automática del navegador; 2) 'pageshow' fuerza top en
        carga normal Y en restauración desde bfcache (back/forward), donde
        los scripts defer NO se re-ejecutan. Maneja Capítulos y Obertura. -->
-  <script is:inline>
-    (function () {
-      if ('scrollRestoration' in history) {
-        try { history.scrollRestoration = 'manual'; } catch (e) {}
-      }
-      var toTop = function () { window.scrollTo(0, 0); };
-      // Antes del primer paint (si ya hay layout) + tras cargar + bfcache.
-      toTop();
-      window.addEventListener('pageshow', toTop);
-      window.addEventListener('DOMContentLoaded', toTop);
-    })();
-  </script>
+  <script is:inline src="/js/book-scroll-restore.js"></script>
 
   <slot name="head" />
 </head>
@@ -352,20 +326,6 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
     }
   </style>
 
-  <script is:inline>
-    /* Reading progress · scaleX según scroll. */
-    (function () {
-      var bar = document.getElementById('book-progress');
-      if (!bar) return;
-      var update = function () {
-        var h = document.documentElement;
-        var max = h.scrollHeight - h.clientHeight;
-        var ratio = max > 0 ? h.scrollTop / max : 0;
-        bar.style.transform = 'scaleX(' + ratio + ')';
-      };
-      document.addEventListener('scroll', update, { passive: true });
-      update();
-    })();
-  </script>
+  <script is:inline src="/js/book-progress-bar.js"></script>
 </body>
 </html>
