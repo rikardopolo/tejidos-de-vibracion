@@ -50,6 +50,15 @@ export function getNivel(cookies: AstroCookies): Nivel {
 }
 
 export function gatingActivo(): boolean {
+  // PREVIEW BRANCH ONLY (preview/chapters-1-2-3 · NO MERGE A MAIN).
+  // En cualquier rama Vercel distinta de `main` desactivamos el gating
+  // por completo para que el revisor interno vea el contenido sin pasar
+  // por BloquePuerta + form Brevo. main NUNCA toma este camino porque
+  // VERCEL_GIT_COMMIT_REF=main en deploys de produccion.
+  if (typeof process !== 'undefined' && process.env) {
+    const branch = process.env.VERCEL_GIT_COMMIT_REF ?? '';
+    if (branch && branch !== 'main') return false;
+  }
   return readEnv('GATING_ACTIVO') === 'true';
 }
 

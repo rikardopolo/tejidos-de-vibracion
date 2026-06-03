@@ -1,0 +1,740 @@
+---
+chapter: "cap-3-mundo-cuantico"
+kind: "numbered"
+num: "3.3.2"
+title: "Entrelazamiento, EPR, Bell, Aspect"
+subtitle: "De la objeción de 1935 al Nobel de 2022 · ochenta y siete años para una respuesta"
+order: 7
+headerLabel: "Cap. 3 · §3.3.2"
+publishedAt: 2026-06-01
+authors:
+  - "Ricardo Polo"
+tags:
+  - "cap-3"
+  - "entrelazamiento"
+  - "EPR"
+  - "bell"
+  - "aspect"
+  - "nobel-2022"
+---
+
+import VozTejido from '@/components/book/VozTejido.astro';
+import PausaReflexiva from '@/components/book/PausaReflexiva.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
+
+*Cómo dos partículas distantes mantienen correlaciones que ninguna
+explicación local puede sostener*
+
+— ◇ —
+
+## **La pregunta que Einstein lanzó al mundo en mayo de 1935**
+
+El §3.3.1 cerró con Schrödinger publicando el experimento mental del
+gato a finales de noviembre de 1935. Pero seis meses antes, en mayo de
+aquel mismo año, había aparecido otro paper igualmente decisivo. El 15
+de mayo de 1935, *Physical Review* publicó un artículo titulado *Can
+Quantum-Mechanical Description of Physical Reality Be Considered
+Complete?* —¿Puede considerarse completa la descripción
+mecánico-cuántica de la realidad física?— firmado por Albert Einstein,
+Boris Podolsky y Nathan Rosen, los tres trabajando en el Institute for
+Advanced Study de Princeton.
+
+El paper, conocido desde entonces como **EPR** por las iniciales de sus
+autores, no era largo —cuatro páginas en formato de revista científica—
+pero contenía una de las objeciones más afinadas que la mecánica
+cuántica iba a recibir nunca. Y lo hacía no desde fuera de la teoría,
+sino desde dentro: aceptando todo el formalismo cuántico como
+matemáticamente correcto y mostrando, a partir de él, una conclusión que
+los autores consideraban inaceptable.
+
+El argumento procedía así. Imaginemos dos partículas que han
+interactuado en el pasado y se separan después en direcciones opuestas.
+La mecánica cuántica describe el estado conjunto de las dos partículas
+mediante una función de onda compartida —un **estado entrelazado**— que
+codifica correlaciones entre las propiedades de ambas. Si la función de
+onda total tiene la forma adecuada, medir la posición de la primera
+partícula nos permite predecir con certeza la posición de la segunda,
+incluso si las dos partículas están separadas por años luz en el momento
+de la medición. Lo mismo ocurriría si midiéramos el momento. Y aquí
+estaba el problema, según EPR: dado que podemos elegir libremente, en el
+momento de la medición sobre la primera partícula, si medir su posición
+o su momento —y dado que la elección es libre y la segunda partícula
+está demasiado lejos para verse afectada por nuestra elección sin violar
+la velocidad límite de la relatividad—, la segunda partícula debe poseer
+simultáneamente posición y momento bien definidos antes de cualquier
+medición.
+
+Pero la mecánica cuántica niega exactamente esto. El principio de
+indeterminación de Heisenberg (que el §3.1 introdujo) establece que
+posición y momento no pueden tener valores simultáneos bien definidos.
+Por tanto, concluyeron Einstein, Podolsky y Rosen: **la descripción
+cuántica es incompleta**. Debe haber "elementos de realidad" que la
+teoría no captura. Debe existir una descripción más profunda —con
+**variables ocultas**— que restablezca el realismo clásico subyacente.
+
+El argumento era ingenioso. Aceptaba el formalismo, lo aplicaba
+consistentemente, y derivaba una conclusión que minaba la pretensión
+filosófica de Copenhague de que la mecánica cuántica era una descripción
+completa de la realidad. Era el último intento serio de Einstein por
+salvar el realismo clásico desde dentro de la propia teoría que ayudó a
+fundar.
+
+Una nota histórica menos conocida: el paper EPR fue redactado por
+Podolsky, no por Einstein. Einstein había discutido las ideas con
+Podolsky y Rosen en una serie de reuniones, pero el texto final lo
+escribió Podolsky y Einstein no lo revisó antes de la publicación. En
+una carta a Schrödinger del 19 de junio de 1935 —apenas un mes después
+de la aparición del paper— Einstein escribió que su preocupación central
+había quedado *"sofocada por el formalismo"*. Lo que Einstein realmente
+quería decir, lo dijo con más claridad en cartas y artículos
+posteriores: el problema no era específicamente la incompatibilidad
+entre posición y momento, sino la idea de que dos partículas separadas
+pudieran mantener correlaciones que ningún mecanismo local podía
+explicar. A esto Einstein lo llamó, en una carta a Max Born del 3 de
+marzo de 1947, *"spukhafte Fernwirkung"* — acción fantasmagórica a
+distancia.
+
+— ◇ —
+
+**◆**
+
+## **Veintinueve años de estancamiento**
+
+La objeción EPR perturbó a Bohr lo suficiente como para escribir una
+réplica en el mismo *Physical Review*, también en 1935. La respuesta de
+Bohr —técnicamente sutil, filosóficamente densa— argumentaba que las
+"elementos de realidad" definidos por EPR presuponían un realismo
+clásico que la mecánica cuántica precisamente no comparte. La medición y
+el sistema medido, según Bohr, forman un todo inseparable. Hablar de
+"propiedades del sistema antes de la medición" es importar al dominio
+cuántico una distinción clásica que no se aplica.
+
+El debate quedó en tablas filosóficas. Cada bando podía exponer su
+posición, ninguno podía refutar al otro mediante argumentos puramente
+conceptuales. Y como las predicciones experimentales de la mecánica
+cuántica eran las mismas en ambas interpretaciones —ambos coincidían en
+lo que ocurriría en cualquier experimento físico realizable—, el debate
+parecía condenado a permanecer en el dominio de la filosofía.
+
+Durante casi tres décadas eso fue exactamente lo que ocurrió. La mayoría
+de los físicos consideraban la cuestión EPR como una disputa
+interpretativa sin consecuencia experimental. La mecánica cuántica
+funcionaba; las predicciones se confirmaban; los problemas filosóficos
+eran asunto de filósofos. Hasta 1964.
+
+— ◇ —
+
+**◆**
+
+## **El teorema de Bell**
+
+En 1964, un físico irlandés del CERN llamado John Stewart Bell, que
+normalmente se ocupaba de física de altas energías, pasó un año sabático
+en Stanford, Wisconsin y Brandeis. Aprovechó esos meses para volver
+sobre el problema EPR con calma. Bell era un buen conocedor del
+formalismo cuántico, simpatizaba intelectualmente con Einstein —prefería
+la idea de variables ocultas a la interpretación de Copenhague—, y se
+preguntó si las distintas posiciones podían distinguirse
+experimentalmente.
+
+La respuesta a la que llegó fue un resultado matemático tan limpio que
+cambió el debate para siempre. Bell demostró que **cualquier teoría de
+variables ocultas locales** —cualquier teoría que cumpla simultáneamente
+con (a) realismo, (b) localidad respetando la velocidad de la luz como
+límite, y (c) libertad estadística en la elección de las mediciones—
+predice correlaciones entre mediciones distantes que satisfacen una
+desigualdad numérica concreta. Las **desigualdades de Bell**.
+
+La mecánica cuántica, por su parte, predice para los mismos sistemas
+correlaciones que **violan** esa desigualdad. La diferencia es
+matemáticamente sutil pero experimentalmente decisiva: si pudiera
+medirse con suficiente precisión, los experimentos distinguirían sin
+ambigüedad si la naturaleza obedece variables ocultas locales (Bell
+satisfechas) o si obedece a la mecánica cuántica (Bell violadas).
+
+El paper se titulaba *On the Einstein-Podolsky-Rosen Paradox* y se
+publicó en una revista efímera llamada *Physics Physique Физика* —que
+duraría apenas cuatro números antes de cerrar—. Bell la eligió porque la
+revista pagaba a los autores en lugar de cobrarles tarifas de
+publicación, y Bell consideraba que aquel paper era trabajo lateral que
+no debía costarle dinero. La revista cerró pronto. El paper se convirtió
+en uno de los más citados de la historia de la física.
+
+Lo que Bell había hecho era convertir una disputa filosófica en una
+pregunta experimental. Las preguntas experimentales tienen respuestas.
+La cuestión ahora era simplemente realizar los experimentos.
+
+— ◇ —
+
+**◆**
+
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-4.png"
+  numero="3.4"
+  titulo="Diagrama del experimento Bell-CHSH de Aspect 1981-82"
+  alt="Montaje experimental de Aspect en Orsay con fuente central de fotones entrelazados, dos brazos con polarizadores rotables en cuatro ángulos y contador de coincidencias para el test de Bell-CHSH"
+  descripcion="El montaje experimental que verificó la violación de las desigualdades de Bell con cierre del loophole de localidad. Los pares de fotones entrelazados se generan en el centro y se miden con polarizadores que pueden orientarse en cuatro ángulos distintos. La correlación medida (S ≈ 2.7) viola decisivamente la desigualdad CHSH (S ≤ 2 para variables ocultas locales) y confirma S = 2√2 ≈ 2.828 predicho por la mecánica cuántica. Premio Nobel de Física 2022 a Aspect, Clauser y Zeilinger."
+/>
+
+## **Los experimentos · de Clauser a Aspect**
+
+El primer test experimental serio de las desigualdades de Bell lo
+realizó **John Clauser**, un físico americano que en aquel momento
+trabajaba en Berkeley, junto con Stuart Freedman. El experimento,
+publicado en 1972 en *Physical Review Letters*, midió correlaciones
+entre fotones emitidos en una transición atómica de calcio. Los
+resultados violaban las desigualdades de Bell, en concordancia con la
+predicción cuántica.
+
+Pero el experimento de Clauser-Freedman tenía limitaciones técnicas. Los
+detectores no eran suficientemente eficientes —se asume que los fotones
+detectados son una muestra representativa de los emitidos, pero esa
+asunción no estaba garantizada (la llamada *detection loophole*)—.
+Además, las orientaciones de los polarizadores estaban fijadas durante
+toda la duración de cada serie de mediciones, dejando abierta la
+posibilidad teórica de que algún tipo de comunicación local subliminal
+entre los polarizadores y la fuente pudiera explicar las correlaciones
+(la llamada *locality loophole*).
+
+Quien iba a cerrar este segundo agujero, el de la localidad, era un
+joven físico francés llamado **Alain Aspect**. La historia de cómo
+Aspect llegó al problema es lo bastante hermosa como para contarla.
+
+Alain Aspect había nacido en Agen, en el suroeste de Francia, el 15 de
+junio de 1947. Estudió en la École Normale Supérieure de Cachan y, tras
+pasar la *agrégation* en física en 1969, hizo el servicio civil
+obligatorio como cooperante en Camerún entre 1971 y 1974, dando clases
+de física en la École Normale Supérieure de Yaoundé. Allí, en sus tardes
+libres bajo el sol ecuatorial, leía el manual de mecánica cuántica de
+Cohen-Tannoudji, Diu y Laloë —el texto canónico francés de la época—. En
+esas lecturas tropezó con el paper de Bell de 1964. Y se le ocurrió una
+idea: hacer el experimento que Bell había imaginado, pero **cambiando la
+orientación de los polarizadores durante el vuelo de los fotones**, es
+decir, después de que cada par hubiera sido emitido pero antes de que
+llegara a los detectores. De esa manera, ningún mecanismo local
+subliminal podría haber "comunicado" información entre la fuente y los
+polarizadores antes de la medición. La *locality loophole* quedaría
+cerrada.
+
+Cuando Aspect volvió a Francia, fue a CERN a discutir su idea con Bell
+en persona. La conversación, según Aspect contó después, fue
+inolvidable. Bell le escuchó con atención, le hizo preguntas técnicas, y
+al final solo tuvo una pregunta personal: *«¿Tiene usted un puesto
+permanente?»*. Aspect, que había sido nombrado *maître de conférences*
+en la École Normale Supérieure de Cachan, respondió que sí. Bell le dio
+su bendición y le aconsejó publicar el plan. Bell sabía lo que estaba
+haciendo: aquella era el tipo de física que en los años setenta podía
+destruir una carrera académica. Trabajos sobre los fundamentos de la
+mecánica cuántica eran considerados, por gran parte de la comunidad,
+como ocupación marginal de filósofos disfrazados de físicos.
+
+Aspect realizó tres experimentos sucesivos en el Institut d'Optique
+Théorique et Appliquée de Orsay, cerca de París, entre 1980 y 1982, con
+la colaboración de Philippe Grangier y Gérard Roger. La fuente eran
+átomos de calcio excitados por láser que emitían pares de fotones
+entrelazados en cascada. Los polarizadores eran cambiables en menos de
+diez nanosegundos, mientras los fotones aún estaban en vuelo desde la
+fuente hacia los detectores. El paper definitivo, publicado el 12 de
+julio de 1982 en *Physical Review Letters* bajo el título *Experimental
+Realization of Einstein-Podolsky-Rosen-Bohm Gedankenexperiment: A New
+Violation of Bell's Inequalities*, mostró que las correlaciones medidas
+violaban las desigualdades de Bell con cinco desviaciones estándar de
+significancia estadística, en perfecta concordancia con la predicción
+cuántica.
+
+El experimento de Aspect cerró el debate empírico. La naturaleza no
+obedece variables ocultas locales. Las correlaciones cuánticas a
+distancia son reales y no se pueden reducir a ningún mecanismo clásico
+local que reproduzca las predicciones cuánticas.
+
+Cuarenta años después, el 4 de octubre de 2022, la Academia Sueca de
+Ciencias otorgó el Premio Nobel de Física a **Alain Aspect, John F.
+Clauser y Anton Zeilinger** —este último por haber cerrado en 1998 las
+últimas lagunas experimentales con experimentos en la Universidad de
+Innsbruck—. La cita oficial del Comité fue: *"for experiments with
+entangled photons, establishing the violation of Bell inequalities and
+pioneering quantum information science"* — por experimentos con fotones
+entrelazados que establecieron la violación de las desigualdades de Bell
+y por el trabajo pionero en la ciencia de la información cuántica.
+
+— ◇ —
+
+**◆**
+
+## **Lo que el entrelazamiento sí permite y lo que no permite**
+
+Conviene decirlo con la mayor claridad posible, porque ningún punto de
+la mecánica cuántica es más distorsionado por la divulgación apresurada
+que este: **el entrelazamiento NO permite transmitir información más
+rápido que la luz. Punto.**
+
+Lo que el entrelazamiento permite es que dos partículas separadas
+mantengan correlaciones cuánticas entre sus mediciones. Si dos fotones
+entrelazados se separan a años luz de distancia y un experimentador en
+el laboratorio A mide la polarización de su fotón obteniendo, digamos,
+"vertical", entonces el experimentador en el laboratorio B medirá su
+fotón obteniendo "horizontal" con probabilidad 100% en ciertos arreglos
+experimentales. Esa correlación es real, está experimentalmente
+confirmada, y es genuinamente cuántica —ninguna teoría local puede
+reproducirla—.
+
+Pero **el experimentador A no controla qué resultado obtiene**. Su
+medición es genuinamente aleatoria: 50% probabilidad de "vertical", 50%
+probabilidad de "horizontal". Y como no controla su resultado, no puede
+usar la correlación para enviar un mensaje al experimentador B. La
+estadística de los resultados que B observa es exactamente la misma
+—50/50, indistinguible del ruido— independientemente de lo que A haga.
+La correlación se descubre solo cuando A y B comparan sus resultados
+después, y esa comparación viaja por canales clásicos limitados por la
+velocidad de la luz.
+
+Este resultado se llama **teorema de no-comunicación** (o *no-signalling
+theorem*) y es un teorema demostrable rigurosamente dentro del
+formalismo cuántico estándar. Establece que cualquier teoría que
+incorpore (a) el formalismo cuántico estándar, (b) la regla de Born para
+las probabilidades, y (c) la composición de subsistemas mediante
+producto tensorial, es automáticamente compatible con la relatividad
+especial: no permite comunicación superlumínica.
+
+La conclusión es importante porque cierra de un golpe una clase entera
+de extrapolaciones divulgativas. **El entrelazamiento no permite
+telepatía cuántica entre humanos.** No permite "comunicación
+instantánea" entre mentes a distancia. No permite influir sobre eventos
+lejanos por la fuerza del pensamiento. No es la "explicación científica"
+de la sincronicidad junguiana ni de las experiencias místicas de unidad
+cósmica. Estas pueden ser experiencias humanas legítimas, dignas de ser
+exploradas en su propio dominio, pero **no son consecuencias del
+entrelazamiento cuántico**. La distancia conceptual entre el
+entrelazamiento de dos fotones individuales en un laboratorio y "la red
+cuántica universal de la consciencia" es de muchos órdenes de magnitud,
+y atravesarla sin marcar el salto distorsiona tanto la física como la
+metáfora.
+
+Lo que sí ha hecho el entrelazamiento, y conviene decirlo con la misma
+honestidad, es revolucionar tres campos tecnológicos contemporáneos:
+
+— **Computación cuántica**: los ordenadores cuánticos en desarrollo en
+IBM, Google, Microsoft, Rigetti y otros centros explotan el
+entrelazamiento entre qubits para realizar ciertos cálculos que en
+arquitecturas clásicas serían intratables. Los avances de los últimos
+diez años son significativos —el procesador Willow de Google demostró en
+2024 que aumentar el número de qubits puede reducir errores—, aunque los
+ordenadores cuánticos prácticamente útiles para problemas industriales
+siguen siendo asunto de investigación, no de aplicación masiva.
+
+— **Criptografía cuántica**: los protocolos de distribución cuántica de
+claves —especialmente el BB84 de Bennett y Brassard (1984) y el E91 de
+Ekert (1991)— permiten transmitir claves criptográficas con seguridad
+garantizada por las leyes de la física, no por hipótesis matemáticas.
+China ha desplegado redes operativas de comunicación cuántica entre
+Beijing y Shanghai, y Europa está construyendo infraestructura similar.
+
+— **Teleportación cuántica**: Anton Zeilinger, junto con Bouwmeester,
+Pan, Mattle, Eibl y Weinfurter, demostró experimentalmente la
+teleportación cuántica en 1997 (*Nature* 390, 575-579). El nombre es
+desafortunadamente engañoso: lo que se "teletransporta" no es materia ni
+energía, es **estado cuántico**. Y el protocolo requiere un canal
+clásico paralelo que viaja a la velocidad de la luz, así que no hay
+transmisión superlumínica. Pero la teleportación cuántica es real, es
+base de futuros internet cuánticos, y forma parte del Premio Nobel 2022.
+
+Cada uno de estos tres campos es real, está respaldado por física
+consolidada, y está transformando la tecnología contemporánea. El
+entrelazamiento es tecnológicamente significativo. No tiene por qué
+inflarse a metafísica para ser admirable.
+
+— ◇ —
+
+**◆**
+
+<VozTejido titulo="John Bell + Alain Aspect (díada)">
+
+*El teórico irlandés y el experimental francés que convirtieron una
+disputa filosófica en una respuesta experimental*
+
+> **«La mecánica cuántica no permite enviar señales más rápido que la
+> luz. Pero sí permite correlaciones a distancia que ningún mecanismo
+> local puede explicar. La pregunta no es si la naturaleza es no-local
+> en este sentido específico — los experimentos lo han demostrado. La
+> pregunta es qué significa que sea así.»* — Síntesis del legado
+> conjunto de Bell y Aspect.*
+
+**Primer acto · El teórico irlandés y la pregunta que nadie hacía**
+
+John Stewart Bell nació el 28 de julio de 1928 en Belfast, Irlanda del
+Norte, en una familia protestante de clase trabajadora. Su madre lo
+animó a estudiar a pesar de las limitaciones económicas; su padre tenía
+estudios elementales. Bell mostró talento temprano para las matemáticas
+y la física. Estudió en Queen's University de Belfast, primero
+ingeniería experimental y después matemáticas y física teórica. Hizo su
+doctorado en física teórica en la Universidad de Birmingham en 1956.
+
+Tras varios años en el establecimiento atómico de Harwell, Bell se mudó
+a CERN —el laboratorio europeo de física de partículas en Ginebra— en
+1960. Allí pasó el resto de su carrera. Su trabajo principal era física
+teórica de partículas: ecuaciones de campo, simetrías, predicciones de
+interacciones. La mecánica cuántica fundamental era para Bell una
+afición intelectual privada, no su línea de investigación oficial.
+
+Pero era una afición intensa. Bell sentía, desde sus años de estudiante,
+que la interpretación de Copenhague era filosóficamente insatisfactoria.
+Le incomodaba la idea de que la mecánica cuántica fuera "completa" en el
+sentido de Bohr. Le incomodaba que el debate Einstein-Bohr hubiera
+quedado en tablas filosóficas. Le incomodaba que la física aceptara,
+pragmáticamente, una teoría cuya interpretación ontológica seguía
+abierta tras tres décadas. Bell era irlandés, había crecido entre
+disputas religiosas que se prolongaban porque ninguna de las partes
+podía probar nada, y no quería que la física derivara hacia algo
+similar.
+
+En 1963-64, durante un año sabático en Stanford, Wisconsin y Brandeis,
+Bell se sentó a trabajar el problema. El paper que publicó en 1964 era
+breve, técnico, casi anodino en su presentación. No anunciaba
+revolución. Solo demostraba un teorema: si hay variables ocultas locales
+detrás del formalismo cuántico, entonces ciertas correlaciones
+experimentales tienen una cota numérica concreta. Si la mecánica
+cuántica es correcta, esa cota se viola.
+
+Lo que Bell estaba ofreciendo era un puente entre filosofía y
+experimento. Un puente que durante casi tres décadas nadie había sabido
+construir. Bell, modesto y discreto, pasó los años siguientes
+escribiendo papers adicionales sobre los fundamentos cuánticos —reunidos
+eventualmente en su libro *Speakable and Unspeakable in Quantum
+Mechanics* (1987)— mientras mantenía su trabajo cotidiano en física de
+partículas en CERN.
+
+John Bell murió súbitamente el 1 de octubre de 1990 en Ginebra, a los
+sesenta y dos años, de un derrame cerebral. Murió antes de ver el
+reconocimiento Nobel que su teorema haría posible — el premio de 2022
+fue otorgado, naturalmente, a los experimentadores; los Premios Nobel no
+se otorgan póstumamente. Pero los nombres de Bell y de su teorema
+atraviesan ya la cultura científica como pocas contribuciones del siglo
+XX.
+
+**Segundo acto · El experimental francés y la lectura en Camerún**
+
+Alain Aspect tenía veinticuatro años cuando, en 1971, se embarcó en el
+barco que lo llevaría a Camerún para hacer su servicio civil obligatorio
+como cooperante. Había pasado la *agrégation* en física en 1969 y le
+habían asignado una posición de profesor en la École Normale Supérieure
+de Yaoundé, la capital camerunesa. Sus tres años allí —de 1971 a 1974—
+combinarían enseñanza diaria de física a estudiantes africanos con las
+tardes libres y los fines de semana dedicados al estudio personal.
+
+En Yaoundé, Aspect leyó intensamente. El libro que más impacto le causó
+fue *Quantum Mechanics* de Cohen-Tannoudji, Diu y Laloë —el texto
+canónico francés de mecánica cuántica, publicado en dos volúmenes en
+1973—. En ese libro, en una sección final dedicada a los aspectos
+filosóficos de la teoría, Aspect tropezó con la referencia al paper de
+Bell de 1964.
+
+Aspect buscó el paper original. Lo leyó. Lo releyó. Y se dio cuenta de
+algo que muchos físicos de la época no habían visto: que el teorema de
+Bell convertía la disputa EPR-Bohr en un experimento realizable, y que
+ese experimento podía hacerse mejor de como lo había hecho Clauser en
+1972. Específicamente, podía hacerse cambiando las orientaciones de los
+polarizadores **durante el vuelo de los fotones**, cerrando así la
+*locality loophole*.
+
+Cuando volvió a Francia en 1974, Aspect fue a Ginebra a presentar su
+idea a Bell. La conversación duró tres horas. Bell escuchó con
+paciencia, hizo preguntas técnicas precisas, y al final solo formuló una
+pregunta personal: *«Do you have a permanent position?»* —¿Tiene usted
+un puesto permanente?—. Aspect, que era *maître de conférences* en la
+École Normale Supérieure de Cachan, respondió que sí. Bell sonrió, le
+dio su bendición, y le dijo: *"En la ciencia fundamental, no debería
+haber secretos."* Aspect publicó la propuesta del experimento en 1975,
+dos meses antes de cumplir veintiocho años. Era su primer paper.
+
+**Tercer acto · Los tres experimentos de Orsay y el Nobel cuarenta años
+después**
+
+Los tres experimentos de Aspect en Orsay entre 1980 y 1982 fueron el
+resultado de seis años de trabajo paciente. La fuente era un haz de
+átomos de calcio excitados a un estado intermedio mediante dos láseres
+sintonizados en frecuencias específicas; al desexcitarse, los átomos
+emitían pares de fotones entrelazados en cascada. Los detectores eran
+fotomultiplicadores de eficiencia limitada pero conocida. Los
+polarizadores eran *switches* electroópticos capaces de cambiar de
+orientación en menos de diez nanosegundos —tiempo durante el cual los
+fotones aún estaban en vuelo desde la fuente hacia los detectores,
+separados por trece metros—.
+
+El paper definitivo, *Experimental Realization of
+Einstein-Podolsky-Rosen-Bohm Gedankenexperiment: A New Violation of
+Bell's Inequalities*, se publicó en *Physical Review Letters* el 12 de
+julio de 1982. Las desigualdades de Bell quedaban violadas con cinco
+desviaciones estándar de significancia estadística. La predicción
+cuántica se confirmaba con precisión. Las teorías de variables ocultas
+locales quedaban experimentalmente excluidas.
+
+La importancia del resultado fue reconocida inmediatamente por la
+comunidad de fundamentos cuánticos. Pero el reconocimiento más amplio
+fue lento. Anton Zeilinger refinó los experimentos en 1998, cerrando las
+últimas lagunas. Otros experimentadores —Hensen et al. (2015) en Delft,
+los "experimentos sin lagunas" de 2015— extendieron las verificaciones
+hasta donde la tecnología actual permite. Cuatro décadas después del
+paper de Aspect-Grangier-Roger de 1982, el Premio Nobel de Física de
+2022 fue otorgado a Aspect, Clauser y Zeilinger.
+
+Aspect, en su discurso Nobel pronunciado en Estocolmo el 8 de diciembre
+de 2022, dedicó parte considerable de su tiempo a recordar a Bell. Dijo:
+*"John no recibió este premio porque los Nobel no se otorgan
+póstumamente. Pero todo lo que hemos hecho los experimentadores es
+responder, con instrumentos, a la pregunta que él formuló con
+matemáticas."*
+
+**Frase-puente al capítulo**
+
+> **Lo que Bell convirtió en pregunta experimental, Aspect convirtió en
+> respuesta. La naturaleza viola las desigualdades de Bell. Hay
+> correlaciones cuánticas a distancia que ningún mecanismo local puede
+> explicar. Pero esas correlaciones no permiten transmitir información
+> más rápido que la luz: el teorema de no-comunicación es absoluto. El
+> entrelazamiento es real y profundo, sí, pero no es telepatía cuántica.
+> La distinción es crucial. Y la siguiente paradoja —el principio de
+> incertidumbre— va a profundizar el cuadro: no porque revele otro
+> fenómeno espectacular, sino porque articula con precisión los límites
+> estructurales del conocimiento mismo dentro del formalismo
+> cuántico.**
+
+**[ P A U S A C I E N T Í F I C A ]**
+
+**Lo que el entrelazamiento sí establece y lo que no**
+
+**Está documentado y forma parte del consenso científico actual:**
+
+— El **paper EPR de 1935** plantea correctamente la tensión entre el
+formalismo cuántico estándar, el principio de localidad relativista, y
+la noción clásica de "elementos de realidad" preexistentes a la
+medición. La argumentación lógica es sólida; la única forma de salir es
+abandonar al menos una de las premisas.
+
+— Las **desigualdades de Bell** (Bell 1964) son un teorema matemático
+demostrable: cualquier teoría de variables ocultas locales predice
+correlaciones que satisfacen cotas numéricas concretas. La mecánica
+cuántica predice violación de esas cotas para ciertos sistemas
+entrelazados.
+
+— Los **experimentos de Aspect** en Orsay 1980-1982 violaron las
+desigualdades de Bell con cinco desviaciones estándar, cerrando la
+*locality loophole* mediante la conmutación rápida de polarizadores
+durante el vuelo de los fotones. Experimentos posteriores de Zeilinger
+(Innsbruck 1998), Hensen et al. (Delft 2015) y otros confirmaron la
+violación cerrando todas las lagunas experimentales conocidas.
+
+— El **Premio Nobel de Física 2022** fue otorgado a Aspect, Clauser y
+Zeilinger con la cita oficial *"for experiments with entangled photons,
+establishing the violation of Bell inequalities and pioneering quantum
+information science"*.
+
+— El **teorema de no-comunicación** (no-signalling theorem) es un
+teorema rigurosamente demostrable dentro del formalismo cuántico
+estándar. Establece que el entrelazamiento NO permite transmisión de
+información a velocidades superiores a la de la luz. Este resultado es
+absoluto: no hay loophole conocido ni esperado dentro del formalismo
+cuántico estándar.
+
+— La **computación cuántica**, la **criptografía cuántica** (BB84 de
+Bennett-Brassard 1984; E91 de Ekert 1991) y la **teleportación
+cuántica** (Bouwmeester et al. 1997) son aplicaciones reales del
+entrelazamiento, en distintos grados de desarrollo tecnológico. China y
+Europa han desplegado redes operativas de comunicación cuántica.
+
+**Requiere matización filosófica honesta:**
+
+— **Qué significa exactamente** la no-localidad cuántica sigue siendo
+objeto de debate filosófico activo. Distintas interpretaciones de la
+mecánica cuántica que el §3.6 desplegará atribuyen significados
+distintos: para Copenhague, las propiedades simplemente no existen antes
+de la medición; para De Broglie-Bohm, hay variables ocultas no-locales
+(la onda piloto); para Muchos Mundos, no hay colapso y todas las
+correlaciones se explican mediante ramificación del multiverso; para
+QBism, las correlaciones reflejan información subjetiva del agente.
+Todas estas interpretaciones reproducen las mismas predicciones
+experimentales y todas son compatibles con la violación de Bell.
+
+— El paper EPR de 1935, según la propia evaluación posterior de
+Einstein, no expresa exactamente lo que él quería argumentar. Podolsky
+redactó el texto sin que Einstein lo revisara antes de la publicación.
+La preocupación central de Einstein —la tensión entre completitud
+cuántica y separabilidad local— quedó "sofocada por el formalismo" según
+escribió Einstein a Schrödinger el 19 de junio de 1935.
+
+**Lo que la evidencia no respalda y conviene marcar explícitamente:**
+
+— La afirmación de que **"el entrelazamiento permite comunicación
+instantánea más rápida que la luz"** es **falsa**. El teorema de
+no-comunicación lo prohíbe absolutamente. La divulgación apresurada que
+afirma lo contrario está distorsionando la mecánica cuántica.
+
+— La afirmación de que **"al medir una partícula entrelazada se afecta
+instantáneamente a la otra"** requiere matización extremadamente
+cuidadosa. Lo que ocurre es que las correlaciones predichas por la
+mecánica cuántica se manifiestan en las mediciones; pero ningún
+experimentador puede usar este hecho para enviar información, controlar
+el resultado distante, o influir causalmente sobre el sistema lejano de
+manera operacionalmente útil. Hablar de "afectación instantánea" como si
+fuera transmisión causal de algo es engañoso.
+
+— La afirmación de que **"el Big Bang fue el evento de interacción más
+masivo de la historia y por tanto toda la materia del universo permanece
+entrelazada"** es **incorrecta**. Las correlaciones de entrelazamiento
+se destruyen rápidamente por decoherencia ambiental cualquier vez que un
+sistema entrelazado interactúa con su entorno. El entrelazamiento se
+preserva solamente en sistemas cuidadosamente aislados de su entorno, no
+como propiedad cosmológica universal.
+
+— La afirmación de que **"el entrelazamiento explica científicamente la
+sincronicidad junguiana, las experiencias místicas de unidad cósmica, la
+telepatía o las conexiones emocionales a distancia"** es una
+**extrapolación filosófica que no se deriva del formalismo cuántico**.
+Estas experiencias humanas pueden ser legítimas en su propio dominio
+fenomenológico, pero no son consecuencias del entrelazamiento cuántico.
+Confundir el plano científico con el simbólico distorsiona tanto la
+física como la metáfora.
+
+— La afirmación de que **"las computadoras cuánticas demuestran que la
+consciencia es cuántica"** es **incorrecta**. Las computadoras cuánticas
+son dispositivos artificialmente construidos para mantener la coherencia
+cuántica de qubits aislados. No demuestran nada sobre la consciencia
+humana, que opera en un cerebro caliente y húmedo donde la decoherencia
+ambiental es casi instantánea.
+
+**Referencia primaria:** Einstein, A., Podolsky, B., & Rosen, N. (1935).
+«Can Quantum-Mechanical Description of Physical Reality Be Considered
+Complete?» *Physical Review*, 47(10), 777-780.
+
+**Referencia primaria:** Bell, J. S. (1964). «On the
+Einstein-Podolsky-Rosen Paradox.» *Physics Physique Физика*, 1(3),
+195-200.
+
+**Referencia primaria:** Aspect, A., Grangier, P., & Roger, G. (1982).
+«Experimental Realization of Einstein-Podolsky-Rosen-Bohm
+Gedankenexperiment: A New Violation of Bell's Inequalities.» *Physical
+Review Letters*, 49(2), 91-94.
+
+**Referencia primaria:** Aspect, A., Dalibard, J., & Roger, G. (1982).
+«Experimental Test of Bell's Inequalities Using Time-Varying Analyzers.»
+*Physical Review Letters*, 49(25), 1804-1807.
+
+**Referencia primaria sobre experimentos sin lagunas:** Hensen, B.,
+Bernien, H., Dréau, A. E., et al. (2015). «Loophole-free Bell inequality
+violation using electron spins separated by 1.3 kilometres.» *Nature*,
+526(7575), 682-686.
+
+**Referencia académica sobre teoría de Bell:** Bell, J. S. (1987).
+*Speakable and Unspeakable in Quantum Mechanics*. Cambridge University
+Press.
+
+**Referencia académica sobre teleportación cuántica:** Bouwmeester, D.,
+Pan, J. W., Mattle, K., Eibl, M., Weinfurter, H., & Zeilinger, A.
+(1997). «Experimental quantum teleportation.» *Nature*, 390(6660),
+575-579.
+
+**Referencia oficial Nobel 2022:** The Royal Swedish Academy of Sciences
+(2022). «Press release: The Nobel Prize in Physics 2022.»
+NobelPrize.org.
+
+**◆**
+
+</VozTejido>
+
+<PausaReflexiva titulo="La distinción que importa">
+
+> *◆ *PRÁCTICA CONTEMPLATIVA* *Lo que sigue es una pregunta
+> contemplativa, no una afirmación física. El entrelazamiento cuántico
+> es un fenómeno entre partículas microscópicas con condiciones
+> experimentales específicas. NO se demuestra entre personas. NO explica
+> conexiones telepáticas. NO autoriza afirmaciones de unidad cósmica
+> literal. Sin embargo, el concepto invita a una pregunta interior
+> legítima.**
+
+Pausa.
+
+Trae a la mente alguien con quien sientes una conexión profunda. Alguien
+con quien, aun a la distancia, hay algo que persiste. Una madre, un
+hermano, un amigo, alguien que ya no está físicamente.
+
+Sostén dos cosas a la vez:
+
+**Lo primero**: la mecánica cuántica no demuestra que esa conexión sea
+entrelazamiento literal en el sentido técnico. Esa conexión está hecha
+de memoria compartida, lenguaje común, afecto encarnado, neurobiología
+de los vínculos, historia tejida. Es real, profunda, sustantiva — y no
+necesita la mecánica cuántica para ser cualquiera de esas cosas.
+
+**Lo segundo**: el entrelazamiento como concepto, en cambio, te ofrece
+una metáfora útil — no derivación, metáfora — para algo importante. Que
+dos sistemas que han interactuado mantienen propiedades correlacionadas
+más allá de la separación inmediata, en un sentido que la lógica clásica
+del *cada-cosa-en-su-lugar* no había sabido nombrar antes.
+
+Una pregunta:
+
+*Cuando reconozco que la mecánica cuántica no demuestra mis vínculos
+profundos como entrelazamiento literal, ¿pierdo algo, o gano precisión?*
+
+No respondas en voz alta. No respondas siquiera mentalmente con
+palabras. Solo deja que la pregunta encuentre su lugar en ti.
+
+La distinción entre lo que un fenómeno físico demuestra y lo que un
+concepto físico ilumina simbólicamente es exactamente la disciplina que
+este capítulo te está entrenando. La pregunta no es si tus vínculos son
+reales — claro que lo son. La pregunta es si necesitas que la física los
+valide para que sean reales. Y la respuesta — desde la disciplina del
+Modo D — es no.
+
+Tus vínculos no necesitan ser entrelazamiento cuántico para ser
+sagrados.
+
+Vuelve al texto.
+
+</PausaReflexiva>
+## **Cierre y puente al §3.3.3**
+
+El entrelazamiento es real. Las correlaciones cuánticas a distancia
+están experimentalmente verificadas con precisión absoluta desde 1982.
+El teorema de Bell convirtió en pregunta experimental lo que durante
+tres décadas había sido disputa filosófica, y la respuesta de la
+naturaleza fue inequívoca: no hay variables ocultas locales que
+reproduzcan las predicciones cuánticas. Einstein perdió esta apuesta
+intelectual con Bohr, aunque la perdió de manera honorable: su objeción
+EPR de 1935 obligó a la mecánica cuántica a aclarar su propia estructura
+conceptual, y el camino que siguió desde EPR hasta el Premio Nobel 2022
+es uno de los recorridos más fértiles de la física del siglo XX.
+
+Pero el entrelazamiento, por extraordinario que sea, no permite
+comunicación superlumínica, no demuestra la consciencia cuántica, no
+explica la sincronicidad junguiana, no fundamenta la telepatía, no
+convierte al cosmos en una "red cuántica universal" en sentido
+cosmológico literal. Cada una de estas afirmaciones —que abundan en la
+divulgación apresurada— atraviesa fronteras epistémicas sin marcarlas, y
+cada una distorsiona tanto la física como la metáfora.
+
+Lo que el entrelazamiento sí entrega es una imagen del mundo más sutil
+que la clásica: un mundo donde dos sistemas que han interactuado en el
+pasado mantienen, por su preparación común, correlaciones que no se
+reducen a propiedades locales preexistentes. No es separabilidad
+clásica, no es influencia causal a distancia, es un tercer tipo de
+relación que la mecánica cuántica codifica con precisión y que el
+lenguaje cotidiano no captura del todo.
+
+La tercera y última paradoja del §3.3 vuelve la mirada hacia el
+conocimiento mismo. Hasta ahora hemos visto qué hace la naturaleza
+cuando opera cuánticamente: produce dualidades onda-partícula, sostiene
+superposiciones coherentes, mantiene correlaciones entrelazadas. Lo que
+viene en el §3.3.3 es la formulación rigurosa de **lo que se puede saber
+simultáneamente sobre un sistema cuántico**. No es una limitación
+instrumental que mejores tecnologías eventualmente superarían. Es un
+teorema estructural del formalismo, demostrado por Heisenberg en 1927,
+que establece cotas absolutas sobre el conocimiento simultáneo de pares
+de propiedades físicas.
+
+El principio de incertidumbre te espera al otro lado del umbral.
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+— ◇ —

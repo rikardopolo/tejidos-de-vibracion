@@ -88,7 +88,11 @@ const webpSrc = `${baseSinExt}.webp`;
     max-width: 65ch;
   }
 
-  .figura-tdv__numero {
+  /* Selector calificado con el padre para ganar especificidad a reglas de
+     contenedores que la figura puede heredar (p. ej. `.marginalia
+     .marginalia__body p { text-align: left }` cuando la figura vive dentro
+     de una VentanaCuantica) además del `p { text-align: justify }` global. */
+  .figura-tdv .figura-tdv__numero {
     margin: 0 0 0.6rem;
     font-family: var(--sans, 'Inter', system-ui, sans-serif);
     font-size: var(--fs-eyebrow, 0.75rem);
@@ -96,18 +100,20 @@ const webpSrc = `${baseSinExt}.webp`;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--oro-suave, #B68914);
+    text-align: center;
   }
 
-  .figura-tdv__titulo {
+  .figura-tdv .figura-tdv__titulo {
     margin: 0;
     font-family: var(--serif, 'EB Garamond', Georgia, serif);
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 1.25;
     color: var(--tinta, #1A1A1A);
+    text-align: center;
   }
 
-  .figura-tdv__subtitulo {
+  .figura-tdv .figura-tdv__subtitulo {
     margin: 0.5rem 0 0;
     font-family: var(--serif, 'EB Garamond', Georgia, serif);
     font-size: 1.15rem;
@@ -115,6 +121,7 @@ const webpSrc = `${baseSinExt}.webp`;
     font-style: italic;
     line-height: 1.4;
     color: var(--oro-suave, #B68914);
+    text-align: center;
   }
 
   /* ── Picture wrapper · transparente al layout ────────────────────────────── */
@@ -123,18 +130,18 @@ const webpSrc = `${baseSinExt}.webp`;
     width: 100%;
   }
 
-  /* ── Imagen sin marco · sombra mínima ────────────────────────────────────── */
+  /* ── Imagen flotando · sin marco, sin recuadro, sin sombra ───────────────────
+     La ilustración trae su propio fondo pergamino y ornamentación; flota
+     directamente sobre la página usando su proporción natural (height: auto).
+     NO se fuerza aspect-ratio/object-fit: eso creaba pillarbox + sombra
+     fantasma alrededor de una caja más ancha que la imagen = marco percibido.
+     El CLS queda cubierto por los atributos width/height del <img>. */
   .figura-tdv__imagen {
     display: block;
     width: 100%;
     height: auto;
     max-width: 100%;
-    border-radius: 4px;
-    box-shadow: 0 1px 2px rgba(26, 26, 26, 0.04),
-                0 4px 12px rgba(26, 26, 26, 0.05);
-    /* aspect-ratio reserva el espacio para evitar CLS antes de cargar */
-    aspect-ratio: 16 / 9;
-    object-fit: contain;
+    margin: 0 auto;
     background: transparent;
   }
 

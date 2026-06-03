@@ -1,0 +1,212 @@
+---
+/**
+ * <Frontispicio> · página-título + colofón opcional.
+ *
+ * Replica el frontispicio de la Obertura (00-frontispicio) para reusarlo al
+ * comienzo de los capítulos. Solo varían el kicker de sección, el subtítulo
+ * de la pieza y el tipo de colofón al pie.
+ *
+ * Colofón de DOS NIVELES (decisión editorial 2026-06-01, Ricardo):
+ *
+ *   colofon="proteccion" → aviso sobrio de derechos/disuasión (©, SafeCreative,
+ *     portal, prohibición de reproducción). SIN ISBN, SIN "Primera edición
+ *     digital". Pensado para la apertura de cada capítulo, que se distribuye
+ *     suelto y necesita la protección visible de entrada.
+ *
+ *   colofon="completo" → identidad bibliográfica completa del Volumen I
+ *     (línea de obra, ©, SafeCreative + código, ISBN, portal, prohibición,
+ *     edición). Pensado para la apertura del libro (Obertura). El ISBN
+ *     identifica el Volumen I completo, no cada capítulo — estamparlo por
+ *     capítulo sería bibliográficamente incorrecto.
+ *
+ *   undefined (default) → sin colofón. Útil para usos donde la
+ *     protección/identidad bibliográfica viven aparte.
+ *
+ * Estilos en <style is:global> (NO scoped): los componentes .astro con
+ * <style> scoped usados DENTRO de MDX generan un selector [data-astro-cid-…]
+ * que el build de producción no aplica al elemento (works-in-dev / breaks-in
+ * -prod). is:global no tiene ese problema. Namespace `frontis__*` para no
+ * colisionar con el frontispicio inline de la Obertura (.frontispiece-*).
+ *
+ * Tokens del libro (--oro, --tinta, --serif, --cornisa, --mono): disponibles
+ * en Obertura y Capítulos (tokens.css vía global.css).
+ */
+interface Props {
+  /** Kicker de sección · ej. "Obertura", "Capítulo I". */
+  seccion: string;
+  /** Subtítulo de la pieza · ej. "El Tejedor Consciente Despierta". */
+  subtitulo: string;
+  /** Línea de fecha · romana. Default: la del Volumen I. */
+  fecha?: string;
+  /** Tipo de colofón al pie de la página-título. Ver doc del módulo. */
+  colofon?: 'proteccion' | 'completo';
+}
+const { seccion, subtitulo, fecha = '19 · iv · mmxxvi', colofon } = Astro.props;
+
+const ISBN = '978-628-01-8624-5';
+const CODIGO_REGISTRO = '2604275409285';
+---
+
+<header class="frontis">
+  <p class="frontis__volumen">Volumen i</p>
+  <h1 class="frontis__title">Tejidos <span class="frontis__amp">de</span> Vibración</h1>
+  <div class="frontis__ornament" aria-hidden="true">◇ &nbsp; ◆ &nbsp; ◇</div>
+  <p class="frontis__kicker">{seccion}</p>
+  <p class="frontis__subtitle">{subtitulo}</p>
+  <p class="frontis__author">Ricardo Polo · Orion</p>
+  <p class="frontis__date">{fecha}</p>
+</header>
+
+{colofon === 'proteccion' && (
+  <section class="frontis__proteccion" aria-label="Aviso de derechos">
+    <p>© 2026 Ricardo Polo (Orion)</p>
+    <p>Obra registrada en SafeCreative · Reg. <span class="frontis__code-num">{CODIGO_REGISTRO}</span></p>
+    <p>Portal: <a href="https://tejidosderealidad.com">tejidosderealidad.com</a></p>
+    <p class="frontis__proteccion-rights">Prohibida la reproducción total o parcial sin permiso del autor.</p>
+  </section>
+)}
+
+{colofon === 'completo' && (
+  <section class="frontis__legal" aria-label="Datos de registro y copyright">
+    <p class="frontis__legal-title">Tejidos de Vibración, Volumen I — {seccion}: {subtitulo}</p>
+    <p>© 2026 Ricardo Polo (Orion)</p>
+    <p>Obra registrada en SafeCreative.</p>
+    <p>Código de registro: <span class="frontis__code-num">{CODIGO_REGISTRO}</span></p>
+    <p>ISBN: <span class="frontis__code-num">{ISBN}</span></p>
+    <p>Portal: <a href="https://tejidosderealidad.com">tejidosderealidad.com</a></p>
+    <p class="frontis__rights">Prohibida la reproducción total o parcial sin permiso del autor.</p>
+    <p class="frontis__edition">Primera edición digital · 2026</p>
+  </section>
+)}
+
+<style is:global>
+  .frontis {
+    text-align: center;
+    padding: 2rem 0 3rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    margin-bottom: 4rem;
+  }
+  .frontis__volumen {
+    font-family: var(--cornisa, var(--sans));
+    font-weight: 400;
+    font-size: 0.78rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--reposo);
+    margin: 0 0 2.5rem;
+  }
+  .frontis__title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0 0 0.6rem;
+    line-height: 1.05;
+    color: var(--tinta);
+  }
+  .frontis__amp {
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: lowercase;
+    color: var(--oro-suave);
+  }
+  .frontis__ornament {
+    text-align: center;
+    color: var(--oro-suave);
+    margin: 2.5rem 0;
+    font-size: 1.25rem;
+    letter-spacing: 1.2em;
+    user-select: none;
+  }
+  .frontis__kicker {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+    margin: 2.5rem 0 0.8rem;
+  }
+  .frontis__subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.35rem;
+    color: var(--tinta);
+    margin: 0;
+  }
+  .frontis__author {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--tinta-suave);
+    margin: 1.2rem 0 0.3rem;
+  }
+  .frontis__date {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--reposo);
+  }
+
+  /* Colofón COMPLETO (Obertura) · identidad bibliográfica del Volumen I. */
+  .frontis__legal {
+    margin: 3rem auto 4rem;
+    padding: 2rem 0;
+    border-top: 1px solid rgba(26, 26, 26, 0.08);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--tinta-suave);
+  }
+  .frontis__legal p { margin: 0.4rem 0; text-align: left; }
+  .frontis__legal-title { font-style: italic; margin-bottom: 1.4rem !important; }
+  .frontis__code-num {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    color: var(--tinta);
+  }
+  .frontis__rights { font-style: italic; margin-top: 1.4rem !important; }
+  .frontis__edition {
+    margin-top: 1.2rem !important;
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--reposo);
+  }
+  .frontis__legal a {
+    color: var(--indigo);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+  }
+
+  /* Colofón PROTECCIÓN (capítulos) · aviso sobrio sin ISBN, una jerarquía
+     visual por debajo del título de sección · no compite con él. */
+  .frontis__proteccion {
+    margin: 2.4rem auto 3rem;
+    padding: 1.2rem 0 0;
+    max-width: 36rem;
+    border-top: 1px dotted rgba(26, 26, 26, 0.18);
+    font-family: var(--serif);
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--tinta-suave);
+    text-align: center;
+  }
+  .frontis__proteccion p {
+    margin: 0.32rem 0;
+    text-align: center;
+  }
+  .frontis__proteccion-rights {
+    font-style: italic;
+    margin-top: 0.8rem !important;
+  }
+  .frontis__proteccion a {
+    color: var(--indigo);
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+  }
+</style>

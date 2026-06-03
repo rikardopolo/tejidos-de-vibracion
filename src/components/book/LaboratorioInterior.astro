@@ -1,20 +1,27 @@
 ---
 /**
  * LaboratorioInterior · wrapper de conveniencia alrededor de Marginalia.
- * Equivale a <Marginalia kind="laboratorio-interior" ...>.
- * Usado para ejercicios prácticos paso a paso (Laboratorio AUM,
- * Nadi Shodhana, Tu Catedral, etc. en los capítulos del libro).
+ *
+ * Soporta dos variantes editoriales:
+ *   variant="interior" (default) → kind="laboratorio-interior" · eyebrow oro
+ *     Ejercicios exploratorios paso a paso (Laboratorio AUM, Nadi Shodhana, etc).
+ *   variant="formal"             → kind="ejercicio-formal" · eyebrow oro
+ *     Practica ritual sostenida con protocolo (MA-NI-PAD-ME, etc).
+ *     V2.1 reserva esta variante para practicas con efectos documentados
+ *     sobre el sistema nervioso autonomo.
  */
 import Marginalia from './Marginalia.astro';
 
 interface Props {
   titulo: string;
   duracion?: string;
+  variant?: 'interior' | 'formal';
 }
 
-const { titulo, duracion } = Astro.props;
+const { titulo, duracion, variant = 'interior' } = Astro.props;
+const kind = variant === 'formal' ? 'ejercicio-formal' : 'laboratorio-interior';
 ---
 
-<Marginalia kind="laboratorio-interior" titulo={titulo} duracion={duracion}>
+<Marginalia kind={kind} titulo={titulo} duracion={duracion}>
   <slot />
 </Marginalia>

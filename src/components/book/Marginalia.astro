@@ -24,9 +24,11 @@ interface Props {
   kind: MarginaliaKind;
   titulo: string;
   duracion?: string;
+  /** Override del eyebrow (ej. "Voz del Tejido" en la Obertura). Default: label canónico del kind. */
+  label?: string;
 }
 
-const { kind, titulo, duracion } = Astro.props;
+const { kind, titulo, duracion, label: labelOverride } = Astro.props;
 
 const kindLabels: Record<MarginaliaKind, string> = {
   'pausa-reflexiva':    'Pausa reflexiva',
@@ -47,13 +49,13 @@ const modifiers: Partial<Record<MarginaliaKind, string>> = {
 };
 
 const modifier = modifiers[kind] ?? '';
-const label = kindLabels[kind];
+const label = labelOverride ?? kindLabels[kind];
 ---
 
 <aside class={`marginalia${modifier ? ' ' + modifier : ''}`}>
   <p class="marginalia__kind">{label}</p>
   {duracion && (
-    <p class="muted" style="font-family: var(--sans); font-size: 0.8125rem; letter-spacing: 0.05em; margin: 0 0 0.5rem 0;">
+    <p class="muted" style="font-family: var(--cornisa, var(--sans)); font-size: 0.8125rem; letter-spacing: 0.05em; margin: 0 0 0.5rem 0;">
       DURACIÓN · {duracion}
     </p>
   )}

@@ -17,12 +17,16 @@
  *
  * Patrón paralelo a `pages/obertura/index.astro` (biblioteca de Obertura).
  * Reemplaza el antiguo `pages/capitulo/[slug].astro`.
+ *
+ * Sprint shell-redesign (preview/chapters-1-2-3): usa CapituloLayout y
+ * marcadores compactos por tipo de pieza (pieceMarker).
  */
 import { getCollection, getEntry } from 'astro:content';
-import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import { getNivel, gatingActivo } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
+import { pieceMarker, type PieceKind } from '@/lib/piece-num';
 
 export const prerender = false;
 
@@ -55,8 +59,18 @@ const hasSections = sections.length > 0;
 // Fallback monolítico (sin chapter-sections): mismo comportamiento que el
 // antiguo [slug].astro. Cap. 1 con status 'fragmento-permanente' siempre
 // muestra BloquePuerta (esCap1Publicado=false). Cap. 2/3 idem.
-const esCap1Publicado = !hasSections && data.status === 'published' && chapterNum === 1;
-const verContenido = nivel >= 1 && esCap1Publicado;
+//
+// PREVIEW BRANCH ONLY (preview/chapters-1-2-3 · NO MERGE A MAIN):
+// en cualquier rama Vercel distinta de main relajamos chapterNum===1
+// para permitir revisar el contenido monolitico de Cap.2 y Cap.3 tal
+// como esta en main, sin migrar a chapter-sections.
+const branchRef = (typeof process !== 'undefined' && process.env)
+  ? (process.env.VERCEL_GIT_COMMIT_REF ?? '')
+  : '';
+const esPreviewBranch = branchRef !== '' && branchRef !== 'main';
+const esCapPublicadoMonolitico = !hasSections && data.status === 'published'
+  && (chapterNum === 1 || esPreviewBranch);
+const verContenido = nivel >= 1 && esCapPublicadoMonolitico;
 const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
 let Content: any = null;
@@ -64,23 +78,18 @@ if (verContenido) {
   const rendered = await chapterEntry.render();
   Content = rendered.Content;
 }
-
-// prev/next entre capítulos publicados (para fallback monolítico)
-const allChapters = await getCollection('book', ({ data: d }) =>
-  d.kind === 'capitulo' && d.status === 'published'
-);
-const sorted = allChapters.sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
-const idx = sorted.findIndex(c => c.slug === chapter);
-const prev = idx > 0 ? sorted[idx - 1] : null;
-const next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
+const leaf = (slug: string) => slug.split('/').pop() ?? slug;
 ---
 
-<LecturaLarga
+<CapituloLayout
   title={`Cap. ${romanChapter} · ${data.title} · Tejidos de Vibración`}
   description={data.subtitle ?? `Capítulo ${romanChapter} del Volumen I`}
+  chapter={chapter}
+  chapterLabel={capitulo}
+  nivel={nivel}
   pageId={`capitulo-${chapterNum}`}
 >
-  <article class="measure pt-5">
+  <article class="measure">
     <header class="stack-sm">
       <p class="eyebrow">Acto {data.act} · Capítulo {romanChapter}</p>
       <h1 class="title-1">{data.title}</h1>
@@ -93,14 +102,14 @@ const next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
       <Fragment>
         {/* BIBLIOTECA · piezas navegables del capítulo */}
         <p class="section-eyebrow">Las {sections.length} piezas del capítulo</p>
-        <ol class="cap-toc">
+        <ol class="cap-biblioteca">
           {sections.map((s) => (
-            <li class="cap-toc__item">
-              <a href={`/capitulo/${chapter}/${s.slug.split('/').pop()}`} class="cap-toc__link">
-                <span class="cap-toc__num">{s.data.num ?? s.data.headerLabel}</span>
-                <span class="cap-toc__body">
-                  <span class="cap-toc__title">{s.data.title}</span>
-                  {s.data.subtitle && <em class="cap-toc__sub">{s.data.subtitle}</em>}
+            <li class="cap-biblioteca__item">
+              <a href={`/capitulo/${chapter}/${leaf(s.slug)}`} class="cap-biblioteca__link">
+                <span class="cap-biblioteca__num">{pieceMarker({ kind: s.data.kind as PieceKind, num: s.data.num })}</span>
+                <span class="cap-biblioteca__body">
+                  <span class="cap-biblioteca__title">{s.data.title}</span>
+                  {s.data.subtitle && <em class="cap-biblioteca__sub">{s.data.subtitle}</em>}
                 </span>
               </a>
             </li>
@@ -120,23 +129,22 @@ const next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
       </Fragment>
     )}
   </article>
-</LecturaLarga>
+</CapituloLayout>
 
 <style>
-  /* Biblioteca del capítulo · estilos scoped (system.css del libro carga
-   * los tokens globales · estos detalles son específicos de la biblioteca). */
-  .cap-toc {
+  /* Biblioteca del capítulo · estilos scoped. */
+  .cap-biblioteca {
     list-style: none;
     padding: 0;
     margin: 2rem 0 4rem;
   }
-  .cap-toc__item {
+  .cap-biblioteca__item {
     border-bottom: 1px solid var(--pergamino-2);
   }
-  .cap-toc__item:first-child {
+  .cap-biblioteca__item:first-child {
     border-top: 1px solid var(--pergamino-2);
   }
-  .cap-toc__link {
+  .cap-biblioteca__link {
     display: grid;
     grid-template-columns: 4.5rem 1fr;
     column-gap: 1.5rem;
@@ -146,24 +154,24 @@ const next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
     color: var(--tinta);
     transition: background 180ms ease, padding 180ms ease;
   }
-  .cap-toc__link:hover {
+  .cap-biblioteca__link:hover {
     background: var(--pergamino-2);
     padding-left: 0.75rem;
   }
-  .cap-toc__num {
-    font-family: var(--serif);
-    font-size: 0.95rem;
-    font-style: italic;
+  .cap-biblioteca__num {
+    font-family: var(--mono);
+    font-size: 0.85rem;
     color: var(--oro-suave);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
+    text-align: center;
   }
-  .cap-toc__title {
+  .cap-biblioteca__title {
     font-family: var(--serif);
     font-weight: 500;
     font-size: 1.2rem;
     line-height: 1.3;
   }
-  .cap-toc__sub {
+  .cap-biblioteca__sub {
     display: block;
     font-family: var(--serif);
     font-style: italic;

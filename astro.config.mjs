@@ -2,6 +2,9 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import vercel from '@astrojs/vercel/serverless';
+import remarkSeparators from './src/lib/remark-separators.mjs';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +14,12 @@ export default defineConfig({
     webAnalytics: { enabled: false },
     imageService: false,
   }),
+  // remarkSeparators gilda los separadores literales standalone (— ◇ —, ◆,
+  // ◇ ◆ ◇) a divisores .flourish en oro · MDX hereda markdown.remarkPlugins.
+  markdown: {
+    remarkPlugins: [remarkSeparators, remarkMath],
+    rehypePlugins: [rehypeKatex],
+  },
   integrations: [mdx()],
   build: {
     inlineStylesheets: 'auto',

@@ -1,0 +1,70 @@
+---
+/**
+ * ReflejoPoetico · caja semántica V2.1 (preview/chapters-1-2-3).
+ *
+ * Stub creado para esta preview · sin definición canónica del componente
+ * todavía en main. Reserva el espacio visual para fragmentos poéticos
+ * intercalados (eco del Carril B en el cuerpo del capítulo).
+ *
+ * Props:
+ *   - autor     · firma opcional bajo el reflejo
+ *   - epigrafe  · contexto / fuente / cita corta
+ */
+interface Props {
+  autor?: string;
+  epigrafe?: string;
+}
+const { autor, epigrafe } = Astro.props;
+---
+
+<figure class="reflejo-poetico" role="group" aria-label="Reflejo poético">
+  <div class="reflejo-poetico__cuerpo">
+    <slot />
+  </div>
+  {(autor || epigrafe) && (
+    <figcaption class="reflejo-poetico__pie">
+      {autor && <span class="reflejo-poetico__autor">— {autor}</span>}
+      {epigrafe && <span class="reflejo-poetico__epigrafe">{epigrafe}</span>}
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .reflejo-poetico {
+    margin: 3rem auto;
+    max-width: 36rem;
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    border-top: 1px solid var(--oro-fantasma);
+    border-bottom: 1px solid var(--oro-fantasma);
+  }
+  .reflejo-poetico__cuerpo {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--tinta-suave);
+  }
+  .reflejo-poetico__cuerpo :global(p) {
+    margin: 0.4rem 0;
+  }
+  .reflejo-poetico__pie {
+    margin-top: 1rem;
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+  }
+  .reflejo-poetico__autor {
+    display: block;
+  }
+  .reflejo-poetico__epigrafe {
+    display: block;
+    margin-top: 0.3rem;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--reposo);
+  }
+</style>

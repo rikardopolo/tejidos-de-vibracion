@@ -1,0 +1,487 @@
+---
+chapter: "cap-2-ciencia-escuchar"
+kind: "numbered"
+num: "2.7"
+title: "Fonones"
+subtitle: "Cuando la vibración mecánica de la materia se cuantizó · Einstein, Debye, Tamm"
+order: 10
+headerLabel: "Cap. 2 · §2.7"
+publishedAt: 2026-05-09
+authors:
+  - "Ricardo Polo"
+tags:
+  - "cap-2"
+  - "fonones"
+  - "vibracion-cuantizada"
+  - "debye"
+  - "tamm"
+  - "frenkel"
+---
+
+import PausaCientifica from '@/components/book/PausaCientifica.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
+import Formula from '@/components/book/Formula.astro';
+
+*La vibración cuantizada de la materia*
+
+— ◇ —
+
+## La pregunta natural de Einstein
+
+Planck había abierto accidentalmente la puerta. Einstein la había
+cruzado deliberadamente, llevando la cuantización desde los osciladores
+en las paredes del cuerpo negro hasta la luz misma. La grieta cuántica
+estaba abierta. Pero quedaba un territorio entero sin explorar, un
+territorio que el propio Einstein se hizo cargo de explorar dos años
+después, en 1907.
+
+La pregunta era simple en su formulación. Si los osciladores que
+**emiten luz** están cuantizados, ¿qué ocurre con los osciladores que
+**no emiten luz** pero que vibran de todos modos? Concretamente: ¿qué
+ocurre con las vibraciones mecánicas dentro de los sólidos? Cuando una
+barra de hierro se calienta, sus átomos vibran alrededor de sus
+posiciones de equilibrio en la red cristalina. Esas vibraciones
+almacenan energía térmica. ¿Están también cuantizadas? ¿Vibra la materia
+misma —la materia inerte, sin radiación electromagnética de por medio—
+en paquetes discretos?
+
+El problema técnico que motivaba la pregunta era preciso. En 1819, los
+químicos franceses Pierre Louis Dulong y Alexis Thérèse Petit habían
+formulado una ley empírica que parecía universal: la **capacidad
+calorífica molar** de cualquier sólido elemental —cuánta energía hay que
+entregarle para subir su temperatura un grado— era aproximadamente la
+misma constante (~3R, donde R es la constante de los gases) e
+independiente de la temperatura. La ley funcionaba bellamente a
+temperatura ambiente y a altas temperaturas. Pero a finales del siglo
+XIX, los físicos experimentales habían empezado a medir la capacidad
+calorífica de los sólidos a temperaturas muy bajas, cercanas al cero
+absoluto, y el resultado era desconcertante.
+
+A bajas temperaturas, la capacidad calorífica caía a cero. No permanecía
+constante. Cualquier sólido, enfriado lo suficiente, se volvía
+progresivamente "incapaz" de absorber energía térmica. La física clásica
+no podía explicar el descenso. Era otra grieta clásica esperando
+solución cuántica.
+
+Einstein, en marzo de 1907, decidió aplicar el cuanto al problema.
+
+— ◇ —
+
+**◆**
+
+## 1907 · Einstein extiende la cuantización a la materia
+
+Einstein publicó ese año, en *Annalen der Physik* volumen 22, un paper
+titulado *"Die Plancksche Theorie der Strahlung und die Theorie der
+spezifischen Wärme"* —*"La teoría de la radiación de Planck y la teoría
+del calor específico de los sólidos"*.**<sup>1</sup>** Tenía veintiocho
+años. Seguía trabajando en la oficina de patentes de Berna, aunque su
+carrera académica estaba a punto de despegar.
+
+Su propuesta era de una elegancia desconcertante. Trataría cada átomo
+del sólido como un **oscilador armónico cuántico independiente**,
+vibrando alrededor de su posición de equilibrio en la red cristalina.
+Aplicando la cuantización de Planck —cada oscilador solo puede tener
+energías E = nhν con *n* entero—, la energía vibratoria de cada átomo
+solo podría tomar valores discretos.
+
+Las consecuencias eran sorprendentes. A temperaturas altas, la energía
+térmica disponible (kT, donde k es la constante de Boltzmann y T la
+temperatura absoluta) sería mucho mayor que el cuanto vibratorio mínimo
+(hν). Los osciladores podrían absorber libremente paquetes de energía.
+La capacidad calorífica recuperaría el valor clásico de Dulong-Petit.
+Pero a temperaturas bajas, cuando kT se vuelve menor que hν, los
+osciladores quedan **atrapados en su estado fundamental**. No pueden
+absorber paquetes de energía vibratoria de tamaño hν cuando la energía
+térmica disponible es mucho menor que ese mínimo. Los modos vibratorios
+"se congelan". La capacidad calorífica colapsa.
+
+El modelo de Einstein predecía cualitativamente el descenso
+experimental. No con precisión perfecta a todas las temperaturas —su
+simplificación de tratar todos los átomos como osciladores
+independientes con la misma frecuencia era demasiado tosca— pero con la
+dirección correcta y por las razones correctas.
+
+Abraham Pais, biógrafo definitivo de Einstein, escribiría décadas
+después una frase precisa sobre el alcance de este paper: *"Con este
+paper comienza la teoría cuántica del estado sólido. Es el primer paper
+jamás escrito sobre la teoría cuántica del estado
+sólido."***<sup>2</sup>**
+
+La implicación arquitectónica era enorme. La cuantización ya no era
+propiedad exclusiva de la radiación electromagnética. **La materia misma
+vibra cuánticamente.** El cuanto entró al sólido.
+
+— ◇ —
+
+**◆**
+
+<FiguraTDV
+  imagen="/assets/cap-2/figura-2-9.png"
+  numero="2.9"
+  titulo="Fonones"
+  subtitulo="curva de dispersión en una cadena lineal de átomos"
+  alt="Curva de dispersión de fonones en cadena atómica monocromática con comportamiento lineal en bajas frecuencias y saturación en el límite de zona de Brillouin"
+  descripcion="Curva de dispersión de fonones en una cadena lineal de átomos (modelo de Debye 1912). En el límite de longitudes de onda largas (k → 0), la relación ω(k) es lineal y reproduce el sonido clásico. Cerca del borde de la zona de Brillouin (k → π/a), la curvatura se aparta del comportamiento clásico — manifestación de la naturaleza cuantizada de la red cristalina. Cada cuanto de esta vibración es un fonón con energía E = ℏω y momento p = ℏk (Fórmula 2.7)."
+/>
+
+## 1912 · Debye refina con un insight decisivo
+
+Cinco años después, en 1912, el físico holandés-alemán **Peter Debye**
+—que sería Premio Nobel de Química en 1936 por trabajos sobre estructura
+molecular— publicó un refinamiento del modelo de Einstein con una
+intuición decisiva.**<sup>3</sup>**
+
+Lo que Einstein había omitido era simple pero fundamental. Los átomos en
+un sólido **no vibran independientemente**. Están conectados por enlaces
+químicos. Cuando un átomo se mueve, sus vecinos también se mueven, y los
+vecinos de los vecinos, en patrones coordinados que se propagan a través
+del cristal entero. Las vibraciones reales no son oscilaciones aisladas:
+son **modos colectivos** que viajan a través del medio como ondas
+sonoras internas.
+
+Estas ondas sonoras intracristalinas tienen un espectro continuo de
+frecuencias. Las frecuencias bajas corresponden a longitudes de onda
+largas, comparables al tamaño del cristal entero. Las frecuencias altas
+corresponden a longitudes de onda cortas, hasta una **frecuencia máxima
+de Debye** (ω_D) determinada por la separación atómica y la velocidad
+del sonido en el material.
+
+Aplicando la cuantización a este espectro continuo de modos colectivos,
+Debye derivó una fórmula que ajustaba los datos experimentales con
+precisión extraordinaria. A temperaturas altas, recuperaba Dulong-Petit.
+A temperaturas bajas, predecía que la capacidad calorífica varía como T³
+—la **ley T³ de Debye**—, exactamente lo que se observaba.
+
+Hay una analogía estructural decisiva en lo que Debye había hecho.
+Trataba las vibraciones del sólido como cuantos confinados en el volumen
+del cristal, **exactamente como Planck había tratado la radiación
+electromagnética como cuantos de luz confinados en una cavidad**. La
+materia y la luz compartían estructura cuántica fundamental. Ambas
+vibraban en paquetes discretos. La diferencia era el medio: el campo
+electromagnético en un caso, la red cristalina atómica en el otro.
+
+Pero estos cuantos vibratorios mecánicos todavía no tenían nombre.
+
+— ◇ —
+
+**◆**
+
+<Formula num="2.7" titulo="Fonones · cuanto de vibración mecánica">
+
+$$E = \hbar\omega \qquad p = \hbar k$$
+
+<Fragment slot="donde">
+
+**E** · energía del cuanto de vibración (joules)
+
+**ω** · frecuencia angular de la vibración mecánica (radianes por segundo). Léase «omega». ω = 2πν
+
+**p** · momento del cuanto de vibración (kg·m/s)
+
+**k** · número de onda, relacionado con la longitud de onda por k = 2π/λ (m⁻¹)
+
+**ℏ** · constante de Planck reducida, ℏ = h/2π ≈ 1.055 × 10⁻³⁴ J·s
+
+*Las dos relaciones canónicas que definen los fonones, propuestas por Einstein (1907) para los modos vibracionales de un sólido cristalino y refinadas por Debye (1912) introduciendo el espectro modal. El nombre fonón (del griego phōnē, sonido) fue acuñado por Igor Tamm en 1932. Un fonón es a la vibración mecánica lo que un fotón es a la vibración electromagnética: el cuanto mínimo indivisible que la materia puede emitir o absorber. Esta dualidad — partículas que son cuantos de un campo vibratorio — es uno de los puentes conceptuales más fértiles entre la mecánica clásica y la cuántica.*
+
+</Fragment>
+
+</Formula>
+
+## 1930 · Tamm y Frenkel bautizan al cuanto
+
+El nombre llegaría dieciocho años después del paper de Debye. En 1930,
+el físico soviético **Igor Tamm** —futuro Premio Nobel de Física en 1958
+por explicar la radiación Cherenkov— introdujo formalmente el concepto
+en el lenguaje de la teoría cuántica del estado sólido. El nombre lo
+sugirió **Yakov Frenkel**, también físico soviético, por analogía
+directa con "fotón". La etimología es transparente: del griego *phōnē*
+—sonido, voz.
+
+Si el fotón es el cuanto del campo electromagnético —cuantización de la
+luz—, el fonón es el cuanto del campo de desplazamientos atómicos en un
+medio material —cuantización del sonido en el sentido más amplio:
+cualquier vibración mecánica colectiva.
+
+La paridad lingüística refleja una paridad física profunda. Ambos son
+cuantos de campos vibratorios. Ambos se comportan como bosones, lo que
+significa que múltiples cuantos pueden coexistir en el mismo modo
+vibratorio (a diferencia de los electrones, que se excluyen mutuamente).
+Ambos transportan energía y momento. Ambos pueden ser absorbidos y
+emitidos.
+
+Pero hay una diferencia crucial. Los fotones existen en el vacío. Los
+fonones **solo existen dentro de un medio material**. Son
+cuasipartículas —excitaciones del medio, no entidades fundamentales
+independientes del medio que las soporta. Si retiras el medio, los
+fonones desaparecen. La realidad ontológica del fonón está atada a la
+existencia de la materia que vibra.
+
+Esta diferencia, lejos de ser una limitación, es lo que hace a los
+fonones tan relevantes para la biología. Porque la biología es, antes
+que ninguna otra cosa, **materia organizada**. Y donde hay materia
+organizada, hay fonones.
+
+— ◇ —
+
+**◆**
+
+## Los fonones que ya conoces
+
+Los fonones no son entidades exóticas restringidas a laboratorios de
+bajas temperaturas. Están presentes en cada acto de tu vida cotidiana,
+aunque rara vez te detengas a pensarlo.
+
+Cuando tocas un objeto frío y sientes el frío en tu piel, lo que ocurre
+físicamente es transferencia fonónica. Los fonones de tu mano —con
+energías típicas correspondientes a 37 grados Celsius— se transfieren al
+objeto. Los fonones del objeto frío, de menor energía, se transfieren a
+tu mano. La sensación que el cerebro interpreta como "frío" es una
+sensación de pérdida fonónica neta. La temperatura, vista desde la
+mecánica cuántica, es simplemente el contenido fonónico promedio de un
+sistema.
+
+Cuando hablas o escuchas, las ondas de presión que viajan a través del
+aire son, en su descripción macroscópica, ondas sonoras clásicas. En su
+descripción cuántica fundamental, son vastas multitudes de fonones
+acústicos viajando por el aire. La velocidad del sonido en cualquier
+medio —340 metros por segundo en aire a temperatura ambiente, 1.480 en
+agua, varios miles en metales— es, exactamente, la velocidad de los
+fonones acústicos macroscópicos del medio.
+
+Cuando un cantante de ópera rompe una copa de cristal afinando su voz a
+la frecuencia natural de la copa —fenómeno de resonancia simpática que
+vimos en la sección 2.2 con Mersenne—, está bombardeando la copa con
+fonones acústicos en su frecuencia de resonancia. La copa absorbe
+energía de cada fonón hasta que su estructura cristalina no puede
+sostener más, y se fractura. La cuerda de Galileo y Mersenne, vista a
+escala cuántica, era un conjunto vibrante de fonones unidimensionales
+del cuerpo de la cuerda.
+
+Y cuando una corriente eléctrica fluye a través de un superconductor, lo
+hace mediante un mecanismo descubierto en 1957 por John Bardeen, Leon
+Cooper y Robert Schrieffer (la teoría BCS) que requiere fonones
+explícitamente: los electrones se emparejan en *pares de Cooper*
+atraídos efectivamente entre sí mediante el intercambio de fonones de la
+red cristalina. Sin fonones no habría superconductividad convencional.
+Toda la electrónica de bajas temperaturas, desde los aceleradores de
+partículas hasta las máquinas de resonancia magnética hospitalarias,
+depende del intercambio fonónico entre electrones.
+
+Los fonones, lejos de ser una abstracción técnica, son la descripción
+cuántica fundamental de toda vibración mecánica en cualquier medio
+material. Aprender a verlos cambia silenciosamente la imagen del mundo:
+cada superficie, cada respiración, cada palabra dicha o escuchada es, a
+la escala cuántica, un fenómeno fonónico.
+
+— ◇ —
+
+**◆**
+
+## La materia vibrante · puente al Cap. 3
+
+Llegamos al punto del capítulo donde la cuestión central de *Tejidos de
+Vibración* —la idea de que la "vibración" atraviesa toda la jerarquía de
+la naturaleza, desde el cosmos hasta el cuerpo humano— deja de ser una
+afirmación que requiera justificación filosófica y se convierte en una
+afirmación con fundamento físico verificable.
+
+Consideremos tres hechos, todos de consenso científico establecido.
+
+**Primer hecho.** En 2022, un equipo del **Oak Ridge National
+Laboratory** en Tennessee detectó experimentalmente fonones en una
+proteína biológica real —específicamente en la proteína fluorescente
+verde (GFP), una de las proteínas más estudiadas de la biología
+molecular. La detección se realizó mediante dispersión inelástica de
+neutrones, técnica que permite "ver" vibraciones cuantizadas en sistemas
+complejos. Los resultados fueron publicados bajo revisión por pares en
+*Structural Dynamics*.**<sup>4</sup>** No es teoría especulativa: son
+fonones biológicos medidos directamente.
+
+**Segundo hecho.** Los fonones existen en bicapas lipídicas, las
+membranas biológicas que forman las paredes de cada célula del cuerpo
+humano. Los modos vibratorios colectivos de las membranas celulares han
+sido caracterizados teórica y experimentalmente con precisión durante
+las dos últimas décadas. Toda célula viva es, a nivel mecánico
+fundamental, un sistema fonónico.
+
+**Tercer hecho.** La membrana basilar coclear que vimos en la sección
+2.4 con Helmholtz —ese piano biológico desenrollado dentro de tu oído
+interno— transmite, exactamente, fonones acústicos. Cada vez que
+escuchas una nota musical, los fonones del aire se acoplan con la
+membrana timpánica, se transmiten por los huesecillos del oído medio, se
+convierten en fonones del fluido coclear, y excitan finalmente las
+células ciliadas. La audición humana es una cadena de transducciones
+fonónicas.
+
+La conclusión es directa y libre de especulación. **El cuerpo humano es,
+en sentido físicamente preciso, un sistema fonónico.** Las proteínas
+vibran cuánticamente. Las membranas vibran cuánticamente. Los tejidos
+transmiten fonones. La biología no flota en un éter metafórico de
+"vibraciones" simbólicas: está hecha, a su nivel mecánico fundamental,
+de cuantos de vibración mecánica con energías cuantizadas en el sentido
+estricto que Einstein y Debye le dieron al concepto.
+
+Esto no significa —y aquí es donde el rigor importa— que cualquier
+afirmación divulgativa sobre "vibraciones biológicas" sea
+automáticamente correcta. Lo que significa es que **hay un terreno
+firme** desde el cual el resto del libro puede explorar con cuidado las
+preguntas más delicadas: ¿pueden los fonones biológicos tener funciones
+específicas en procesos vivos? ¿Pueden las vibraciones cuánticas en
+proteínas y membranas tener relevancia funcional, no solo térmica? ¿Hay
+zonas de la biología donde la coherencia cuántica de fonones se sostiene
+lo suficiente para hacer trabajo biológico útil?
+
+Estas preguntas tienen respuestas parciales. Algunas están firmemente
+establecidas como consenso. Otras están en frontera científica activa.
+Otras todavía son especulación que el libro discutirá con el marco
+epistémico apropiado del Doble Carril. Lo que importa en este punto del
+recorrido es solo plantar la semilla conceptual con base sólida: **la
+cuantización abierta por Planck y extendida por Einstein no se detuvo en
+la luz ni en la materia inerte. Atravesó la jerarquía de la naturaleza
+hasta llegar a los seres vivos.**
+
+— ◇ —
+
+**◆**
+
+<PausaCientifica titulo="Lo que significa cuantizar la vibración mecánica">
+
+**Está documentado y forma parte del consenso científico actual:**
+
+— Las vibraciones colectivas en sólidos cristalinos están cuantizadas en
+cuasipartículas llamadas fonones, con energía E = ℏω y momento lineal p
+= ℏk, donde ℏ es la constante de Planck reducida.
+
+— El modelo de Einstein-Debye explica con precisión extraordinaria la
+capacidad calorífica de los sólidos a todas las temperaturas. La ley T³
+de Debye a bajas temperaturas es uno de los grandes triunfos de la
+mecánica cuántica temprana.
+
+— Los fonones existen en sistemas biológicos. La detección experimental
+directa de fonones en la proteína GFP fue publicada en 2022 por un
+equipo del Oak Ridge National Laboratory mediante dispersión inelástica
+de neutrones.
+
+— Los fonones en bicapas lipídicas (membranas biológicas) están bien
+caracterizados teórica y experimentalmente.
+
+— La superconductividad convencional (teoría BCS, 1957) está mediada por
+interacciones electrón-fonón.
+
+**Requiere cautela o matización:**
+
+— Los fonones son **cuasipartículas**, no partículas fundamentales como
+los electrones o los quarks. Existen solo dentro de medios materiales.
+No son entidades independientes del medio que las soporta. Esta
+distinción ontológica es importante: hablar de "un fonón viajando"
+siempre implica un medio que vibra.
+
+— La transferencia de la teoría de fonones desde sistemas cristalinos
+perfectos hasta sistemas biológicos —que son inhomogéneos, hidratados,
+dinámicos y fuera del equilibrio termodinámico— requiere modificaciones
+teóricas significativas. Los modelos de fonones en proteínas y membranas
+son extensiones de la teoría original, no aplicaciones directas.
+
+— Las hipótesis de **Davydov** (1973) sobre solitones-fonón en
+proteínas, y las hipótesis de **Fröhlich** (1968) sobre condensación de
+modos vibracionales coherentes en biosistemas, son teorías de frontera
+científica activa. Tienen base teórica respetable pero
+confirmación experimental limitada en sistemas biológicos in vivo. El
+Capítulo 3 las discutirá con marco epistémico apropiado.
+
+**Lo que la evidencia no respalda:**
+
+— No hay base científica para identificar los fonones biológicos con
+"frecuencias curativas específicas" en hertz audibles (528 Hz, 432 Hz,
+etc.). Los fonones biológicos típicos en proteínas operan en rangos de
+**terahertz** —seis órdenes de magnitud por encima del rango audible
+humano. Cualquier divulgación que mezcle ambas escalas de frecuencia
+comete un error físico básico.
+
+— No hay base para extender la cuantización fonónica a categorías
+macroscópicas como "vibración del estado emocional", "frecuencia de la
+consciencia" o "vibración del campo aural" en sentido literal. Estas
+extensiones pueden ser metáforas legítimas en su propio dominio
+simbólico, pero **no son consecuencias derivables de la teoría cuántica
+de fonones**.
+
+**Referencia primaria:** Einstein, A. (1907). «Die Plancksche Theorie
+der Strahlung und die Theorie der spezifischen Wärme.» *Annalen der
+Physik*, 22, 180–190.
+
+**Referencia primaria:** Debye, P. (1912). «Zur Theorie der spezifischen
+Wärmen.» *Annalen der Physik*, 39(14), 789–839.
+
+**Referencia académica:** Pais, A. (1982). *Subtle is the Lord: The
+Science and the Life of Albert Einstein*. Oxford: Oxford University
+Press, especialmente el capítulo 20.
+
+**Referencia académica moderna:** Wang, Y., Phillips, J. C., et al.
+(2022). «Experimental mapping of short-wavelength phonons in proteins.»
+*Structural Dynamics*, 9(2), 024301.
+
+— ◇ —
+
+**◆**
+
+</PausaCientifica>
+
+## Cierre · ¿Podemos escuchar la vibración de la vida?
+
+La materia vibra cuánticamente. Las proteínas vibran. Las membranas
+vibran. Los tejidos transmiten fonones. Esto está establecido. Pero
+queda una pregunta más íntima, más sensorial, que el siglo XXI hizo
+posible plantear con seriedad por primera vez en la historia.
+
+¿Podemos *escuchar* esas vibraciones? ¿Podemos extender el oído humano
+hasta el rango de frecuencias donde vibran las células vivas? ¿Es
+posible un instrumento que haga audible la vibración de la vida a su
+escala más íntima —no metafóricamente, sino literalmente, como una nota
+que un oído humano pueda registrar?
+
+La respuesta, sorprendentemente, es afirmativa. Y conduce a un
+experimento extraordinario realizado en la Universidad de California,
+Los Ángeles, durante la primera década del siglo XXI.
+
+Un físico nano-experimentalista llamado **James Gimzewski** tomó un
+microscopio de fuerza atómica —el instrumento más fino del que la
+humanidad dispone para "tocar" superficies a escala atómica, capaz de
+registrar desplazamientos de fracciones de nanómetro. Lo apoyó
+delicadamente sobre la pared celular de una levadura viva. Y descubrió
+que la célula vibraba en frecuencias audibles.
+
+A ese experimento, y al campo emergente que abrió —la **sonocitología**,
+el estudio del sonido celular—, está dedicada la siguiente sección.
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+**Notas y referencias**
+
+**<sup>1</sup>** Einstein, A. (1907). «Die Plancksche Theorie der
+Strahlung und die Theorie der spezifischen Wärme.» *Annalen der Physik*,
+22, 180–190. Una corrección menor apareció en el mismo volumen, p. 800,
+en *"Berichtigung zu meiner Arbeit"*. El paper inaugura formalmente la
+teoría cuántica del estado sólido.
+
+**<sup>2</sup>** Pais, A. (1982). *Subtle is the Lord: The Science and
+the Life of Albert Einstein*. Oxford: Oxford University Press, p. 389.
+La frase original en inglés: *"With this paper, solid state quantum
+theory begins."*
+
+**<sup>3</sup>** Debye, P. (1912). «Zur Theorie der spezifischen
+Wärmen.» *Annalen der Physik*, 39(14), 789–839. Para una exposición
+moderna del modelo Einstein-Debye y su rango de validez, ver: Kittel, C.
+(2005). *Introduction to Solid State Physics* (8th edition). Hoboken:
+Wiley, capítulo 5. El término *fonón* fue introducido por Igor Tamm en
+1930; el nombre fue sugerido por Yakov Frenkel.
+
+**<sup>4</sup>** Wang, Y., Phillips, J. C., Petridis, L., et al. (2022).
+«Experimental mapping of short-wavelength phonons in proteins.»
+*Structural Dynamics*, 9(2), 024301. Detección experimental de modos
+colectivos cuantizados en la proteína fluorescente verde mediante
+dispersión inelástica de neutrones, realizada en el Spallation Neutron
+Source del Oak Ridge National Laboratory.

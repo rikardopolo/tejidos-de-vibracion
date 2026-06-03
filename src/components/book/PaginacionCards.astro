@@ -1,0 +1,110 @@
+---
+/**
+ * <PaginacionCards> · navegación anterior/siguiente al pie de cada pieza.
+ *
+ * Sprint shell-redesign (preview/chapters-1-2-3). Extrae el <nav> inline
+ * que vivía en [section].astro y lo reexpresa como cards expresivas
+ * (kicker · marcador compacto · título italic), siguiendo la referencia
+ * ref-2 de la Obertura.
+ *
+ * Cuando no hay pieza adyacente, la card degrada a "Índice del capítulo".
+ */
+import { pieceMarker, type PieceKind } from '@/lib/piece-num';
+
+interface Adjacent {
+  /** Slug-hoja de la pieza (último segmento). */
+  slug: string;
+  kind: PieceKind;
+  num?: string;
+  title: string;
+}
+interface Props {
+  /** Slug del capítulo (para los hrefs y el fallback al índice). */
+  chapter: string;
+  prev?: Adjacent | null;
+  next?: Adjacent | null;
+}
+const { chapter, prev, next } = Astro.props;
+const indexHref = `/capitulo/${chapter}`;
+---
+
+<nav class="paginacion" aria-label="Navegación entre piezas">
+  {prev ? (
+    <a class="paginacion__card paginacion__card--prev" href={`/capitulo/${chapter}/${prev.slug}`}>
+      <span class="paginacion__dir">← Anterior</span>
+      <span class="paginacion__num">{pieceMarker({ kind: prev.kind, num: prev.num })}</span>
+      <span class="paginacion__title">{prev.title}</span>
+    </a>
+  ) : (
+    <a class="paginacion__card paginacion__card--back" href={indexHref}>
+      <span class="paginacion__dir">← Índice</span>
+      <span class="paginacion__title">Índice del capítulo</span>
+    </a>
+  )}
+
+  {next ? (
+    <a class="paginacion__card paginacion__card--next" href={`/capitulo/${chapter}/${next.slug}`}>
+      <span class="paginacion__dir">Siguiente →</span>
+      <span class="paginacion__num">{pieceMarker({ kind: next.kind, num: next.num })}</span>
+      <span class="paginacion__title">{next.title}</span>
+    </a>
+  ) : (
+    <a class="paginacion__card paginacion__card--back" href={indexHref}>
+      <span class="paginacion__dir">Índice →</span>
+      <span class="paginacion__title">Índice del capítulo</span>
+    </a>
+  )}
+</nav>
+
+<style>
+  .paginacion {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 5rem 0 6rem;
+    padding-top: 3rem;
+    border-top: 1px solid var(--pergamino-2);
+  }
+  .paginacion__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.3rem 1.2rem;
+    text-decoration: none;
+    border: 1px solid var(--pergamino-2);
+    border-radius: 2px;
+    color: var(--tinta);
+    transition: border-color 180ms ease, background 180ms ease;
+  }
+  .paginacion__card:hover {
+    border-color: var(--oro-suave);
+    background: var(--pergamino-2);
+  }
+  .paginacion__card--prev { text-align: left; align-items: flex-start; }
+  .paginacion__card--next { text-align: right; align-items: flex-end; }
+  .paginacion__card--back { text-align: center; align-items: center; }
+  .paginacion__dir {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+  }
+  .paginacion__num {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--reposo);
+    letter-spacing: 0.04em;
+  }
+  .paginacion__title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--tinta);
+    line-height: 1.25;
+  }
+
+  @media (max-width: 540px) {
+    .paginacion { grid-template-columns: 1fr; }
+  }
+</style>

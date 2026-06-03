@@ -1,0 +1,129 @@
+---
+/**
+ * <CapituloToc> · índice navegable de las piezas de un capítulo.
+ *
+ * Sprint shell-redesign (preview/chapters-1-2-3). Clon de <OberturaToc>
+ * repintado a la paleta oro del libro. Lista las piezas del capítulo
+ * (no los headings de la página actual · eso era el viejo BookToc).
+ *
+ * El summary "☰ ÍNDICE" vive en el slot izquierdo del header del
+ * BookReader. El panel abre bajo el header. Cierre por
+ * outside-click / ESC vía /book-chrome.js.
+ *
+ * Patrón <details>+<summary>: toggle nativo sin JS framework.
+ */
+import { getCollection } from 'astro:content';
+import { pieceMarker, type PieceKind } from '@/lib/piece-num';
+
+interface Props {
+  /** Slug del capítulo padre (ej. "cap-2-ciencia-escuchar"). */
+  chapter: string;
+  /** Slug de la pieza actual (último segmento) · se highlightea. */
+  current?: string;
+  /** Etiqueta del capítulo para el título del panel (ej. "Capítulo II"). */
+  chapterLabel?: string;
+}
+const { chapter, current, chapterLabel } = Astro.props;
+
+const all = await getCollection('chapter-sections', ({ data }) => data.chapter === chapter);
+all.sort((a, b) => a.data.order - b.data.order);
+
+function leaf(slug: string): string {
+  return slug.split('/').pop() ?? slug;
+}
+---
+
+<details class="cap-toc" id="cap-toc">
+  <summary class="book-chrome__btn cap-toc__toggle" aria-label="Abrir índice del capítulo">
+    <span class="book-chrome__btn-icon" aria-hidden="true">☰</span>
+    <span class="book-chrome__btn-label">Índice</span>
+  </summary>
+  <nav class="cap-toc__panel" aria-label="Índice del capítulo">
+    <p class="cap-toc__title">{chapterLabel ?? 'Capítulo'} · {all.length} piezas</p>
+    <ol class="cap-toc__list">
+      {all.map((entry) => {
+        const slug = leaf(entry.slug);
+        const isCurrent = slug === current;
+        return (
+          <li class={`cap-toc__item${isCurrent ? ' is-current' : ''}`}>
+            <a href={`/capitulo/${chapter}/${slug}`} aria-current={isCurrent ? 'page' : undefined}>
+              <span class="cap-toc__num">{pieceMarker({ kind: entry.data.kind as PieceKind, num: entry.data.num })}</span>
+              <span class="cap-toc__name">{entry.data.title}</span>
+            </a>
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
+</details>
+
+<style>
+  /* ── Toggle (summary) · pill del header ───────────────────────── */
+  .cap-toc { position: relative; }
+  .cap-toc__toggle { list-style: none; cursor: pointer; }
+  .cap-toc__toggle::-webkit-details-marker { display: none; }
+  .cap-toc__toggle::marker { content: ''; }
+
+  /* ── Panel desplegable ────────────────────────────────────────
+     position: absolute relativo a `.cap-toc` (no fixed). El header
+     `.cap-chrome` tiene backdrop-filter, que crea un containing block
+     para `position: fixed` y rompería el anclaje al viewport. Con
+     absolute el panel cuelga del summary de forma predecible en todos
+     los anchos. */
+  .cap-toc__panel { display: none; }
+  .cap-toc[open] .cap-toc__panel {
+    display: block;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    width: min(360px, calc(100vw - 2.4rem));
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    padding: 1.4rem 1.5rem 1.6rem;
+    background: var(--pergamino);
+    border: 1px solid var(--oro-fantasma);
+    box-shadow: 0 12px 36px rgba(26, 22, 18, 0.18);
+    z-index: 91;
+  }
+
+  .cap-toc__title {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+    margin: 0 0 1rem;
+  }
+  .cap-toc__list { list-style: none; padding: 0; margin: 0; }
+  .cap-toc__item a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding: 0.45rem 0;
+    text-decoration: none;
+    border-bottom: 1px solid var(--pergamino-2);
+    color: var(--tinta);
+    font-family: var(--serif);
+    transition: color 0.15s;
+  }
+  .cap-toc__item:last-child a { border-bottom: 0; }
+  .cap-toc__item a:hover { color: var(--oro-suave); }
+  .cap-toc__num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--reposo);
+    flex-shrink: 0;
+    min-width: 1.9rem;
+    text-align: center;
+  }
+  .cap-toc__name { font-size: 0.95rem; line-height: 1.35; }
+  .cap-toc__item.is-current a { color: var(--oro-suave); font-style: italic; }
+  .cap-toc__item.is-current .cap-toc__num { color: var(--oro-suave); }
+
+  @media (max-width: 640px) {
+    .cap-toc[open] .cap-toc__panel {
+      width: calc(100vw - 2rem);
+      max-height: 70vh;
+    }
+  }
+</style>

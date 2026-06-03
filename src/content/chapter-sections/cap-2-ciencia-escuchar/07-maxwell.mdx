@@ -1,0 +1,627 @@
+---
+chapter: "cap-2-ciencia-escuchar"
+kind: "numbered"
+num: "2.5"
+title: "Maxwell y el Espectro Electromagnético"
+subtitle: "La luz como vibración del campo · y la grieta que abrió el siglo XX"
+order: 8
+headerLabel: "Cap. 2 · §2.5"
+publishedAt: 2026-05-09
+authors:
+  - "Ricardo Polo"
+tags:
+  - "cap-2"
+  - "maxwell"
+  - "electromagnetismo"
+  - "luz"
+  - "hertz"
+  - "corriente-desplazamiento"
+---
+
+import VozTejido from '@/components/book/VozTejido.astro';
+import PausaCientifica from '@/components/book/PausaCientifica.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
+import Formula from '@/components/book/Formula.astro';
+
+*Cuando la luz se reveló como vibración*
+
+— ◇ —
+
+## La pregunta de Helmholtz
+
+Helmholtz cerró el círculo del sonido en 1863. Cuerda, ecuación, oído:
+el triángulo objeto-onda-perceptor estaba completo. Pero su pregunta
+final apuntaba más lejos. Si el sonido es vibración mecánica del aire,
+¿qué clase de vibración es **la luz**?
+
+La pregunta no era nueva. Llevaba dos siglos abierta.
+
+Newton, en su *Opticks* de 1704, había defendido que la luz era un flujo
+de partículas diminutas —*corpúsculos*— que viajaban en línea recta
+desde la fuente hasta el ojo. Christiaan Huygens, en el mismo siglo
+XVII, había propuesto lo contrario: que la luz era una onda que se
+propagaba a través de un medio invisible llamado *éter luminífero*.
+Durante el siglo XVIII, la autoridad de Newton inclinó la balanza hacia
+la teoría corpuscular. Pero a comienzos del siglo XIX, los experimentos
+de Thomas Young con la doble rendija (1801) y de Augustin Fresnel con la
+difracción y la interferencia (1818) mostraron, con evidencia
+inapelable, que la luz se comporta como onda. Las franjas brillantes y
+oscuras que aparecían cuando la luz pasaba por dos rendijas estrechas
+eran exactamente lo que la teoría ondulatoria predecía y exactamente lo
+que la teoría corpuscular no podía explicar.
+
+Para mediados del siglo XIX, casi todos los físicos aceptaban que la luz
+era onda. Pero quedaban dos preguntas sin respuesta. **Onda de qué.** Y
+**onda en qué medio.**
+
+Michael Faraday, en una serie de experimentos asombrosos entre 1831 y
+1845, había mostrado conexiones físicas verificadas entre la
+electricidad, el magnetismo y la luz: un campo magnético podía rotar el
+plano de polarización de un haz luminoso. Pero Faraday era hijo de un
+herrero, autodidacta, sin formación matemática. Podía intuir las
+relaciones, podía describirlas con metáforas vívidas (sus famosas
+*líneas de fuerza*), pero no podía formularlas en ecuaciones.
+
+La síntesis matemática esperaba a un escocés modesto que, en King's
+College London, durante la primera mitad de la década de 1860,
+escribiría cuatro ecuaciones —en realidad veinte, en su forma original—
+que cambiarían para siempre la noción humana de "vibración".
+
+— ◇ —
+
+**◆**
+
+## Maxwell, el escocés callado
+
+James Clerk Maxwell nació en Edimburgo el 13 de junio de 1831, hijo
+único de un abogado y de una madre devota que le enseñaba la Biblia.
+Pasó la infancia en Glenlair, finca familiar en Dumfries and Galloway,
+en el suroeste de Escocia. A los ocho años perdió a su madre por cáncer
+abdominal —enfermedad y edad que, casi cincuenta años después, lo
+matarían a él mismo.
+
+Era un niño extraordinariamente curioso. Su pregunta favorita, según los
+testimonios familiares, era *"What's the go o' that?"* —¿qué hace eso,
+cómo funciona?— y si la respuesta no le satisfacía, insistía con *"But
+what's the particular go of it?"* —pero ¿cuál es exactamente su
+funcionamiento? A los catorce años publicó su primer paper científico,
+sobre curvas ovales, leído en su nombre ante la Royal Society of
+Edinburgh.
+
+Estudió en la University of Edinburgh entre 1847 y 1850, y luego en
+Cambridge —primero Peterhouse, después Trinity College— hasta 1854. Se
+graduó como **Second Wrangler** y Smith's Prizeman, distinciones
+académicas máximas. Tras unos años como profesor en Marischal College de
+Aberdeen, fue nombrado en 1860 catedrático de Filosofía Natural en
+King's College London.
+
+Allí, durante cinco años, hizo el trabajo que lo convertiría en uno de
+los físicos más influyentes de toda la historia.
+
+Lo que tenía a su disposición que nadie antes había tenido reunido en
+una sola mente:
+
+— **Los experimentos de Faraday** sobre la rotación del plano de
+polarización de la luz por campos magnéticos (1845), que conectaban
+directamente óptica y electromagnetismo. — **Las medidas precisas de
+Wilhelm Weber y Rudolf Kohlrausch (1856)** de las constantes eléctrica y
+magnética del vacío, ε₀ y μ₀. — **Las medidas refinadas de la velocidad
+de la luz** de Hippolyte Fizeau (1849, c ≈ 313.000.000 m/s) y Léon
+Foucault (1862, c ≈ 298.000.000 m/s).
+
+Y tenía algo más, decisivo, que ningún físico anterior había poseído: la
+formación matemática rigurosa de Cambridge combinada con una **modestia
+humana** profunda. Maxwell no buscaba originalidad. Buscaba la verdad.
+Estaba dispuesto a tomar en serio las intuiciones de Faraday —incluyendo
+las que sus colegas más matemáticos consideraban toscas— y traducirlas
+pacientemente al lenguaje formal.
+
+Esa combinación —rigor matemático sin arrogancia matemática— sería
+decisiva. Porque la solución que Maxwell encontró no requería desechar
+la física conocida. Requería notar que era **asimétrica**, y
+completarla.
+
+— ◇ —
+
+**◆**
+
+## La corriente de desplazamiento · una corrección que cambió el mundo
+
+A mediados del siglo XIX, las leyes electromagnéticas conocidas eran
+cuatro:
+
+— **Ley de Gauss para el campo eléctrico:** las cargas eléctricas crean
+campos eléctricos a su alrededor. — **Ley de Gauss para el magnetismo:**
+no existen monopolos magnéticos. Los polos magnéticos siempre vienen en
+pares Norte-Sur, nunca aislados. — **Ley de Faraday:** un campo
+magnético cambiante genera un campo eléctrico (este principio sostiene
+todo generador eléctrico moderno). — **Ley de Ampère:** una corriente
+eléctrica genera un campo magnético a su alrededor (este principio
+sostiene todo electroimán).
+
+Cuatro leyes verificadas experimentalmente. Cuatro leyes consistentes
+entre sí. Pero —y aquí está la grieta— **asimétricas**.
+
+Si lees las cuatro leyes con atención, notarás un hueco. La tercera dice
+que un campo magnético cambiante genera un campo eléctrico (Faraday lo
+había demostrado). La cuarta dice que una corriente —es decir, cargas
+eléctricas en movimiento— genera un campo magnético. Pero falta algo. Si
+los campos magnéticos cambiantes generan campos eléctricos, ¿por qué los
+campos eléctricos cambiantes no generan campos magnéticos? La simetría
+parecería exigirlo.
+
+Maxwell, entre 1861 y 1862, decidió tomar esa intuición en serio. En su
+serie de papers *On Physical Lines of Force*, propuso añadir un término
+extra a la ley de Ampère —un término que él llamó *corriente de
+desplazamiento* (*displacement current*)— para que **un campo eléctrico
+cambiante también generara un campo magnético**, no solo las corrientes
+de cargas reales.
+
+La corrección parecía pequeña. En la práctica, era de una elegancia
+revolucionaria. Convertía las cuatro leyes en un sistema **simétrico y
+autoconsistente**: cualquier cambio en E genera B, cualquier cambio en B
+genera E. Y aquí ocurrió lo decisivo.
+
+Cuando un sistema físico tiene esa estructura —cuando un cambio en una
+cantidad genera una cantidad emparejada que a su vez genera la primera—
+cualquier perturbación inicial **se auto-sostiene**. El cambio de E
+genera B; el cambio de ese B genera E; el cambio de ese nuevo E genera
+B; y así indefinidamente. El patrón se propaga por sí mismo, sin
+necesitar materia que lo transporte. **El campo electromagnético es su
+propio sustrato.**
+
+En 1865, Maxwell publicó el paper definitivo: *A Dynamical Theory of the
+Electromagnetic Field*, leído ante la Royal Society el 8 de diciembre de
+1864 y enviado a imprenta el 16 de junio de 1865.**<sup>1</sup>** Veinte
+ecuaciones diferenciales parciales. La reformulación elegante en cuatro
+ecuaciones vectoriales —la que cualquier estudiante de física aprende
+hoy— vendría décadas después, de manos de Oliver Heaviside y del propio
+Heinrich Hertz. Pero la física de fondo estaba ya completa en 1865.
+
+Y entonces ocurrió algo extraordinario.
+
+— ◇ —
+
+**◆**
+
+## La luz desenmascarada
+
+Cuando Maxwell manipuló matemáticamente sus ecuaciones, **emergió una
+ecuación de onda** estructuralmente idéntica a la de D'Alembert para la
+cuerda vibrante que vimos en §2.3. La perturbación electromagnética se
+propagaba en el espacio según las mismas matemáticas que la perturbación
+de una cuerda tensada, solo que en lugar de propagarse a través de un
+medio mecánico (el aire, una cuerda), se propagaba a través del campo
+electromagnético mismo.
+
+La velocidad predicha por las ecuaciones era:
+
+1
+
+c = ──────────
+
+√(ε₀·μ₀)
+
+donde ε₀ y μ₀ son la permitividad eléctrica y la permeabilidad magnética
+del vacío. Estas dos constantes ya habían sido medidas en laboratorios
+eléctricos por Weber y Kohlrausch en 1856, sin que nadie sospechara que
+tenían algo que ver con la luz.
+
+Maxwell sustituyó los valores experimentales conocidos en su fórmula. El
+resultado fue **aproximadamente 310.740.000 metros por segundo**.
+
+Comparemos. La velocidad de la luz medida por Fizeau en 1849: 313
+millones de metros por segundo. Por Foucault en 1862: 298 millones. La
+predicción de Maxwell, derivada únicamente de leyes eléctricas y
+magnéticas, caía exactamente en medio del rango de medidas
+experimentales de la luz visible.
+
+La coincidencia era demasiado precisa para ser casual. Y Maxwell la
+interpretó con la sobriedad escocesa de la que era capaz, en una de las
+frases más famosas de toda la historia de la física:
+
+> "This velocity is so nearly that of light, that it seems we have
+> strong reason to conclude that light itself (including radiant heat
+> and other radiations if any) is an electromagnetic disturbance in the
+> form of waves propagated through the electromagnetic field according
+> to electromagnetic laws."
+
+*"Esta velocidad es tan cercana a la de la luz que parece que tenemos
+razones fuertes para concluir que la luz misma (incluyendo el calor
+radiante y otras radiaciones si las hay) es una perturbación
+electromagnética en forma de ondas propagadas a través del campo
+electromagnético según leyes electromagnéticas."***<sup>1</sup>**
+
+Dos siglos de debate sobre la naturaleza de la luz —partícula contra
+onda, éter luminífero contra propagación pura— quedaban resueltos por
+una sola ecuación. La luz era electromagnetismo. Era oscilación del
+mismo campo que mueve los imanes y las corrientes. La óptica, la
+electricidad y el magnetismo no eran tres ciencias distintas. Eran tres
+aspectos de una sola física.
+
+— ◇ —
+
+**◆**
+
+<Formula num="2.5" titulo="Velocidad de la luz desde las ecuaciones de Maxwell">
+
+$$c = \dfrac{1}{\sqrt{\varepsilon_0\,\mu_0}}$$
+
+<Fragment slot="donde">
+
+**c** · velocidad de la luz en el vacío (metros por segundo)
+
+**ε₀** · permitividad eléctrica del vacío, ε₀ ≈ 8.854 × 10⁻¹² F/m. Léase «épsilon cero».
+
+**μ₀** · permeabilidad magnética del vacío, μ₀ = 4π × 10⁻⁷ T·m/A. Léase «mu cero».
+
+*Derivada por James Clerk Maxwell en A Dynamical Theory of the Electromagnetic Field (Royal Society, 1865). Las dos constantes ε₀ y μ₀ habían sido medidas en laboratorios eléctricos por Weber y Kohlrausch en 1856 sin que nadie sospechara su relación con la luz. Sustituyendo los valores experimentales, Maxwell obtuvo c ≈ 310.740.000 m/s, en perfecta concordancia con las medidas ópticas de Fizeau (313 millones, 1849) y Foucault (298 millones, 1862). La luz era electromagnetismo, propagado a través del campo según leyes electromagnéticas. Dos siglos de debate sobre la naturaleza de la luz quedaron resueltos por una sola ecuación.*
+
+</Fragment>
+
+</Formula>
+
+<FiguraTDV
+  imagen="/assets/cap-2/figura-2-5.png"
+  numero="2.5"
+  titulo="El espectro electromagnético completo"
+  alt="Espectro electromagnético en escala logarítmica desde ondas de radio hasta rayos gamma con la ventana visible humana de una octava destacada"
+  descripcion="El espectro electromagnético abarca aproximadamente 24 órdenes de magnitud en frecuencia. La ventana visible humana (380-790 THz) corresponde a menos de una octava — minúscula comparada con el espectro completo. Lo que llamamos «luz» en sentido cotidiano es solo una franja muy estrecha de la realidad electromagnética. Todas estas bandas son la misma física a frecuencias diferentes, descritas por las mismas cuatro ecuaciones que Maxwell escribió entre 1861 y 1865."
+/>
+
+## El espectro entero
+
+Una vez identificada la luz como onda electromagnética, las ecuaciones
+de Maxwell admiten ondas de **cualquier frecuencia**. El ojo humano
+percibe solamente una banda estrecha del espectro —apenas una octava de
+frecuencia, aproximadamente entre 400 y 790 terahertz, lo que
+corresponde a longitudes de onda entre 380 y 750 nanómetros. Eso es lo
+que llamamos *luz visible*. Pero las ecuaciones admiten infinitamente
+más.
+
+Hoy, ciento sesenta años después de Maxwell, conocemos el espectro
+electromagnético completo:
+
+— **Ondas de radio** (kHz–GHz): WiFi, radio AM y FM, telefonía móvil,
+transmisión de televisión. — **Microondas** (GHz): hornos microondas,
+comunicaciones satelitales, radares meteorológicos. — **Infrarrojo**
+(terahertz bajos): calor radiante de cualquier cuerpo a temperatura
+ambiente, mandos a distancia, visión nocturna térmica. — **Luz visible**
+(~400–790 THz): la única banda que el ojo humano percibe. Una octava
+estrecha en un espectro de más de quince órdenes de magnitud. —
+**Ultravioleta** (PHz): quemaduras solares, esterilización médica,
+fluorescencia. — **Rayos X** (ExHz): imagen médica, cristalografía de
+proteínas. — **Rayos gamma** (ZHz): radiactividad, explosiones de
+supernovas, terapias oncológicas dirigidas.
+
+**Todas son la misma física.** Las antenas WiFi de tu casa y los rayos
+gamma emitidos por una estrella en colapso obedecen a las mismas cuatro
+ecuaciones que un escocés escribió en King's College London entre 1861 y
+1865. La diferencia no está en el tipo de fenómeno: está únicamente en
+la frecuencia de oscilación del mismo campo electromagnético.
+
+Aquí, en este punto del capítulo, *Tejidos de Vibración* encuentra uno
+de sus anclajes científicos más sólidos del Volumen I. Cuando el libro
+habla de "vibración" como categoría unificadora del cosmos, no está
+usando la palabra metafóricamente ni por casualidad poética. Está
+nombrando, con precisión técnica, lo que la electrodinámica clásica
+describe: el campo electromagnético es un océano único, modulable en
+frecuencia, y la diversidad de fenómenos que percibimos como luz, calor,
+ondas de radio, rayos X o radiación cósmica son **diferentes notas de la
+misma cuerda física**.
+
+Galileo midió cuerdas. Mersenne dio el primer número en hercios.
+D'Alembert escribió la ecuación. Helmholtz entendió el oído. Maxwell,
+finalmente, demostró que el universo entero —no solo el aire y las
+cuerdas— vibra.
+
+— ◇ —
+
+<VozTejido titulo="James Clerk Maxwell (1831–1879)">
+
+*El escocés modesto que unificó luz, electricidad y magnetismo*
+
+Cuando Albert Einstein, en 1931, fue invitado a celebrar el centenario
+del nacimiento de Maxwell, escribió que su obra había sido *"la más
+profunda y la más fructífera que la física ha experimentado desde los
+tiempos de Newton"*. Cuando Richard Feynman, treinta años después,
+escribió sus *Lectures on Physics*, dedicó un párrafo entero a defender
+una afirmación más radical: *"Desde una perspectiva larga de la historia
+humana, vista desde, digamos, diez mil años en el futuro, no puede haber
+duda de que el evento más significativo del siglo XIX será juzgado como
+el descubrimiento por Maxwell de las leyes de la electrodinámica. La
+Guerra Civil Americana palidecerá hasta la insignificancia provincial en
+comparación con este importante evento científico de la misma década."*
+
+Estas frases, viniendo de dos físicos cuya obra propia transformó
+completamente la imagen humana del cosmos, sugieren que Maxwell hizo
+algo cuya magnitud aún no terminamos de medir. Vale la pena entender
+quién fue, qué problema resolvió, y por qué su modestia personal
+contrastaba tan radicalmente con la magnitud de su logro.
+
+El **Acto Primero** de su vida científica —el problema histórico que
+enfrentó— era el de una física fragmentada. La óptica era un campo. La
+electricidad, otro. El magnetismo, un tercero. Cada uno tenía sus
+propios experimentos, sus propias leyes, su propia comunidad de
+practicantes. Faraday había mostrado que los tres campos estaban
+conectados, pero, sin formación matemática, no podía formalizar las
+conexiones. Maxwell heredó esa situación al graduarse de Cambridge en
+1854, con veintitrés años, en plena posesión de las herramientas
+matemáticas más avanzadas de su tiempo.
+
+Su primera decisión fue, paradójicamente, no usar esas herramientas para
+imponer formalismo a Faraday. Tomó las metáforas físicas del autodidacta
+y las matematizó respetando su intuición. *On Faraday's Lines of Force*
+(1855-56), su primer paper electromagnético, está dedicado a demostrar
+que las "líneas de fuerza" que Faraday dibujaba para visualizar los
+campos podían formalizarse rigurosamente. Esa fidelidad —la del joven
+matemático brillante que se inclina ante el viejo experimentalista sin
+formación— marca el carácter de Maxwell: rigor sin arrogancia,
+originalidad sin desprecio por los predecesores.
+
+El **Acto Segundo** —el insight que aportó— ocurrió entre 1861 y 1865.
+Notó que las leyes electromagnéticas conocidas eran asimétricas, y que
+la asimetría era física, no sólo matemática. Si los campos magnéticos
+cambiantes generan campos eléctricos, por simetría debería ser cierto
+que los campos eléctricos cambiantes generan campos magnéticos. Este
+principio de simetría —puramente teórico, basado en intuición estética y
+filosófica antes que experimental— le llevó a añadir la *corriente de
+desplazamiento* a la ley de Ampère en 1861. Sin esa corrección, las
+ecuaciones no admiten ondas. Con ella, las admiten — y las ondas
+resultan tener exactamente la velocidad de la luz.
+
+Maxwell hizo algo más profundo que predecir las ondas electromagnéticas.
+**Predijo que la luz misma es onda electromagnética.** Esta unificación
+—electricidad, magnetismo y óptica como tres aspectos de una sola
+realidad física— es uno de los logros conceptuales más profundos de toda
+la historia de la ciencia.
+
+Después del paper de 1865, Maxwell se retiró a Glenlair durante seis
+años, dedicado a refinar su teoría y a otros temas (la teoría cinética
+de los gases, el análisis de los anillos de Saturno, la visión
+cromática). En 1871 fue convocado para fundar y dirigir el nuevo
+**Cavendish Laboratory de Cambridge**, que bajo su dirección se
+convertiría en uno de los laboratorios de física más importantes del
+mundo (cinco Premios Nobel de física en su primer siglo). Allí pasó los
+últimos ocho años de su vida.
+
+El **Acto Tercero** —el legado— es vasto pero quizás más amargo de lo
+que merecía. Maxwell murió en Cambridge el 5 de noviembre de 1879, a los
+**48 años**, de cáncer abdominal: la misma enfermedad que mató a su
+madre exactamente a la misma edad. No vio confirmadas experimentalmente
+sus predicciones. Heinrich Hertz lo haría ocho años después de su
+muerte. Tampoco vio cómo, en 1905, un patentador suizo de 26 años
+llamado Albert Einstein tomaría la constancia de la velocidad de la luz
+—implícita en las ecuaciones de Maxwell— como postulado fundamental de
+la teoría especial de la relatividad, y reescribiría con ello la noción
+humana de espacio y tiempo.
+
+Maxwell vivió toda su vida como un cristiano presbiteriano profundamente
+devoto. Cuidaba personalmente a los enfermos del pueblo de Glenlair.
+Cuando los primeros síntomas de su propio cáncer aparecieron, no se lo
+dijo a nadie durante meses, porque su esposa Katherine Mary —siete años
+mayor que él— estaba convaleciente y él no quería preocuparla. Murió
+quietamente, sin haber escuchado las palabras que Einstein y Feynman
+pronunciarían sobre él.
+
+**Frase-puente al capítulo presente:** *Cada vez que enciendes una
+pantalla, abres una llamada de WhatsApp, escuchas la radio del coche o
+pasas por una antena de telefonía móvil, estás dentro de un fenómeno
+físico que un escocés modesto formuló en King's College London entre
+1861 y 1865, y que un alumno alemán de Helmholtz confirmó
+experimentalmente en Karlsruhe en 1887. La civilización inalámbrica
+entera del siglo XXI cabe dentro de cuatro ecuaciones que Maxwell
+escribió antes de cumplir 35 años.*
+
+— ◇ —
+
+**◆**
+
+<FiguraTDV
+  imagen="/assets/cap-2/figura-2-6.png"
+  numero="2.6"
+  titulo="Aparato de Hertz"
+  subtitulo="primera transmisión y recepción de ondas electromagnéticas"
+  alt="Aparato experimental de Hertz de 1886 con transmisor de chispas y receptor de anillo de cobre demostrando la propagación de ondas electromagnéticas"
+  descripcion="Aparato de Heinrich Hertz, Karlsruhe, 1886-1887. El transmisor genera ondas electromagnéticas mediante chispas de alto voltaje entre dos esferas de zinc. El receptor — un alambre de cobre rectangular con su propia separación — capta las ondas a varios metros de distancia y produce chispas correlacionadas. Es la primera demostración experimental directa de las predicciones de Maxwell (1865), ocho años después de su muerte. Cuando un alumno preguntó qué utilidad tendría, Hertz respondió: «Es solo un experimento que prueba que el Maestro Maxwell tenía razón»."
+/>
+
+</VozTejido>
+
+## 1887 · Hertz cierra el círculo
+
+Ocho años después de la muerte de Maxwell, en un laboratorio de
+Karlsruhe, Alemania, un joven profesor alemán confirmaría
+experimentalmente todo lo que el escocés había predicho.
+
+**Heinrich Rudolf Hertz** había nacido en Hamburgo en 1857. Estudió
+física en Berlín bajo la dirección directa de **Hermann von Helmholtz**
+—el mismo Helmholtz al que dedicamos la sección anterior—. Doctorado en
+1880 bajo Helmholtz. Profesor en Karlsruhe Polytechnic University desde
+1885. Para 1886, había decidido que era hora de probar experimentalmente
+las predicciones de Maxwell.
+
+Su aparato, asombrosamente sencillo en retrospectiva: un transmisor
+consistente en dos esferas de zinc de 30 centímetros de diámetro
+separadas por unos 3 metros, conectadas por un alambre de cobre de 2
+milímetros de grosor con una pequeña separación central donde podían
+producirse chispas eléctricas al aplicar alto voltaje. Y un receptor
+consistente en un alambre de cobre curvado en forma de rectángulo
+(120×80 cm) con su propia separación de chispa diminuta.
+
+En noviembre de 1886, Hertz aplicó alto voltaje al transmisor. Saltaron
+chispas en la separación central. Y, simultáneamente, sin conexión
+física, **saltaron también chispas en el receptor a varios metros de
+distancia**. Las ondas electromagnéticas predichas por Maxwell habían
+cruzado el aire entre los dos aparatos y excitado el receptor
+exactamente como predecía la teoría.
+
+En 1887 y 1888, Hertz publicó los resultados completos en *Annalen der
+Physik*.**<sup>2</sup>** Llegó a detectar las ondas hasta a 18 metros de
+distancia. Mediante interferencia con superficies reflectantes, llegó a
+producir ondas estacionarias a 450 megahercios, midiendo su longitud y
+confirmando la velocidad predicha por Maxwell.
+
+Cuando un estudiante le preguntó qué utilidad tendría el descubrimiento,
+Hertz respondió con la modestia que había aprendido de su maestro: *"Es
+de ninguna utilidad. Es solo un experimento que prueba que el Maestro
+Maxwell tenía razón."*
+
+Hertz murió a los 36 años, en 1894, de granulomatosis con poliangeítis
+—el mismo año en que murió Helmholtz. Maestro y discípulo se fueron
+juntos. No vio que siete años después Marconi usaría sus ondas para la
+primera transmisión transatlántica. Hoy la unidad de frecuencia lleva su
+apellido: **hercio (Hz)**, en honor a quien demostró que Maxwell tenía
+razón. La civilización inalámbrica entera del planeta reposa sobre lo
+que ocurrió en un laboratorio universitario alemán en noviembre de 1886.
+
+— ◇ —
+
+**◆**
+
+<PausaCientifica titulo="Maxwell y los límites de su unificación">
+
+**Está documentado y forma parte del consenso científico actual:**
+
+— Las ecuaciones de Maxwell describen exhaustivamente el
+electromagnetismo clásico: la propagación de ondas electromagnéticas en
+cualquier rango de frecuencia, la interacción de cargas y corrientes con
+campos, las propiedades ópticas de medios materiales, la generación y
+detección de radiación.
+
+— La luz visible es radiación electromagnética en una banda estrecha del
+espectro (aproximadamente entre 400 y 790 terahertz). Esto está
+experimentalmente verificado desde Hertz (1887-88) hasta los
+aceleradores de partículas modernos.
+
+— El espectro electromagnético es continuo: ondas de radio, microondas,
+infrarrojo, luz visible, ultravioleta, rayos X y rayos gamma son la
+misma física a frecuencias diferentes.
+
+— La velocidad de la luz en el vacío c = 1/√(ε₀·μ₀) es una constante
+universal, y constituye la base postulacional de la teoría especial de
+la relatividad de Einstein (1905).
+
+**Requiere cautela o matización:**
+
+— La identificación "luz = vibración" es **estructural pero no
+ontológica**. La luz vibra el campo electromagnético; el sonido vibra
+moléculas de aire. Las ecuaciones de onda son matemáticamente análogas
+pero el medio (o ausencia de medio) es físicamente distinto. La luz se
+propaga en el vacío sin necesitar materia; el sonido no puede propagarse
+en el vacío. Confundir estas dos formas de "vibración" como si fueran
+ontológicamente la misma cosa es un error conceptual común en literatura
+divulgativa.
+
+— Las ecuaciones de Maxwell son **clásicas, no cuánticas**. Describen la
+radiación electromagnética como onda continua, no como compuesta de
+fotones. La descripción cuántica completa de la radiación requiere QED
+(electrodinámica cuántica), formulada entre 1947 y 1949 por Richard
+Feynman, Sin-Itiro Tomonaga y Julian Schwinger. En la mayoría de
+regímenes prácticos, las predicciones de Maxwell coinciden con las de
+QED en su límite clásico, pero conceptualmente son teorías distintas.
+
+**Lo que la evidencia no respalda:**
+
+— No hay base para extender las ecuaciones de Maxwell a fenómenos de
+conciencia, vida, intención o entrelazamiento cuántico. Maxwell describe
+campos electromagnéticos clásicos, no estados cuánticos. Cualquier
+divulgación que invoque "ecuaciones de Maxwell" para sustentar
+afirmaciones sobre coherencia cuántica biológica, telepatía o intención
+está usando el nombre de Maxwell sin las matemáticas de Maxwell.
+
+— Las "frecuencias específicas curativas" (528 Hz, 432 Hz y otras) que
+aparecen en literatura divulgativa **no derivan de las ecuaciones de
+Maxwell**. Son afirmaciones independientes que pueden tener o no
+fundamento experimental, pero su justificación no pasa por la
+electrodinámica clásica. Discutiremos estas afirmaciones en su lugar
+apropiado del libro, con el nivel de evidencia que les corresponde.
+
+**Referencia primaria:** Maxwell, J. C. (1865). «A Dynamical Theory of
+the Electromagnetic Field.» *Philosophical Transactions of the Royal
+Society of London*, 155, 459–512.
+
+**Referencia primaria:** Maxwell, J. C. (1873). *A Treatise on
+Electricity and Magnetism* (2 vols.). Oxford: Clarendon Press.
+
+**Referencia primaria:** Hertz, H. (1893). *Electric Waves: Being
+Researches on the Propagation of Electric Action with Finite Velocity
+through Space*. London: Macmillan. Traducción inglesa de los papers
+originales de 1887-88.
+
+**Referencia académica moderna:** Longair, M. (2015). «'…a paper …I hold
+to be great guns': a commentary on Maxwell (1865) 'A dynamical theory of
+the electromagnetic field'.» *Philosophical Transactions of the Royal
+Society A*, 373(2039), 20140473.
+
+— ◇ —
+
+**◆**
+
+</PausaCientifica>
+
+## La grieta que abrió el siglo XX
+
+Maxwell había unificado luz, electricidad y magnetismo como vibración de
+un solo campo. La civilización del siglo XX —radio, televisión,
+telefonía móvil, WiFi, fibra óptica, satélites, GPS— sería construida
+sobre sus cuatro ecuaciones. Si tuviéramos que nombrar el cuerpo de
+conocimiento físico más completamente verificado y más universalmente
+aplicado de toda la historia, las ecuaciones de Maxwell estarían entre
+las primeras candidatas.
+
+Y sin embargo, hacia el final del siglo XIX, comenzó a aparecer un
+problema.
+
+Cuando los físicos aplicaban las ecuaciones de Maxwell a un caso
+aparentemente simple —cómo se distribuye la energía electromagnética
+emitida por un objeto caliente, lo que llamaban *radiación de cuerpo
+negro*—, las predicciones daban resultados absurdos. La teoría predecía
+que cualquier cuerpo caliente debería emitir cantidades infinitas de
+energía en frecuencias ultravioletas. Si las ecuaciones fueran correctas
+en ese régimen, abrir la puerta de un horno tibio bombardearía a
+cualquier persona cercana con una catarata de rayos ultravioletas y
+rayos X capaz de desintegrarla en segundos.
+
+Pero abrir un horno no nos desintegra. Las predicciones eran
+espectacularmente falsas. Se las llamó la **catástrofe ultravioleta**
+—catástrofe no del horno, sino de la teoría.
+
+Era una grieta en el edificio de la física clásica. Y la solución,
+propuesta por un físico alemán llamado **Max Planck** el 14 de diciembre
+de 1900, requeriría algo impensable: aceptar que la energía
+electromagnética **no es continua**, sino que viene en paquetes
+discretos, indivisibles, llamados *cuantos*.
+
+Esa propuesta —que Planck mismo consideraba inicialmente solo un truco
+matemático para evitar las predicciones absurdas— resultaría ser el
+primer paso de una transformación que dejaría obsoleta toda la física
+clásica. La onda continua de Maxwell se rompería en granos. La grieta se
+ensancharía hasta dejar entrar un mundo nuevo.
+
+A esa solución, y a sus consecuencias revolucionarias, está dedicada la
+siguiente sección. Allí comienza, oficialmente, la mecánica cuántica.
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+**Notas y referencias**
+
+**<sup>1</sup>** Maxwell, J. C. (1865). «A Dynamical Theory of the
+Electromagnetic Field.» *Philosophical Transactions of the Royal Society
+of London*, 155, 459–512. La cita célebre sobre la naturaleza
+electromagnética de la luz aparece en la Parte VI del paper, titulada
+«Electromagnetic Theory of Light». El paper fue leído ante la Royal
+Society el 8 de diciembre de 1864 y enviado a imprenta el 16 de junio de
+1865. Maxwell escribió originalmente veinte ecuaciones; la reformulación
+moderna en cuatro ecuaciones vectoriales es obra posterior de Oliver
+Heaviside y del propio Heinrich Hertz, en las décadas de 1880 y 1890.
+
+**<sup>2</sup>** Hertz, H. (1893). *Electric Waves: Being Researches on
+the Propagation of Electric Action with Finite Velocity through Space*.
+London: Macmillan. Traducción inglesa de los papers originales
+publicados en *Annalen der Physik* entre 1887 y 1888. Para una discusión
+moderna detallada del aparato experimental de Hertz y su réplica con
+instrumentación contemporánea, ver: Bryant, J. H. (1988). *Heinrich
+Hertz: The Beginning of Microwaves*. New York: IEEE Press.

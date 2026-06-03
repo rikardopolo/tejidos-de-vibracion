@@ -1,0 +1,101 @@
+---
+/**
+ * CapituloLayout · wrapper delgado sobre <BookReader> para los capítulos
+ * del libro (refactor de deduplicación · 2026-05-31).
+ *
+ * Todo el chrome (header de 3 slots, reading-progress, thread-strip,
+ * paper-grain, reader-controls, scaffold + pre-paint) vive en BookReader.
+ * Este wrapper sólo inyecta:
+ *   - su TOC (CapituloToc) en el slot izquierdo del header
+ *   - su breadcrumb central (◆ §N · Cap. N)
+ *   - su SEO (preview: noindex · OG "Tejidos de Vibración" · sin schema)
+ *   - sus overrides de cuerpo (.prose justify+hyphens · .measure h2)
+ *
+ * El cuerpo de lectura (.prose, .measure, .marginalia) y la tipografía
+ * vienen de system.css (importado por BookReader vía global.css).
+ *
+ * NOTA preview branch (preview/chapters-1-2-3): robots=noindex hasta el
+ * merge a main. (Heredado del Base.astro original.)
+ */
+import BookReader from '@/layouts/BookReader.astro';
+import CapituloToc from '@/components/book/CapituloToc.astro';
+
+interface Props {
+  /** Título HTML del <head>. */
+  title: string;
+  /** Descripción meta. */
+  description: string;
+  /** Slug del capítulo (para CapituloToc). */
+  chapter: string;
+  /** Etiqueta del capítulo (ej. "Capítulo II") · título del panel TOC. */
+  chapterLabel?: string;
+  /** Slug-hoja de la pieza actual · highlight en el TOC. */
+  currentSlug?: string;
+  /** Breadcrumb central del header · omitir en el índice del capítulo. */
+  breadcrumbOrnament?: string;
+  breadcrumbText?: string;
+  /** Nivel de acceso (gating) · propagado a body[data-nivel]. */
+  nivel?: 0 | 1 | 2;
+  pageId?: string;
+}
+
+const {
+  title,
+  description,
+  chapter,
+  chapterLabel,
+  currentSlug,
+  breadcrumbOrnament,
+  breadcrumbText,
+  nivel = 1,
+  pageId,
+} = Astro.props;
+---
+
+<BookReader
+  title={title}
+  description={description}
+  robots="noindex,nofollow,noarchive"
+  og={{ type: 'article', siteName: 'Tejidos de Vibración', locale: 'es_ES' }}
+  nivel={nivel}
+  pageId={pageId}
+  bodyClass="capitulo-body"
+  mainClass="cap-main"
+  breadcrumb={breadcrumbText ? { ornament: breadcrumbOrnament, text: breadcrumbText } : undefined}
+>
+  <CapituloToc slot="toc" chapter={chapter} current={currentSlug} chapterLabel={chapterLabel} />
+  <slot />
+</BookReader>
+
+<style is:global>
+  /* ── Main · columna de lectura del capítulo ──────────────────── */
+  .cap-main {
+    position: relative;
+    z-index: 1;
+    padding: 2.5rem 1.5rem 6rem;
+  }
+
+  /* ── Justify + hyphens · SOLO cuerpo .prose (decisión 4) ──────── */
+  .capitulo-body .prose > p {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+  /* No justificar la última línea suelta de párrafos cortos en mobile */
+  @media (max-width: 480px) {
+    .capitulo-body .prose > p { text-align: left; }
+  }
+
+  /* ── Divisores de sección (h2 del cuerpo) · sub-tarea 3.5 ──────
+     system.css aplica `.measure h2 { text-transform: lowercase }` con
+     inicial mayúscula. En capítulos el texto fuente ya viene en caja
+     correcta desde el DOCX · respetarlo. Scoped a `.capitulo-body`. */
+  .capitulo-body .measure h2 { text-transform: none; }
+  .capitulo-body .measure h2::first-letter { text-transform: none; }
+
+  /* ── Móvil ───────────────────────────────────────────────────── */
+  @media (max-width: 640px) {
+    .cap-main { padding: 2rem 1.2rem 5rem; }
+  }
+</style>

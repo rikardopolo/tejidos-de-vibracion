@@ -1,0 +1,638 @@
+---
+chapter: "cap-3-mundo-cuantico"
+kind: "numbered"
+num: "3.1"
+title: "La Fractura del Paradigma"
+subtitle: "Cómo el cosmos-reloj de Laplace cedió al cosmos cuántico"
+order: 4
+headerLabel: "Cap. 3 · §3.1"
+publishedAt: 2026-06-01
+authors:
+  - "Ricardo Polo"
+tags:
+  - "cap-3"
+  - "fractura"
+  - "paradigma"
+  - "laplace"
+  - "heisenberg"
+  - "planck"
+---
+
+import VozTejido from '@/components/book/VozTejido.astro';
+import PausaReflexiva from '@/components/book/PausaReflexiva.astro';
+import Formula from '@/components/book/Formula.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
+
+*Cuando la certeza absoluta se reveló como hipótesis local*
+
+— ◇ —
+
+## **El cosmos-reloj y su fundamento filosófico**
+
+Para entender el alcance de la fractura que el siglo XX produjo en la
+física, conviene primero recordar la magnitud del edificio que se
+fracturó. No fue una teoría menor. Fue la cosmovisión que durante
+doscientos cincuenta años había sostenido el pensamiento occidental
+sobre la naturaleza del mundo material.
+
+En 1687, Isaac Newton publicó los *Philosophiae Naturalis Principia
+Mathematica*. El libro propuso que el universo entero —desde la caída de
+una manzana hasta la órbita de Júpiter— obedece tres leyes simples del
+movimiento más una ley universal de la gravitación. Aplicadas a
+cualquier sistema material con condiciones iniciales conocidas, estas
+leyes permiten calcular la trayectoria futura del sistema con precisión
+arbitraria. La materia es como una máquina infinitamente afinada: dadas
+las posiciones y velocidades en un instante, todo lo demás se sigue por
+inferencia matemática.
+
+Cien años más tarde, el matemático francés Pierre-Simon Laplace llevó
+esta visión a su formulación más radical. En el ensayo filosófico que
+abre su *Théorie analytique des probabilités* (1814), Laplace propuso un
+experimento mental que la posteridad llamaría *el demonio de Laplace*:
+
+> **Una inteligencia que conociera, en un momento dado, todas las
+> fuerzas que animan a la naturaleza y la situación respectiva de los
+> seres que la componen, si además fuera lo suficientemente vasta para
+> someter estos datos al análisis, abrazaría en una sola fórmula los
+> movimientos de los cuerpos más grandes del universo y los del átomo
+> más liviano: para ella nada sería incierto, y el porvenir, como el
+> pasado, estaría presente ante sus ojos.**
+
+Esta no era una declaración técnica. Era una declaración ontológica
+sobre la **naturaleza misma del tiempo y la causalidad**. El futuro,
+según Laplace, ya existía implícitamente en el presente, igual que el
+pasado. La incertidumbre que los seres humanos experimentamos sobre lo
+que va a ocurrir era un artefacto de nuestra ignorancia, no una
+propiedad del mundo. El cosmos en sí no contenía azar genuino. Era
+determinismo puro, y el azar —el aparente azar— era solamente la sombra
+que la ignorancia humana proyectaba sobre un mecanismo perfectamente
+determinado.
+
+Durante el siglo XIX entero, esta visión laplaciana se asentó como el
+suelo conceptual sobre el que se construyó la física, la química, la
+fisiología incipiente, la economía clásica e incluso buena parte de la
+filosofía moral. Si el universo es un mecanismo cuyo futuro está
+completamente determinado por su presente, entonces el azar no existe en
+sentido propio, la libertad humana es ilusión o reduce a un
+comportamiento neuronal ya determinado, y el conocimiento progresa hacia
+una omniciencia teóricamente alcanzable cuyo único obstáculo es la
+complejidad de la información requerida.
+
+Era una cosmovisión coherente. Era hermosa en su sencillez. Y era, según
+iba a descubrirse, fundamentalmente incorrecta.
+
+— ◇ —
+
+**◆**
+
+## **Las primeras fisuras**
+
+Las grietas comenzaron a aparecer en lugares aparentemente menores. La
+sección §2.6 del Capítulo 2 trazó la historia detallada del problema del
+cuerpo negro y la solución que Max Planck encontró el 14 de diciembre de
+1900: la energía no se intercambia continuamente entre materia y
+radiación, sino en paquetes discretos, en cuantos de tamaño E = hν.
+Aquel acto, que Planck mismo llamaría décadas después *"un acto de
+desesperación"*, abrió la primera grieta en el continuo clásico.
+
+El siguiente golpe llegó cinco años después, en marzo de 1905, cuando un
+empleado de la oficina de patentes de Berna —Albert Einstein, veintiséis
+años, sin posición académica— publicó en *Annalen der Physik* un paper
+sobre el efecto fotoeléctrico que el Cap. 2 también narró. La luz, dijo
+Einstein, no es solamente una onda electromagnética en el sentido
+clásico de Maxwell: en su interacción con la materia se comporta como un
+torrente de cuantos discretos, partículas de luz que más tarde Gilbert
+Lewis llamaría **fotones** (1926).
+
+Quienes esperan que la lista de fracturas continúe linealmente se
+equivocan. Lo que ocurrió a partir de 1905 fue una avalancha. Niels Bohr
+aplicó la cuantización a las órbitas electrónicas de los átomos en 1913,
+explicando por primera vez el espectro de emisión del hidrógeno. Louis
+de Broglie propuso en 1924 que las partículas materiales también tienen
+comportamiento ondulatorio, con longitud de onda λ = h/p. Werner
+Heisenberg formuló la mecánica matricial en 1925. Erwin Schrödinger,
+durante sus dos semanas de vacaciones de Navidad en Arosa de 1925-26 que
+el Cap. 2 §2.10 narró, escribió la ecuación de onda que describe la
+materia como función de probabilidad. Max Born, días después, propuso la
+interpretación probabilística: el cuadrado del módulo de la función de
+onda da la **densidad de probabilidad** de encontrar la partícula en un
+lugar al medirla.
+
+Y en 1927, Heisenberg formuló lo que iba a convertirse en el martillo
+definitivo contra el demonio de Laplace.
+
+— ◇ —
+
+**◆**
+
+**◆**
+
+<PausaReflexiva titulo="El suelo bajo los pies">
+
+> *◆ *PRÁCTICA CONTEMPLATIVA* *Lo que sigue es una invitación
+> contemplativa breve. No afirma que la mecánica cuántica produzca el
+> efecto que describe; solo invita a un reconocimiento simbólico de la
+> experiencia interior análoga al desplazamiento epistemológico que el
+> siglo XX produjo en la física.**
+
+Pausa la lectura por un instante.
+
+Mira el objeto más sólido que tengas cerca. Una taza, un libro, la
+superficie sobre la que reposa lo que sostiene estas palabras. Permítete
+sentir su solidez por un momento — el peso, la firmeza, el contorno
+definido.
+
+Ahora sostén dos preguntas a la vez, sin contestarlas:
+
+*¿Qué pasa con mi sentido de "lo sólido" si recuerdo que esta taza, en
+su escala microscópica, no tiene los contornos definidos que mis
+sentidos le atribuyen?*
+
+*¿Qué cambia, y qué no cambia, si lo sé?*
+
+No respondas. Solo deja que las dos preguntas convivan unos segundos en
+silencio.
+
+La taza sigue siendo taza. La solidez sigue siendo funcional. Y al mismo
+tiempo, hay algo en cómo la habitas que ha cambiado al saber que hay
+otra escala donde sus contornos no existen como tu sentido común los
+imagina.
+
+Esa convivencia simultánea de dos lecturas válidas — la macroscópica
+funcional, la microscópica sutil — es la disciplina que el resto del
+capítulo va a pedirte que sostengas. No es elección entre ambas. Es la
+capacidad de habitarlas juntas.
+
+Cuando estés listo, vuelve al texto.
+
+</PausaReflexiva>
+## **El principio de Heisenberg y la muerte del demonio**
+
+En un paper publicado en *Zeitschrift für Physik* en marzo de 1927,
+Heisenberg derivó del formalismo cuántico una desigualdad matemática que
+parecía simple pero cuyo alcance filosófico era devastador. Si llamamos
+Δx a la incertidumbre en la posición de una partícula y Δp a la
+incertidumbre en su momento (masa por velocidad), entonces el producto
+de ambas tiene una cota inferior:
+
+<Formula num="3.2" titulo="Principio de Incertidumbre de Heisenberg (forma heurística)">
+
+$$\Delta x \cdot \Delta p \geq \dfrac{\hbar}{2}$$
+
+<Fragment slot="donde">
+
+**Δx** · incertidumbre en la posición de la partícula (metros)
+
+**Δp** · incertidumbre en el momento lineal (kg·m/s)
+
+**ℏ** · constante de Planck reducida, ℏ = h/2π ≈ 1.055 × 10⁻³⁴ J·s
+
+*Esta es la forma original heurística que Heisenberg presentó en 1927
+en Zeitschrift für Physik. La versión moderna formal (Fórmula 3.3) usa
+desviaciones estándar σ y se deriva del formalismo cuántico.*
+
+</Fragment>
+
+</Formula>
+
+donde ℏ es la constante de Planck reducida. La cota es minúscula —del
+orden de 10⁻³⁵ joule-segundo— y por eso no es visible en sistemas
+macroscópicos. Pero la cota es **absoluta**: no se puede burlar con
+instrumentos más finos.
+
+Y aquí está la diferencia decisiva con cualquier limitación clásica
+anterior. La indeterminación de Heisenberg no es una limitación
+instrumental, no es ruido experimental, no es ignorancia humana sobre
+datos que el cosmos en sí mismo posee. Es una propiedad estructural del
+formalismo cuántico aplicada a sistemas físicos reales. La posición y el
+momento de una partícula cuántica no tienen valores simultáneamente
+definidos en el mundo, no porque el observador no los conozca, sino
+porque la naturaleza misma no los contiene como tales.
+
+Esto desactiva al demonio de Laplace de raíz. La inteligencia hipotética
+de Laplace presuponía la existencia simultánea de todas las posiciones y
+velocidades. Si esa simultaneidad no existe en el mundo —si los pares de
+variables conjugadas no tienen valores conjuntos definidos antes de la
+medición— entonces no hay datos que el demonio pueda procesar. El
+cálculo del futuro a partir del presente, en sentido laplaciano
+absoluto, deja de ser difícil y se convierte en imposible.
+
+La cuestión no era ya si los humanos podemos calcular el futuro. La
+cuestión era si el futuro, en el sentido fuerte que Laplace le daba,
+**existe ya** en el presente. Y la respuesta de la mecánica cuántica
+fue: no. El futuro se actualiza a partir del presente mediante eventos
+que tienen un componente irreductiblemente probabilístico. No es ruido;
+es ontología.
+
+— ◇ —
+
+**◆**
+
+## **Lo que sobrevive de Newton**
+
+Sería un error pedagógico —uno de esos errores que la divulgación
+apresurada propaga— concluir de lo anterior que la mecánica clásica fue
+refutada en el sentido ordinario del término. No fue refutada; fue
+**delimitada**.
+
+La distinción es importante. Las ecuaciones de Newton siguen funcionando
+con precisión absoluta para predecir las efemérides astronómicas,
+calcular trayectorias de cohetes, diseñar puentes y aviones, y operar
+sistemas GPS. La ingeniería del siglo XXI sigue construida sobre Newton.
+Esto no es accidente ni costumbre: es consecuencia matemática de un
+teorema demostrable.
+
+El teorema se llama **principio de correspondencia**, formulado por
+Niels Bohr en 1920 y refinado por la generación siguiente. Establece que
+las predicciones de la mecánica cuántica reproducen las predicciones de
+la mecánica clásica cuando se aplican a sistemas suficientemente grandes
+—donde la acción involucrada es mucho mayor que la constante de Planck
+ℏ—. En el régimen macroscópico, los efectos cuánticos individuales se
+promedian y desaparecen del comportamiento observable; queda la mecánica
+clásica como límite estadístico.
+
+Visto así, lo que Newton describió no era un universo equivocado. Era
+una **descripción local excelente** de un dominio donde los efectos
+cuánticos son despreciables, dentro de un cosmos cuya descripción más
+fundamental es de naturaleza distinta. La relación entre Newton y la
+mecánica cuántica es la misma que la relación entre Newton y la
+relatividad especial: cada nueva teoría no destruye a la anterior, la
+**contiene** como caso particular y amplía el rango de fenómenos que
+puede explicar.
+
+La historia de la física no es una secuencia de demoliciones. Es una
+secuencia de envolventes sucesivas. Y esa observación tiene una
+consecuencia importante para la postura del lector ante este capítulo:
+cuando se diga que tal afirmación clásica "fue refutada" por la mecánica
+cuántica, lo que se está diciendo en sentido riguroso es que la
+afirmación clásica deja de ser válida fuera de su dominio de
+aplicabilidad. Dentro de su dominio sigue siendo correcta.
+
+El **demonio de Laplace** sí fue refutado en sentido fuerte, eso sí,
+porque era una afirmación de validez universal: pretendía que el futuro
+completo del cosmos estaba contenido en su presente. La mecánica
+cuántica establece que esa pretensión es físicamente imposible, no por
+la complejidad de los datos sino por la inexistencia de los datos en la
+forma supuesta. El determinismo absoluto fue refutado como principio
+universal. La mecánica clásica determinista fue contenida como
+aproximación local.
+
+— ◇ —
+
+**◆**
+
+## **La fractura ontológica · qué cambia y qué permanece**
+
+Más allá del cambio técnico, la fractura cuántica produjo un cambio
+ontológico cuyas implicaciones aún se debaten en la filosofía
+contemporánea de la física. Conviene nombrar esos cambios con precisión,
+sin saturar el lenguaje, separando lo que la física dice
+operacionalmente de lo que distintas escuelas filosóficas leen entre
+líneas.
+
+**Primer cambio · La causalidad ya no es totalmente determinista.** En
+sistemas cuánticos, la evolución de la función de onda es determinista
+—la ecuación de Schrödinger es una ecuación diferencial que, dada una
+condición inicial, predice exactamente la función de onda en cualquier
+instante posterior—, pero **el resultado de cualquier medición
+individual contiene un componente irreductiblemente aleatorio** dentro
+de la distribución de probabilidad. Esto no es indeterminismo total —las
+probabilidades están perfectamente definidas y pueden calcularse con
+precisión absoluta— pero tampoco es determinismo laplaciano. Es una
+tercera categoría: **determinismo de las probabilidades, indeterminismo
+de los resultados individuales**.
+
+**Segundo cambio · La medición deja de ser un acto neutro.** En la
+física clásica, medir un sistema implica revelar propiedades que el
+sistema poseía antes de la medición. La cuchara estaba a 23°C antes de
+que el termómetro lo confirmara. En la mecánica cuántica, esto deja de
+ser cierto en general: ciertas propiedades de un sistema cuántico no
+tienen valores definidos antes de su medición; el acto de medir
+contribuye a definirlos. Cómo describir exactamente este hecho —si la
+medición *crea* el valor o lo *actualiza* desde una superposición
+preexistente— es objeto del debate entre interpretaciones que el §3.6
+explorará. Pero el hecho operacional es que el acto de medir cambia, en
+general, el sistema medido.
+
+**Tercer cambio · La realidad puede ser irreductiblemente
+probabilística.** Esta es la afirmación más fuerte y la que más
+resistencia generó en los propios fundadores. Einstein dedicó las
+últimas tres décadas de su vida a buscar **variables ocultas** que
+restauraran el determinismo subyacente. La intuición era que la aparente
+aleatoriedad cuántica debía ser, como en la mecánica estadística
+clásica, un resultado de nuestra ignorancia sobre variables más
+profundas que el formalismo cuántico no captura todavía.
+
+El **teorema de Bell** (1964) y su verificación experimental por
+**Aspect, Dalibard y Roger** (1982) cerraron, en buena medida, esa
+puerta. El teorema demuestra matemáticamente que **ninguna teoría de
+variables ocultas locales** puede reproducir las predicciones cuánticas.
+Si la mecánica cuántica es correcta —y los experimentos de Aspect y los
+posteriores hasta el Premio Nobel de Física de 2022 confirman que lo
+es—, entonces no hay variables ocultas locales esperando ser
+descubiertas. El azar cuántico es genuino, no ignorancia disfrazada. (El
+§3.3.2 de este capítulo dedicará desarrollo completo a Bell y Aspect.)
+
+**Lo que permanece**, y conviene nombrarlo con la misma claridad: la
+realidad sigue siendo intersubjetivamente verificable. Los experimentos
+arrojan resultados reproducibles. Las predicciones cuánticas se
+confirman con precisión asombrosa en cada test que se les somete. La
+ciencia sigue funcionando. Lo que cambia no es la posibilidad del
+conocimiento científico; es la naturaleza ontológica de aquello sobre lo
+que el conocimiento científico opera.
+
+El cosmos no es menos real por ser cuántico. Es más sutil. Y la sutileza
+no es un déficit; es la forma exacta en que la naturaleza opera por
+debajo de la capa macroscópica donde la intuición clásica funciona.
+
+— ◇ —
+
+**◆**
+
+<VozTejido titulo="Max Planck (regreso)">
+
+*El descubridor reluctante que vivió para ver cómo su descubrimiento le
+sobrevivía*
+
+> **«Eine neue wissenschaftliche Wahrheit pflegt sich nicht in der
+> Weise durchzusetzen, daß ihre Gegner überzeugt werden und sich als
+> belehrt erklären, sondern vielmehr dadurch, daß ihre Gegner allmählich
+> aussterben und daß die heranwachsende Generation von vornherein mit
+> der Wahrheit vertraut gemacht ist.»* *«Una nueva verdad científica
+> no triunfa convenciendo a sus oponentes y haciéndoles ver la luz, sino
+> más bien porque sus oponentes mueren con el tiempo, y crece una nueva
+> generación que está familiarizada con ella desde el principio.»* —
+> Max Planck, *Wissenschaftliche Selbstbiographie* (Leipzig, 1948), p.
+> 22, publicada póstumamente.*
+
+**Primer acto · El conservador que abrió la grieta**
+
+El Capítulo 2 dejó a Planck en diciembre de 1900, presentando su
+hipótesis cuántica ante la Sociedad Alemana de Física en Berlín con la
+incomodidad de quien sabe que está rompiendo con todo lo que ha
+defendido durante décadas. Aquella sección no contó cómo siguió la
+historia. La Voz del Tejido del §3.1 es exactamente esa continuación: la
+vida de un físico que abrió una grieta en el cosmos clásico sin desearlo
+y que pasó las cuatro décadas siguientes intentando entender lo que
+había hecho.
+
+Planck nunca se sintió cómodo con la mecánica cuántica que él mismo
+había engendrado. Durante años intentó devolver su constante h al marco
+clásico, buscar una derivación que no requiriera abandonar la
+continuidad, encontrar una explicación que evitara el escándalo
+conceptual. En su autobiografía científica escribió, con franqueza
+desarmante: *"Mis intentos infructuosos de incorporar el cuanto
+elemental de acción a la teoría clásica continuaron durante varios años
+y me costaron un gran esfuerzo."*
+
+No lo logró. El cuanto resistió toda domesticación. Y mientras Planck se
+debatía con las matemáticas tratando de salvar la continuidad clásica,
+una nueva generación de físicos —Einstein, Bohr, Heisenberg,
+Schrödinger, Born, Dirac, Pauli, Jordan, De Broglie— tomó el cuanto sin
+pedir permiso y construyó sobre él un edificio teórico que en
+veinticinco años se convirtió en el formalismo más predictivamente
+exitoso de la historia de la física.
+
+Planck era, ya en 1925, un anciano respetado. Era ya el profesor emérito
+de la Universidad de Berlín. Era el secretario de la Sección de
+Matemáticas y Ciencias Naturales de la Academia de Ciencias de Berlín,
+cargo que ocuparía hasta 1943. Era el presidente de la Kaiser Wilhelm
+Gesellschaft, que años después llevaría su nombre. Y desde esas
+posiciones contemplaba cómo la mecánica cuántica que él había iniciado
+se desarrollaba en direcciones cuyas implicaciones filosóficas le
+resultaban inquietantes.
+
+**Segundo acto · La estoicidad del que vio caer todo a su alrededor**
+
+El Capítulo 2 §2.6 ya recogió las tragedias personales de Planck —Marie
+en 1909, Karl en 1916, las gemelas Margarete y Emma en 1917 y 1919, la
+casa bombardeada en febrero de 1944, Erwin ejecutado por el régimen nazi
+el 23 de enero de 1945—. No las repetiré aquí. Lo que conviene añadir,
+porque es relevante al sentido del §3.1, es esto: durante todas esas
+décadas en que Planck enterraba a su esposa y a casi todos sus hijos,
+mientras Alemania caía dos veces y la civilización europea se hundía en
+su crisis más profunda, Planck siguió pensando, escribiendo, dando
+conferencias.
+
+En 1944, después de que su casa de Berlín-Grunewald fuera destruida por
+un bombardeo aéreo —con sus libros, sus manuscritos, sus cuadernos de
+cálculo, toda la memoria escrita de una vida científica de seis décadas
+reducida a cenizas—, Planck siguió trabajando. Tenía ochenta y seis
+años. Había perdido a casi todos los seres que amaba. Y seguía
+escribiendo, porque escribir era lo único que sabía hacer y porque
+entendía que el saber, aunque la civilización que lo produce caiga, vale
+la pena por sí mismo.
+
+En 1947, instalado en Gotinga junto a su segunda esposa Marga y su hijo
+Hermann —los únicos que le quedaban—, Planck completó la última versión
+de su autobiografía científica. La envió a la editorial Johann Ambrosius
+Barth de Leipzig. Murió el 4 de octubre de 1947, a los ochenta y nueve
+años. La autobiografía fue publicada al año siguiente, en 1948, con el
+título *Wissenschaftliche Selbstbiographie*.
+
+Es en esa autobiografía donde aparece, en la página 22, la frase que la
+posteridad iba a llamar *el principio de Planck*.
+
+**Tercer acto · El principio de Planck y su alcance filosófico**
+
+La frase es amarga en su sencillez: *una nueva verdad científica no
+triunfa convenciendo a sus oponentes y haciéndoles ver la luz, sino más
+bien porque sus oponentes mueren con el tiempo, y crece una nueva
+generación que está familiarizada con ella desde el principio.*
+
+Planck no estaba pensando en términos abstractos cuando escribió esto.
+Estaba mirando hacia atrás en su propia carrera y pensando concretamente
+en lo que él mismo había vivido. Estaba pensando en cómo Boltzmann fue
+ridiculizado durante décadas por su mecánica estadística antes de ser
+aceptado. En cómo su propia hipótesis cuántica había sido tratada con
+escepticismo educado durante años, mientras él mismo dudaba de ella. En
+cómo Einstein, cuando propuso que la luz es cuanto en 1905, fue
+minimizado incluso por Planck mismo, que en 1913 todavía escribía cartas
+de recomendación disculpándose por las "audacias" de Einstein. En cómo
+Bohr, Heisenberg y Schrödinger habían tenido que ganar terreno
+generación contra generación.
+
+La paráfrasis posterior —*"Science progresses one funeral at a time"*,
+"la ciencia progresa funeral por funeral", popularizada en 1975 por el
+economista Paul Samuelson— es un poco más cínica que la formulación
+original de Planck, pero captura el sentido. El cambio de paradigma no
+procede por debate racional puro entre adultos competentes. Procede en
+buena medida por relevo generacional. Los antiguos no cambian de
+opinión; mueren. Los jóvenes crecen en el nuevo marco y lo dan por
+sentado.
+
+Esta observación es incómoda para una imagen idealizada de la ciencia
+como progreso continuo de la razón. **Pero es realista**, y Planck lo
+escribió no como crítica sino como diagnóstico estoico. La ciencia
+progresa, pero su progreso no es solamente conceptual; es también
+biográfico, sociológico, generacional. Las teorías nuevas no convencen a
+los que ya tienen una teoría que les funciona. Convencen a los jóvenes
+que aún no han elegido teoría.
+
+Thomas S. Kuhn citaría esta frase en 1962 como una de las observaciones
+fundamentales de *La estructura de las revoluciones científicas*. La
+sociología de la ciencia llamaría desde entonces *el principio de
+Planck* a la generalización empírica de que la edad correlaciona con la
+resistencia a las nuevas teorías.
+
+Para el §3.1 del Cap. 3, lo que la voz de Planck entrega al Tejedor es
+una postura ante el cambio de paradigma cuántico que el lector está
+cruzando ahora mismo. La incomodidad conceptual que pueda sentir leyendo
+este capítulo no es señal de fracaso intelectual; es señal de que su
+mente está haciendo lo mismo que hicieron Planck, Einstein, Bohr y
+Schrödinger en sus respectivas décadas: confrontar un cosmos que no
+encaja con la intuición heredada y aprender, lentamente, a habitar las
+nuevas reglas.
+
+**Frase-puente al capítulo**
+
+> **Si no logras convencer a tus oponentes, espera. Una nueva
+> generación crecerá familiarizada con la verdad. La fractura del
+> paradigma no es batalla intelectual ganada en una tarde; es
+> transformación generacional sostenida durante décadas. Lo que el Cap.
+> 3 te pedirá no es que aceptes inmediatamente cada paradoja cuántica.
+> Es que las habites. El convencimiento llega por convivencia, no por
+> decreto.**
+
+**[ P A U S A C I E N T Í F I C A ]**
+
+**Lo que se rompió y lo que sigue intacto**
+
+**Está documentado y forma parte del consenso científico actual:**
+
+— La mecánica clásica newtoniana es exacta como **caso límite** de la
+mecánica cuántica cuando se aplica a sistemas macroscópicos donde las
+acciones involucradas son mucho mayores que la constante de Planck. Este
+resultado se llama *principio de correspondencia* y fue formulado por
+Bohr en 1920. La aerospacial, la ingeniería estructural y los sistemas
+GPS funcionan correctamente con ecuaciones newtonianas porque operan en
+un régimen donde los efectos cuánticos son despreciables.
+
+— El **principio de indeterminación de Heisenberg** (1927) establece que
+ciertos pares de variables conjugadas (posición-momento, energía-tiempo)
+tienen una cota mínima irreducible al producto de sus incertidumbres: Δx
+· Δp ≥ ℏ/2. Esta cota no es instrumental ni cognitiva; es una propiedad
+estructural derivable del formalismo cuántico.
+
+— La **interpretación probabilística de Born** (1926) es matemáticamente
+consistente con el formalismo de Schrödinger y ha sido confirmada
+experimentalmente con precisión absoluta en miles de experimentos
+durante un siglo.
+
+— El **teorema de Bell** (1964) demuestra matemáticamente que las
+predicciones cuánticas son incompatibles con cualquier teoría local de
+variables ocultas. La verificación experimental de Aspect, Dalibard y
+Roger (1982) y experimentos posteriores —que culminaron en el Premio
+Nobel de Física de 2022 a Aspect, Clauser y Zeilinger— confirman que la
+naturaleza viola las desigualdades de Bell. El §3.3.2 desarrollará este
+punto con detalle.
+
+**Requiere matización filosófica honesta:**
+
+— **Qué significa exactamente** que el principio de indeterminación sea
+"ontológico" y no solamente "instrumental" sigue siendo objeto de debate
+filosófico activo. Las distintas interpretaciones de la mecánica
+cuántica que el §3.6 desplegará atribuyen significados ligeramente
+distintos a esta afirmación, aunque todas coinciden en que ninguna
+teoría local de variables ocultas puede salvar el determinismo
+laplaciano.
+
+— La caracterización de la transición clásica → cuántica como un "cambio
+de paradigma kuhniano" es defendida ampliamente, pero también discutida
+en filosofía de la ciencia. Algunos autores —Valia Allori (2015), entre
+otros— han argumentado que existen formas legítimas de entender la
+mecánica cuántica que no requieren un cambio sustancial respecto al
+paradigma clásico. Esta es una discusión filosófica legítima cuya
+resolución no afecta a las predicciones experimentales de la teoría.
+
+**Lo que la evidencia no respalda y conviene marcar explícitamente:**
+
+— No es correcto afirmar que "la mecánica cuántica refutó a Newton". Lo
+correcto es decir que **delimitó el dominio de aplicabilidad** de Newton
+al régimen macroscópico clásico, donde sigue siendo exacta como
+aproximación. La frase "Newton fue refutado" propaga una imagen falsa de
+la historia de la física como secuencia de demoliciones, cuando en
+realidad es una secuencia de envolventes sucesivas.
+
+— No es correcto afirmar, como hace cierta divulgación, que "la mecánica
+cuántica demostró que el observador crea la realidad". El acto de medir
+afecta al sistema medido en sentido operacional preciso, pero saltar de
+ahí a "la consciencia humana crea el universo" es una extrapolación
+filosófica que no se deriva del formalismo cuántico. Esta confusión será
+desarrollada con detalle en el §3.6 al discutir las distintas
+interpretaciones, especialmente la interpretación de von Neumann-Wigner
+y sus límites.
+
+— El "principio de Planck" según el cual la ciencia progresa funeral por
+funeral es una **observación sociológica empíricamente respaldada**
+(Hull, Tessner & Diamond, 1978), pero NO debe leerse como afirmación de
+que el cambio científico es irracional. Es afirmación de que el cambio
+científico tiene componentes sociales, biográficos y generacionales
+**además** de los componentes racionales puros. Estos componentes
+coexisten; ninguno excluye al otro.
+
+**Referencia primaria:** Heisenberg, W. (1927). «Über den anschaulichen
+Inhalt der quantentheoretischen Kinematik und Mechanik.» *Zeitschrift
+für Physik*, 43(3-4), 172–198. (El paper original del principio de
+indeterminación.)
+
+**Referencia primaria:** Born, M. (1926). «Zur Quantenmechanik der
+Stoßvorgänge.» *Zeitschrift für Physik*, 37, 863–867. (La interpretación
+probabilística.)
+
+**Referencia primaria:** Planck, M. (1948). *Wissenschaftliche
+Selbstbiographie*. Leipzig: Johann Ambrosius Barth Verlag, p. 22.
+(Edición inglesa: Gaynor, F., trans., *Scientific Autobiography and
+Other Papers*, 1949, pp. 33-34.)
+
+**Referencia académica filosófica:** Kuhn, T. S. (1962). *The Structure
+of Scientific Revolutions*. Chicago: University of Chicago Press.
+
+**Referencia académica sobre el principio de Planck:** Hull, D. L.,
+Tessner, P. D., & Diamond, A. M. (1978). «Planck's Principle.»
+*Science*, 202(4369), 717-723.
+
+**Referencia académica sobre debate kuhniano vs no-kuhniano:** Allori,
+V. (2015). «Quantum Mechanics and Paradigm Shifts.» *Topoi*, 34(2),
+313-323.
+
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-1.png"
+  numero="3.1"
+  titulo="Línea de tiempo"
+  subtitulo="La Avalancha 1900-1927"
+  alt="Línea de tiempo horizontal de 1900 a 1927 con los hitos de la física cuántica, desde el cuanto de Planck hasta la complementariedad de Bohr, agrupados en tres fases"
+  descripcion="Veintisiete años cambiaron toda la física. La cascada de descubrimientos entre 1900 y 1927, conocida como 'los años heroicos' de la física, transformó el cosmos clásico en el cosmos cuántico. Cada hito construyó sobre el anterior y forzó el siguiente. La velocidad fue tal que muchos de sus protagonistas seguían vivos cuando se otorgaron los Premios Nobel correspondientes."
+/>
+
+</VozTejido>
+## **Cierre y puente al §3.2**
+
+La fractura del paradigma fue real, pero no fue catastrófica. Newton no
+se desplomó: quedó delimitado. Laplace fue refutado en sentido fuerte
+porque su demonio dependía de una pretensión imposible —la simultaneidad
+ontológica de todos los datos del cosmos—, pero el determinismo local de
+la mecánica clásica sigue funcionando dentro de su dominio. La
+incertidumbre de Heisenberg desactivó la posibilidad de omniciencia
+teórica, pero no la posibilidad de conocimiento científico genuino y
+reproducible.
+
+Lo que se rompió, en sentido fuerte, fue la **continuidad ingenua** del
+cosmos clásico. La energía no fluye sino salta. La materia no es
+continua sino granular. Las propiedades físicas no preexisten siempre a
+su medición. El azar cuántico es genuino, no ignorancia disfrazada.
+
+Y queda planteada la pregunta que motivó al joven empleado de la oficina
+de patentes en 1905, que motivó a Bohr en 1913, y que motivó a De
+Broglie en 1924: si la luz se comporta a veces como onda y a veces como
+partícula, **¿qué es la luz, en realidad?** Y, peor aún para la
+intuición clásica, **¿qué es la materia?**
+
+Esa pregunta —la dualidad onda-partícula— es la que la siguiente sección
+del capítulo aborda de frente.
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+— ◇ —

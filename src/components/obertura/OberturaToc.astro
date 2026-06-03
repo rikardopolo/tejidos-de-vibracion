@@ -2,17 +2,17 @@
 /**
  * <OberturaToc> · índice navegable de las 15 piezas de la Obertura.
  *
- * Botón flotante (esquina superior izquierda en desktop, inferior en móvil)
- * que abre un panel deslizable con la lista completa, agrupada por las 4
- * secciones del libro (apertura, capacidades, marco, cierre).
+ * Refactor de deduplicación (2026-05-31): clon estructural de <CapituloToc>.
+ * Vive en el slot izquierdo del header de <BookReader> como pill
+ * "☰ ÍNDICE"; el panel cuelga del summary (position:absolute, no fixed,
+ * porque el header tiene backdrop-filter). Cierre por outside-click / ESC
+ * vía /book-chrome.js (cargado por BookReader, maneja cualquier <details>
+ * del chrome por id).
  *
- * Highlights la pieza actual usando el slug propio de la URL. Cierra al
- * click fuera, ESC, o tras navegar.
+ * Agrupa las piezas por las 4 secciones del libro (apertura · capacidades
+ * · marco · cierre). Paleta del chrome unificada al oro del libro.
  *
- * No requiere JS framework: usa <details>+<summary> para el toggle y un
- * pequeño script inline (CSP-safe vía nonce) para el active state, ESC
- * y outside-click. Reading-progress y scroll-spy se mantienen en el
- * layout principal.
+ * Patrón <details>+<summary>: toggle nativo sin JS framework.
  */
 import { getCollection } from 'astro:content';
 
@@ -34,7 +34,6 @@ const { current } = Astro.props;
 const all = await getCollection('obertura', ({ data }) => data.status === 'published');
 all.sort((a, b) => a.data.order - b.data.order);
 
-// Group by section
 const grouped: Record<Section, typeof all> = {
   apertura: [],
   capacidades: [],
@@ -48,36 +47,109 @@ for (const entry of all) {
 ---
 
 <details class="obertura-toc" id="obertura-toc">
-  <summary class="obertura-toc-toggle" aria-label="Abrir índice de la Obertura">
-    <span class="obertura-toc-icon" aria-hidden="true">☰</span>
-    <span class="obertura-toc-label">Índice</span>
+  <summary class="book-chrome__btn obertura-toc__toggle" aria-label="Abrir índice de la Obertura">
+    <span class="book-chrome__btn-icon" aria-hidden="true">☰</span>
+    <span class="book-chrome__btn-label">Índice</span>
   </summary>
-  <nav class="obertura-toc-panel" aria-label="Índice de la Obertura">
-    <p class="obertura-toc-title">Obertura · 15 piezas</p>
-    {SECTION_ORDER.map((sec) => (
-      <div class="obertura-toc-section">
-        <p class="obertura-toc-section-label">{SECTION_LABELS[sec]}</p>
-        <ol class="obertura-toc-list">
-          {grouped[sec].map((entry) => (
-            <li class={`obertura-toc-item${entry.slug === current ? ' is-current' : ''}`}>
-              <a href={`/obertura/${entry.slug}`}>
-                <span class="obertura-toc-num">{entry.data.chapterNum}</span>
-                <span class="obertura-toc-name">{entry.data.title}</span>
-              </a>
-            </li>
-          ))}
+  <nav class="obertura-toc__panel" aria-label="Índice de la Obertura">
+    <p class="obertura-toc__title">Obertura · {all.length} piezas</p>
+    {SECTION_ORDER.map((sec) => grouped[sec].length > 0 && (
+      <div class="obertura-toc__section">
+        <p class="obertura-toc__section-label">{SECTION_LABELS[sec]}</p>
+        <ol class="obertura-toc__list">
+          {grouped[sec].map((entry) => {
+            const isCurrent = entry.slug === current;
+            return (
+              <li class={`obertura-toc__item${isCurrent ? ' is-current' : ''}`}>
+                <a href={`/obertura/${entry.slug}`} aria-current={isCurrent ? 'page' : undefined}>
+                  <span class="obertura-toc__num">{entry.data.chapterNum}</span>
+                  <span class="obertura-toc__name">{entry.data.title}</span>
+                </a>
+              </li>
+            );
+          })}
         </ol>
       </div>
     ))}
   </nav>
 </details>
 
-<!-- Estilos del panel TOC (.obertura-toc-*) viven globalmente en
-     OberturaLayout.astro para que ChapterToc y BookToc compartan el
-     mismo chrome sin duplicación. -->
 <style>
-  /* (intencionalmente vacío · ver OberturaLayout.astro global styles) */
-</style>
+  /* ── Toggle (summary) · pill del header ───────────────────────── */
+  .obertura-toc { position: relative; }
+  .obertura-toc__toggle { list-style: none; cursor: pointer; }
+  .obertura-toc__toggle::-webkit-details-marker { display: none; }
+  .obertura-toc__toggle::marker { content: ''; }
 
-<!-- Comportamiento (close on outside click / ESC) externalizado para CSP-safe. -->
-<script is:inline src="/obertura-toc.js" defer></script>
+  /* ── Panel desplegable ────────────────────────────────────────
+     position: absolute relativo a `.obertura-toc` (no fixed). El header
+     `.book-chrome` tiene backdrop-filter, que crea un containing block
+     para `position: fixed` y rompería el anclaje al viewport. */
+  .obertura-toc__panel { display: none; }
+  .obertura-toc[open] .obertura-toc__panel {
+    display: block;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    width: min(360px, calc(100vw - 2.4rem));
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+    padding: 1.4rem 1.5rem 1.6rem;
+    background: var(--pergamino);
+    border: 1px solid var(--oro-fantasma);
+    box-shadow: 0 12px 36px rgba(26, 22, 18, 0.18);
+    z-index: 91;
+  }
+
+  .obertura-toc__title {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+    margin: 0 0 1rem;
+  }
+
+  .obertura-toc__section { margin-bottom: 1.1rem; }
+  .obertura-toc__section:last-child { margin-bottom: 0; }
+  .obertura-toc__section-label {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--reposo);
+    margin: 0 0 0.4rem;
+  }
+
+  .obertura-toc__list { list-style: none; padding: 0; margin: 0; }
+  .obertura-toc__item a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding: 0.4rem 0;
+    text-decoration: none;
+    border-bottom: 1px solid var(--pergamino-2);
+    color: var(--tinta);
+    font-family: var(--serif);
+    transition: color 0.15s;
+  }
+  .obertura-toc__item:last-child a { border-bottom: 0; }
+  .obertura-toc__item a:hover { color: var(--oro-suave); }
+  .obertura-toc__num {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--reposo);
+    flex-shrink: 0;
+    min-width: 1.9rem;
+    text-align: center;
+  }
+  .obertura-toc__name { font-size: 0.95rem; line-height: 1.35; }
+  .obertura-toc__item.is-current a { color: var(--oro-suave); font-style: italic; }
+  .obertura-toc__item.is-current .obertura-toc__num { color: var(--oro-suave); }
+
+  @media (max-width: 640px) {
+    .obertura-toc[open] .obertura-toc__panel {
+      width: calc(100vw - 2rem);
+      max-height: 70vh;
+    }
+  }
+</style>

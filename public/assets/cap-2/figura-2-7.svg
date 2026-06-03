@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" role="img" aria-labelledby="t27">
+  <title id="t27">Espectro del cuerpo negro a 5000 K — comparación entre Rayleigh-Jeans (catástrofe ultravioleta), Wien y Planck</title>
+  <defs>
+    <linearGradient id="vis27" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#8B1A4F"/>
+      <stop offset="25%"  stop-color="#C5312C"/>
+      <stop offset="50%"  stop-color="#E5B628"/>
+      <stop offset="75%"  stop-color="#3FA34D"/>
+      <stop offset="100%" stop-color="#5A2E8B"/>
+    </linearGradient>
+  </defs>
+
+  <text x="360" y="28" font-family="Georgia, serif" font-size="17" fill="#1A1A1A" text-anchor="middle">Espectro del cuerpo negro a 5000 K</text>
+  <text x="360" y="48" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#3A3530" text-anchor="middle">la catástrofe ultravioleta y su resolución por la cuantización de Planck</text>
+
+  <!-- Marco de gráfica -->
+  <!-- origen 90,360 ; ancho 540 ; alto 270 -->
+  <line x1="90" y1="80" x2="90" y2="360" stroke="#1A1A1A" stroke-width="1.2"/>
+  <line x1="90" y1="360" x2="640" y2="360" stroke="#1A1A1A" stroke-width="1.2"/>
+
+  <!-- Banda visible en eje X -->
+  <rect x="170" y="362" width="60" height="10" fill="url(#vis27)"/>
+  <text x="200" y="386" font-family="Georgia, serif" font-size="10" font-style="italic" fill="#1A1A1A" text-anchor="middle">visible</text>
+
+  <!-- Curva PLANCK (indigo sólida) -->
+  <!-- pico ~ x=180, baja a la derecha, baja también a la izquierda -->
+  <path d="M 90 358
+           C 110 340, 130 300, 150 210
+           C 165 140, 180 100, 200 110
+           C 220 125, 240 175, 270 235
+           C 310 290, 360 320, 420 340
+           C 490 350, 560 356, 640 358"
+        stroke="#2D1B69" stroke-width="2.6" fill="none"/>
+
+  <!-- Curva WIEN (verde punteada) - ajusta bien en alta, falla en baja -->
+  <path d="M 90 358
+           C 110 358, 125 355, 145 340
+           C 160 320, 175 200, 195 110
+           C 215 130, 240 180, 280 240
+           C 320 290, 380 322, 440 342
+           C 510 352, 580 357, 640 358"
+        stroke="#1D9E75" stroke-width="2" fill="none" stroke-dasharray="6 5"/>
+
+  <!-- Curva RAYLEIGH-JEANS (rojo/vino punteada) - diverge al infinito -->
+  <!-- Empieza en (90,358), sigue lineal hasta baja frecuencia, luego dispara verticalmente -->
+  <path d="M 90 358
+           C 130 340, 170 290, 210 230
+           C 240 175, 270 110, 290 60
+           L 295 30"
+        stroke="#9B2A2A" stroke-width="2" fill="none" stroke-dasharray="3 4"/>
+
+  <!-- Flecha de divergencia -->
+  <line x1="295" y1="30" x2="295" y2="10" stroke="#9B2A2A" stroke-width="1.8"/>
+  <path d="M291 14 L295 6 L299 14 Z" fill="#9B2A2A"/>
+  <text x="305" y="22" font-family="Georgia, serif" font-size="11" font-style="italic" fill="#9B2A2A">→ ∞</text>
+
+  <!-- Etiqueta "catástrofe ultravioleta" -->
+  <text x="370" y="70" font-family="Georgia, serif" font-size="13" font-style="italic" fill="#9B2A2A" text-anchor="start">catástrofe ultravioleta</text>
+  <line x1="365" y1="66" x2="300" y2="50" stroke="#9B2A2A" stroke-width="0.6"/>
+
+  <!-- Leyenda -->
+  <g transform="translate(440,110)" font-family="Georgia, serif" font-size="12">
+    <line x1="0" y1="0" x2="28" y2="0" stroke="#9B2A2A" stroke-width="2" stroke-dasharray="3 4"/>
+    <text x="36" y="4" fill="#1A1A1A">Rayleigh-Jeans</text>
+    <text x="36" y="18" fill="#8A8A8A" font-size="10" font-style="italic">clásica · diverge</text>
+
+    <line x1="0" y1="38" x2="28" y2="38" stroke="#1D9E75" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="36" y="42" fill="#1A1A1A">Wien</text>
+    <text x="36" y="56" fill="#8A8A8A" font-size="10" font-style="italic">ajusta solo en alta ν</text>
+
+    <line x1="0" y1="76" x2="28" y2="76" stroke="#2D1B69" stroke-width="2.6"/>
+    <text x="36" y="80" fill="#1A1A1A">Planck</text>
+    <text x="36" y="94" fill="#8A8A8A" font-size="10" font-style="italic">reconcilia ambos extremos</text>
+  </g>
+
+  <!-- Ejes -->
+  <text x="80" y="78" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#1A1A1A" text-anchor="end">u(ν,T)</text>
+  <text x="650" y="378" font-family="Georgia, serif" font-size="12" font-style="italic" fill="#1A1A1A">ν</text>
+  <text x="50" y="220" font-family="Georgia, serif" font-size="11" fill="#8A8A8A" text-anchor="middle" transform="rotate(-90 50 220)">densidad espectral</text>
+  <text x="365" y="402" font-family="Georgia, serif" font-size="11" fill="#8A8A8A" text-anchor="middle">frecuencia</text>
+
+  <!-- Anotación clave -->
+  <rect x="200" y="420" width="320" height="30" rx="4" fill="#E5DBBE" stroke="#B68914" stroke-width="0.8"/>
+  <text x="360" y="441" font-family="Georgia, serif" font-size="14" font-style="italic" fill="#B68914" text-anchor="middle">
+    E = nhν   ·   la energía se cuantiza · 14 dic 1900
+  </text>
+</svg>
