@@ -1,20 +1,38 @@
 ---
 /**
  * FormularioTejedor.astro — Captura nombre + correo + consentimiento + honeypot.
- * Envía POST a /api/leads/libro (que dispara DOI flow en Brevo).
+ * Form de registro CANÓNICO del sitio (usado en /recibir, gate de Obertura y
+ * pre-venta). Envía POST al endpoint indicado vía /formulario-tejedor.js.
  *
  * Props:
  *   id: para distinguir múltiples instancias en una misma página (default "form-tejedor")
  *   variant: "inline" (compacto, para BloqueRegistro) o "page" (centrado, para /recibir)
+ *   endpoint: API destino (default "/api/leads/libro" · DOI flow en Brevo)
+ *   submitText: texto del botón (default "Entrar al tejido")
+ *   successText: mensaje tras envío exitoso
+ *   consentText: prefijo del consentimiento (antes del enlace a privacidad)
  */
 export interface Props {
   id?: string;
   variant?: 'inline' | 'page';
+  endpoint?: string;
+  submitText?: string;
+  successText?: string;
+  consentText?: string;
 }
-const { id = 'form-tejedor', variant = 'inline' } = Astro.props;
+const {
+  id = 'form-tejedor',
+  variant = 'inline',
+  endpoint = '/api/leads/libro',
+  submitText = 'Entrar al tejido',
+  successText = 'Revisa tu correo. Te enviamos un link para confirmar.',
+  consentText = 'Acepto recibir los capítulos por correo y conozco la',
+} = Astro.props;
 ---
 
-<form id={id} class={`form-tejedor form-tejedor--${variant}`} novalidate data-tejedor-form>
+<form id={id} class={`form-tejedor form-tejedor--${variant}`} novalidate
+      data-tejedor-form data-endpoint={endpoint} data-submit-text={submitText}
+      data-success-text={successText}>
   <label class="form-tejedor__field">
     <span class="form-tejedor__label">Nombre</span>
     <input type="text" name="nombre" required minlength="2" maxlength="100"
@@ -29,13 +47,13 @@ const { id = 'form-tejedor', variant = 'inline' } = Astro.props;
 
   <label class="form-tejedor__consent">
     <input type="checkbox" name="acepto" required />
-    <span>Acepto recibir los capítulos por correo y conozco la <a href="/privacidad" class="lit-link">política de privacidad</a>.</span>
+    <span>{consentText} <a href="/privacidad" class="lit-link">política de privacidad</a>.</span>
   </label>
 
   <input type="text" name="website" tabindex="-1" autocomplete="off"
          aria-hidden="true" class="form-tejedor__honeypot" />
 
-  <button type="submit" class="form-tejedor__submit">Entrar al tejido</button>
+  <button type="submit" class="form-tejedor__submit">{submitText}</button>
 
   <p class="form-tejedor__nota">
     Sin spam. Sin venta de datos. Cada correo trae link de baja con un click.
