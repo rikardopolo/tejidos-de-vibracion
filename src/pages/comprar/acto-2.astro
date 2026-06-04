@@ -5,6 +5,7 @@
 // Mientras tanto: el form postea a /api/preventa → Brevo (atributo
 // FUENTE=preventa-acto-2). Layout LecturaLarga = nav + footer del sitio.
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import FormularioTejedor from '@/components/book/FormularioTejedor.astro';
 
 const SEO = {
   title: 'Acto II · Pre-venta — Tejidos de Vibración',
@@ -87,37 +88,14 @@ const SEO = {
         el día que el Acto II abra.
       </p>
 
-      <form id="preventa-form" class="pv-form" novalidate>
-        <div class="pv-form-fila">
-          <label for="nombre" class="pv-form-label">Nombre</label>
-          <input id="nombre" name="nombre" type="text" class="pv-form-input"
-            placeholder="Tu nombre" required autocomplete="given-name" />
-        </div>
-        <div class="pv-form-fila">
-          <label for="email" class="pv-form-label">Correo electrónico</label>
-          <input id="email" name="email" type="email" class="pv-form-input"
-            placeholder="tu@correo.com" required autocomplete="email" />
-        </div>
-        <!-- honeypot anti-spam · debe quedar vacío -->
-        <div class="pv-hp" aria-hidden="true">
-          <label for="website">No rellenar</label>
-          <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
-        </div>
-        <button type="submit" class="pv-form-btn" id="preventa-btn">
-          Avísame en septiembre
-        </button>
-        <p class="pv-form-legal">
-          Tu correo no se comparte con nadie. Puedes darte de baja en
-          cualquier momento.
-        </p>
-      </form>
-
-      <div id="preventa-ok" class="pv-form-ok" hidden>
-        <p>✓&nbsp; Listo. Te escribiremos cuando el Acto II esté disponible.</p>
-      </div>
-      <div id="preventa-error" class="pv-form-error" hidden>
-        <p>Algo salió mal. Intenta de nuevo en un momento.</p>
-      </div>
+      <FormularioTejedor
+        id="preventa-form"
+        variant="page"
+        endpoint="/api/preventa"
+        submitText="Avísame en septiembre"
+        successText="Listo. Te avisaremos cuando el Acto II esté disponible."
+        consentText="Acepto que me avisen del Acto II por correo y conozco la"
+      />
     </section>
 
     <!-- ── PUENTE AL ACTO I ──────────────────────────────────── -->
@@ -131,48 +109,6 @@ const SEO = {
 
   </article>
 </LecturaLarga>
-
-<!-- ── SCRIPT DE ENVÍO (Astro lo empaqueta a /_astro → CSP-safe) ── -->
-<script>
-  const form = document.getElementById('preventa-form') as HTMLFormElement | null;
-  const btn  = document.getElementById('preventa-btn') as HTMLButtonElement | null;
-  const ok   = document.getElementById('preventa-ok') as HTMLElement | null;
-  const err  = document.getElementById('preventa-error') as HTMLElement | null;
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (!btn) return;
-
-    const nombre  = (form.elements.namedItem('nombre')  as HTMLInputElement).value.trim();
-    const email   = (form.elements.namedItem('email')   as HTMLInputElement).value.trim();
-    const website = (form.elements.namedItem('website') as HTMLInputElement).value;
-
-    if (!nombre || !email) return;
-
-    btn.disabled = true;
-    btn.textContent = 'Enviando…';
-    if (err) err.hidden = true;
-
-    try {
-      const res = await fetch('/api/preventa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, email, website }),
-      });
-
-      if (res.ok) {
-        form.hidden = true;
-        if (ok) ok.hidden = false;
-      } else {
-        throw new Error('non-ok');
-      }
-    } catch {
-      if (err) err.hidden = false;
-      btn.disabled = false;
-      btn.textContent = 'Avísame en septiembre';
-    }
-  });
-</script>
 
 <style>
   /* Tokens canónicos del sitio (tokens.css): --pergamino --tinta --oro
@@ -242,38 +178,6 @@ const SEO = {
     font-family: var(--serif); font-size: var(--fs-body, 1.1875rem);
     line-height: var(--lh-body, 1.7); margin: 0.5rem 0 2rem;
   }
-  .pv-form { display: flex; flex-direction: column; gap: 1.25rem; max-width: 30rem; }
-  .pv-form-fila { display: flex; flex-direction: column; gap: 0.4rem; }
-  .pv-form-label { font-family: var(--sans); font-size: 0.8rem; color: var(--reposo); letter-spacing: 0.04em; }
-  .pv-form-input {
-    background: #fff;
-    border: 1px solid var(--oro-fantasma, rgba(212, 160, 23, 0.4));
-    padding: 0.65rem 0.85rem;
-    font-family: var(--serif); font-size: var(--fs-body, 1.1875rem);
-    color: var(--tinta); outline: none; transition: border-color 0.2s var(--ease-editorial, ease);
-  }
-  .pv-form-input:focus { border-color: var(--oro); }
-  /* honeypot: fuera de pantalla, no visible ni tabulable */
-  .pv-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-  .pv-form-btn {
-    background: var(--indigo); color: #fff; border: none;
-    padding: 0.85rem 1.75rem; font-family: var(--sans); font-size: 0.9rem;
-    letter-spacing: 0.04em; cursor: pointer; align-self: flex-start;
-    transition: background 0.2s var(--ease-editorial, ease);
-  }
-  .pv-form-btn:hover:not(:disabled) { background: var(--oro-suave); }
-  .pv-form-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-  .pv-form-legal { font-family: var(--sans); font-size: 0.75rem; color: var(--reposo); margin-top: 0.25rem; }
-  .pv-form-ok {
-    padding: 1.25rem 1.5rem; border-left: 4px solid var(--verde);
-    background: color-mix(in srgb, var(--verde) 10%, var(--pergamino));
-    font-family: var(--serif); font-size: var(--fs-body, 1.1875rem); margin-top: 1rem;
-  }
-  .pv-form-error {
-    padding: 1.25rem 1.5rem; border-left: 4px solid #c0392b;
-    background: color-mix(in srgb, #c0392b 8%, var(--pergamino));
-    font-family: var(--serif); margin-top: 1rem;
-  }
 
   /* ── PUENTE ─────────────────────────────────────────────────── */
   .pv-puente { padding: var(--gap-lg, 4rem) 0 0; text-align: center; }
@@ -290,7 +194,6 @@ const SEO = {
 
   @media (max-width: 600px) {
     .pv-card { padding: 1.25rem; }
-    .pv-form-btn { align-self: stretch; text-align: center; }
     .pv-precio { font-size: 1.9rem; }
   }
 </style>

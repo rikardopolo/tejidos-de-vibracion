@@ -27,7 +27,8 @@ const readEnv = (key: string): string | undefined => {
 
 const preventaSchema = z.object({
   nombre: z.string().min(2).max(100).trim(),
-  email: z.string().email().max(254),
+  correo: z.string().email().max(254),
+  acepto: z.boolean().optional(), // consentimiento (form canónico FormularioTejedor)
   website: z.string().max(0), // honeypot: debe venir vacío
 });
 
@@ -74,7 +75,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   // Upsert sin lista: marca el interés con atributos para segmentar en Sep 2026.
   const upsert = await upsertContact({
-    email: parsed.data.email,
+    email: parsed.data.correo,
     apiKey,
     attributes: {
       NOMBRE: parsed.data.nombre,
