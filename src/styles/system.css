@@ -1357,6 +1357,35 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
   min-height: 1.5em;
 }
 
+/* Variante "page" como tarjeta cálida · adopta el estilo del gate de la
+   Obertura (BloquePuerta) a la paleta del sitio: papel cálido con reglas
+   arriba/abajo, botón y enlace en oro. Aplica a /recibir y /comprar/acto-2.
+   El gate usa variant="inline" + sus propios overrides, así que no se toca. */
+.form-tejedor--page {
+  max-width: 32rem;
+  padding: 2.75rem 2rem;
+  background: var(--pergamino-2);
+  border-top: 1px solid color-mix(in srgb, var(--tinta) 14%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--tinta) 14%, transparent);
+}
+
+.form-tejedor--page .form-tejedor__submit {
+  color: var(--pergamino);
+  background: var(--oro);
+  border-color: var(--oro);
+}
+.form-tejedor--page .form-tejedor__submit:hover {
+  background: var(--oro-suave);
+  border-color: var(--oro-suave);
+}
+
+.form-tejedor--page a.lit-link {
+  color: var(--oro);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
 /* ─────────────────────────── Figuras del libro */
 .figura-libro {
   margin: 3rem 0;

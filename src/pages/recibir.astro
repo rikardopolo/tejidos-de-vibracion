@@ -40,11 +40,6 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
         <div class="recibir-form-wrap">
           <FormularioTejedor id="form-tejedor-recibir" variant="page" />
         </div>
-
-        <p class="form-tejedor__nota mt-2">
-          Sin spam. Sin venta de datos. Al final de cada correo hay un enlace para darte de baja con un
-          solo clic. Más en <a href="/privacidad" class="lit-link">privacidad</a>.
-        </p>
       </>
     ) : (
       <div class="prose">
