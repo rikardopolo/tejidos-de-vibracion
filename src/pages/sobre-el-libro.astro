@@ -58,7 +58,8 @@ import LitLink from '@/components/book/LitLink.astro';
       .invitacion-registro {
         border-top   : 1px solid color-mix(in srgb, var(--oro) 28%, transparent);
         border-bottom: 1px solid color-mix(in srgb, var(--oro) 28%, transparent);
-        padding      : 3.5rem 0;
+        background   : var(--pergamino-2);
+        padding      : 3.5rem 2rem;
         margin       : 3rem 0 4rem;
         text-align   : center;
       }
@@ -74,7 +75,7 @@ import LitLink from '@/components/book/LitLink.astro';
         font-family  : var(--serif, 'EB Garamond', Georgia, serif);
         font-size    : clamp(1.6rem, 3.5vw, 2.2rem);
         font-weight  : 400;
-        color        : var(--indigo, #2D1B69);
+        color        : var(--tinta-suave, #3A3530);
         margin-bottom: 1rem;
       }
       .inv-cuerpo {
@@ -90,12 +91,12 @@ import LitLink from '@/components/book/LitLink.astro';
         font-size      : 0.88rem;
         letter-spacing : 0.04em;
         color          : var(--pergamino, #F2EAD5);
-        background     : var(--indigo, #2D1B69);
+        background     : var(--oro, #D4A017);
         padding        : 0.8rem 1.8rem;
         text-decoration: none;
         transition     : background 0.2s;
       }
-      .inv-cta:hover { background: var(--oro); }
+      .inv-cta:hover { background: var(--oro-suave, #B68914); }
     </style>
 
     <section class="prose section-gap" style="display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: start;">
