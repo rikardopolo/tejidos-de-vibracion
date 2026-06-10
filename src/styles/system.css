@@ -1081,6 +1081,16 @@ main {
 .reader-controls__group button:hover { border-color: var(--oro); background: var(--pergamino-2); }
 .reader-controls__group button.is-active { border-color: var(--oro); color: var(--oro-suave); }
 
+/* Movil: el Aa (reader-controls) vive en desktop en right:5rem, que en
+   viewports estrechos cae a media columna y se monta sobre la prosa.
+   Lo apilamos ENCIMA del toc-trigger (☰) en la esquina inferior derecha.
+   Va DESPUES de las reglas base para ganar en la cascada (los media
+   queries no suben especificidad). */
+@media (max-width: 720px) {
+  .reader-controls-trigger { bottom: 4.5rem; right: 1rem; }
+  .reader-controls { bottom: 7.5rem; right: 1rem; }
+}
+
 /* Reading modes — applied via [data-reader-mode] on <html> */
 html[data-reader-mode="night"] {
   --pergamino: #1a1714;
