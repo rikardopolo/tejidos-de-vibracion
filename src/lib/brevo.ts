@@ -20,6 +20,31 @@ export const leadSchema = z.object({
 export type Lead = z.infer<typeof leadSchema>;
 
 /**
+ * POST a la API de Brevo con headers estándar; devuelve {status, text} crudos.
+ * Cada caller interpreta el status (los códigos de éxito difieren por endpoint).
+ */
+async function brevoFetch(
+  path: string,
+  label: string,
+  logExtra: string,
+  apiKey: string,
+  payload: unknown,
+): Promise<{ status: number; text: string }> {
+  const res = await fetch(`${BREVO_API_BASE}${path}`, {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'api-key': apiKey,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+  const text = await res.text();
+  console.log(`[Brevo ${label}] status=${res.status}${logExtra} body=${text.slice(0, 200)}`);
+  return { status: res.status, text };
+}
+
+/**
  * Crea (o actualiza) un contacto en Brevo SIN añadirlo a ninguna lista.
  * Usamos esto pre-confirmación: el contacto existe en Brevo pero el workflow
  * de bienvenida (asociado a la lista #9) no se dispara hasta que confirme.
@@ -37,25 +62,14 @@ export async function upsertContact(opts: {
   };
 
   try {
-    const res = await fetch(`${BREVO_API_BASE}/contacts`, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'api-key': opts.apiKey,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    const { status, text } = await brevoFetch('/contacts', 'upsertContact', '', opts.apiKey, payload);
 
-    const text = await res.text();
-    console.log(`[Brevo upsertContact] status=${res.status} body=${text.slice(0, 200)}`);
-
-    if (res.status === 201 || res.status === 204) return { ok: true };
+    if (status === 201 || status === 204) return { ok: true };
     // Contact ya existe (200 ok or 400 with "exist" message)
-    if (res.status === 400 && (text.includes('already') || text.includes('exist'))) {
+    if (status === 400 && (text.includes('already') || text.includes('exist'))) {
       return { ok: true };
     }
-    return { ok: false, status: res.status, message: text.slice(0, 300) };
+    return { ok: false, status, message: text.slice(0, 300) };
   } catch (e) {
     console.error('[Brevo upsertContact] fetch threw:', e);
     return { ok: false, status: 0, message: String(e).slice(0, 300) };
@@ -72,23 +86,18 @@ export async function addContactToList(opts: {
   apiKey: string;
 }): Promise<{ ok: true } | { ok: false; status: number; message: string }> {
   try {
-    const res = await fetch(`${BREVO_API_BASE}/contacts/lists/${opts.listId}/contacts/add`, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'api-key': opts.apiKey,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({ emails: [opts.email.toLowerCase().trim()] }),
-    });
+    const { status, text } = await brevoFetch(
+      `/contacts/lists/${opts.listId}/contacts/add`,
+      'addContactToList',
+      ` listId=${opts.listId}`,
+      opts.apiKey,
+      { emails: [opts.email.toLowerCase().trim()] },
+    );
 
-    const text = await res.text();
-    console.log(`[Brevo addContactToList] status=${res.status} listId=${opts.listId} body=${text.slice(0, 200)}`);
-
-    if (res.status === 201 || res.status === 204) return { ok: true };
+    if (status === 201 || status === 204) return { ok: true };
     // El contacto ya está en la lista
-    if (res.status === 400 && text.includes('already')) return { ok: true };
-    return { ok: false, status: res.status, message: text.slice(0, 300) };
+    if (status === 400 && text.includes('already')) return { ok: true };
+    return { ok: false, status, message: text.slice(0, 300) };
   } catch (e) {
     console.error('[Brevo addContactToList] fetch threw:', e);
     return { ok: false, status: 0, message: String(e).slice(0, 300) };
@@ -114,25 +123,20 @@ export async function sendTransactionalEmail(opts: {
   };
 
   try {
-    const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
-      method: 'POST',
-      headers: {
-        'accept': 'application/json',
-        'api-key': opts.apiKey,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    const { status, text } = await brevoFetch(
+      '/smtp/email',
+      'sendTransactionalEmail',
+      ` templateId=${opts.templateId}`,
+      opts.apiKey,
+      payload,
+    );
 
-    const text = await res.text();
-    console.log(`[Brevo sendTransactionalEmail] status=${res.status} templateId=${opts.templateId} body=${text.slice(0, 200)}`);
-
-    if (res.status === 201 || res.status === 200) {
+    if (status === 201 || status === 200) {
       let messageId: string | undefined;
       try { messageId = JSON.parse(text).messageId; } catch { /* ignore */ }
       return { ok: true, messageId };
     }
-    return { ok: false, status: res.status, message: text.slice(0, 300) };
+    return { ok: false, status, message: text.slice(0, 300) };
   } catch (e) {
     console.error('[Brevo sendTransactionalEmail] fetch threw:', e);
     return { ok: false, status: 0, message: String(e).slice(0, 300) };

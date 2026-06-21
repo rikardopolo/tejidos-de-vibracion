@@ -15,16 +15,7 @@
  * flujo del lector.
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-
-function readEnv(key: string): string | undefined {
-  if (typeof process !== 'undefined' && process.env) {
-    const fromProc = process.env[key];
-    if (fromProc !== undefined && fromProc !== '') return fromProc;
-  }
-  const fromMeta = (import.meta.env as Record<string, string | undefined>)[key];
-  if (fromMeta !== undefined && fromMeta !== '') return fromMeta;
-  return undefined;
-}
+import { readEnv } from './env';
 
 let cached: SupabaseClient | null = null;
 
