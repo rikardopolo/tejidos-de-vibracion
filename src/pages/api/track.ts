@@ -19,18 +19,9 @@ import { z } from 'zod';
 import { getCollection } from 'astro:content';
 import { getServerClient } from '@/lib/supabase';
 import { verifyAccessToken } from '@/lib/token';
+import { readEnv } from '@/lib/env';
 
 export const prerender = false;
-
-const readEnv = (key: string): string | undefined => {
-  if (typeof process !== 'undefined' && process.env) {
-    const p = process.env[key];
-    if (p !== undefined && p !== '') return p;
-  }
-  const m = (import.meta.env as Record<string, string | undefined>)[key];
-  if (m !== undefined && m !== '') return m;
-  return undefined;
-};
 
 const eventSchema = z.object({
   type: z.enum(['page_view', 'section_progress', 'section_complete']),

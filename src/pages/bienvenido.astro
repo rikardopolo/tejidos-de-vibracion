@@ -3,18 +3,9 @@ import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import { verifyAccessToken } from '@/lib/token';
 import { addContactToList } from '@/lib/brevo';
 import { getServerClient } from '@/lib/supabase';
+import { readEnv } from '@/lib/env';
 
 export const prerender = false;
-
-const readEnv = (key: string): string | undefined => {
-  if (typeof process !== 'undefined' && process.env) {
-    const p = process.env[key];
-    if (p !== undefined && p !== '') return p;
-  }
-  const m = (import.meta.env as Record<string, string | undefined>)[key];
-  if (m !== undefined && m !== '') return m;
-  return undefined;
-};
 
 // El token llega por query (GET, desde el correo) o por el form (POST, clic humano).
 // SOLO el POST sella la confirmación. Así un prefetch del cliente de correo o un
