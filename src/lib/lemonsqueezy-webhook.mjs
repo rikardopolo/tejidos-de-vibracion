@@ -77,6 +77,7 @@ export function parseOrderEvent(body, eventName) {
     lsOrderId,
     lsOrderIdentifier: str(attr.identifier) ?? str(attr.order_number),
     email: typeof attr.user_email === 'string' ? attr.user_email.toLowerCase().trim() : null,
+    userName: typeof attr.user_name === 'string' && attr.user_name.trim() ? attr.user_name.trim() : null,
     leadId: str(custom.lead_id),
     productSlug: str(custom.product_slug),
     amountCents: Number.isFinite(attr.total) ? attr.total : null,

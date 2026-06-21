@@ -13,6 +13,7 @@ export interface ParsedOrderEvent {
   lsOrderId: string;
   lsOrderIdentifier: string | null;
   email: string | null;
+  userName: string | null;
   leadId: string | null;
   productSlug: string | null;
   amountCents: number | null;

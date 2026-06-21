@@ -38,12 +38,13 @@ test('mapeo producto→nivel', () => {
 test('parseOrderEvent: order_created normaliza campos', () => {
   const body = {
     meta: { event_name: 'order_created', custom_data: { lead_id: '42', product_slug: 'bundle-preventa' } },
-    data: { id: 9999, attributes: { identifier: 'abc-uuid', order_number: 7, user_email: 'Foo@Bar.com', total: 2600, currency: 'USD', status: 'paid', test_mode: true } },
+    data: { id: 9999, attributes: { identifier: 'abc-uuid', order_number: 7, user_name: 'Juliana', user_email: 'Foo@Bar.com', total: 2600, currency: 'USD', status: 'paid', test_mode: true } },
   };
   const p = parseOrderEvent(body, 'order_created');
   assert.equal(p.lsOrderId, '9999');
   assert.equal(p.lsOrderIdentifier, 'abc-uuid');
   assert.equal(p.email, 'foo@bar.com');
+  assert.equal(p.userName, 'Juliana');
   assert.equal(p.leadId, '42');
   assert.equal(p.productSlug, 'bundle-preventa');
   assert.equal(p.amountCents, 2600);

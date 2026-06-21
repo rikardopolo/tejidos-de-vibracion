@@ -5,6 +5,8 @@ import {
   mapProductToNivel,
   parseOrderEvent,
 } from '@/lib/lemonsqueezy-webhook.mjs';
+import { generatePurchaseToken } from '@/lib/purchase-token.mjs';
+import { sendTransactionalEmail } from '@/lib/brevo';
 
 export const prerender = false;
 
@@ -122,6 +124,35 @@ export const POST: APIRoute = async ({ request }) => {
     },
   });
   if (evErr) console.error('[webhooks/lemonsqueezy] events insert (no crítico):', evErr.message);
+
+  // Fase 4 · otorgar acceso: email con el enlace de acceso (solo en compra, no en
+  // reembolso). El enlace lleva un token de compra firmado (nivel + scope).
+  if (parsed.status === 'paid' && parsed.email) {
+    const tokenSecret = readEnv('ACCESS_TOKEN_SECRET');
+    const apiKey = readEnv('BREVO_API_KEY');
+    const templateIdRaw = readEnv('BREVO_TEMPLATE_BUNDLE_PREVENTA');
+    const siteUrl = readEnv('PUBLIC_SITE_URL') || readEnv('SITE_URL') || 'https://tejidosdevibracion.com';
+    const templateId = Number(templateIdRaw);
+    if (tokenSecret && apiKey && templateIdRaw && !Number.isNaN(templateId)) {
+      const accessToken = generatePurchaseToken(
+        { email: parsed.email, nivel, slugs: parsed.productSlug ? [parsed.productSlug] : [], orderId: parsed.lsOrderId },
+        tokenSecret,
+      );
+      const slug = parsed.productSlug ?? 'bundle-preventa';
+      const accesoUrl = `${siteUrl}/acceso/${encodeURIComponent(slug)}?t=${encodeURIComponent(accessToken)}`;
+      // NOMBRE (no FIRSTNAME); {{ unsubscribe }} lo resuelve Brevo en la plantilla, que
+      // debe tener el click-tracking DESACTIVADO (regla de transaccionales del proyecto).
+      const sent = await sendTransactionalEmail({
+        to: { email: parsed.email, name: parsed.userName ?? undefined },
+        templateId,
+        params: { NOMBRE: parsed.userName ?? '', ACCESO_URL: accesoUrl },
+        apiKey,
+      });
+      if (!sent.ok) console.error('[webhooks/lemonsqueezy] email de acceso falló:', sent);
+    } else {
+      console.warn('[webhooks/lemonsqueezy] email de acceso omitido · faltan ACCESS_TOKEN_SECRET/BREVO_API_KEY/BREVO_TEMPLATE_BUNDLE_PREVENTA');
+    }
+  }
 
   return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, nivel });
 };
