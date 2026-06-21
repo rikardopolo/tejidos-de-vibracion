@@ -63,11 +63,22 @@ export const POST: APIRoute = async ({ request }) => {
     return json(200, { ok: true, ignored: eventName ?? 'unknown' });
   }
 
-  const nivelInfo = mapProductToNivel(parsed.productSlug);
+  // orders.email/product_slug son NOT NULL. Validamos ANTES del upsert para no
+  // disparar un fallo de constraint → 500 → reintento infinito de LS.
+  if (!parsed.email) {
+    console.error(`[webhooks/lemonsqueezy] order ${parsed.lsOrderId} sin user_email · 400 (no reintentable)`);
+    return json(400, { ok: false, error: 'missing_email' });
+  }
+  // Nuestro checkout siempre manda product_slug en custom; una compra directa en LS
+  // sin custom cae al único producto activo. TODO multi-producto: mapear por variant_id.
+  const productSlug = parsed.productSlug ?? 'bundle-preventa';
+  if (!parsed.productSlug) {
+    console.warn(`[webhooks/lemonsqueezy] order ${parsed.lsOrderId} sin product_slug · fallback ${productSlug}`);
+  }
+
+  const nivelInfo = mapProductToNivel(productSlug);
   if (!nivelInfo) {
-    console.error(
-      `[webhooks/lemonsqueezy] product_slug desconocido: ${parsed.productSlug} (order ${parsed.lsOrderId}) · default nivel 2`,
-    );
+    console.error(`[webhooks/lemonsqueezy] product_slug sin nivel: ${productSlug} (order ${parsed.lsOrderId}) · default nivel 2`);
   }
   const nivel = nivelInfo?.nivel ?? 2;
   const expira = nivelInfo?.expira ?? null;
@@ -82,7 +93,8 @@ export const POST: APIRoute = async ({ request }) => {
   // Conciliación con leads: custom.lead_id; si no vino, match por email.
   let leadId = parsed.leadId;
   if (!leadId && parsed.email) {
-    const { data: lead } = await supabase.from('leads').select('id').eq('email', parsed.email).maybeSingle();
+    const { data: lead, error: leadErr } = await supabase.from('leads').select('id').eq('email', parsed.email).maybeSingle();
+    if (leadErr) console.error('[webhooks/lemonsqueezy] lookup de lead por email falló (no crítico):', leadErr.message);
     if (lead?.id) leadId = String(lead.id);
   }
 
@@ -93,7 +105,7 @@ export const POST: APIRoute = async ({ request }) => {
       ls_order_identifier: parsed.lsOrderIdentifier,
       email: parsed.email,
       lead_id: leadId,
-      product_slug: parsed.productSlug,
+      product_slug: productSlug,
       tipo: 'one-time',
       amount_cents: parsed.amountCents,
       currency: parsed.currency,
@@ -118,7 +130,7 @@ export const POST: APIRoute = async ({ request }) => {
     source: 'lemonsqueezy_webhook',
     metadata: {
       ls_order_id: parsed.lsOrderId,
-      product_slug: parsed.productSlug,
+      product_slug: productSlug,
       nivel,
       test_mode: parsed.testMode,
     },
@@ -135,10 +147,10 @@ export const POST: APIRoute = async ({ request }) => {
     const templateId = Number(templateIdRaw);
     if (tokenSecret && apiKey && templateIdRaw && !Number.isNaN(templateId)) {
       const accessToken = generatePurchaseToken(
-        { email: parsed.email, nivel, slugs: parsed.productSlug ? [parsed.productSlug] : [], orderId: parsed.lsOrderId },
+        { email: parsed.email, nivel, slugs: [productSlug], orderId: parsed.lsOrderId },
         tokenSecret,
       );
-      const slug = parsed.productSlug ?? 'bundle-preventa';
+      const slug = productSlug;
       const accesoUrl = `${siteUrl}/acceso/${encodeURIComponent(slug)}?t=${encodeURIComponent(accessToken)}`;
       // NOMBRE (no FIRSTNAME); {{ unsubscribe }} lo resuelve Brevo en la plantilla, que
       // debe tener el click-tracking DESACTIVADO (regla de transaccionales del proyecto).
@@ -148,7 +160,12 @@ export const POST: APIRoute = async ({ request }) => {
         params: { NOMBRE: parsed.userName ?? '', ACCESO_URL: accesoUrl },
         apiKey,
       });
-      if (!sent.ok) console.error('[webhooks/lemonsqueezy] email de acceso falló:', sent);
+      if (!sent.ok) {
+        // El email ES la entrega del acceso: si falla, 500 para que LS reintente.
+        // El upsert de orders es idempotente por ls_order_id, así que el retry es seguro.
+        console.error('[webhooks/lemonsqueezy] email de acceso falló · 500 para reintento de LS:', sent);
+        return json(500, { ok: false, error: 'email_failed' });
+      }
     } else {
       console.warn('[webhooks/lemonsqueezy] email de acceso omitido · faltan ACCESS_TOKEN_SECRET/BREVO_API_KEY/BREVO_TEMPLATE_BUNDLE_PREVENTA');
     }
