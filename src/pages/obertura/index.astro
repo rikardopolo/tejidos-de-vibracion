@@ -37,7 +37,7 @@ const ua = Astro.request.headers.get('user-agent') ?? '';
 const isBot = /bot|crawl|spider|googlebot|bingbot|gptbot|claudebot|perplexitybot|google-extended|oai-searchbot|anthropic-ai|cohere-ai|yandex|baiduspider|duckduckbot|applebot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|telegrambot|slackbot|discord|mojeekbot|opengraph|preview|unfurl|metainspector|embed/i.test(ua);
 
 // Resolver nivel · biblioteca pública para todos · solo se usa para propagar a CSS.
-const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
+const nivel = isBot ? 1 : (gatingActivo() ? await getNivel(Astro.cookies) : 1);
 
 const allEntries = await getCollection('obertura', ({ data }) => data.status === 'published');
 allEntries.sort((a, b) => a.data.order - b.data.order);

@@ -5,7 +5,7 @@ import { getNivel, gatingActivo } from '@/lib/gating';
 
 export const prerender = false;
 
-const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
+const nivel = gatingActivo() ? await getNivel(Astro.cookies) : 1;
 ---
 <LecturaLarga
   title="Recibe el primer capítulo · gratis · Tejidos de Vibración"

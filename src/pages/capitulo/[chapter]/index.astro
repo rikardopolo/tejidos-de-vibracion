@@ -38,7 +38,7 @@ if (!chapterEntry || chapterEntry.data.kind !== 'capitulo') {
   return Astro.redirect('/indice');
 }
 
-const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
+const nivel = gatingActivo() ? await getNivel(Astro.cookies) : 1;
 const data = chapterEntry.data;
 const chapterNum = data.chapter ?? 0;
 const romanChapter = romanize(chapterNum);

@@ -53,7 +53,7 @@ if (!entry) {
 const esPublica = PIEZAS_PUBLICAS.has(slug);
 const nivelRequerido: 0 | 1 = esPublica ? 0 : 1;
 // Bots ven todo · gatingActivo() permite override por env · si no, default Nivel 1
-const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
+const nivel = isBot ? 1 : (gatingActivo() ? await getNivel(Astro.cookies) : 1);
 const tieneAcceso = nivel >= nivelRequerido;
 
 // Solo renderizar contenido si tiene acceso · piezas Nivel 1 muestran

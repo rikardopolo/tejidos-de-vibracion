@@ -10,6 +10,8 @@
 import type { AstroCookies } from 'astro';
 import { verifyAccessToken } from './token';
 import { verifyPurchaseToken, looksLikePurchaseToken } from './purchase-token.mjs';
+import { resolveRefundGate } from './refund-gate.mjs';
+import { getServerClient } from './supabase';
 
 export type Nivel = 0 | 1 | 2 | 3;
 
@@ -29,7 +31,7 @@ function readEnv(key: string): string | undefined {
 }
 
 /** Nivel + scope (slugs comprados) leídos y verificados desde la cookie. */
-export function getAcceso(cookies: AstroCookies): { nivel: Nivel; slugs: string[] } {
+export async function getAcceso(cookies: AstroCookies): Promise<{ nivel: Nivel; slugs: string[] }> {
   const secret = readEnv('ACCESS_TOKEN_SECRET');
   if (!secret) return { nivel: 0, slugs: [] };
 
@@ -39,15 +41,33 @@ export function getAcceso(cookies: AstroCookies): { nivel: Nivel; slugs: string[
   // Token de COMPRA (nivel 2/3 + scope) · formato body.sig (un punto).
   if (looksLikePurchaseToken(value)) {
     const r = verifyPurchaseToken(value, secret);
-    return r.valid ? { nivel: r.nivel, slugs: r.slugs } : { nivel: 0, slugs: [] };
+    if (!r.valid) return { nivel: 0, slugs: [] };
+    const granted = { nivel: r.nivel, slugs: r.slugs };
+
+    // Chequeo de reembolso (best-effort). El token firmado ya prueba la compra:
+    // consultamos `orders` SOLO para REVOCAR tras un reembolso/disputa. Cualquier
+    // fallo de infra hace fail-open al nivel del token (un outage no debe tumbar
+    // acceso legítimo). Los tokens de REGISTRO no tocan la DB (sin coste extra).
+    const supabase = r.orderId ? getServerClient() : null;
+    let order: { status: string } | null = null;
+    let queryError = false;
+    if (supabase && r.orderId) {
+      const res = await supabase.from('orders').select('status').eq('ls_order_id', r.orderId).maybeSingle();
+      order = res.data;
+      queryError = res.error != null;
+      if (queryError) console.warn('[gating] consulta orders falló · fail-open al token de compra:', res.error?.message);
+    } else if (r.orderId && !supabase) {
+      console.warn('[gating] Supabase no disponible · fail-open al nivel del token de compra');
+    }
+    return resolveRefundGate(granted, { orderId: r.orderId, hasClient: supabase != null, queryError, order });
   }
 
   // Token de REGISTRO (nivel 1) · formato legacy (un único blob base64url, sin puntos).
   return verifyAccessToken(value, secret).valid ? { nivel: 1, slugs: [] } : { nivel: 0, slugs: [] };
 }
 
-export function getNivel(cookies: AstroCookies): Nivel {
-  return getAcceso(cookies).nivel;
+export async function getNivel(cookies: AstroCookies): Promise<Nivel> {
+  return (await getAcceso(cookies)).nivel;
 }
 
 export function gatingActivo(): boolean {

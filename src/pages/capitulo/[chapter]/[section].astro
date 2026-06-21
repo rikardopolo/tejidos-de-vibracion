@@ -67,7 +67,7 @@ const capitulo = `Capítulo ${romanChapter}`;
 // editorial interno (draft/review/published) pero NO afecta el gating
 // runtime. Lo único que define visibilidad pública es el status del
 // capítulo padre.
-const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
+const nivel = isBot ? 1 : (gatingActivo() ? await getNivel(Astro.cookies) : 1);
 const tieneAcceso = chapterEntry.data.status === 'published' && nivel >= 1;
 const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
