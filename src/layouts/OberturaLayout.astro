@@ -25,6 +25,7 @@
 import BookReader from '@/layouts/BookReader.astro';
 import OberturaToc from '@/components/obertura/OberturaToc.astro';
 import { baseSchemaGraph, SITE as SEO_SITE } from '@/lib/seo';
+import type { Nivel } from '@/lib/gating';
 
 interface Props {
   /** Título HTML para el <head>. */
@@ -40,7 +41,7 @@ interface Props {
   schemas?: Record<string, unknown>[];
   /** Nivel de acceso del lector (0=anónimo, 1=tejedor, 2=suscriptor).
    *  Se propaga a body[data-nivel="..."] para CSS de gating. Default: 1. */
-  nivel?: 0 | 1 | 2;
+  nivel?: Nivel;
 }
 
 const {

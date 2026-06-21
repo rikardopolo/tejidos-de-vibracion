@@ -25,6 +25,7 @@
 import '@/styles/global.css';
 import SchemaJsonLd from '@/components/SchemaJsonLd.astro';
 import { SITE } from '@/lib/seo';
+import type { Nivel } from '@/lib/gating';
 
 interface Props {
   /** Título del <head>. */
@@ -48,7 +49,7 @@ interface Props {
   /** Bloques JSON-LD · cada uno se renderiza vía <SchemaJsonLd>. */
   schemas?: Record<string, unknown>[];
   /** Nivel de acceso (gating) · propagado a body[data-nivel]. */
-  nivel?: 0 | 1 | 2;
+  nivel?: Nivel;
   /** id de página · body[data-page]. */
   pageId?: string;
   /** Clase del <body> (ej. 'capitulo-body' / 'obertura-body'). */

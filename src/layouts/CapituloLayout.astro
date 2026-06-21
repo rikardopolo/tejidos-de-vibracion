@@ -19,6 +19,7 @@
  */
 import BookReader from '@/layouts/BookReader.astro';
 import CapituloToc from '@/components/book/CapituloToc.astro';
+import type { Nivel } from '@/lib/gating';
 
 interface Props {
   /** Título HTML del <head>. */
@@ -35,7 +36,7 @@ interface Props {
   breadcrumbOrnament?: string;
   breadcrumbText?: string;
   /** Nivel de acceso (gating) · propagado a body[data-nivel]. */
-  nivel?: 0 | 1 | 2;
+  nivel?: Nivel;
   pageId?: string;
 }
 
