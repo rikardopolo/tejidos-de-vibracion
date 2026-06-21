@@ -77,6 +77,7 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   bodyClass="obertura-body"
   mainClass="obertura-main"
   breadcrumb={headerLabel ? { ornament: '◆', text: headerLabel } : undefined}
+  track={currentSlug ? { surface: 'obertura', chapter: 'obertura', section: currentSlug } : undefined}
 >
   <OberturaToc slot="toc" current={currentSlug} />
   <slot />

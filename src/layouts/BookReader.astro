@@ -57,6 +57,12 @@ interface Props {
   mainClass?: string;
   /** Breadcrumb central del header (slot center). Omitir para usar header-center. */
   breadcrumb?: { ornament?: string; text?: string };
+  /**
+   * Contexto de rastreo de lectura first-party. Presente solo en páginas de
+   * sección real (no en índices/portadas). Emite data-track-* en <body> y
+   * carga /reading-tracker.js. `chapter` es la unidad ('obertura' | 'cap-N-...').
+   */
+  track?: { surface: 'obertura' | 'capitulo'; chapter: string; section: string };
 }
 
 const {
@@ -72,6 +78,7 @@ const {
   bodyClass,
   mainClass = 'book-main',
   breadcrumb,
+  track,
 } = Astro.props;
 
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, SITE).toString();
@@ -141,7 +148,14 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
 
   <slot name="head" />
 </head>
-<body class={bodyClass} data-page={pageId} data-nivel={nivel}>
+<body
+  class={bodyClass}
+  data-page={pageId}
+  data-nivel={nivel}
+  data-track-surface={track?.surface}
+  data-track-chapter={track?.chapter}
+  data-track-section={track?.section}
+>
   <a href="#main-content" class="skip-link">Saltar al contenido</a>
 
   <!-- Reading progress bar · top del viewport -->
@@ -196,6 +210,7 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
 
   <script src="/libro-reader.js" defer></script>
   <script src="/book-chrome.js" defer></script>
+  {track && <script src="/reading-tracker.js" defer></script>}
 
   <style is:global>
     /* ── Paper grain · radial gradients sutiles en oro/índigo ─────── */

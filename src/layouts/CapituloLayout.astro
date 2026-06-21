@@ -62,6 +62,7 @@ const {
   bodyClass="capitulo-body"
   mainClass="cap-main"
   breadcrumb={breadcrumbText ? { ornament: breadcrumbOrnament, text: breadcrumbText } : undefined}
+  track={currentSlug ? { surface: 'capitulo', chapter, section: currentSlug } : undefined}
 >
   <CapituloToc slot="toc" chapter={chapter} current={currentSlug} chapterLabel={chapterLabel} />
   <slot />

@@ -37,7 +37,9 @@ const isSoon = soon;
 const isGestating = !isSoon && gestating;
 const isActive = !isSoon && !isGestating && !!href;
 
-const Tag = isActive ? 'a' : 'span';
+// `any` evita el falso positivo de TS con tags polimórficos (a/span) + spread
+// de atributos condicionales · solo afecta tipos, el valor runtime es correcto.
+const Tag: any = isActive ? 'a' : 'span';
 const modifierClass = isSoon
   ? ' toc-entry--soon'
   : isGestating
