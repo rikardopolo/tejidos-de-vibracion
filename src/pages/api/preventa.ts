@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { upsertContact, hashIp, isRateLimited } from '@/lib/brevo';
+import { readEnv } from '@/lib/env';
 
 export const prerender = false;
 
@@ -14,16 +15,6 @@ export const prerender = false;
  *
  * Solo requiere BREVO_API_KEY (ya configurada en prod). No usa Resend.
  */
-
-const readEnv = (key: string): string | undefined => {
-  if (typeof process !== 'undefined' && process.env) {
-    const p = process.env[key];
-    if (p !== undefined && p !== '') return p;
-  }
-  const m = (import.meta.env as Record<string, string | undefined>)[key];
-  if (m !== undefined && m !== '') return m;
-  return undefined;
-};
 
 const preventaSchema = z.object({
   nombre: z.string().min(2).max(100).trim(),

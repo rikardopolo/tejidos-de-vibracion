@@ -9,6 +9,7 @@ import {
 import { generateAccessToken } from '@/lib/token';
 import { getServerClient } from '@/lib/supabase';
 import { getGeo } from '@/lib/geo';
+import { readEnv } from '@/lib/env';
 
 export const prerender = false;
 
@@ -18,16 +19,6 @@ export const prerender = false;
  */
 const CONSENT_TEXT_LIBRO =
   'Acepto recibir los capítulos por correo y que se registre mi avance de lectura para mejorar el libro. Conozco la política de privacidad.';
-
-const readEnv = (key: string): string | undefined => {
-  if (typeof process !== 'undefined' && process.env) {
-    const p = process.env[key];
-    if (p !== undefined && p !== '') return p;
-  }
-  const m = (import.meta.env as Record<string, string | undefined>)[key];
-  if (m !== undefined && m !== '') return m;
-  return undefined;
-};
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   // Solo aceptar JSON
