@@ -48,7 +48,7 @@ interface Props {
   /** Bloques JSON-LD · cada uno se renderiza vía <SchemaJsonLd>. */
   schemas?: Record<string, unknown>[];
   /** Nivel de acceso (gating) · propagado a body[data-nivel]. */
-  nivel?: 0 | 1 | 2;
+  nivel?: 0 | 1 | 2 | 3;
   /** id de página · body[data-page]. */
   pageId?: string;
   /** Clase del <body> (ej. 'capitulo-body' / 'obertura-body'). */
