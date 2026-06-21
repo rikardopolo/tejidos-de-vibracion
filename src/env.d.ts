@@ -9,6 +9,10 @@ interface ImportMetaEnv {
   readonly GATING_ACTIVO: string;
   readonly SUSCRIPCION_ACTIVA: string;
   readonly COMUNIDAD_ACTIVA: string;
+  readonly LEMONSQUEEZY_API_KEY: string;
+  readonly LS_STORE_ID: string;
+  readonly LS_VARIANT_BUNDLE_PREVENTA: string;
+  readonly LS_WEBHOOK_SECRET: string;
   readonly PUBLIC_SITE_URL: string;
   readonly SITE_URL: string;
 }
