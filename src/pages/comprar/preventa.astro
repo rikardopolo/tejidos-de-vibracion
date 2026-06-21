@@ -1,0 +1,194 @@
+---
+// src/pages/comprar/preventa.astro
+// Página de COMPRA del Bundle de pre-venta (Cap. 4 + Acto II + Acto III).
+// CTA ÚNICO: comprar. El botón postea a /api/checkout/bundle-preventa y redirige
+// al checkout de Lemon Squeezy. Sustituye a /comprar/acto-2 (301 en vercel.json).
+// Layout LecturaLarga = nav + footer del sitio.
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+
+const SEO = {
+  title: 'Bundle de pre-venta — Tejidos de Vibración',
+  description:
+    'El Capítulo 4, el Acto II y el Acto III de «Tejidos de Vibración» al precio de pre-venta: $26 USD, el más bajo que existirá. Sube a $32 en septiembre 2026.',
+};
+---
+
+<LecturaLarga title={SEO.title} description={SEO.description} pageId="comprar-preventa">
+  <article class="preventa measure pt-5">
+
+    <!-- ── HERO + CTA ───────────────────────────────────────── -->
+    <header class="pv-hero">
+      <p class="eyebrow">Tejidos de Vibración · Volumen I · Pre-venta</p>
+      <h1 class="pv-titulo">
+        El bundle de pre-venta<span class="pv-titulo-sub">Capítulo 4 · Acto II · Acto III</span>
+      </h1>
+      <p class="pv-bajada">
+        Asegura ahora —al precio más bajo que existirá— el tramo del libro donde
+        el recorrido entra en el cuerpo y se adentra en la pregunta por el
+        observador.
+      </p>
+      <p class="pv-precio-bloque">
+        <span class="pv-precio">$26 USD</span>
+        <span class="pv-precio-nota">· siete capítulos · formato digital</span>
+      </p>
+      <p class="pv-urgencia">
+        Es el precio de pre-venta: <strong>sube a $32 en septiembre&nbsp;2026</strong>.
+        Quien compra hoy paga menos que quien llega después.
+      </p>
+
+      <div class="pv-cta-bloque">
+        <button type="button" class="pv-comprar" data-checkout-button>
+          Comprar el bundle — $26&nbsp;USD
+        </button>
+        <p class="pv-cta-nota" data-checkout-status role="status" aria-live="polite"></p>
+        <p class="pv-cta-fina">Pago seguro vía Lemon Squeezy · impuestos incluidos donde apliquen.</p>
+      </div>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <!-- ── QUÉ INCLUYE ──────────────────────────────────────── -->
+    <!-- COPY a afinar por Orion: descripciones de Cap. 4 y Acto III. -->
+    <section class="pv-capitulos" aria-label="Qué incluye el bundle">
+      <p class="eyebrow">Qué incluye</p>
+
+      <article class="pv-card">
+        <span class="pv-cap-num">Capítulo 4</span>
+        <h2 class="pv-cap-titulo">El umbral</h2>
+        <p class="pv-cap-desc">
+          El capítulo que cierra el primer movimiento y abre el paso del mundo
+          de afuera al mundo de adentro.
+        </p>
+      </article>
+
+      <article class="pv-card">
+        <span class="pv-cap-num">Acto II · caps. 5–7</span>
+        <h2 class="pv-cap-titulo">El Observador en el Campo</h2>
+        <p class="pv-cap-desc">
+          Neurociencia de la Frecuencia, Estados Expandidos de Conciencia y El
+          Problema del Observador: cómo el cerebro construye la realidad y qué
+          significa, de verdad, observar.
+        </p>
+      </article>
+
+      <article class="pv-card">
+        <span class="pv-cap-num">Acto III · caps. 8–10</span>
+        <h2 class="pv-cap-titulo">La síntesis</h2>
+        <p class="pv-cap-desc">
+          El tercer movimiento completo, donde el libro llega a su cierre
+          narrativo y las hebras se tejen en una sola figura.
+        </p>
+      </article>
+
+      <p class="pv-entrega-nota">
+        Compras una vez y recibes cada acto a medida que se publica: el Acto II
+        desde septiembre&nbsp;2026 y el Acto III desde enero&nbsp;2027. El precio
+        de pre-venta no vuelve.
+      </p>
+    </section>
+
+    <div class="flourish flourish--rule"></div>
+
+    <!-- ── CTA DE CIERRE (mismo llamado) ────────────────────── -->
+    <section class="pv-cierre">
+      <button type="button" class="pv-comprar" data-checkout-button>
+        Comprar el bundle — $26&nbsp;USD
+      </button>
+      <p class="pv-cta-nota" data-checkout-status role="status" aria-live="polite"></p>
+    </section>
+
+  </article>
+</LecturaLarga>
+
+<script src="/comprar-checkout.js" defer></script>
+
+<style>
+  /* Tokens canónicos del sitio (tokens.css): --pergamino --tinta --oro
+     --oro-suave --indigo --reposo --serif --sans. Sin hex duros. */
+
+  .preventa { padding-bottom: var(--gap-xl, 6rem); }
+
+  /* ── HERO ─────────────────────────────────────────────────── */
+  .pv-hero { text-align: center; padding: var(--gap-md, 2rem) 0 var(--gap-lg, 4rem); }
+  .pv-titulo {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 6vw, 3.8rem);
+    font-weight: 400;
+    line-height: var(--lh-tight, 1.2);
+    color: var(--indigo);
+    margin: 0.25rem 0 0.5rem;
+  }
+  .pv-titulo-sub {
+    display: block;
+    font-size: clamp(1.2rem, 3.2vw, 1.7rem);
+    font-style: italic;
+    color: var(--oro);
+    margin-top: 0.3rem;
+  }
+  .pv-bajada {
+    font-family: var(--serif);
+    font-size: var(--fs-body-lg, 1.25rem);
+    line-height: var(--lh-body, 1.7);
+    max-width: 36rem;
+    margin: 1.75rem auto 0;
+  }
+  .pv-precio-bloque {
+    margin-top: var(--gap-md, 2rem);
+    display: flex; align-items: baseline; justify-content: center; gap: 0.5rem;
+  }
+  .pv-precio { font-family: var(--serif); font-size: 2.2rem; font-weight: 500; color: var(--indigo); }
+  .pv-precio-nota { font-family: var(--sans); font-size: 0.82rem; color: var(--reposo); }
+  .pv-urgencia {
+    font-family: var(--sans); font-size: 0.92rem; line-height: 1.5;
+    color: var(--reposo); max-width: 30rem; margin: 0.75rem auto 0;
+  }
+  .pv-urgencia strong { color: var(--indigo); }
+
+  /* ── CTA (botón de compra) ────────────────────────────────── */
+  .pv-cta-bloque { margin-top: var(--gap-md, 2rem); }
+  .pv-comprar {
+    appearance: none; -webkit-appearance: none; cursor: pointer;
+    font-family: var(--sans); font-size: 1.05rem; font-weight: 600;
+    color: var(--pergamino, #fdfbf6); background: var(--oro);
+    border: none; border-radius: 8px; padding: 0.95rem 2rem;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+  .pv-comprar:hover { background: var(--oro-suave); }
+  .pv-comprar:active { transform: translateY(1px); }
+  .pv-comprar:disabled { opacity: 0.6; cursor: progress; }
+  .pv-cta-nota { font-family: var(--sans); font-size: 0.85rem; color: var(--indigo); min-height: 1.2em; margin: 0.75rem 0 0; }
+  .pv-cta-fina { font-family: var(--sans); font-size: 0.78rem; color: var(--reposo); margin: 0.6rem 0 0; }
+
+  /* ── QUÉ INCLUYE ──────────────────────────────────────────── */
+  .pv-capitulos {
+    padding: var(--gap-lg, 4rem) 0 var(--gap-md, 2rem);
+    display: flex; flex-direction: column; gap: var(--gap-md, 2rem);
+  }
+  .pv-card {
+    padding: 1.75rem 2rem;
+    border-left: 4px solid var(--oro);
+    background: var(--oro-fantasma, rgba(212, 160, 23, 0.12));
+  }
+  .pv-cap-num {
+    font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--oro-suave); display: block; margin-bottom: 0.4rem;
+  }
+  .pv-cap-titulo {
+    font-family: var(--serif); font-size: var(--fs-h3, 1.5rem); font-weight: 500;
+    color: var(--indigo); margin: 0 0 0.5rem;
+  }
+  .pv-cap-desc { font-family: var(--serif); font-size: var(--fs-body, 1.1875rem); line-height: var(--lh-body, 1.7); }
+  .pv-entrega-nota {
+    font-family: var(--sans); font-size: 0.9rem; line-height: 1.6; color: var(--reposo);
+    max-width: 34rem; margin: var(--gap-sm, 1rem) auto 0; text-align: center;
+  }
+
+  /* ── CIERRE ───────────────────────────────────────────────── */
+  .pv-cierre { padding: var(--gap-md, 2rem) 0 0; text-align: center; }
+
+  @media (max-width: 600px) {
+    .pv-card { padding: 1.25rem; }
+    .pv-precio { font-size: 1.9rem; }
+    .pv-comprar { width: 100%; }
+  }
+</style>
