@@ -1,0 +1,73 @@
+---
+/**
+ * /acceso/[producto] · Canjea el token de compra por la cookie de acceso.
+ *
+ * El comprador llega aquí desde el email que dispara el webhook (Fase 3/4). El
+ * token de la URL codifica nivel (2/3) + scope de productos; al validarlo se fija
+ * la cookie tejedor-access y el gating desbloquea el contenido correspondiente.
+ * El nivel/scope viven en el token, no en el path: `[producto]` solo enruta.
+ */
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import { verifyPurchaseToken } from '@/lib/purchase-token.mjs';
+
+export const prerender = false;
+
+const readEnv = (key: string): string | undefined => {
+  if (typeof process !== 'undefined' && process.env) {
+    const p = process.env[key];
+    if (p !== undefined && p !== '') return p;
+  }
+  const m = (import.meta.env as Record<string, string | undefined>)[key];
+  if (m !== undefined && m !== '') return m;
+  return undefined;
+};
+
+const token = Astro.url.searchParams.get('t');
+const secret = readEnv('ACCESS_TOKEN_SECRET');
+
+if (token && secret) {
+  const result = verifyPurchaseToken(token, secret);
+  if (result.valid) {
+    // Token válido → fija la cookie de acceso y lleva al lector directo al índice
+    // del libro. El correo ya guarda la "llave"; no hace falta pantalla intermedia.
+    Astro.cookies.set('tejedor-access', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 365 * 24 * 60 * 60, // 1 año · alinea con el TTL del token de compra
+    });
+    return Astro.redirect('/indice');
+  }
+}
+// Token ausente o inválido → cae al render de "enlace caducado".
+---
+<LecturaLarga
+  title="Enlace caducado · Tejidos de Vibración"
+  description="Tu enlace de acceso no coincidió."
+  pageId="acceso"
+>
+  <article class="measure pt-5">
+    <header class="center">
+      <p class="eyebrow">Tejidos de Vibración</p>
+      <h1 class="title-1" style="font-style: italic;">El enlace ya no abre</h1>
+    </header>
+
+    <div class="flourish flourish--triple mt-2h"></div>
+
+    <div class="prose">
+      <p class="no-indent">
+        Tu enlace de acceso no coincidió. Puede que haya caducado o que se haya
+        cortado al viajar por el correo.
+      </p>
+      <p>
+        Abre de nuevo el enlace que te enviamos al confirmar la compra. Si no lo
+        encuentras, escríbenos y te lo reenviamos.
+      </p>
+    </div>
+
+    <div class="center mt-4 mb-6">
+      <a class="lit-link lit-link--lg" href="/obertura">Volver a la Obertura →</a>
+    </div>
+  </article>
+</LecturaLarga>

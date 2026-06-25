@@ -15,6 +15,7 @@
  * flujo del lector.
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import ws from 'ws';
 
 function readEnv(key: string): string | undefined {
   if (typeof process !== 'undefined' && process.env) {
@@ -36,6 +37,10 @@ export function getServerClient(): SupabaseClient | null {
   if (!url || !secret) return null;
   cached = createClient(url, secret, {
     auth: { persistSession: false, autoRefreshToken: false },
+    // No usamos realtime (server-only, solo REST), pero supabase-js inicializa
+    // RealtimeClient en el constructor y en Node <22 exige un WebSocket nativo;
+    // proveemos `ws` para que no lance. ponytail: transport solo satisface el ctor.
+    realtime: { transport: ws as unknown as never },
   });
   return cached;
 }

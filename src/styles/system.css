@@ -1369,7 +1369,7 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
 
 /* Variante "page" como tarjeta cálida · adopta el estilo del gate de la
    Obertura (BloquePuerta) a la paleta del sitio: papel cálido con reglas
-   arriba/abajo, botón y enlace en oro. Aplica a /recibir y /comprar/acto-2.
+   arriba/abajo, botón y enlace en oro. Aplica a /recibir.
    El gate usa variant="inline" + sus propios overrides, así que no se toca. */
 .form-tejedor--page {
   max-width: 32rem;

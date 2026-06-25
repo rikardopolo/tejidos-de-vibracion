@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "rm -rf node_modules && pnpm install --frozen-lockfile",
   "buildCommand": "pnpm build",
   "ignoreCommand": "git diff HEAD^ HEAD --quiet -- src public scripts vercel.json package.json docs",
   "headers": [
@@ -45,6 +45,7 @@
     }
   ],
   "redirects": [
+    { "source": "/comprar/acto-2", "destination": "/comprar/preventa", "permanent": true },
     { "source": "/libro", "destination": "/", "permanent": true },
     { "source": "/libro/obertura", "destination": "/obertura", "permanent": true },
     { "source": "/libro/:path*", "destination": "/:path*", "permanent": true }

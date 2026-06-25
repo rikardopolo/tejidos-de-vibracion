@@ -1,0 +1,39 @@
+---
+// src/pages/comprar/gracias.astro
+// Destino del redirect post-pago de Lemon Squeezy. El acceso real llega por el
+// email que dispara el webhook (token → /acceso); esta página solo agradece y
+// orienta. Layout LecturaLarga = nav + footer.
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+
+const SEO = {
+  title: 'Gracias por tu compra — Tejidos de Vibración',
+  description: 'Tu compra está confirmada. Revisa tu correo para abrir tu acceso.',
+};
+---
+
+<LecturaLarga title={SEO.title} description={SEO.description} pageId="comprar-gracias">
+  <article class="measure pt-5">
+    <header class="center">
+      <p class="eyebrow eyebrow--gold">El tejido te recibe</p>
+      <h1 class="title-1" style="font-style: italic;">Gracias</h1>
+    </header>
+
+    <div class="flourish flourish--triple mt-2h"></div>
+
+    <div class="prose">
+      <p class="no-indent">
+        Tu compra está confirmada. En un momento te llegará un correo con el
+        enlace para abrir tu acceso y con el recibo.
+      </p>
+      <p>
+        Si no lo ves en unos minutos, revisa la carpeta de promociones o spam.
+        Cuando abras el enlace, los capítulos que compraste quedarán disponibles
+        cada vez que vuelvas con este navegador.
+      </p>
+    </div>
+
+    <div class="center mt-4 mb-6">
+      <a class="lit-link lit-link--lg" href="/indice">Ir a leer →</a>
+    </div>
+  </article>
+</LecturaLarga>

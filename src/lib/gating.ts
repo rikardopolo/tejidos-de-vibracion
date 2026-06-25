@@ -1,60 +1,59 @@
 /**
- * gating.ts · Detección del nivel de acceso desde la cookie tejedor-access.
+ * gating.ts · Nivel de acceso desde la cookie tejedor-access.
  *
- * Niveles:
- *   0 = anónimo         → fragmento 20-30% + BloqueRegistro
- *   1 = tejedor free    → contenido completo
- *   2 = suscriptor pago → contenido completo + extras (inactivo al lanzamiento)
+ * Niveles (Guía Estratégica · escalera de compromiso):
+ *   0 = visitante          → fragmento 20-30% + BloqueRegistro
+ *   1 = tejedor registrado → Obertura + Acto I (token de registro · token.ts)
+ *   2 = comprador          → + Cap. 4 + Acto II/III (token de compra · purchase-token.mjs)
+ *   3 = libro completo     → + objeto terminado / acceso permanente
  */
 import type { AstroCookies } from 'astro';
 import { verifyAccessToken } from './token';
+import { verifyPurchaseToken, looksLikePurchaseToken } from './purchase-token.mjs';
 
-export type Nivel = 0 | 1 | 2;
+export type Nivel = 0 | 1 | 2 | 3;
 
 /**
  * Lee una variable de entorno respetando runtime PRIMERO, build-time como fallback.
- *
- * Vite inlines `import.meta.env.X` en build time; si la var tenía un valor
- * "stale" o vacío entonces, queda hardcoded en el bundle y nunca refleja
- * cambios posteriores en el dashboard de Vercel.
- *
- * `process.env[key]` con bracket-notation no es estáticamente analizable
- * por Vite y se evalúa en runtime en Node (Vercel Serverless), garantizando
- * que los valores actuales del dashboard se apliquen sin rebuild.
+ * `process.env[key]` (bracket-notation) no es estáticamente analizable por Vite y
+ * se evalúa en runtime en Vercel → el dashboard es la fuente de verdad sin rebuild.
  */
 function readEnv(key: string): string | undefined {
-  // Runtime first (Vercel dashboard como fuente de verdad)
   if (typeof process !== 'undefined' && process.env) {
     const fromProc = process.env[key];
     if (fromProc !== undefined && fromProc !== '') return fromProc;
   }
-  // Fallback a build-time (útil en dev local con .env file)
   const fromMeta = (import.meta.env as Record<string, string | undefined>)[key];
   if (fromMeta !== undefined && fromMeta !== '') return fromMeta;
   return undefined;
 }
 
-export function getNivel(cookies: AstroCookies): Nivel {
+/** Nivel + scope (slugs comprados) leídos y verificados desde la cookie. */
+export function getAcceso(cookies: AstroCookies): { nivel: Nivel; slugs: string[] } {
   const secret = readEnv('ACCESS_TOKEN_SECRET');
-  if (!secret) return 0;
+  if (!secret) return { nivel: 0, slugs: [] };
 
-  const cookie = cookies.get('tejedor-access');
-  if (!cookie?.value) return 0;
+  const value = cookies.get('tejedor-access')?.value;
+  if (!value) return { nivel: 0, slugs: [] };
 
-  const result = verifyAccessToken(cookie.value, secret);
-  if (!result.valid) return 0;
+  // Token de COMPRA (nivel 2/3 + scope) · formato body.sig (un punto).
+  if (looksLikePurchaseToken(value)) {
+    const r = verifyPurchaseToken(value, secret);
+    return r.valid ? { nivel: r.nivel, slugs: r.slugs } : { nivel: 0, slugs: [] };
+  }
 
-  // Para el lanzamiento: todo token válido = Nivel 1 (tejedor free).
-  // En el futuro: leer atributo de Brevo/Supabase para distinguir 1 vs 2.
-  return 1;
+  // Token de REGISTRO (nivel 1) · formato legacy (un único blob base64url, sin puntos).
+  return verifyAccessToken(value, secret).valid ? { nivel: 1, slugs: [] } : { nivel: 0, slugs: [] };
+}
+
+export function getNivel(cookies: AstroCookies): Nivel {
+  return getAcceso(cookies).nivel;
 }
 
 export function gatingActivo(): boolean {
-  // PREVIEW BRANCH ONLY (preview/chapters-1-2-3 · NO MERGE A MAIN).
-  // En cualquier rama Vercel distinta de `main` desactivamos el gating
-  // por completo para que el revisor interno vea el contenido sin pasar
-  // por BloquePuerta + form Brevo. main NUNCA toma este camino porque
-  // VERCEL_GIT_COMMIT_REF=main en deploys de produccion.
+  // En cualquier rama Vercel distinta de `main` se desactiva el gating por
+  // completo para que el revisor interno vea el contenido sin pasar por la puerta.
+  // main NUNCA toma este camino (VERCEL_GIT_COMMIT_REF=main en producción).
   if (typeof process !== 'undefined' && process.env) {
     const branch = process.env.VERCEL_GIT_COMMIT_REF ?? '';
     if (branch && branch !== 'main') return false;
