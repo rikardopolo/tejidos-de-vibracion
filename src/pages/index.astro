@@ -10,9 +10,12 @@ import LitLink from '@/components/book/LitLink.astro';
   pageId="home"
 >
   <article class="cover measure">
-    <p class="eyebrow eyebrow--gold mt-6">Volumen I · Tejidos de Realidad</p>
+    <div class="vib-stage">
+      <canvas id="vib-hero" aria-hidden="true"></canvas>
+      <p class="eyebrow eyebrow--gold mt-6">Volumen I · Tejidos de Realidad</p>
 
-    <h1 class="monumental">Tejidos<br/>de <em>Vibración</em></h1>
+      <h1 class="monumental">Tejidos<br/>de <em>Vibración</em></h1>
+    </div>
 
     <p class="umbral-line">Donde la mirada teje lo posible en lo real, y el silencio entre dos latidos resulta ser el río que ambas orillas comparten.</p>
 
@@ -46,3 +49,22 @@ import LitLink from '@/components/book/LitLink.astro';
     </p>
   </article>
 </LecturaLarga>
+
+<!-- Visualizador de vibración detrás del título · canvas nativo, externo (CSP) -->
+<script is:inline src="/js/vib-hero.js"></script>
+
+<style>
+  .vib-stage { position: relative; isolation: isolate; }
+  /* el contenido del hero por encima del canvas */
+  .vib-stage > :not(#vib-hero) { position: relative; z-index: 1; }
+  #vib-hero {
+    position: absolute;
+    z-index: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    top: -3.5rem;
+    height: calc(100% + 7rem);
+    pointer-events: none;   /* los clics del hero pasan a través */
+  }
+</style>
