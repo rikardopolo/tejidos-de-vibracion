@@ -71,6 +71,10 @@ body {
   margin: 0;
   background: var(--pergamino);
   color: var(--tinta);
+  /* ⑧ cross-fade dia/noche · el load va pre-pintado (sin transicion), solo el
+     toggle cruza. reduced-motion lo anula via el kill-switch global. */
+  transition: background-color 0.55s var(--ease-editorial, ease),
+              color 0.55s var(--ease-editorial, ease);
   font-family: var(--serif);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
@@ -243,6 +247,30 @@ main {
   font-weight: 500;
   color: var(--oro);
 }
+/* ① shimmer en "Vibración" · barrido de luz dorada lento sobre el oro. La em ya
+   es oro; el gradiente clip:text le pasa una banda mas clara que cruza la palabra. */
+.monumental .vibracion-title {
+  background: linear-gradient(100deg,
+    var(--oro) 0%, var(--oro) 38%, #f3dd8e 50%, var(--oro) 62%, var(--oro) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: vibracion-sheen 9s var(--ease-editorial, ease) infinite;
+}
+@keyframes vibracion-sheen {
+  from { background-position: 120% 0; }
+  to   { background-position: -20% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .monumental .vibracion-title {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: var(--oro);
+    color: var(--oro);
+  }
+}
 
 /* títulos */
 .title-1 {
@@ -375,6 +403,7 @@ main {
   float: left;
   padding: 0.05em 0.12em 0 0;
   color: var(--oro);
+  text-shadow: 0 0 24px var(--oro-fantasma);   /* ③ halo oro sutil en la capitular */
 }
 
 /* divisores tipográficos */
