@@ -8,6 +8,7 @@
     var max = h.scrollHeight - h.clientHeight;
     var ratio = max > 0 ? h.scrollTop / max : 0;
     bar.style.transform = 'scaleX(' + ratio + ')';
+    h.style.setProperty('--read-progress', ratio);   // hilo del Tejedor (⑥)
   };
   document.addEventListener('scroll', update, { passive: true });
   update();
