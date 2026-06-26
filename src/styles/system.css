@@ -84,6 +84,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ⑨ scrollbar dorada · refuerza la paleta en cada punto de contacto.
+   Hereda los tokens, así que el modo noche la adapta sola. */
+* { scrollbar-color: var(--oro-suave) transparent; scrollbar-width: thin; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--oro-suave);
+  border: 2px solid var(--pergamino);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--oro); }
+
 /* ----- Indicador de progreso (decorativo, una sola línea) ----- */
 .progress-rail {
   position: fixed;

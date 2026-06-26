@@ -252,6 +252,21 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
       pointer-events: none;
       z-index: 1;
     }
+    /* ⑥ el hilo cobra vida con tu descenso: un brillo oro desciende hasta el
+       punto de lectura (--read-progress lo setea book-progress-bar.js). Quieto:
+       no compite con la barra superior. */
+    .book-thread::after {
+      content: "";
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      height: calc(var(--read-progress, 0) * 100%);
+      background: linear-gradient(180deg,
+        rgba(212, 160, 23, 0) 0%,
+        rgba(212, 160, 23, 0.4) 70%,
+        rgba(212, 160, 23, 0.68) 100%);
+      transition: height 140ms linear;
+    }
 
     /* ── Header chrome ────────────────────────────────────────────── */
     .book-chrome {
