@@ -8,14 +8,14 @@
  * Este wrapper sólo inyecta:
  *   - su TOC (CapituloToc) en el slot izquierdo del header
  *   - su breadcrumb central (◆ §N · Cap. N)
- *   - su SEO (preview: noindex · OG "Tejidos de Vibración" · sin schema)
+ *   - su SEO (index,follow heredado de BookReader · OG "Tejidos de Vibración" · sin schema)
  *   - sus overrides de cuerpo (.prose justify+hyphens · .measure h2)
  *
  * El cuerpo de lectura (.prose, .measure, .marginalia) y la tipografía
  * vienen de system.css (importado por BookReader vía global.css).
  *
- * NOTA preview branch (preview/chapters-1-2-3): robots=noindex hasta el
- * merge a main. (Heredado del Base.astro original.)
+ * SEO: indexable (index,follow) por el default de BookReader — los capítulos
+ * son contenido público del libro.
  */
 import BookReader from '@/layouts/BookReader.astro';
 import CapituloToc from '@/components/book/CapituloToc.astro';
@@ -55,7 +55,6 @@ const {
 <BookReader
   title={title}
   description={description}
-  robots="noindex,nofollow,noarchive"
   og={{ type: 'article', siteName: 'Tejidos de Vibración', locale: 'es_ES' }}
   nivel={nivel}
   pageId={pageId}

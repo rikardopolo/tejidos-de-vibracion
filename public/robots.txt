@@ -1,5 +1,8 @@
-# PREVIEW BRANCH ONLY · preview/chapters-1-2-3 · NO MERGE A MAIN.
-# Bloqueo total para revisión interna del 18-jun-2026. Restaurar antes de
-# cualquier eventual merge a main (User-agent: * / Allow: / / Disallow: /api/).
+# Tejidos de Vibracion - libro abierto a buscadores.
+# (El "Disallow: /" previo era de una rama de revision interna del 18-jun-2026
+#  que se filtro a main; retirado al abrir el libro a indexacion.)
 User-agent: *
-Disallow: /
+Allow: /
+Disallow: /api/
+
+Sitemap: https://tejidosdevibracion.com/sitemap.xml
