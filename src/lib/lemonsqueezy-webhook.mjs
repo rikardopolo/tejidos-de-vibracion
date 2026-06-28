@@ -5,6 +5,7 @@
  * testeable con `node --test`. El efecto (Supabase) vive en el handler .ts.
  */
 import crypto from 'node:crypto';
+import { SLUG_NIVEL } from './product-slugs.mjs';
 
 /**
  * Verifica la firma del webhook LS: HMAC-SHA256 hex del raw body con el signing
@@ -23,17 +24,8 @@ export function verifyLemonSignature(rawBody, signatureHeader, secret) {
   return crypto.timingSafeEqual(a, b);
 }
 
-// Escalera de productos → nivel de acceso (+ expiración).
-// acceso_expira_at = null → permanente (decisión Nivel 3 abierta en la Guía).
-const SLUG_NIVEL = {
-  'bundle-preventa': { nivel: 2, expira: null },
-  'bundle-normal': { nivel: 2, expira: null },
-  'acto-2': { nivel: 2, expira: null },
-  'acto-3': { nivel: 2, expira: null },
-  'libro-completo': { nivel: 3, expira: null },
-  'libro-epub': { nivel: 3, expira: null },
-  'upgrade-libro': { nivel: 3, expira: null },
-};
+// SLUG_NIVEL (escalera producto→nivel) vive ahora en product-slugs.mjs · FUENTE
+// ÚNICA compartida con el schema de contenido (config.ts). Ver ese módulo.
 
 /**
  * Resuelve nivel/expiración desde el product_slug. Slug desconocido → null
@@ -51,6 +43,57 @@ const ORDER_EVENTS = {
   order_created: 'paid',
   order_refunded: 'refunded',
 };
+
+/**
+ * Persiste la orden de forma IDEMPOTENTE-ATÓMICA y decide si es la PRIMERA vez que
+ * se procesa este evento (para correr los efectos: events, tags Brevo, email) — sin
+ * un SELECT previo (check-then-act), que con entregas concurrentes del mismo
+ * ls_order_id duplicaría los efectos.
+ *
+ * - paid: upsert con ignoreDuplicates + select('id'). La BD inserta SOLO si la fila
+ *   no existía (UNIQUE(ls_order_id)); `data.length>0` ⇒ primera entrega. Reintentos
+ *   o concurrencia chocan con el UNIQUE, no insertan, devuelven [] ⇒ no efecto.
+ * - refunded: update({status:'refunded',...}) WHERE ls_order_id=X AND status<>'refunded'
+ *   RETURNING id. Devuelve fila SOLO en la primera transición a refunded. Si afecta 0
+ *   filas (ya refunded ⇒ reintento, o no existe order previo ⇒ refund-huérfano) cae a
+ *   un upsert ignoreDuplicates para distinguir "huérfano nuevo" de "ya procesado".
+ *
+ * Lógica de DB pura (recibe el cliente por parámetro); testeable con un mock que
+ * replique las semánticas atómicas de Postgres. El efecto de red real vive en el
+ * cliente supabase que se le inyecta.
+ *
+ * @param {{ from: (t: string) => any }} supabase  cliente supabase-js (o mock)
+ * @param {{ lsOrderId: string, status: 'paid'|'refunded' }} parsed
+ * @param {Record<string, unknown>} row  fila a persistir (mismas columnas que orders)
+ * @returns {Promise<{ isFirstEffect: boolean, error: { message: string }|null }>}
+ */
+export async function persistOrderAtomic(supabase, parsed, row) {
+  if (parsed.status === 'refunded') {
+    // Idempotente por la TRANSICIÓN a 'refunded' (el order suele existir del paid).
+    const { data: transitioned, error: updErr } = await supabase
+      .from('orders')
+      .update({ status: 'refunded', raw: row.raw, lead_id: row.lead_id })
+      .eq('ls_order_id', parsed.lsOrderId)
+      .neq('status', 'refunded')
+      .select('id');
+    if (updErr) return { isFirstEffect: false, error: updErr };
+    if (transitioned && transitioned.length > 0) return { isFirstEffect: true, error: null };
+    // 0 filas: o ya 'refunded' (reintento), o refund sin paid previo (huérfano).
+    const { data: inserted, error: insErr } = await supabase
+      .from('orders')
+      .upsert(row, { onConflict: 'ls_order_id', ignoreDuplicates: true })
+      .select('id');
+    if (insErr) return { isFirstEffect: false, error: insErr };
+    return { isFirstEffect: !!inserted && inserted.length > 0, error: null };
+  }
+  // paid: insert-if-new atómico.
+  const { data: inserted, error: insErr } = await supabase
+    .from('orders')
+    .upsert(row, { onConflict: 'ls_order_id', ignoreDuplicates: true })
+    .select('id');
+  if (insErr) return { isFirstEffect: false, error: insErr };
+  return { isFirstEffect: !!inserted && inserted.length > 0, error: null };
+}
 
 /**
  * Normaliza el payload del webhook de orden de LS a un registro para `orders`.

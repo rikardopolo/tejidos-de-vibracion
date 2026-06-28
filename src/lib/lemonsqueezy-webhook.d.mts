@@ -27,3 +27,9 @@ export function parseOrderEvent(
   body: unknown,
   eventName: string | undefined,
 ): ParsedOrderEvent | null;
+
+export function persistOrderAtomic(
+  supabase: { from: (table: string) => any },
+  parsed: { lsOrderId: string; status: 'paid' | 'refunded' },
+  row: Record<string, unknown>,
+): Promise<{ isFirstEffect: boolean; error: { message: string } | null }>;

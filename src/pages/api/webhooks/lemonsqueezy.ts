@@ -4,6 +4,7 @@ import {
   verifyLemonSignature,
   mapProductToNivel,
   parseOrderEvent,
+  persistOrderAtomic,
 } from '@/lib/lemonsqueezy-webhook.mjs';
 import { generatePurchaseToken } from '@/lib/purchase-token.mjs';
 import { sendTransactionalEmail, tagContactSafe } from '@/lib/brevo';
@@ -14,7 +15,9 @@ export const prerender = false;
  * Webhook de Lemon Squeezy → registra compras confirmadas en `orders`, la fuente
  * de verdad del acceso de pago (Nivel 2/3). Características:
  *  - Verifica la firma sobre el RAW body (HMAC-SHA256, timing-safe) antes de nada.
- *  - Idempotente: upsert por ls_order_id (LS reintenta los webhooks).
+ *  - Idempotente ATÓMICO: la "primera vez" la decide la BD (upsert ignoreDuplicates
+ *    para paid · update WHERE status<>refunded para refund), no un SELECT previo, así
+ *    dos entregas concurrentes del mismo ls_order_id no duplican efectos.
  *  - Resuelve nivel_otorgado desde product_slug (mapa en lemonsqueezy-webhook.mjs).
  *  - Concilia con leads vía custom.lead_id; si no viene, por email.
  *
@@ -120,49 +123,40 @@ export const POST: APIRoute = async ({ request }) => {
     if (lead?.id) leadId = String(lead.id);
   }
 
-  // DEDUP de efectos secundarios: LS reintenta los webhooks. El email de acceso,
-  // el log en `events` y los tags de Brevo deben correr UNA sola vez por orden,
-  // no en cada reintento. Detectamos insert-vs-update con una consulta previa por
-  // ls_order_id (patrón más simple y robusto: el heurístico created_at==updated_at
-  // es frágil porque el trigger de updated_at también dispara en el upsert).
-  const { data: existing, error: existErr } = await supabase
-    .from('orders')
-    .select('id')
-    .eq('ls_order_id', parsed.lsOrderId)
-    .maybeSingle();
-  if (existErr) {
-    console.error('[webhooks/lemonsqueezy] lookup previo de orders falló · 500 para reintento:', existErr.message);
-    return json(500, { ok: false, error: 'persist_failed' });
-  }
-  const isNewOrder = !existing;
+  // IDEMPOTENCIA ATÓMICA · LS reintenta los webhooks y puede entregar el MISMO
+  // ls_order_id en paralelo. La decisión de "primera vez" debe ser ATÓMICA con la
+  // escritura, no de un SELECT previo (check-then-act): dos entregas concurrentes
+  // leerían ambas existing=null y ambas correrían los efectos (2 emails, 2 tags, 2
+  // filas en events). Por eso NO consultamos antes; dejamos que la fila de orders
+  // (UNIQUE(ls_order_id)) sea el árbitro y los efectos cuelgan de ESE resultado.
+  const row = {
+    ls_order_id: parsed.lsOrderId,
+    ls_order_identifier: parsed.lsOrderIdentifier,
+    email: parsed.email,
+    lead_id: leadId,
+    product_slug: slug,
+    tipo: 'one-time' as const,
+    amount_cents: parsed.amountCents,
+    currency: parsed.currency,
+    status: parsed.status,
+    nivel_otorgado: nivel,
+    acceso_expira_at: expira,
+    test_mode: parsed.testMode,
+    raw: body,
+  };
 
-  // Idempotente: upsert por ls_order_id (refresca status en reintentos/refunds).
-  const { error } = await supabase.from('orders').upsert(
-    {
-      ls_order_id: parsed.lsOrderId,
-      ls_order_identifier: parsed.lsOrderIdentifier,
-      email: parsed.email,
-      lead_id: leadId,
-      product_slug: slug,
-      tipo: 'one-time',
-      amount_cents: parsed.amountCents,
-      currency: parsed.currency,
-      status: parsed.status,
-      nivel_otorgado: nivel,
-      acceso_expira_at: expira,
-      test_mode: parsed.testMode,
-      raw: body,
-    },
-    { onConflict: 'ls_order_id' },
-  );
-
-  if (error) {
-    console.error('[webhooks/lemonsqueezy] upsert orders falló:', error.message);
+  // isFirstEffect: ¿es esta la primera vez que corremos los efectos de ESTE evento
+  // para ESTE ls_order_id? Lo resuelve la BD de forma ATÓMICA dentro de
+  // persistOrderAtomic (upsert ignoreDuplicates / update WHERE status<>refunded),
+  // no un SELECT previo. Misma fuente que el test del módulo puro.
+  const { isFirstEffect, error: persistErr } = await persistOrderAtomic(supabase, parsed, row);
+  if (persistErr) {
+    console.error('[webhooks/lemonsqueezy] persistencia atómica falló · 500 para reintento:', persistErr.message);
     return json(500, { ok: false, error: 'persist_failed' });
   }
 
-  // EFECTOS SECUNDARIOS · solo en order NUEVO (no en reintentos de LS).
-  if (isNewOrder) {
+  // EFECTOS SECUNDARIOS · solo en la PRIMERA vez (atómica) de este evento.
+  if (isFirstEffect) {
     // Timeline (best-effort; no rompe el ack si falla).
     const { error: evErr } = await supabase.from('events').insert({
       lead_id: leadId,
@@ -204,7 +198,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   // Fase 4 · otorgar acceso: email con el enlace de acceso (solo en compra NUEVA,
   // no en reembolso ni en reintentos). El enlace lleva un token de compra firmado.
-  if (isNewOrder && parsed.status === 'paid' && parsed.email) {
+  if (isFirstEffect && parsed.status === 'paid' && parsed.email) {
     const tokenSecret = readEnv('ACCESS_TOKEN_SECRET');
     const apiKey = readEnv('BREVO_API_KEY');
     const templateIdRaw = readEnv('BREVO_TEMPLATE_BUNDLE_PREVENTA');
@@ -226,8 +220,8 @@ export const POST: APIRoute = async ({ request }) => {
       });
       if (!sent.ok) {
         // El email ES la entrega del acceso: si falla, 500 para que LS reintente.
-        // El upsert de orders es idempotente por ls_order_id, así que el retry es seguro.
-        // El order quedó persistido; en el retry existing!=null → isNewOrder=false y
+        // El order ya quedó persistido (insert atómico); en el retry el upsert con
+        // ignoreDuplicates choca con la fila existente → [] → isFirstEffect=false y
         // NO reenviaremos el email. Trade-off ponytail: preferimos no duplicar email a
         // garantizar entrega ante un fallo transitorio de Brevo (raro; queda el log).
         console.error('[webhooks/lemonsqueezy] email de acceso falló · 500 para reintento de LS:', sent);
@@ -238,7 +232,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, nivel, new: isNewOrder });
+  return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, nivel, new: isFirstEffect });
 };
 
 export const ALL: APIRoute = () => json(405, { ok: false, error: 'method_not_allowed' });

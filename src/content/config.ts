@@ -1,4 +1,9 @@
 import { defineCollection, z } from 'astro:content';
+// FUENTE ÚNICA de slugs de producto · el MISMO catálogo que usa el webhook de
+// Lemon Squeezy (SLUG_NIVEL). Tipar productoSlug como enum hace que un typo en el
+// frontmatter ROMPA el build (astro check), en vez de fallar en silencio y dejar
+// que el gate niegue acceso a un comprador legítimo.
+import { PRODUCT_SLUGS } from '@/lib/product-slugs.mjs';
 
 /**
  * Colección `book` · entradas top-level del libro.
@@ -55,7 +60,7 @@ const book = defineCollection({
      * de compra. Sólo aplica a contenido de pago (nivelRequerido ≥ 2);
      * déjalo vacío para contenido gratis/registrado.
      */
-    productoSlug: z.string().optional(),
+    productoSlug: z.enum(PRODUCT_SLUGS).optional(),
   }),
 });
 
@@ -109,7 +114,7 @@ const chapterSections = defineCollection({
      */
     nivelRequerido: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]).default(1),
     /** Slug del producto que desbloquea la pieza (sólo contenido de pago). */
-    productoSlug: z.string().optional(),
+    productoSlug: z.enum(PRODUCT_SLUGS).optional(),
     publishedAt: z.date().optional(),
     authors: z.array(z.string()).default(['Ricardo Polo']),
     tags: z.array(z.string()).default([]),
