@@ -21,9 +21,10 @@ interface Props {
   bodyClass?: string;
   pageId?: string;
   jsonLd?: Record<string, unknown>;
+  robots?: string;
 }
 
-const { title, description, canonical, ogImage, bodyClass, pageId, jsonLd } = Astro.props;
+const { title, description, canonical, ogImage, bodyClass, pageId, jsonLd, robots } = Astro.props;
 
 const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
 ---
@@ -36,6 +37,7 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
   bodyClass={bodyClass}
   pageId={pageId}
   jsonLd={jsonLd}
+  robots={robots}
   nivel={nivel}
 >
   <BookHeader />
