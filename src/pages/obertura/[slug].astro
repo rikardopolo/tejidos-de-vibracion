@@ -18,7 +18,7 @@
 import OberturaLayout from '@/layouts/OberturaLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import { getCollection, getEntry } from 'astro:content';
-import { getNivel, gatingActivo } from '@/lib/gating';
+import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
 import { SITE, breadcrumb, wrapGraph } from '@/lib/seo';
 
 export const prerender = false;
@@ -50,11 +50,15 @@ if (!entry) {
 }
 
 // Resolver nivel y derivar acceso a la pieza.
+// nivelRequerido es data-driven: 0 para piezas públicas, 1 para el resto de
+// la Obertura (Acto I). La comparación pasa por puedeAcceder, que también
+// exigiría scope de producto si alguna pieza declarara uno (hoy ninguna).
 const esPublica = PIEZAS_PUBLICAS.has(slug);
-const nivelRequerido: 0 | 1 = esPublica ? 0 : 1;
+const nivelRequerido: Nivel = esPublica ? 0 : 1;
 // Bots ven todo · gatingActivo() permite override por env · si no, default Nivel 1
-const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
-const tieneAcceso = nivel >= nivelRequerido;
+const acceso = isBot ? { nivel: 1 as Nivel, slugs: [] } : (gatingActivo() ? getAcceso(Astro.cookies) : { nivel: 1 as Nivel, slugs: [] });
+const nivel = acceso.nivel;
+const tieneAcceso = puedeAcceder(acceso, nivelRequerido);
 
 // Solo renderizar contenido si tiene acceso · piezas Nivel 1 muestran
 // header + BloquePuerta cuando el lector está en Nivel 0 (patrón cap-2/3).

@@ -50,6 +50,11 @@ export function getNivel(cookies: AstroCookies): Nivel {
   return getAcceso(cookies).nivel;
 }
 
+// Decisión PURA de acceso (nivel + scope de producto). Vive en gate-decision.mjs
+// para ser testeable con `node --test` sin deps; se re-exporta aquí para que las
+// páginas la consuman desde un único punto. Ver gate-decision.mjs para la regla.
+export { puedeAcceder } from './gate-decision.mjs';
+
 export function gatingActivo(): boolean {
   // En cualquier rama Vercel distinta de `main` se desactiva el gating por
   // completo para que el revisor interno vea el contenido sin pasar por la puerta.

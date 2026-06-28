@@ -24,7 +24,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
-import { getNivel, gatingActivo } from '@/lib/gating';
+import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceMarker, type PieceKind } from '@/lib/piece-num';
 
@@ -38,7 +38,8 @@ if (!chapterEntry || chapterEntry.data.kind !== 'capitulo') {
   return Astro.redirect('/indice');
 }
 
-const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
+const acceso = gatingActivo() ? getAcceso(Astro.cookies) : { nivel: 1 as Nivel, slugs: [] };
+const nivel = acceso.nivel;
 const data = chapterEntry.data;
 const chapterNum = data.chapter ?? 0;
 const romanChapter = romanize(chapterNum);
@@ -70,7 +71,12 @@ const branchRef = (typeof process !== 'undefined' && process.env)
 const esPreviewBranch = branchRef !== '' && branchRef !== 'main';
 const esCapPublicadoMonolitico = !hasSections && data.status === 'published'
   && (chapterNum === 1 || esPreviewBranch);
-const verContenido = nivel >= 1 && esCapPublicadoMonolitico;
+// Gating data-driven: exige el nivel declarado por el capítulo (default 1) y,
+// si pertenece a un producto de pago, el slug en el scope del token de compra.
+// Con los defaults de Acto I (nivelRequerido=1, sin productoSlug) equivale al
+// histórico `nivel >= 1` → no-regresión.
+const verContenido = puedeAcceder(acceso, data.nivelRequerido, data.productoSlug)
+  && esCapPublicadoMonolitico;
 const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
 let Content: any = null;

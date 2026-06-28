@@ -42,6 +42,20 @@ const book = defineCollection({
      * Metadata pura · no afecta runtime · señal para mantenedores.
      */
     archived: z.boolean().default(false),
+    /**
+     * Nivel de acceso que exige esta pieza (gating data-driven).
+     * Por defecto 1 (tejedor registrado), que preserva el comportamiento
+     * histórico de Acto I. El contenido de pago debe declararlo explícito:
+     * Cap. 4 / Acto II → 2 ; libro completo → 3.
+     */
+    nivelRequerido: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]).default(1),
+    /**
+     * Slug del producto/bundle que desbloquea esta pieza. Cuando está
+     * presente, el lector además debe tener ese slug en el scope de su token
+     * de compra. Sólo aplica a contenido de pago (nivelRequerido ≥ 2);
+     * déjalo vacío para contenido gratis/registrado.
+     */
+    productoSlug: z.string().optional(),
   }),
 });
 
@@ -87,6 +101,15 @@ const chapterSections = defineCollection({
      * - 'published' · contenido completo renderiza para Nivel 1
      */
     status: z.enum(['draft', 'review', 'published', 'fragmento-permanente']).default('draft'),
+    /**
+     * Nivel de acceso de la pieza. Por defecto hereda 1 (registrado), igual
+     * que el comportamiento histórico. El gate efectivo usa el MAYOR entre
+     * este valor y el del capítulo padre, así que para Acto II basta con
+     * declarar nivelRequerido=2 en el capítulo padre.
+     */
+    nivelRequerido: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]).default(1),
+    /** Slug del producto que desbloquea la pieza (sólo contenido de pago). */
+    productoSlug: z.string().optional(),
     publishedAt: z.date().optional(),
     authors: z.array(z.string()).default(['Ricardo Polo']),
     tags: z.array(z.string()).default([]),

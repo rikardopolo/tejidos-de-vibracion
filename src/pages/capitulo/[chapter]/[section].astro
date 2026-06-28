@@ -25,7 +25,7 @@ import { getCollection, getEntry } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import PaginacionCards from '@/components/book/PaginacionCards.astro';
-import { getNivel, gatingActivo } from '@/lib/gating';
+import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceOrnament, type PieceKind } from '@/lib/piece-num';
 
@@ -67,8 +67,21 @@ const capitulo = `Capítulo ${romanChapter}`;
 // editorial interno (draft/review/published) pero NO afecta el gating
 // runtime. Lo único que define visibilidad pública es el status del
 // capítulo padre.
-const nivel = isBot ? 1 : (gatingActivo() ? getNivel(Astro.cookies) : 1);
-const tieneAcceso = chapterEntry.data.status === 'published' && nivel >= 1;
+const acceso = isBot
+  ? { nivel: 1 as Nivel, slugs: [] }
+  : (gatingActivo() ? getAcceso(Astro.cookies) : { nivel: 1 as Nivel, slugs: [] });
+const nivel = acceso.nivel;
+// Gating data-driven · requisito efectivo = el MAYOR entre el del capítulo
+// padre (unidad publicada) y el de la pieza; el productoSlug de la pieza tiene
+// prioridad sobre el del capítulo. Con los defaults de Acto I (nivelRequerido=1,
+// sin productoSlug) esto equivale al histórico `nivel >= 1` → no-regresión.
+const nivelRequerido = Math.max(
+  chapterEntry.data.nivelRequerido,
+  entry.data.nivelRequerido,
+) as Nivel;
+const productoSlug = entry.data.productoSlug ?? chapterEntry.data.productoSlug;
+const tieneAcceso = chapterEntry.data.status === 'published'
+  && puedeAcceder(acceso, nivelRequerido, productoSlug);
 const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
 let Content: any = null;
