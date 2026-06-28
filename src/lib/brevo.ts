@@ -10,6 +10,32 @@ import { z } from 'zod';
 
 const BREVO_API_BASE = 'https://api.brevo.com/v3';
 
+/**
+ * Añade un contacto a una lista de Brevo SOLO si el ID de lista viene por env.
+ * ponytail: sin ID configurado salta con console.warn — el tag NUNCA rompe el
+ * webhook ni bloquea el cobro/entitlement (que dependen de `orders`, no de Brevo).
+ * No lanza: best-effort por diseño.
+ */
+export async function tagContactSafe(opts: {
+  email: string;
+  listId: number | undefined;
+  apiKey: string | undefined;
+  label: string;
+}): Promise<void> {
+  if (!opts.apiKey) {
+    console.warn(`[Brevo tag] sin BREVO_API_KEY · salto tag ${opts.label}`);
+    return;
+  }
+  if (!opts.listId || Number.isNaN(opts.listId)) {
+    console.warn(`[Brevo tag] sin listId para ${opts.label} · salto (no rompe el webhook)`);
+    return;
+  }
+  const res = await addContactToList({ email: opts.email, listId: opts.listId, apiKey: opts.apiKey });
+  if (!res.ok) {
+    console.warn(`[Brevo tag] ${opts.label} listId=${opts.listId} falló (no crítico): ${res.message}`);
+  }
+}
+
 export const leadSchema = z.object({
   nombre: z.string().min(2).max(100).trim(),
   correo: z.string().email().max(254),

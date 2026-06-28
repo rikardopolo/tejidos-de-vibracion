@@ -72,3 +72,34 @@ test('parseOrderEvent: evento no soportado → null', () => {
   assert.equal(parseOrderEvent({ data: { id: 1 } }, 'subscription_created'), null);
   assert.equal(parseOrderEvent({ data: { id: 1 }, meta: { event_name: 'order_created' } }, undefined) === null, false);
 });
+
+// ─── Hardening: camino del dinero · sin fallback silencioso ────────────────
+// El handler NO debe otorgar nivel de pago si el producto no se reconoce.
+// Aquí blindamos el contrato puro del que depende esa decisión.
+test('hardening: producto desconocido NO mapea a nivel (sin fallback a nivel 2)', () => {
+  // Antes el handler hacía `?? bundle-preventa` → nivel 2 a cualquier compra.
+  assert.equal(mapProductToNivel('producto-que-no-existe'), null);
+  assert.equal(mapProductToNivel(''), null);
+  assert.equal(mapProductToNivel(null), null);
+  assert.equal(mapProductToNivel(undefined), null);
+});
+
+test('hardening: slug nivel-3 (libro) ≠ slug nivel-2 (preventa) → ruta de tag correcta', () => {
+  // El tag de Brevo se elige por nivel; estos niveles deben ser estables.
+  for (const s of ['libro-completo', 'libro-epub', 'upgrade-libro']) {
+    assert.equal(mapProductToNivel(s)?.nivel, 3, `${s} debe ser nivel 3`);
+  }
+  for (const s of ['bundle-preventa', 'bundle-normal', 'acto-2', 'acto-3']) {
+    assert.equal(mapProductToNivel(s)?.nivel, 2, `${s} debe ser nivel 2`);
+  }
+});
+
+test('hardening: parseOrderEvent sin product_slug NO inventa uno (handler decide no otorgar)', () => {
+  const p = parseOrderEvent(
+    { meta: { event_name: 'order_created', custom_data: {} }, data: { id: 77, attributes: { user_email: 'a@b.com' } } },
+    'order_created',
+  );
+  // productSlug nulo → el handler loguea order_unknown_product y NO otorga acceso.
+  assert.equal(p.productSlug, null);
+  assert.equal(mapProductToNivel(p.productSlug), null);
+});

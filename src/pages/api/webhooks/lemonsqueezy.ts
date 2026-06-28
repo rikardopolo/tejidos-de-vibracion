@@ -6,7 +6,7 @@ import {
   parseOrderEvent,
 } from '@/lib/lemonsqueezy-webhook.mjs';
 import { generatePurchaseToken } from '@/lib/purchase-token.mjs';
-import { sendTransactionalEmail } from '@/lib/brevo';
+import { sendTransactionalEmail, tagContactSafe } from '@/lib/brevo';
 
 export const prerender = false;
 
@@ -70,26 +70,47 @@ export const POST: APIRoute = async ({ request }) => {
     console.error(`[webhooks/lemonsqueezy] order ${parsed.lsOrderId} sin user_email · 400 (no reintentable)`);
     return json(400, { ok: false, error: 'missing_email' });
   }
-  // Nuestro checkout siempre manda product_slug en custom; una compra directa en LS
-  // sin custom cae al único producto activo. TODO multi-producto: mapear por variant_id.
-  const productSlug = parsed.productSlug ?? 'bundle-preventa';
-  if (!parsed.productSlug) {
-    console.warn(`[webhooks/lemonsqueezy] order ${parsed.lsOrderId} sin product_slug · fallback ${productSlug}`);
-  }
-
-  const nivelInfo = mapProductToNivel(productSlug);
-  if (!nivelInfo) {
-    console.error(`[webhooks/lemonsqueezy] product_slug sin nivel: ${productSlug} (order ${parsed.lsOrderId}) · default nivel 2`);
-  }
-  const nivel = nivelInfo?.nivel ?? 2;
-  const expira = nivelInfo?.expira ?? null;
-
   const supabase = getServerClient();
   if (!supabase) {
     // Sin Supabase no podemos persistir. 500 → LS reintenta (la idempotencia cubre el retry).
     console.error('[webhooks/lemonsqueezy] Supabase no disponible · 500 para reintento');
     return json(500, { ok: false, error: 'persist_unavailable' });
   }
+
+  // CAMINO DEL DINERO · sin fallback silencioso: un producto desconocido o sin
+  // product_slug NO regala acceso de pago. Antes caía a bundle-preventa/nivel 2.
+  // Ahora: log de auditoría (events) + ack 200 a LS, sin token ni email.
+  const productSlug = parsed.productSlug ?? null;
+  const nivelInfo = productSlug ? mapProductToNivel(productSlug) : null;
+  if (!productSlug || !nivelInfo) {
+    console.warn(
+      `[webhooks/lemonsqueezy] producto NO reconocido (slug=${productSlug ?? 'ausente'}, order ${parsed.lsOrderId}) · NO se otorga nivel de pago`,
+    );
+    // Conciliación con leads para el log (best-effort).
+    let unkLeadId = parsed.leadId;
+    if (!unkLeadId && parsed.email) {
+      const { data: lead } = await supabase.from('leads').select('id').eq('email', parsed.email).maybeSingle();
+      if (lead?.id) unkLeadId = String(lead.id);
+    }
+    const { error: unkErr } = await supabase.from('events').insert({
+      lead_id: unkLeadId,
+      type: 'order_unknown_product',
+      source: 'lemonsqueezy_webhook',
+      metadata: {
+        ls_order_id: parsed.lsOrderId,
+        product_slug: productSlug,
+        status: parsed.status,
+        test_mode: parsed.testMode,
+      },
+    });
+    if (unkErr) console.error('[webhooks/lemonsqueezy] events insert (order_unknown_product) falló (no crítico):', unkErr.message);
+    // 200 = ack a LS (no reintentar): el evento es válido, solo no lo monetizamos.
+    return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, unknown_product: true });
+  }
+  // Aquí productSlug es un slug conocido y no-nulo (si no, ya devolvimos 200 arriba).
+  const slug: string = productSlug;
+  const nivel = nivelInfo.nivel;
+  const expira = nivelInfo.expira;
 
   // Conciliación con leads: custom.lead_id; si no vino, match por email.
   let leadId = parsed.leadId;
@@ -99,14 +120,30 @@ export const POST: APIRoute = async ({ request }) => {
     if (lead?.id) leadId = String(lead.id);
   }
 
-  // Idempotente: upsert por ls_order_id.
+  // DEDUP de efectos secundarios: LS reintenta los webhooks. El email de acceso,
+  // el log en `events` y los tags de Brevo deben correr UNA sola vez por orden,
+  // no en cada reintento. Detectamos insert-vs-update con una consulta previa por
+  // ls_order_id (patrón más simple y robusto: el heurístico created_at==updated_at
+  // es frágil porque el trigger de updated_at también dispara en el upsert).
+  const { data: existing, error: existErr } = await supabase
+    .from('orders')
+    .select('id')
+    .eq('ls_order_id', parsed.lsOrderId)
+    .maybeSingle();
+  if (existErr) {
+    console.error('[webhooks/lemonsqueezy] lookup previo de orders falló · 500 para reintento:', existErr.message);
+    return json(500, { ok: false, error: 'persist_failed' });
+  }
+  const isNewOrder = !existing;
+
+  // Idempotente: upsert por ls_order_id (refresca status en reintentos/refunds).
   const { error } = await supabase.from('orders').upsert(
     {
       ls_order_id: parsed.lsOrderId,
       ls_order_identifier: parsed.lsOrderIdentifier,
       email: parsed.email,
       lead_id: leadId,
-      product_slug: productSlug,
+      product_slug: slug,
       tipo: 'one-time',
       amount_cents: parsed.amountCents,
       currency: parsed.currency,
@@ -124,23 +161,50 @@ export const POST: APIRoute = async ({ request }) => {
     return json(500, { ok: false, error: 'persist_failed' });
   }
 
-  // Timeline (best-effort; no rompe el ack si falla).
-  const { error: evErr } = await supabase.from('events').insert({
-    lead_id: leadId,
-    type: parsed.status === 'refunded' ? 'order_refunded' : 'order_paid',
-    source: 'lemonsqueezy_webhook',
-    metadata: {
-      ls_order_id: parsed.lsOrderId,
-      product_slug: productSlug,
-      nivel,
-      test_mode: parsed.testMode,
-    },
-  });
-  if (evErr) console.error('[webhooks/lemonsqueezy] events insert (no crítico):', evErr.message);
+  // EFECTOS SECUNDARIOS · solo en order NUEVO (no en reintentos de LS).
+  if (isNewOrder) {
+    // Timeline (best-effort; no rompe el ack si falla).
+    const { error: evErr } = await supabase.from('events').insert({
+      lead_id: leadId,
+      type: parsed.status === 'refunded' ? 'order_refunded' : 'order_paid',
+      source: 'lemonsqueezy_webhook',
+      metadata: {
+        ls_order_id: parsed.lsOrderId,
+        product_slug: slug,
+        nivel,
+        test_mode: parsed.testMode,
+      },
+    });
+    if (evErr) console.error('[webhooks/lemonsqueezy] events insert (no crítico):', evErr.message);
 
-  // Fase 4 · otorgar acceso: email con el enlace de acceso (solo en compra, no en
-  // reembolso). El enlace lleva un token de compra firmado (nivel + scope).
-  if (parsed.status === 'paid' && parsed.email) {
+    // Tags Brevo (env-guarded, best-effort) · order_created → lista de comprador
+    // según nivel; order_refunded → lista de reembolso. ponytail: sin ID el tag
+    // se salta con console.warn; el cobro/entitlement NUNCA depende del tag.
+    const brevoApiKey = readEnv('BREVO_API_KEY');
+    if (parsed.email) {
+      if (parsed.status === 'refunded') {
+        await tagContactSafe({
+          email: parsed.email,
+          listId: Number(readEnv('BREVO_LIST_REEMBOLSO')),
+          apiKey: brevoApiKey,
+          label: 'comprador-reembolso',
+        });
+      } else {
+        // nivel 3 = libro completo · nivel 2 = preventa/actos.
+        const listId = nivel === 3 ? readEnv('BREVO_LIST_COMPRADOR_LIBRO') : readEnv('BREVO_LIST_COMPRADOR_PREVENTA');
+        await tagContactSafe({
+          email: parsed.email,
+          listId: Number(listId),
+          apiKey: brevoApiKey,
+          label: nivel === 3 ? 'comprador-libro' : 'comprador-preventa',
+        });
+      }
+    }
+  }
+
+  // Fase 4 · otorgar acceso: email con el enlace de acceso (solo en compra NUEVA,
+  // no en reembolso ni en reintentos). El enlace lleva un token de compra firmado.
+  if (isNewOrder && parsed.status === 'paid' && parsed.email) {
     const tokenSecret = readEnv('ACCESS_TOKEN_SECRET');
     const apiKey = readEnv('BREVO_API_KEY');
     const templateIdRaw = readEnv('BREVO_TEMPLATE_BUNDLE_PREVENTA');
@@ -148,10 +212,9 @@ export const POST: APIRoute = async ({ request }) => {
     const templateId = Number(templateIdRaw);
     if (tokenSecret && apiKey && templateIdRaw && !Number.isNaN(templateId)) {
       const accessToken = generatePurchaseToken(
-        { email: parsed.email, nivel, slugs: [productSlug], orderId: parsed.lsOrderId },
+        { email: parsed.email, nivel, slugs: [slug], orderId: parsed.lsOrderId },
         tokenSecret,
       );
-      const slug = productSlug;
       const accesoUrl = `${siteUrl}/acceso/${encodeURIComponent(slug)}?t=${encodeURIComponent(accessToken)}`;
       // NOMBRE (no FIRSTNAME); {{ unsubscribe }} lo resuelve Brevo en la plantilla, que
       // debe tener el click-tracking DESACTIVADO (regla de transaccionales del proyecto).
@@ -164,6 +227,9 @@ export const POST: APIRoute = async ({ request }) => {
       if (!sent.ok) {
         // El email ES la entrega del acceso: si falla, 500 para que LS reintente.
         // El upsert de orders es idempotente por ls_order_id, así que el retry es seguro.
+        // El order quedó persistido; en el retry existing!=null → isNewOrder=false y
+        // NO reenviaremos el email. Trade-off ponytail: preferimos no duplicar email a
+        // garantizar entrega ante un fallo transitorio de Brevo (raro; queda el log).
         console.error('[webhooks/lemonsqueezy] email de acceso falló · 500 para reintento de LS:', sent);
         return json(500, { ok: false, error: 'email_failed' });
       }
@@ -172,7 +238,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, nivel });
+  return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, nivel, new: isNewOrder });
 };
 
 export const ALL: APIRoute = () => json(405, { ok: false, error: 'method_not_allowed' });
