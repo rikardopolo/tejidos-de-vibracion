@@ -9,6 +9,7 @@ interface Props {
   bodyClass?: string;
   pageId?: string;
   jsonLd?: Record<string, unknown>;
+  robots?: string;
   nivel?: 0 | 1 | 2 | 3;
 }
 
@@ -20,6 +21,7 @@ const {
   bodyClass,
   pageId,
   jsonLd,
+  robots = 'noindex,nofollow,noarchive',
   nivel = 0,
 } = Astro.props;
 
@@ -51,10 +53,11 @@ const schema = jsonLd ?? defaultJsonLd;
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    {/* Base.astro lo usa SOLO el 404 (el contenido usa LecturaLarga /
-        OberturaLayout / CapituloLayout, indexables). noindex es intencional
-        para la página de error — no es un bloqueo global. */}
-    <meta name="robots" content="noindex,nofollow,noarchive" />
+    {/* robots · default noindex (404 + páginas de utilidad: privacidad, buscar,
+        confirmación). Las páginas públicas pasan robots="index,follow" por prop.
+        Obertura/capítulos son indexables vía BookReader. LecturaLarga reenvía
+        esta prop → su default también es noindex salvo opt-in explícito. */}
+    <meta name="robots" content={robots} />
 
     <link rel="canonical" href={canonicalUrl} />
 
