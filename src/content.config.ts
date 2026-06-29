@@ -1,4 +1,5 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 // FUENTE ÚNICA de slugs de producto · el MISMO catálogo que usa el webhook de
 // Lemon Squeezy (SLUG_NIVEL). Tipar productoSlug como enum hace que un typo en el
 // frontmatter ROMPA el build (astro check), en vez de fallar en silencio y dejar
@@ -11,7 +12,7 @@ import { PRODUCT_SLUGS } from '@/lib/product-slugs.mjs';
  * (portada, obertura, capítulos del Volumen I, interludio, colofón).
  */
 const book = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/book' }),
   schema: z.object({
     title: z.string(),
     subtitle: z.string().optional(),
@@ -77,7 +78,7 @@ const book = defineCollection({
  *     └── 07-cierre-vibracional.mdx
  */
 const chapterSections = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/chapter-sections' }),
   schema: z.object({
     /** Slug del capítulo padre (ej. "cap-1-universo-sinfonia"). */
     chapter: z.string(),
@@ -135,7 +136,7 @@ const chapterSections = defineCollection({
  *   iv.  Cierre       · interludio-iii · 10-sintesis · 11-cierre
  */
 const obertura = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/obertura' }),
   schema: z.object({
     /** Número del capítulo o interludio · "00", "01", ..., "11", "i", "ii", "iii" */
     chapterNum: z.string(),

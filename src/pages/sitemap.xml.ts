@@ -26,7 +26,7 @@ export const GET: APIRoute = async () => {
   const chapters = await getCollection('book', ({ data }) =>
     data.kind === 'capitulo' && data.status === 'published'
   );
-  const chapterUrls = chapters.map((c) => `/capitulo/${c.slug}`);
+  const chapterUrls = chapters.map((c) => `/capitulo/${c.id}`);
 
   const allUrls = [...staticUrls, ...chapterUrls];
 

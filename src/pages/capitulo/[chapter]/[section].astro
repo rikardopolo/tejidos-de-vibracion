@@ -21,7 +21,7 @@
  * Sprint shell-redesign (preview/chapters-1-2-3): usa CapituloLayout
  * (header minimalista + breadcrumb dinámico + LECTURA) y PaginacionCards.
  */
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import PaginacionCards from '@/components/book/PaginacionCards.astro';
@@ -86,7 +86,7 @@ const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
 let Content: any = null;
 if (tieneAcceso) {
-  const rendered = await entry.render();
+  const rendered = await render(entry);
   Content = rendered.Content;
 }
 
@@ -103,13 +103,13 @@ const allSections = await getCollection('chapter-sections', ({ data: d }) =>
   d.chapter === chapter
 );
 const sorted = allSections.sort((a, b) => a.data.order - b.data.order);
-const idx = sorted.findIndex(s => s.slug === entry.slug);
+const idx = sorted.findIndex(s => s.id === entry.id);
 const prevEntry = idx > 0 ? sorted[idx - 1] : null;
 const nextEntry = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
 
 const leaf = (slug: string) => slug.split('/').pop() ?? slug;
 const toAdjacent = (e: typeof entry | null) =>
-  e ? { slug: leaf(e.slug), kind: e.data.kind as PieceKind, num: e.data.num, title: e.data.title } : null;
+  e ? { slug: leaf(e.id), kind: e.data.kind as PieceKind, num: e.data.num, title: e.data.title } : null;
 const prev = toAdjacent(prevEntry);
 const next = toAdjacent(nextEntry);
 

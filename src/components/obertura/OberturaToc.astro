@@ -58,10 +58,10 @@ for (const entry of all) {
         <p class="obertura-toc__section-label">{SECTION_LABELS[sec]}</p>
         <ol class="obertura-toc__list">
           {grouped[sec].map((entry) => {
-            const isCurrent = entry.slug === current;
+            const isCurrent = entry.id === current;
             return (
               <li class={`obertura-toc__item${isCurrent ? ' is-current' : ''}`}>
-                <a href={`/obertura/${entry.slug}`} aria-current={isCurrent ? 'page' : undefined}>
+                <a href={`/obertura/${entry.id}`} aria-current={isCurrent ? 'page' : undefined}>
                   <span class="obertura-toc__num">{entry.data.chapterNum}</span>
                   <span class="obertura-toc__name">{entry.data.title}</span>
                 </a>

@@ -17,7 +17,7 @@
  */
 import OberturaLayout from '@/layouts/OberturaLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
 import { SITE, breadcrumb, wrapGraph } from '@/lib/seo';
 
@@ -64,7 +64,7 @@ const tieneAcceso = puedeAcceder(acceso, nivelRequerido);
 // header + BloquePuerta cuando el lector está en Nivel 0 (patrón cap-2/3).
 let Content: any = null;
 if (tieneAcceso) {
-  const rendered = await entry.render();
+  const rendered = await render(entry);
   Content = rendered.Content;
 }
 
@@ -73,7 +73,7 @@ const { title, subtitle, headerLabel, chapterNum, kind, publishedAt, authors } =
 // Resolver prev/next desde la colección completa
 const all = await getCollection('obertura', ({ data }) => data.status === 'published');
 all.sort((a, b) => a.data.order - b.data.order);
-const idx = all.findIndex((e) => e.slug === slug);
+const idx = all.findIndex((e) => e.id === slug);
 const prev = idx > 0 ? all[idx - 1] : null;
 const next = idx < all.length - 1 ? all[idx + 1] : null;
 
@@ -151,7 +151,7 @@ const pieceSchema = wrapGraph([
   {tieneAcceso && (
     <nav class="prev-next" aria-label="Navegación entre capítulos">
       {prev ? (
-        <a class="nav-link nav-prev" href={`/obertura/${prev.slug}`}>
+        <a class="nav-link nav-prev" href={`/obertura/${prev.id}`}>
           <span class="nav-direction">← Anterior</span>
           <span class="nav-num">{prev.data.chapterNum}</span>
           <span class="nav-title">{prev.data.title}</span>
@@ -163,7 +163,7 @@ const pieceSchema = wrapGraph([
       )}
 
       {next ? (
-        <a class="nav-link nav-next" href={`/obertura/${next.slug}`}>
+        <a class="nav-link nav-next" href={`/obertura/${next.id}`}>
           <span class="nav-direction">Siguiente →</span>
           <span class="nav-num">{next.data.chapterNum}</span>
           <span class="nav-title">{next.data.title}</span>

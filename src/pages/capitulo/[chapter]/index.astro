@@ -21,7 +21,7 @@
  * Sprint shell-redesign (preview/chapters-1-2-3): usa CapituloLayout y
  * marcadores compactos por tipo de pieza (pieceMarker).
  */
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
@@ -81,7 +81,7 @@ const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
 let Content: any = null;
 if (verContenido) {
-  const rendered = await chapterEntry.render();
+  const rendered = await render(chapterEntry);
   Content = rendered.Content;
 }
 const leaf = (slug: string) => slug.split('/').pop() ?? slug;
@@ -111,7 +111,7 @@ const leaf = (slug: string) => slug.split('/').pop() ?? slug;
         <ol class="cap-biblioteca">
           {sections.map((s) => (
             <li class="cap-biblioteca__item">
-              <a href={`/capitulo/${chapter}/${leaf(s.slug)}`} class="cap-biblioteca__link">
+              <a href={`/capitulo/${chapter}/${leaf(s.id)}`} class="cap-biblioteca__link">
                 <span class="cap-biblioteca__num">{pieceMarker({ kind: s.data.kind as PieceKind, num: s.data.num })}</span>
                 <span class="cap-biblioteca__body">
                   <span class="cap-biblioteca__title">{s.data.title}</span>
