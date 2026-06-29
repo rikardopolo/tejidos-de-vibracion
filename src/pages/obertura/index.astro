@@ -160,12 +160,12 @@ const grouped = sectionOrder.map((key) => ({
         <p class="heading-sub">{group.meta.sub}</p>
         <ol>
           {group.entries.map((entry) => {
-            const esPublica = PIEZAS_PUBLICAS.has(entry.slug);
+            const esPublica = PIEZAS_PUBLICAS.has(entry.id);
             const esBloqueada = !esPublica && nivel < 1;
             return (
               <li class={esBloqueada ? 'is-locked' : ''}>
                 <a
-                  href={`/obertura/${entry.slug}`}
+                  href={`/obertura/${entry.id}`}
                   aria-label={esBloqueada ? `${entry.data.title} · requiere registro` : undefined}
                 >
                   <span class="num">{entry.data.chapterNum}</span>

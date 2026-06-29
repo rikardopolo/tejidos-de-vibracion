@@ -42,7 +42,7 @@ function leaf(slug: string): string {
     <p class="cap-toc__title">{chapterLabel ?? 'Capítulo'} · {all.length} piezas</p>
     <ol class="cap-toc__list">
       {all.map((entry) => {
-        const slug = leaf(entry.slug);
+        const slug = leaf(entry.id);
         const isCurrent = slug === current;
         return (
           <li class={`cap-toc__item${isCurrent ? ' is-current' : ''}`}>

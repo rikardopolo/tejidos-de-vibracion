@@ -85,13 +85,13 @@ async function sectionsInfo(surface: string, chapter: string): Promise<{ total: 
   let slugs = new Set<string>();
   if (surface === 'obertura') {
     const entries = await getCollection('obertura', (e) => e.data.status === 'published');
-    slugs = new Set(entries.map((e) => e.slug)); // obertura slug ya es hoja
+    slugs = new Set(entries.map((e) => e.id)); // obertura id ya es hoja
   } else if (surface === 'capitulo') {
     const entries = await getCollection(
       'chapter-sections',
       (e) => e.data.chapter === chapter && e.data.kind !== 'portada',
     );
-    slugs = new Set(entries.map((e) => e.slug.split('/').pop() ?? e.slug));
+    slugs = new Set(entries.map((e) => e.id.split('/').pop() ?? e.id));
   }
   const info = { total: slugs.size, slugs };
   infoCache.set(key, info);
