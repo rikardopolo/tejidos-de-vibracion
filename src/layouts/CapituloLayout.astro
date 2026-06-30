@@ -19,6 +19,7 @@
  */
 import BookReader from '@/layouts/BookReader.astro';
 import CapituloToc from '@/components/book/CapituloToc.astro';
+import { chapterOgAlt, chapterOgImage } from '@/lib/seo';
 
 interface Props {
   /** Título HTML del <head>. */
@@ -29,6 +30,8 @@ interface Props {
   chapter: string;
   /** Etiqueta del capítulo (ej. "Capítulo II") · título del panel TOC. */
   chapterLabel?: string;
+  /** Título canónico del capítulo para OG alt. */
+  chapterTitle?: string;
   /** Slug-hoja de la pieza actual · highlight en el TOC. */
   currentSlug?: string;
   /** Breadcrumb central del header · omitir en el índice del capítulo. */
@@ -44,18 +47,29 @@ const {
   description,
   chapter,
   chapterLabel,
+  chapterTitle,
   currentSlug,
   breadcrumbOrnament,
   breadcrumbText,
   nivel = 1,
   pageId,
 } = Astro.props;
+
+const resolvedChapterLabel = chapterLabel ?? 'Capítulo';
+const ogImage = chapterOgImage(chapter);
+const ogImageAlt = chapterOgAlt(resolvedChapterLabel, chapterTitle ?? title);
 ---
 
 <BookReader
   title={title}
   description={description}
-  og={{ type: 'article', siteName: 'Tejidos de Vibración', locale: 'es_ES' }}
+  og={{
+    type: 'article',
+    siteName: 'Tejidos de Vibración',
+    locale: 'es_ES',
+    image: ogImage,
+    imageAlt: ogImageAlt,
+  }}
   nivel={nivel}
   pageId={pageId}
   bodyClass="capitulo-body"

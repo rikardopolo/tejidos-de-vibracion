@@ -15,8 +15,32 @@
 export const SITE = 'https://tejidosdevibracion.com';
 /** Sitio hermano (portal · laboratorio + constelación + autor). */
 export const SITE_PORTAL = 'https://tejidosderealidad.com';
+export const OG_IMAGE_WIDTH = 1200;
+export const OG_IMAGE_HEIGHT = 630;
+export const DEFAULT_OG_IMAGE_PATH = '/og/og-obertura.png';
+export const DEFAULT_OG_IMAGE = `${SITE}${DEFAULT_OG_IMAGE_PATH}`;
+export const DEFAULT_OG_ALT = 'Tejidos de Vibración';
 
 export type SchemaNode = Record<string, unknown>;
+
+export function resolveOgImage(image?: string): string {
+  const source = image ?? DEFAULT_OG_IMAGE_PATH;
+  return source.startsWith('http') ? source : new URL(source, SITE).toString();
+}
+
+export function chapterOgImage(chapterSlug: string): string {
+  const match = /^cap-(\d+)-/.exec(chapterSlug);
+  if (!match) return DEFAULT_OG_IMAGE;
+
+  const chapterNumber = Number(match[1]);
+  if (chapterNumber < 1 || chapterNumber > 10) return DEFAULT_OG_IMAGE;
+
+  return `${SITE}/og/og-cap-${chapterNumber}.png`;
+}
+
+export function chapterOgAlt(chapterLabel: string, chapterTitle: string): string {
+  return `Tejidos de Vibración · ${chapterLabel} · ${chapterTitle}`;
+}
 
 /**
  * Schemas base · Organization + WebSite + Person.
@@ -32,9 +56,9 @@ export function baseSchemaGraph(): SchemaNode[] {
       url: SITE + '/',
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE}/og/og-default.png`,
-        width: 1200,
-        height: 630,
+        url: DEFAULT_OG_IMAGE,
+        width: OG_IMAGE_WIDTH,
+        height: OG_IMAGE_HEIGHT,
       },
       description:
         'Libro Tejidos de Vibración · Volumen I. Sitio dedicado del libro publicado por el proyecto editorial Tejidos de Realidad.',

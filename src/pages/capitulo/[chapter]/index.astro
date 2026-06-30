@@ -92,6 +92,7 @@ const leaf = (slug: string) => slug.split('/').pop() ?? slug;
   description={data.subtitle ?? `Capítulo ${romanChapter} del Volumen I`}
   chapter={chapter}
   chapterLabel={capitulo}
+  chapterTitle={data.title}
   nivel={nivel}
   pageId={`capitulo-${chapterNum}`}
 >
