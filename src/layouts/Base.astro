@@ -1,6 +1,9 @@
 ---
 import '../styles/global.css';
-import { DEFAULT_OG_ALT, DEFAULT_OG_IMAGE_PATH, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, resolveOgImage } from '@/lib/seo';
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, resolveOgImage } from '@/lib/seo';
+
+const HOME_OG_IMAGE_PATH = '/og/og-home.png';
+const HOME_OG_IMAGE_ALT = 'Tejidos de Vibración · Volumen I';
 
 interface Props {
   title: string;
@@ -19,8 +22,8 @@ const {
   title,
   description,
   canonical,
-  ogImage = DEFAULT_OG_IMAGE_PATH,
-  ogImageAlt = DEFAULT_OG_ALT,
+  ogImage = HOME_OG_IMAGE_PATH,
+  ogImageAlt = HOME_OG_IMAGE_ALT,
   bodyClass,
   pageId,
   jsonLd,
