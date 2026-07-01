@@ -1,11 +1,13 @@
 ---
 import '../styles/global.css';
+import { DEFAULT_OG_ALT, DEFAULT_OG_IMAGE_PATH, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, resolveOgImage } from '@/lib/seo';
 
 interface Props {
   title: string;
   description: string;
   canonical?: string;
   ogImage?: string;
+  ogImageAlt?: string;
   bodyClass?: string;
   pageId?: string;
   jsonLd?: Record<string, unknown>;
@@ -17,7 +19,8 @@ const {
   title,
   description,
   canonical,
-  ogImage = '/og/default.svg',
+  ogImage = DEFAULT_OG_IMAGE_PATH,
+  ogImageAlt = DEFAULT_OG_ALT,
   bodyClass,
   pageId,
   jsonLd,
@@ -27,7 +30,7 @@ const {
 
 const siteUrl = 'https://tejidosdevibracion.com';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).href;
-const ogImageUrl = ogImage.startsWith('http') ? ogImage : new URL(ogImage, siteUrl).href;
+const ogImageUrl = resolveOgImage(ogImage);
 
 const defaultJsonLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
@@ -67,6 +70,9 @@ const schema = jsonLd ?? defaultJsonLd;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content="Tejidos de Vibración" />
 
@@ -75,6 +81,7 @@ const schema = jsonLd ?? defaultJsonLd;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <!-- JSON-LD -->
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />

@@ -8,7 +8,7 @@
  * Este wrapper sólo inyecta:
  *   - su TOC (OberturaToc) en el slot izquierdo del header
  *   - su breadcrumb central (◆ {headerLabel}) · omitido en el índice
- *   - su SEO (hreflang · OG og-libro.png · base schema + schemas · indexable)
+ *   - su SEO (hreflang · OG og-obertura.png · base schema + schemas · indexable)
  *   - su tipografía/paleta propias (EB Garamond · vars --obertura-* ·
  *     frontispiece · copyright · h2.chapter / h3.sub / h4.sub-sub · flourishes)
  *
@@ -24,7 +24,7 @@
  */
 import BookReader from '@/layouts/BookReader.astro';
 import OberturaToc from '@/components/obertura/OberturaToc.astro';
-import { baseSchemaGraph, SITE as SEO_SITE } from '@/lib/seo';
+import { baseSchemaGraph, DEFAULT_OG_IMAGE } from '@/lib/seo';
 
 interface Props {
   /** Título HTML para el <head>. */
@@ -52,10 +52,9 @@ const {
   nivel = 1,
 } = Astro.props;
 
-const SITE = SEO_SITE;
-// OG image · `/og/og-libro.png` (1200x630 paper-and-ink). Compartida por la
-// biblioteca y los 15 capítulos.
-const ogImage = `${SITE}/og/og-libro.png`;
+// OG image · `/og/og-obertura.png` (1200x630 paper-and-ink). Compartida por la
+// biblioteca y las piezas de la Obertura.
+const ogImage = DEFAULT_OG_IMAGE;
 // Schema.org base · Organization + WebSite + Person · misma fuente que antes.
 const baseGraph = baseSchemaGraph();
 const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, ...schemas];
@@ -67,7 +66,7 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   hreflang={true}
   og={{
     type: 'article',
-    siteName: 'Tejidos de Realidad',
+    siteName: 'Tejidos de Vibración',
     locale: 'es_CO',
     image: ogImage,
     imageAlt: `${title} · Obertura del Volumen I · Tejidos de Vibración`,

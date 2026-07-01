@@ -24,7 +24,7 @@
  */
 import '@/styles/global.css';
 import SchemaJsonLd from '@/components/SchemaJsonLd.astro';
-import { SITE } from '@/lib/seo';
+import { DEFAULT_OG_ALT, OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, SITE, resolveOgImage } from '@/lib/seo';
 
 interface Props {
   /** Título del <head>. */
@@ -83,7 +83,8 @@ const {
 
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, SITE).toString();
 const ogType = og.type ?? 'article';
-const hasImage = Boolean(og.image);
+const ogImageUrl = resolveOgImage(og.image);
+const ogImageAlt = og.imageAlt ?? DEFAULT_OG_ALT;
 const hasBreadcrumb = Boolean(breadcrumb?.text);
 ---
 
@@ -113,24 +114,17 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
   {description && <meta property="og:description" content={description} />}
   <meta property="og:locale" content={og.locale} />
   <meta property="og:site_name" content={og.siteName} />
-  {hasImage && (
-    <>
-      <meta property="og:image" content={og.image} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      {og.imageAlt && <meta property="og:image:alt" content={og.imageAlt} />}
-    </>
-  )}
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+  <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+  <meta property="og:image:alt" content={ogImageAlt} />
 
-  {/* Twitter · solo cuando hay imagen social */}
-  {hasImage && (
-    <>
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      {description && <meta name="twitter:description" content={description} />}
-      <meta name="twitter:image" content={og.image} />
-    </>
-  )}
+  {/* Twitter */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  {description && <meta name="twitter:description" content={description} />}
+  <meta name="twitter:image" content={ogImageUrl} />
+  <meta name="twitter:image:alt" content={ogImageAlt} />
 
   <!-- JSON-LD · SSR -->
   {schemas.map((s) => <SchemaJsonLd schema={s} />)}
