@@ -1,8 +1,8 @@
 ---
 import '../styles/global.css';
-import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, resolveOgImage } from '@/lib/seo';
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, resolveOgImage } from '@/lib/seo';
 
-const HOME_OG_IMAGE_PATH = '/og/og-home.png';
+const HOME_OG_IMAGE_PATH = '/og/og-home.jpg';
 const HOME_OG_IMAGE_ALT = 'Tejidos de Vibración · Volumen I';
 
 interface Props {
@@ -75,6 +75,7 @@ const schema = jsonLd ?? defaultJsonLd;
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
     <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+    <meta property="og:image:type" content={OG_IMAGE_TYPE} />
     <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content="Tejidos de Vibración" />
