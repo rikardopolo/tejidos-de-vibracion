@@ -13,19 +13,21 @@
  */
 
 export const SITE = 'https://tejidosdevibracion.com';
+export const OG_SITE = 'https://www.tejidosdevibracion.com';
 /** Sitio hermano (portal · laboratorio + constelación + autor). */
 export const SITE_PORTAL = 'https://tejidosderealidad.com';
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
-export const DEFAULT_OG_IMAGE_PATH = '/og/og-obertura.png';
-export const DEFAULT_OG_IMAGE = `${SITE}${DEFAULT_OG_IMAGE_PATH}`;
+export const OG_IMAGE_TYPE = 'image/jpeg';
+export const DEFAULT_OG_IMAGE_PATH = '/og/og-obertura.jpg';
+export const DEFAULT_OG_IMAGE = `${OG_SITE}${DEFAULT_OG_IMAGE_PATH}`;
 export const DEFAULT_OG_ALT = 'Tejidos de Vibración';
 
 export type SchemaNode = Record<string, unknown>;
 
 export function resolveOgImage(image?: string): string {
   const source = image ?? DEFAULT_OG_IMAGE_PATH;
-  return source.startsWith('http') ? source : new URL(source, SITE).toString();
+  return source.startsWith('http') ? source : new URL(source, OG_SITE).toString();
 }
 
 export function chapterOgImage(chapterSlug: string): string {
@@ -35,7 +37,7 @@ export function chapterOgImage(chapterSlug: string): string {
   const chapterNumber = Number(match[1]);
   if (chapterNumber < 1 || chapterNumber > 10) return DEFAULT_OG_IMAGE;
 
-  return `${SITE}/og/og-cap-${chapterNumber}.png`;
+  return `${OG_SITE}/og/og-cap-${chapterNumber}.jpg`;
 }
 
 export function chapterOgAlt(chapterLabel: string, chapterTitle: string): string {
