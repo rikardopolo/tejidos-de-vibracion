@@ -1,7 +1,7 @@
-import type { APIRoute } from 'astro';
+﻿import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 
-const SITE = 'https://tejidosdevibracion.com';
+const SITE = 'https://www.tejidosdevibracion.com';
 
 const STATIC_PUBLIC_URLS = [
   '/',

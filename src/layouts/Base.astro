@@ -1,9 +1,9 @@
----
+﻿---
 import '../styles/global.css';
-import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, resolveOgImage } from '@/lib/seo';
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, SITE, resolveOgImage } from '@/lib/seo';
 
 const HOME_OG_IMAGE_PATH = '/og/og-home.jpg';
-const HOME_OG_IMAGE_ALT = 'Tejidos de Vibración · Volumen I';
+const HOME_OG_IMAGE_ALT = 'Tejidos de VibraciÃ³n Â· Volumen I';
 
 interface Props {
   title: string;
@@ -31,15 +31,15 @@ const {
   nivel = 0,
 } = Astro.props;
 
-const siteUrl = 'https://tejidosdevibracion.com';
+const siteUrl = SITE;
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).href;
 const ogImageUrl = resolveOgImage(ogImage);
 
 const defaultJsonLd: Record<string, unknown> = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Tejidos de Vibración',
-  description: 'Tejidos de Vibración · Volumen I del proyecto Tejidos de Realidad · Por Ricardo Polo',
+  name: 'Tejidos de VibraciÃ³n',
+  description: 'Tejidos de VibraciÃ³n Â· Volumen I del proyecto Tejidos de Realidad Â· Por Ricardo Polo',
   url: siteUrl,
   author: {
     '@type': 'Person',
@@ -59,10 +59,10 @@ const schema = jsonLd ?? defaultJsonLd;
     <title>{title}</title>
     <meta name="description" content={description} />
 
-    {/* robots · default noindex (404 + páginas de utilidad: privacidad, buscar,
-        confirmación). Las páginas públicas pasan robots="index,follow" por prop.
-        Obertura/capítulos son indexables vía BookReader. LecturaLarga reenvía
-        esta prop → su default también es noindex salvo opt-in explícito. */}
+    {/* robots Â· default noindex (404 + pÃ¡ginas de utilidad: privacidad, buscar,
+        confirmaciÃ³n). Las pÃ¡ginas pÃºblicas pasan robots="index,follow" por prop.
+        Obertura/capÃ­tulos son indexables vÃ­a BookReader. LecturaLarga reenvÃ­a
+        esta prop â†’ su default tambiÃ©n es noindex salvo opt-in explÃ­cito. */}
     <meta name="robots" content={robots} />
 
     <link rel="canonical" href={canonicalUrl} />
@@ -73,12 +73,13 @@ const schema = jsonLd ?? defaultJsonLd;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:secure_url" content={ogImageUrl} />
     <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
     <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
     <meta property="og:image:type" content={OG_IMAGE_TYPE} />
     <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content="es_ES" />
-    <meta property="og:site_name" content="Tejidos de Vibración" />
+    <meta property="og:site_name" content="Tejidos de VibraciÃ³n" />
 
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
