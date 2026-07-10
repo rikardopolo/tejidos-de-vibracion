@@ -16,6 +16,7 @@
   --oro-suave:   #B68914;
   --oro-fantasma:rgba(212, 160, 23, 0.18);
   --nocturno:    #0A0E1A;
+  --campo-borde: #D5C9A6;  /* borde de inputs · pergamino-2 apenas oscurecido (rediseño Umbral) */
 
   /* Header — variables para modo noche */
   --header-bg:         rgba(242, 234, 213, 0.82);
