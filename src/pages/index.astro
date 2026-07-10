@@ -10,44 +10,52 @@ import LitLink from '@/components/book/LitLink.astro';
   description="Tejidos de Vibración, Volumen I del proyecto Tejidos de Realidad. Por Ricardo Polo · Orion."
   pageId="home"
 >
-  <article class="cover measure">
-    <div class="vib-stage">
-      <canvas id="vib-hero" aria-hidden="true"></canvas>
-      <p class="eyebrow eyebrow--gold mt-6">Volumen I · Tejidos de Realidad</p>
-
+  <article class="portada">
+    <!-- Héroe a sangre · ondas detrás del título -->
+    <section class="portada-hero vib-stage">
+      <canvas id="c-1a" aria-hidden="true"></canvas>
+      <p class="eyebrow eyebrow--gold">Volumen I · Tejidos de Realidad</p>
       <h1 class="monumental">Tejidos<br/>de <em class="vibracion-title">Vibración</em></h1>
+      <p class="umbral-line portada-umbral">Donde la mirada teje lo posible en lo real, y el silencio entre dos latidos resulta ser el río que ambas orillas comparten.</p>
+    </section>
+
+    <!-- Retícula 640 | 1fr · prosa a la izquierda, umbral de entrada a la derecha -->
+    <div class="portada-grid">
+      <div class="portada-prosa">
+        <div class="prose">
+          <p class="no-indent">No soy físico de laboratorio, ni monje de monasterio. Soy alguien que lleva años sentado en la frontera entre la ecuación y el silencio, preguntándome si esa frontera existe.</p>
+          <p>Tejidos de Vibración es el resultado de esa pregunta sostenida durante años. No pretende dar respuestas definitivas. Pretende cambiar la calidad de las preguntas.</p>
+        </div>
+        <p class="meta portada-autor">Ricardo Polo · Orion — <span class="muted">Volumen I del proyecto Tejidos de Realidad</span></p>
+      </div>
+
+      <div class="portada-umbral-entrada">
+        <p class="portada-intro">Lee la Obertura completa hoy. Los capítulos del Acto I se abrirán uno a uno — y tu correo es la llave de todos.</p>
+
+        <p class="portada-cta"><LitLink size="lg" href="/obertura">Empezar por la Obertura</LitLink></p>
+
+        <div class="lit-link-row portada-secundarios">
+          <LitLink size="secondary" href="/indice">Recorrer el índice</LitLink>
+          <LitLink size="secondary" href="/recibir">Recibir los capítulos</LitLink>
+        </div>
+
+        <!-- Captura de correo · GET a /recibir (allí vive el form consentido
+             completo: nombre + consentimiento legal). NO hace POST inline —
+             preserva la evidencia de consentimiento (Ley 1581/2012). -->
+        <form class="form-tejedor form-tejedor--linea portada-form" action="/recibir" method="get">
+          <input type="email" name="correo" placeholder="tu@correo.com"
+                 aria-label="Tu correo" maxlength="254" autocomplete="email" />
+          <button type="submit" class="form-tejedor__submit">Recibir&nbsp;&rarr;</button>
+        </form>
+        <p class="form-tejedor__nota portada-form-nota">Sin spam. Sin venta de datos.</p>
+      </div>
     </div>
 
-    <p class="umbral-line">Donde la mirada teje lo posible en lo real, y el silencio entre dos latidos resulta ser el río que ambas orillas comparten.</p>
-
-    <p class="meta mt-3">
-      Ricardo Polo · Orion<br/>
-      <span class="muted">Volumen I del proyecto Tejidos de Realidad</span>
-    </p>
-
-    <div class="prose mt-4">
-      <p class="no-indent">No soy físico de laboratorio, ni monje de monasterio. Soy alguien que lleva años sentado en la frontera entre la ecuación y el silencio, preguntándome si esa frontera existe.</p>
-      <p>Tejidos de Vibración es el resultado de esa pregunta sostenida durante años. No pretende dar respuestas definitivas. Pretende cambiar la calidad de las preguntas.</p>
-    </div>
-
-    <p class="umbral-line mt-4" style="font-size: clamp(1.15rem, 2vw, 1.4rem); color: var(--tinta-suave); max-width: 32rem;">Lee la Obertura completa hoy. Los capítulos del Acto I se abrirán uno a uno — y tu correo es la llave de todos.</p>
-
-    <p class="mt-3">
-      <LitLink size="lg" href="/obertura">Empezar por la Obertura</LitLink>
-    </p>
-
-    <p style="font-family: var(--serif); font-style: italic; font-size: 0.85rem; line-height: 1.55; color: var(--reposo); max-width: 30rem; margin: 0.6rem 0 0;">El frontispicio y el primer movimiento son de lectura libre; la Obertura completa se abre con tu correo.</p>
-
-    <div class="lit-link-row mt-2h">
-      <LitLink size="secondary" href="/indice">Recorrer el índice</LitLink>
-      <LitLink size="secondary" href="/recibir">Recibir los capítulos</LitLink>
-    </div>
-
-    <Flourish kind="rule" />
-
-    <p class="meta center mb-6">
-      Tres actos · Diez capítulos · Una Obertura ya abierta
-    </p>
+    <!-- Pie -->
+    <footer class="portada-pie">
+      <Flourish kind="rule" />
+      <p class="meta center">Tres actos · Diez capítulos · Una Obertura ya abierta</p>
+    </footer>
   </article>
 </LecturaLarga>
 
@@ -55,17 +63,82 @@ import LitLink from '@/components/book/LitLink.astro';
 <script is:inline src="/js/vib-hero.js"></script>
 
 <style>
-  .vib-stage { position: relative; isolation: isolate; }
-  /* el contenido del hero por encima del canvas */
-  .vib-stage > :not(#vib-hero) { position: relative; z-index: 1; }
-  #vib-hero {
+  /* main ya aporta padding lateral (0 4rem ≥720px); aquí solo acotamos el
+     ancho al del header/footer del sitio (78rem) para alinear el chrome. */
+  .portada {
+    max-width: 78rem;
+    margin-inline: auto;
+  }
+
+  /* ── Héroe ─────────────────────────────────────────────── */
+  .portada-hero {
+    position: relative;
+    isolation: isolate;
+    padding-top: clamp(2.5rem, 6vw, 5.25rem);
+    min-height: min(566px, 62vh);
+  }
+  .portada-hero > :not(#c-1a) { position: relative; z-index: 1; }
+  #c-1a {
     position: absolute;
+    inset: 0;
     z-index: 0;
-    left: 0;
-    right: 0;
     width: 100%;
-    top: -3.5rem;
-    height: calc(100% + 7rem);
-    pointer-events: none;   /* los clics del hero pasan a través */
+    height: calc(100% + 3.5rem);
+    top: -1.75rem;
+    pointer-events: none;
+  }
+  .portada .eyebrow--gold { color: var(--oro-texto); }   /* AA (D3) */
+  .portada-umbral {
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    max-width: 35rem;
+    margin-top: 2.25rem;
+  }
+
+  /* ── Retícula ──────────────────────────────────────────── */
+  .portada-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 40rem) 1fr;
+    gap: clamp(2rem, 5.5vw, 5.5rem);
+    margin-top: clamp(2rem, 4vw, 3rem);
+    align-items: start;
+  }
+  .portada-prosa .prose p { font-size: var(--fs-body); line-height: var(--lh-body); }
+  .portada-autor {
+    margin-top: 1.5rem;
+    color: var(--reposo);
+  }
+
+  .portada-umbral-entrada {
+    border-left: 1px solid var(--pergamino-2);
+    padding-left: clamp(1.5rem, 2.5vw, 2.75rem);
+  }
+  .portada-intro {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1875rem;
+    line-height: 1.5;
+    color: var(--tinta-suave);
+    max-width: 24rem;
+    margin: 0;
+  }
+  .portada-cta { margin: 1.75rem 0 0; }
+  .portada-secundarios { margin-top: 1.5rem; }
+  .portada-form { margin-top: 1.875rem; }
+  .portada-form-nota { text-align: left; margin-top: 0.5rem; }
+
+  /* ── Pie ───────────────────────────────────────────────── */
+  .portada-pie { margin-top: clamp(3rem, 6vw, 5rem); }
+  .portada-pie .meta { margin-top: 0; }
+
+  /* ── Responsive: colapsa a una columna ─────────────────── */
+  @media (max-width: 56rem) {
+    .portada-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .portada-umbral-entrada {
+      border-left: 0;
+      border-top: 1px solid var(--pergamino-2);
+      padding-left: 0;
+      padding-top: 2rem;
+    }
+    .portada-intro { max-width: none; }
   }
 </style>

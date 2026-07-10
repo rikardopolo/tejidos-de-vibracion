@@ -47,7 +47,7 @@
   --fs-h3:       1.5rem;
   --fs-h2:       2rem;
   --fs-h1:       3rem;
-  --fs-monumental: clamp(3.5rem, 9vw, 8rem);
+  --fs-monumental: clamp(3.5rem, 11vw, 10.25rem);  /* portada · techo ~164px (rediseño Umbral) */
 
   /* Ritmo */
   --lh-body: 1.7;
