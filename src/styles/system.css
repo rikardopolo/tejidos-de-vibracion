@@ -271,21 +271,21 @@ main {
   font-family: var(--serif);
   font-weight: 600;
   font-size: var(--fs-monumental);
-  line-height: 0.95;
-  letter-spacing: -0.015em;
-  color: var(--oro);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: var(--oro-titulo);
   margin: 0;
 }
 .monumental em {
   font-style: italic;
   font-weight: 500;
-  color: var(--oro);
+  color: var(--oro-titulo);
 }
 /* ① shimmer en "Vibración" · barrido de luz dorada lento sobre el oro. La em ya
    es oro; el gradiente clip:text le pasa una banda mas clara que cruza la palabra. */
 .monumental .vibracion-title {
   background: linear-gradient(100deg,
-    var(--oro) 0%, var(--oro) 38%, #f3dd8e 50%, var(--oro) 62%, var(--oro) 100%);
+    var(--oro-titulo) 0%, var(--oro-titulo) 38%, #f3dd8e 50%, var(--oro-titulo) 62%, var(--oro-titulo) 100%);
   background-size: 220% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -301,8 +301,8 @@ main {
   .monumental .vibracion-title {
     animation: none;
     background: none;
-    -webkit-text-fill-color: var(--oro);
-    color: var(--oro);
+    -webkit-text-fill-color: var(--oro-titulo);
+    color: var(--oro-titulo);
   }
 }
 
