@@ -226,14 +226,12 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   .obertura-main--pieza .marginalia .marginalia__kind { color: var(--oro-texto); }
   .obertura-main--pieza .marginalia--cientifica .marginalia__kind { color: var(--obertura-indigo); }
   .obertura-main--pieza .marginalia--voz .marginalia__kind { color: var(--verde-texto); }
-  /* Bloques estructurales de ancho completo · clarean el float para no colisionar
-     con la marginalia del gutter (fix de la caja Laboratorio; vale para figura,
-     cita y encabezados de sección). */
+  /* Cajas de ancho completo · establecen un contexto de formato de bloque para
+     colocarse AL LADO de la marginalia flotada (se encogen al espacio libre) en
+     vez de solaparla (colisión) o caer debajo (hueco). Fix de la caja Laboratorio. */
   .obertura-main--pieza .obertura-piece > .laboratorio,
   .obertura-main--pieza .obertura-piece > figure,
-  .obertura-main--pieza .obertura-piece > blockquote,
-  .obertura-main--pieza .obertura-piece > h2,
-  .obertura-main--pieza .obertura-piece > h3 { clear: right; }
+  .obertura-main--pieza .obertura-piece > blockquote { display: flow-root; }
   .obertura-main--pieza .obertura-piece > .laboratorio { margin-left: 0; margin-right: 0; }
 
   /* ── Encabezado de pieza abierta (title oro + subtítulo) ────── */
