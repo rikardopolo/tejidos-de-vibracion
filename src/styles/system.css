@@ -1166,6 +1166,10 @@ html[data-reader-mode="night"] {
   --header-bg: rgba(26, 23, 20, 0.82);
   --header-bg-scrolled: rgba(26, 23, 20, 0.94);
   --campo-borde: #4a443a;  /* borde de inputs en noche (rediseño Umbral) */
+  /* D3 · en noche el oro/verde brillantes ya pasan AA sobre el fondo oscuro */
+  --oro-titulo:  #d4a017;
+  --oro-texto:   #b68914;
+  --verde-texto: #1d9e75;
 }
 
 /* Reading sizes — applied via [data-reader-size] on <html> */

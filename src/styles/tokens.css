@@ -18,6 +18,14 @@
   --nocturno:    #0A0E1A;
   --campo-borde: #D5C9A6;  /* borde de inputs · pergamino-2 apenas oscurecido (rediseño Umbral) */
 
+  /* Contraste D3 · oros/verde de TEXTO oscurecidos para AA sobre pergamino en
+     DÍA (el --oro/--oro-suave brillantes se reservan para bordes, diamantes,
+     subrayados y el canvas, donde no aplica el contraste de texto). En noche
+     vuelven a los brillantes (el fondo oscuro ya da contraste de sobra). */
+  --oro-titulo:  #A87E12;  /* texto de títulos grandes · AA-large ≥3:1 */
+  --oro-texto:   #86650E;  /* texto oro pequeño: eyebrows, labels, estados · AA ≥4.5:1 */
+  --verde-texto: #167859;  /* Voz del Tejido, texto · AA ≥4.5:1 */
+
   /* Header — variables para modo noche */
   --header-bg:         rgba(242, 234, 213, 0.82);
   --header-bg-scrolled:rgba(242, 234, 213, 0.94);
