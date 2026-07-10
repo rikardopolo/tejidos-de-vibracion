@@ -153,18 +153,19 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   }
 
   /* ═══════════════════════════════════════════════════════════════
-     REDISEÑO «UMBRAL» · retícula de pieza (raíl | lectura | marginalia)
+     REDISEÑO «UMBRAL» · pieza (raíl | columna de lectura)
      Solo en /obertura/[slug] (mainClass --pieza); el índice /obertura NO lo
-     hereda. Reestructura la columna única en 3 zonas SIN tocar el MDX: el raíl
-     es un elemento inyectado por el layout; las marginalia (hijas directas del
-     .obertura-piece) FLOTAN al margen derecho. Especificidad 2-clases → gana a
-     las reglas base sin depender del orden. ═══════════════════════════════════ */
+     hereda. Añade el raíl izquierdo; las cajas (marginalia + laboratorio) van
+     EN EL FLUJO de la lectura como tarjetas tintadas por voz (variante V1). SIN
+     tocar el MDX. Especificidad 2-clases → gana a las reglas base. ═════════════ */
   .obertura-main--pieza {
-    max-width: 78rem;
-    padding: 3.25rem 4rem 6rem;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 3.25rem 1.5rem 6rem;
     display: grid;
-    grid-template-columns: [rail] 12.25rem [content] minmax(0, 1fr);
+    grid-template-columns: [rail] 12.25rem [content] minmax(0, 41.25rem);
     column-gap: 4rem;
+    justify-content: center;
     align-items: start;
   }
   .obertura-main--pieza > :not(.piece-rail) { grid-column: content; min-width: 0; }
@@ -200,38 +201,31 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   }
   .piece-rail__item.is-current .piece-rail__num { color: var(--oro-texto); }
 
-  /* ── Columna de lectura (660) + marginalia flotante al margen ── */
+  /* ── Columna de lectura · cajas en el flujo (V1) ─────────────── */
   .obertura-main--pieza .obertura-piece > *,
   .obertura-main--pieza .obertura-piece > figure { max-width: 41.25rem; }
-  .obertura-main--pieza .obertura-piece::after { content: ''; display: block; clear: both; }
+  /* Marginalia = tarjeta tintada por voz, a ancho de lectura, dentro del flujo. */
   .obertura-main--pieza .obertura-piece > .marginalia {
-    float: right;
-    clear: right;
-    width: 18.5rem;
-    max-width: 18.5rem;
-    margin: 0.5rem 0 1.75rem 2.5rem;
-    padding: 1.1rem 1.25rem 1.15rem 1.35rem;
+    margin: 2.75rem 0;
+    padding: 1.6rem 1.9rem;
     border-left: 2px solid var(--obertura-thread);
-    background: color-mix(in srgb, var(--obertura-thread) 10%, transparent);  /* tinte reflexiva */
+    background: color-mix(in srgb, var(--obertura-thread) 9%, transparent);   /* tinte reflexiva */
   }
   .obertura-main--pieza .obertura-piece > .marginalia--cientifica {
     border-left-color: var(--obertura-indigo);
-    background: color-mix(in srgb, var(--obertura-indigo) 10%, transparent);   /* tinte científica */
+    background: color-mix(in srgb, var(--obertura-indigo) 8%, transparent);    /* tinte científica */
   }
   .obertura-main--pieza .obertura-piece > .marginalia--voz {
     border-left-color: var(--verde);
-    background: color-mix(in srgb, var(--verde) 9%, transparent);              /* tinte tejido */
+    background: color-mix(in srgb, var(--verde) 8%, transparent);              /* tinte tejido */
   }
   /* rótulos de voz · AA (D3) */
   .obertura-main--pieza .marginalia .marginalia__kind { color: var(--oro-texto); }
   .obertura-main--pieza .marginalia--cientifica .marginalia__kind { color: var(--obertura-indigo); }
   .obertura-main--pieza .marginalia--voz .marginalia__kind { color: var(--verde-texto); }
-  /* Cajas de ancho completo · establecen un contexto de formato de bloque para
-     colocarse AL LADO de la marginalia flotada (se encogen al espacio libre) en
-     vez de solaparla (colisión) o caer debajo (hueco). Fix de la caja Laboratorio. */
-  .obertura-main--pieza .obertura-piece > .laboratorio,
-  .obertura-main--pieza .obertura-piece > figure,
-  .obertura-main--pieza .obertura-piece > blockquote { display: flow-root; }
+  /* La caja Laboratorio ya vive en el flujo con su tinte índigo y esquinas;
+     solo neutralizamos su sangrado negativo para alinearla con las demás
+     tarjetas a ancho de lectura. */
   .obertura-main--pieza .obertura-piece > .laboratorio { margin-left: 0; margin-right: 0; }
 
   /* ── Encabezado de pieza abierta (title oro + subtítulo) ────── */
@@ -271,8 +265,7 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     }
     .piece-rail { display: none; }
     .obertura-main--pieza .obertura-piece > .marginalia {
-      float: none; clear: none; width: auto; max-width: none;
-      margin: 2.5rem 0; padding: 1rem 0 1rem 1.5rem;
+      margin: 2.25rem 0; padding: 1.3rem 1.4rem;
     }
   }
 
