@@ -140,20 +140,23 @@ const grouped = sectionOrder.map((key) => ({
   ]}
   nivel={nivel}
 >
-  <header class="biblio-cover">
-    <p class="volumen">Volumen i</p>
-    <h1 class="book-title">Tejidos <span class="ampersand">de</span> Vibración</h1>
-    <div class="ornament-large">◇ &nbsp; ◆ &nbsp; ◇</div>
-    <p class="obertura-label">Obertura</p>
-    <p class="obertura-sub">El Tejedor Consciente Despierta</p>
-    <p class="author">Ricardo Polo · Orion</p>
-    <p class="epigraph">
-      Una Obertura no introduce los temas de la ópera que vendrá. Los toca
-      todos, compactados, en forma de resumen anticipado.
+  <header class="biblio-hero vib-stage">
+    <canvas id="c-6a" aria-hidden="true"></canvas>
+    <p class="biblio-eyebrow">Volumen I · Tejidos de Vibración</p>
+    <h1 class="biblio-h1">Obertura</h1>
+    <p class="biblio-sub">El Tejedor Consciente Despierta</p>
+    <p class="biblio-cta">
+      <a href="/obertura/00-frontispicio" class="biblio-cta-link">Empezar por el Frontispicio</a>
     </p>
   </header>
 
-  <div class="toc">
+  <div class="biblio-meta">
+    <span>Quince piezas · Tres interludios</span>
+    <span class="biblio-meta-dot" aria-hidden="true">◆</span>
+    <span>Tiempo de lectura · 22 minutos</span>
+  </div>
+
+  <div class="toc toc--grid">
     {grouped.map((group) => group.entries.length > 0 && (
       <section class="toc-section">
         <p class="heading">{group.meta.num} · {group.meta.heading}</p>
@@ -162,8 +165,9 @@ const grouped = sectionOrder.map((key) => ({
           {group.entries.map((entry) => {
             const esPublica = PIEZAS_PUBLICAS.has(entry.id);
             const esBloqueada = !esPublica && nivel < 1;
+            const esInterludio = entry.data.kind === 'interludio';
             return (
-              <li class={esBloqueada ? 'is-locked' : ''}>
+              <li class={`${esBloqueada ? 'is-locked' : ''} ${esInterludio ? 'is-interludio' : ''}`.trim()}>
                 <a
                   href={`/obertura/${entry.id}`}
                   aria-label={esBloqueada ? `${entry.data.title} · requiere registro` : undefined}
@@ -171,10 +175,15 @@ const grouped = sectionOrder.map((key) => ({
                   <span class="num">{entry.data.chapterNum}</span>
                   <span class="body">
                     {entry.data.title}
-                    {esBloqueada && <span class="lock" aria-hidden="true">◆</span>}
                     {entry.data.subtitle && <em>{entry.data.subtitle}</em>}
                   </span>
-                  <span class="arrow">→</span>
+                  {esPublica ? (
+                    <span class="estado estado--libre">De lectura libre</span>
+                  ) : esBloqueada ? (
+                    <span class="estado estado--correo">Con tu correo</span>
+                  ) : (
+                    <span class="arrow" aria-hidden="true">→</span>
+                  )}
                 </a>
               </li>
             );
@@ -184,175 +193,206 @@ const grouped = sectionOrder.map((key) => ({
     ))}
   </div>
 
-  <div class="ornament-large">◇ &nbsp; ◆ &nbsp; ◇</div>
+  <footer class="biblio-pie">
+    <p class="biblio-puerta">La Obertura completa — las quince piezas, los tres interludios, el mapa conceptual — es libre para los tejedores registrados. Un nombre y un correo. Eso es todo.</p>
+    <form class="form-tejedor form-tejedor--linea biblio-form" action="/recibir" method="get">
+      <input type="email" name="correo" placeholder="tu@correo.com"
+             aria-label="Tu correo" maxlength="254" autocomplete="email" />
+      <button type="submit" class="form-tejedor__submit">Entrar al tejido&nbsp;&rarr;</button>
+    </form>
+    <p class="form-tejedor__nota biblio-form-nota">Sin spam. Sin venta de datos.</p>
+  </footer>
 </OberturaLayout>
 
+<!-- Ondas ambientales del héroe · preset c-6a de vib-hero.js (externo · CSP) -->
+<script is:inline src="/js/vib-hero.js"></script>
+
 <style>
-  .biblio-cover {
+  /* ── Héroe · ondas c-6a + H1 «Obertura» ─────────────────── */
+  .biblio-hero {
+    position: relative;
+    isolation: isolate;
     text-align: center;
-    padding: 2rem 0 3rem;
-    border-bottom: 1px solid var(--obertura-rule-soft);
-    margin-bottom: 4rem;
+    padding: clamp(1.5rem, 4vw, 3rem) 0 clamp(2rem, 5vw, 3.5rem);
+    min-height: min(380px, 46vh);
+    margin-bottom: 2.5rem;
   }
-  .volumen {
+  .biblio-hero > :not(#c-6a) { position: relative; z-index: 1; }
+  #c-6a {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: calc(100% + 3rem);
+    top: -1.5rem;
+    pointer-events: none;
+  }
+  .biblio-eyebrow {
     font-family: var(--obertura-sans);
-    font-weight: 400;
-    font-size: 0.78rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--obertura-ink-faded);
-    margin: 0 0 2.5rem;
-  }
-  .book-title {
-    font-family: var(--obertura-serif);
     font-weight: 500;
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-    letter-spacing: 0.18em;
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    text-align: center;
-    margin: 0 0 0.6rem;
-    line-height: 1.05;
+    color: var(--oro-texto);
+    margin: 0 0 1.25rem;
   }
-  .book-title .ampersand {
-    font-style: italic;
-    font-weight: 400;
-    letter-spacing: 0;
-    text-transform: lowercase;
-    color: var(--obertura-thread);
-  }
-  .ornament-large {
-    text-align: center;
-    color: var(--obertura-thread);
-    margin: 4.5rem 0;
-    font-size: 1.25rem;
-    letter-spacing: 1.2em;
-    user-select: none;
-  }
-  .obertura-label {
+  .biblio-h1 {
     font-family: var(--obertura-serif);
     font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: var(--obertura-thread);
-    margin: 0 0 0.8rem;
-  }
-  .obertura-sub {
-    font-family: var(--obertura-serif);
-    font-style: italic;
-    font-size: 1.35rem;
-    color: var(--obertura-ink);
+    font-size: clamp(3.5rem, 9vw, 6.5rem);
+    letter-spacing: -0.015em;
+    color: var(--oro-titulo);
+    line-height: 1;
     margin: 0;
   }
-  .author {
+  .biblio-sub {
     font-family: var(--obertura-serif);
     font-style: italic;
-    color: var(--obertura-ink-soft);
-    margin: 1.4rem 0 1.2rem;
+    font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+    color: var(--obertura-ink);
+    margin: 1rem 0 0;
   }
-  .epigraph {
+  .biblio-cta { margin: 2rem 0 0; }
+  .biblio-cta-link {
     font-family: var(--obertura-serif);
-    font-style: italic;
-    font-size: 1.05rem;
+    font-size: 1.375rem;
+    color: var(--obertura-ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--oro-titulo);
+    padding-bottom: 0.4rem;
+    transition: color 0.16s var(--ease-editorial, ease), border-color 0.16s, padding-bottom 0.16s;
+  }
+  .biblio-cta-link:hover {
+    color: var(--oro-suave);
+    border-color: var(--oro-suave);
+    padding-bottom: 0.55rem;
+  }
+
+  /* ── Franja meta ─────────────────────────────────────────── */
+  .biblio-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-family: var(--obertura-sans);
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     color: var(--obertura-ink-faded);
-    line-height: 1.5;
-    max-width: 26rem;
-    margin: 0 auto;
-    padding: 1.2rem 0 0;
+    padding: 1.1rem 0;
     border-top: 1px solid var(--obertura-rule-soft);
+    border-bottom: 1px solid var(--obertura-rule-soft);
+    margin-bottom: 3.5rem;
   }
+  .biblio-meta-dot { color: var(--obertura-thread); font-size: 0.6rem; }
 
-  .toc {
-    margin: 0 auto;
+  /* ── TOC · 4 grupos en 2×2 ───────────────────────────────── */
+  .toc--grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: clamp(2.5rem, 5vw, 5rem);
+    row-gap: 3rem;
+    align-items: start;
   }
-
-  .toc-section {
-    margin-bottom: 4rem;
-  }
+  .toc-section { margin: 0; }
   .toc-section .heading {
     font-family: var(--obertura-sans);
     font-weight: 500;
-    font-size: 0.78rem;
-    letter-spacing: 0.4em;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: var(--obertura-thread);
+    color: var(--oro-texto);
     margin: 0 0 0.3rem;
-    text-align: center;
   }
   .toc-section .heading-sub {
     font-family: var(--obertura-serif);
     font-style: italic;
-    font-size: 1.08rem;
+    font-size: 1.02rem;
     color: var(--obertura-ink-faded);
-    text-align: center;
-    margin: 0 0 1.8rem;
+    margin: 0 0 1.2rem;
   }
-  .toc-section ol {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .toc-section li {
-    margin: 0;
-    border-bottom: 1px solid var(--obertura-rule-soft);
-  }
-  .toc-section li:first-child {
-    border-top: 1px solid var(--obertura-rule-soft);
-  }
+  .toc-section ol { list-style: none; padding: 0; margin: 0; }
+  .toc-section li { margin: 0; }
   .toc-section a {
     display: grid;
-    grid-template-columns: 3.6rem 1fr 1.5rem;
+    grid-template-columns: 2.4rem 1fr auto;
     align-items: baseline;
-    gap: 1rem;
-    padding: 1.2rem 0.4rem;
+    gap: 0.9rem;
+    padding: 0.7rem 0.3rem;
     text-decoration: none;
     color: var(--obertura-ink);
-    transition: background 0.2s, padding 0.2s;
+    border-bottom: 1px solid var(--obertura-rule-soft);
+    transition: padding 0.2s;
   }
-  .toc-section a:hover {
-    background: var(--obertura-thread-hover);
-    padding-left: 1rem;
-  }
+  .toc-section a:hover { padding-left: 0.7rem; }
+  .toc-section a:hover .body { text-decoration: underline; text-decoration-color: var(--obertura-thread); text-underline-offset: 3px; }
   .toc-section .num {
     font-family: var(--obertura-mono);
-    font-size: 0.85rem;
-    color: var(--obertura-thread);
-    letter-spacing: 0.05em;
+    font-size: 0.78rem;
+    color: var(--oro-texto);
+    letter-spacing: 0.03em;
   }
   .toc-section .body {
     font-family: var(--obertura-serif);
-    font-size: 1.18rem;
-    line-height: 1.3;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.25;
   }
   .toc-section .body em {
     display: block;
     font-style: italic;
-    font-size: 0.92rem;
+    font-weight: 400;
+    font-size: 0.9rem;
     color: var(--obertura-ink-faded);
-    margin-top: 0.15rem;
+    margin-top: 0.1rem;
   }
+  .toc-section .is-interludio .body {
+    font-weight: 500;
+    font-style: italic;
+    font-size: 1.15rem;
+  }
+  /* estados de acceso · derivados del nivel real, no hardcodeados */
+  .toc-section .estado {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 0.82rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .toc-section .estado--libre { color: var(--oro-texto); }
+  .toc-section .estado--correo { color: var(--obertura-ink-faded); }
+  .toc-section .is-locked { opacity: 0.55; transition: opacity 0.2s; }
+  .toc-section .is-locked:hover { opacity: 0.85; }
   .toc-section .arrow {
     font-family: var(--obertura-serif);
     color: var(--obertura-thread);
-    font-size: 1.1rem;
-    text-align: right;
+    font-size: 1rem;
     transition: transform 0.2s;
   }
-  .toc-section a:hover .arrow {
-    transform: translateX(4px);
-  }
+  .toc-section a:hover .arrow { transform: translateX(4px); }
 
-  /* Indicador de pieza bloqueada · oro fantasma · solo visible Nivel 0 */
-  .toc-section .lock {
-    color: var(--obertura-gold);
-    opacity: 0.42;
-    font-size: 0.72rem;
-    margin-left: 0.45rem;
-    vertical-align: middle;
-    letter-spacing: 0;
+  /* ── Pie · frase de la puerta + captura de correo ────────── */
+  .biblio-pie {
+    margin-top: 4.5rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--obertura-rule-soft);
+    text-align: center;
   }
-  .toc-section .is-locked a:hover .lock {
-    opacity: 0.7;
-    transition: opacity 0.2s;
+  .biblio-puerta {
+    font-family: var(--obertura-serif);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--obertura-ink-soft);
+    max-width: 34rem;
+    margin: 0 auto 1.75rem;
+    text-wrap: pretty;
+  }
+  .biblio-form { margin: 0 auto; }
+  .biblio-form-nota { text-align: center; margin-top: 0.5rem; }
+
+  /* ── Responsive: grupos a 1 columna ──────────────────────── */
+  @media (max-width: 46rem) {
+    .toc--grid { grid-template-columns: 1fr; row-gap: 2.5rem; }
   }
 </style>
