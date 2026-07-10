@@ -134,7 +134,15 @@ const pieceSchema = wrapGraph([
 >
   <article class={`obertura-piece kind-${kind}`}>
     {tieneAcceso && Content ? (
-      <Content />
+      <>
+        {kind !== 'frontispicio' && (
+          <header class="piece-header">
+            <h1 class="piece-title">{title}</h1>
+            {subtitle && <p class="piece-subtitle">{subtitle}</p>}
+          </header>
+        )}
+        <Content />
+      </>
     ) : (
       <header class="piece-locked-header">
         <p class="locked-eyebrow">{headerLabel}</p>
@@ -150,88 +158,73 @@ const pieceSchema = wrapGraph([
 
   {tieneAcceso && (
     <nav class="prev-next" aria-label="Navegación entre capítulos">
-      {prev ? (
-        <a class="nav-link nav-prev" href={`/obertura/${prev.id}`}>
-          <span class="nav-direction">← Anterior</span>
-          <span class="nav-num">{prev.data.chapterNum}</span>
-          <span class="nav-title">{prev.data.title}</span>
-        </a>
-      ) : (
-        <a class="nav-link nav-back" href="/obertura">
-          <span class="nav-direction">← Biblioteca</span>
-        </a>
-      )}
+      <div class="pn-cell pn-cell--prev">
+        {prev ? (
+          <a href={`/obertura/${prev.id}`}>
+            <span class="pn-cue">← Anterior · {prev.data.chapterNum}</span>
+            <span class="pn-title">{prev.data.title}</span>
+          </a>
+        ) : (
+          <a href="/obertura"><span class="pn-cue">← Biblioteca</span></a>
+        )}
+      </div>
 
-      {next ? (
-        <a class="nav-link nav-next" href={`/obertura/${next.id}`}>
-          <span class="nav-direction">Siguiente →</span>
-          <span class="nav-num">{next.data.chapterNum}</span>
-          <span class="nav-title">{next.data.title}</span>
-        </a>
-      ) : (
-        <a class="nav-link nav-back" href="/obertura">
-          <span class="nav-direction">Biblioteca →</span>
-        </a>
-      )}
+      <div class="pn-cell pn-cell--center">
+        <span class="pn-cue">Obertura</span>
+      </div>
+
+      <div class="pn-cell pn-cell--next">
+        {next ? (
+          <a href={`/obertura/${next.id}`}>
+            <span class="pn-cue">Siguiente · {next.data.chapterNum} →</span>
+            <span class="pn-title">{next.data.title}</span>
+          </a>
+        ) : (
+          <a href="/obertura"><span class="pn-cue">Biblioteca →</span></a>
+        )}
+      </div>
     </nav>
   )}
 </OberturaLayout>
 
 <style>
+  /* Nav inferior · 3 columnas sin cajas, baseline (rediseño Umbral) */
   .prev-next {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
     margin-top: 5rem;
-    padding-top: 3rem;
+    padding-top: 1.6rem;
     border-top: 1px solid var(--obertura-rule);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: baseline;
+    gap: 1.5rem;
   }
-  .nav-link {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 1.2rem 1rem;
-    text-decoration: none;
-    border: 1px solid var(--obertura-rule-soft);
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .nav-link:hover {
-    border-color: var(--obertura-thread);
-    background: var(--obertura-thread-hover);
-  }
-  .nav-prev {
-    text-align: left;
-  }
-  .nav-next {
-    text-align: right;
-  }
-  .nav-back {
-    text-align: center;
-    grid-column: span 1;
-  }
-  .nav-direction {
+  .pn-cell--prev { text-align: left; }
+  .pn-cell--center { text-align: center; }
+  .pn-cell--next { text-align: right; }
+  .pn-cell a { text-decoration: none; display: block; }
+  .pn-cue {
+    display: block;
     font-family: var(--obertura-sans);
-    font-size: 0.7rem;
-    letter-spacing: 0.32em;
+    font-size: 0.66rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--obertura-thread);
+    color: var(--reposo);
   }
-  .nav-num {
-    font-family: var(--obertura-mono);
-    font-size: 0.78rem;
-    color: var(--obertura-ink-faded);
-    margin-top: 0.4rem;
-  }
-  .nav-title {
+  .pn-cell a:hover .pn-cue { color: var(--oro-texto); }
+  .pn-title, .pn-mid {
+    display: block;
     font-family: var(--obertura-serif);
     font-style: italic;
-    font-size: 1.05rem;
+    font-size: 1.0625rem;
     color: var(--obertura-ink);
+    margin-top: 0.375rem;
     line-height: 1.2;
   }
+  .pn-cell a:hover .pn-title { color: var(--obertura-thread-deep); }
 
-  @media (max-width: 540px) {
-    .prev-next { grid-template-columns: 1fr; }
+  @media (max-width: 640px) {
+    .prev-next { grid-template-columns: 1fr; gap: 1.25rem; }
+    .pn-cell--prev, .pn-cell--next { text-align: center; }
   }
 
   /* Header de pieza bloqueada · Nivel 0 viendo pieza Nivel 1 */
