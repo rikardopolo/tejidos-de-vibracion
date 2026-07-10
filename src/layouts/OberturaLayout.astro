@@ -24,6 +24,7 @@
  */
 import BookReader from '@/layouts/BookReader.astro';
 import OberturaToc from '@/components/obertura/OberturaToc.astro';
+import PieceRail from '@/components/obertura/PieceRail.astro';
 import { baseSchemaGraph, DEFAULT_OG_IMAGE } from '@/lib/seo';
 
 interface Props {
@@ -74,11 +75,12 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   schemas={allSchemas}
   nivel={nivel}
   bodyClass="obertura-body"
-  mainClass="obertura-main"
+  mainClass={currentSlug ? 'obertura-main obertura-main--pieza' : 'obertura-main'}
   breadcrumb={headerLabel ? { ornament: '◆', text: headerLabel } : undefined}
   track={currentSlug ? { surface: 'obertura', chapter: 'obertura', section: currentSlug } : undefined}
 >
   <OberturaToc slot="toc" current={currentSlug} />
+  {currentSlug && <PieceRail current={currentSlug} />}
   <slot />
 </BookReader>
 
@@ -148,6 +150,124 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     margin: 0 auto;
     /* padding unificado a .cap-main (era 4rem/8rem). */
     padding: 2.5rem 1.5rem 6rem;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     REDISEÑO «UMBRAL» · retícula de pieza (raíl | lectura | marginalia)
+     Solo en /obertura/[slug] (mainClass --pieza); el índice /obertura NO lo
+     hereda. Reestructura la columna única en 3 zonas SIN tocar el MDX: el raíl
+     es un elemento inyectado por el layout; las marginalia (hijas directas del
+     .obertura-piece) FLOTAN al margen derecho. Especificidad 2-clases → gana a
+     las reglas base sin depender del orden. ═══════════════════════════════════ */
+  .obertura-main--pieza {
+    max-width: 78rem;
+    padding: 3.25rem 4rem 6rem;
+    display: grid;
+    grid-template-columns: [rail] 12.25rem [content] minmax(0, 1fr);
+    column-gap: 4rem;
+    align-items: start;
+  }
+  .obertura-main--pieza > :not(.piece-rail) { grid-column: content; min-width: 0; }
+
+  /* ── Raíl izquierdo (sticky) ───────────────────────────────── */
+  .piece-rail {
+    grid-column: rail;
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+    font-family: var(--obertura-sans);
+  }
+  .piece-rail__eyebrow {
+    font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--oro-texto); margin: 0;
+  }
+  .piece-rail__list { list-style: none; padding: 0; margin: 1.4rem 0 0; }
+  .piece-rail__item a {
+    display: flex; align-items: baseline; gap: 0.5rem;
+    padding: 0.28rem 0 0.28rem 0.65rem;
+    border-left: 2px solid transparent;
+    text-decoration: none; color: var(--reposo);
+    font-size: 0.78rem; line-height: 1.35; transition: color 0.15s;
+  }
+  .piece-rail__item a:hover { color: var(--obertura-ink); }
+  .piece-rail__num {
+    font-family: var(--obertura-mono); font-size: 0.6875rem;
+    color: var(--reposo-claro); flex-shrink: 0;
+  }
+  .piece-rail__item.is-current a {
+    border-left-color: var(--obertura-thread);
+    color: var(--obertura-ink); font-weight: 500;
+  }
+  .piece-rail__item.is-current .piece-rail__num { color: var(--oro-texto); }
+  .piece-rail__collapsed {
+    font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--reposo-claro); margin: 1.85rem 0 0;
+  }
+  .piece-rail__foot {
+    font-size: 0.72rem; line-height: 1.7; color: var(--reposo-claro);
+    margin: 2.25rem 0 0;
+  }
+
+  /* ── Columna de lectura (660) + marginalia flotante al margen ── */
+  .obertura-main--pieza .obertura-piece > *,
+  .obertura-main--pieza .obertura-piece > figure { max-width: 41.25rem; }
+  .obertura-main--pieza .obertura-piece::after { content: ''; display: block; clear: both; }
+  .obertura-main--pieza .obertura-piece > .marginalia {
+    float: right;
+    clear: right;
+    width: 18.5rem;
+    max-width: 18.5rem;
+    margin: 0.5rem 0 1.75rem 2.5rem;
+    padding: 0.25rem 0 0.25rem 1.375rem;
+    border-left: 2px solid var(--obertura-thread);
+  }
+  .obertura-main--pieza .obertura-piece > .marginalia--cientifica { border-left-color: var(--obertura-indigo); }
+  .obertura-main--pieza .obertura-piece > .marginalia--voz { border-left-color: var(--verde); }
+  /* rótulos de voz · AA (D3): oro/verde de texto oscurecidos */
+  .obertura-main--pieza .marginalia .marginalia__kind { color: var(--oro-texto); }
+  .obertura-main--pieza .marginalia--voz .marginalia__kind { color: var(--verde-texto); }
+
+  /* ── Encabezado de pieza abierta (title oro + subtítulo) ────── */
+  .piece-header { margin: 0 0 2.25rem; }
+  .piece-title {
+    font-family: var(--obertura-serif); font-weight: 600;
+    font-size: clamp(2.6rem, 4vw, 3.375rem); line-height: 1.05;
+    letter-spacing: -0.005em; color: var(--oro-titulo); margin: 0;
+    text-wrap: balance;
+  }
+  .piece-subtitle {
+    font-family: var(--obertura-serif); font-style: italic;
+    font-size: 1.5rem; line-height: 1.3; color: var(--obertura-ink);
+    margin: 0.75rem 0 0; text-wrap: balance;
+  }
+  .piece-header__orn { text-align: left; margin: 1.75rem 0 0; font-size: 0.85rem; letter-spacing: 0; }
+  /* el título de la pieza lo pone .piece-header (frontmatter); ocultamos el
+     eyebrow-título que el MDX abre, para no duplicarlo. */
+  .obertura-main--pieza .obertura-piece > .section-eyebrow-bold { display: none; }
+  /* D2 · cuerpo de lectura alineado a la izquierda (sin justify ni hyphens auto) */
+  .obertura-main--pieza .obertura-piece > p { text-align: left; hyphens: manual; -webkit-hyphens: manual; }
+
+  /* El frontispicio (00) conserva su composición ceremonial centrada · queda
+     FUERA de la retícula (su rediseño oro + colofón-a-marginalia es aparte). */
+  .obertura-main--pieza:has(.kind-frontispicio) {
+    display: block;
+    max-width: var(--obertura-col);
+    padding: 2.5rem 1.5rem 6rem;
+  }
+  .obertura-main--pieza:has(.kind-frontispicio) .piece-rail { display: none; }
+
+  /* ── Responsive · <1100px raíl vuelve al ☰, marginalia al flujo ── */
+  @media (max-width: 68.75rem) {
+    .obertura-main--pieza {
+      display: block;
+      max-width: var(--obertura-col);
+      padding: 2.5rem 1.5rem 6rem;
+    }
+    .piece-rail { display: none; }
+    .obertura-main--pieza .obertura-piece > .marginalia {
+      float: none; clear: none; width: auto; max-width: none;
+      margin: 2.5rem 0; padding: 1rem 0 1rem 1.5rem;
+    }
   }
 
   /* ─── Tipografía base ──────────────────────────────────────────

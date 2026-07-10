@@ -1,0 +1,82 @@
+---
+/**
+ * <PieceRail> · raíl de navegación de la Obertura (rediseño «Umbral»).
+ *
+ * Columna izquierda (196px) de las páginas de pieza: el grupo ACTIVO se
+ * despliega con sus piezas (la activa marcada), los otros grupos aparecen
+ * colapsados como una línea de rango, y al pie «Pieza NN de 15».
+ *
+ * Reusa los mismos datos que <OberturaToc> (getCollection + agrupado por
+ * sección). El TOC de la ☰ del chrome se conserva para móvil; este raíl es la
+ * navegación permanente de escritorio. Se oculta <1100px (vuelve al ☰).
+ */
+import { getCollection } from 'astro:content';
+
+type Section = 'apertura' | 'capacidades' | 'marco' | 'cierre';
+const SECTION_LABELS: Record<Section, string> = {
+  apertura: 'Apertura',
+  capacidades: 'Capacidades',
+  marco: 'Marco',
+  cierre: 'Cierre',
+};
+const SECTION_ORDER: Section[] = ['apertura', 'capacidades', 'marco', 'cierre'];
+
+interface Props {
+  /** Slug de la pieza actual. */
+  current: string;
+}
+const { current } = Astro.props;
+
+const all = await getCollection('obertura', ({ data }) => data.status === 'published');
+all.sort((a, b) => a.data.order - b.data.order);
+
+const grouped: Record<Section, typeof all> = { apertura: [], capacidades: [], marco: [], cierre: [] };
+for (const entry of all) {
+  const sec = entry.data.section as Section;
+  if (sec in grouped) grouped[sec].push(entry);
+}
+
+const currentEntry = all.find((e) => e.id === current);
+const currentSection = (currentEntry?.data.section as Section) ?? 'apertura';
+const pieceNumber = all.findIndex((e) => e.id === current) + 1;
+
+// Rango de un grupo colapsado · "05–09", "iii–11" (primer–último chapterNum).
+const rangeOf = (sec: Section) => {
+  const g = grouped[sec];
+  if (!g.length) return '';
+  const first = g[0].data.chapterNum;
+  const last = g[g.length - 1].data.chapterNum;
+  return first === last ? first : `${first}–${last}`;
+};
+---
+
+<aside class="piece-rail" aria-label="Navegación de la Obertura">
+  {SECTION_ORDER.map((sec) => {
+    if (!grouped[sec].length) return null;
+    if (sec === currentSection) {
+      return (
+        <nav class="piece-rail__group" aria-label={`Obertura · ${SECTION_LABELS[sec]}`}>
+          <p class="piece-rail__eyebrow">Obertura · {SECTION_LABELS[sec]}</p>
+          <ol class="piece-rail__list">
+            {grouped[sec].map((entry) => {
+              const isCurrent = entry.id === current;
+              return (
+                <li class={`piece-rail__item${isCurrent ? ' is-current' : ''}`}>
+                  <a href={`/obertura/${entry.id}`} aria-current={isCurrent ? 'page' : undefined}>
+                    <span class="piece-rail__num">{entry.data.chapterNum}</span>
+                    <span class="piece-rail__name">{entry.data.title}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
+      );
+    }
+    return (
+      <p class="piece-rail__collapsed">{SECTION_LABELS[sec]} · {rangeOf(sec)}</p>
+    );
+  })}
+
+  <p class="piece-rail__foot">Pieza {pieceNumber} de {all.length}</p>
+</aside>
