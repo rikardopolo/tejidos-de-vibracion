@@ -1165,6 +1165,11 @@ html[data-reader-mode="night"] {
   --oro-suave: #b68914;
   --header-bg: rgba(26, 23, 20, 0.82);
   --header-bg-scrolled: rgba(26, 23, 20, 0.94);
+  --campo-borde: #4a443a;  /* borde de inputs en noche (rediseño Umbral) */
+  /* D3 · en noche el oro/verde brillantes ya pasan AA sobre el fondo oscuro */
+  --oro-titulo:  #d4a017;
+  --oro-texto:   #b68914;
+  --verde-texto: #1d9e75;
 }
 
 /* Reading sizes — applied via [data-reader-size] on <html> */
@@ -1359,7 +1364,7 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
   font-family: var(--serif);
   font-size: 1.125rem;
   padding: 0.625rem 0.875rem;
-  border: 1px solid var(--pergamino-2);
+  border: 1px solid var(--campo-borde);
   background: var(--pergamino);
   color: var(--tinta);
   border-radius: 2px;
@@ -1457,6 +1462,46 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
+}
+
+/* Variante "una línea" · captura de correo sin caja (portada, biblioteca del
+   rediseño Umbral): un solo input sobre border-bottom + acción en oro-suave
+   tras hairline. El marcado mínimo (email + acción) lo montan las páginas que
+   la usan; reutiliza el submit y el POST del componente FormularioTejedor. */
+.form-tejedor--linea {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  max-width: 24rem;
+  border-bottom: 1px solid var(--tinta);
+  transition: border-color 180ms ease;
+}
+.form-tejedor--linea:focus-within { border-bottom-color: var(--oro); }
+.form-tejedor--linea input[type="email"] {
+  flex: 1;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0.625rem 0;
+  font-size: 1.0625rem;
+}
+.form-tejedor--linea input[type="email"]:focus { border: 0; outline: none; }
+.form-tejedor--linea input::placeholder { color: var(--reposo-claro); font-style: italic; }
+.form-tejedor--linea .form-tejedor__submit {
+  margin: 0;
+  padding: 0.375rem 0 0.375rem 1.125rem;
+  border: 0;
+  border-left: 1px solid var(--pergamino-2);
+  border-radius: 0;
+  background: transparent;
+  color: var(--oro-suave);
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.form-tejedor--linea .form-tejedor__submit:hover {
+  background: transparent;
+  color: var(--oro);
 }
 
 /* ─────────────────────────── Figuras del libro */
