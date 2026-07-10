@@ -243,7 +243,7 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   }
   /* el título de la pieza lo pone .piece-header (frontmatter); ocultamos el
      eyebrow-título que el MDX abre, para no duplicarlo. */
-  .obertura-main--pieza .obertura-piece > .section-eyebrow-bold { display: none; }
+  .obertura-main--pieza .obertura-piece:not(.kind-frontispicio) > .section-eyebrow-bold { display: none; }
   /* D2 · cuerpo de lectura alineado a la izquierda (sin justify ni hyphens auto) */
   .obertura-main--pieza .obertura-piece > p { text-align: left; hyphens: manual; -webkit-hyphens: manual; }
 
@@ -344,22 +344,22 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   }
 
   /* ─── Encabezados ────────────────────────────────────────────── */
+  /* Título ceremonial del frontispicio · oro, no-mayúsculas (rediseño Umbral) */
   .obertura-main h1.book-title {
     font-family: var(--obertura-serif);
-    font-weight: 500;
-    font-size: clamp(2.4rem, 5vw, 3.8rem);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    font-weight: 600;
+    font-size: clamp(2.8rem, 6vw, 3.625rem);
+    letter-spacing: -0.01em;
+    text-transform: none;
     text-align: center;
-    margin: 0 0 0.6rem;
-    line-height: 1.05;
+    color: var(--oro-titulo);
+    margin: 1.25rem 0 0;
+    line-height: 1.08;
   }
   .obertura-main h1.book-title .ampersand {
     font-style: italic;
-    font-weight: 400;
-    letter-spacing: 0;
-    text-transform: lowercase;
-    color: var(--obertura-thread);
+    font-weight: 500;
+    color: var(--oro-titulo);
   }
 
   .obertura-main h2.chapter {
@@ -514,6 +514,17 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     text-align: center;
     margin: 2.5rem 0 1.2rem;
   }
+  /* En el frontispicio, «Umbral Poético» es cabeza de sección ceremonial:
+     itálica oro, no eyebrow en mayúsculas (rediseño Umbral). */
+  .obertura-main--pieza .kind-frontispicio .section-eyebrow-bold {
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--oro-titulo);
+    margin: 3.75rem 0 1.6rem;
+  }
 
   /* ─── Frontispiece (portada del PDF) ─────────────────── */
   .obertura-main .frontispiece {
@@ -541,12 +552,13 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
   }
   .frontispiece-kicker {
     font-family: var(--obertura-serif);
-    font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: var(--obertura-thread);
-    margin: 2.5rem 0 0.8rem;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.875rem;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--obertura-ink);
+    margin: 0 0 0.5rem;
   }
   .frontispiece-subtitle {
     font-family: var(--obertura-serif);
@@ -563,11 +575,13 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     margin: 1.2rem 0 0.3rem;
   }
   .frontispiece-date {
-    font-family: var(--obertura-sans);
-    font-size: 0.78rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    font-feature-settings: 'onum';
     color: var(--obertura-ink-faded);
+    margin-top: 0.4rem;
   }
 
   /* ─── Copyright page (registro SafeCreative) ─────────── */
