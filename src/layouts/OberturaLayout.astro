@@ -199,14 +199,6 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     color: var(--obertura-ink); font-weight: 500;
   }
   .piece-rail__item.is-current .piece-rail__num { color: var(--oro-texto); }
-  .piece-rail__collapsed {
-    font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--reposo-claro); margin: 1.85rem 0 0;
-  }
-  .piece-rail__foot {
-    font-size: 0.72rem; line-height: 1.7; color: var(--reposo-claro);
-    margin: 2.25rem 0 0;
-  }
 
   /* ── Columna de lectura (660) + marginalia flotante al margen ── */
   .obertura-main--pieza .obertura-piece > *,
@@ -218,14 +210,31 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     width: 18.5rem;
     max-width: 18.5rem;
     margin: 0.5rem 0 1.75rem 2.5rem;
-    padding: 0.25rem 0 0.25rem 1.375rem;
+    padding: 1.1rem 1.25rem 1.15rem 1.35rem;
     border-left: 2px solid var(--obertura-thread);
+    background: color-mix(in srgb, var(--obertura-thread) 10%, transparent);  /* tinte reflexiva */
   }
-  .obertura-main--pieza .obertura-piece > .marginalia--cientifica { border-left-color: var(--obertura-indigo); }
-  .obertura-main--pieza .obertura-piece > .marginalia--voz { border-left-color: var(--verde); }
-  /* rótulos de voz · AA (D3): oro/verde de texto oscurecidos */
+  .obertura-main--pieza .obertura-piece > .marginalia--cientifica {
+    border-left-color: var(--obertura-indigo);
+    background: color-mix(in srgb, var(--obertura-indigo) 10%, transparent);   /* tinte científica */
+  }
+  .obertura-main--pieza .obertura-piece > .marginalia--voz {
+    border-left-color: var(--verde);
+    background: color-mix(in srgb, var(--verde) 9%, transparent);              /* tinte tejido */
+  }
+  /* rótulos de voz · AA (D3) */
   .obertura-main--pieza .marginalia .marginalia__kind { color: var(--oro-texto); }
+  .obertura-main--pieza .marginalia--cientifica .marginalia__kind { color: var(--obertura-indigo); }
   .obertura-main--pieza .marginalia--voz .marginalia__kind { color: var(--verde-texto); }
+  /* Bloques estructurales de ancho completo · clarean el float para no colisionar
+     con la marginalia del gutter (fix de la caja Laboratorio; vale para figura,
+     cita y encabezados de sección). */
+  .obertura-main--pieza .obertura-piece > .laboratorio,
+  .obertura-main--pieza .obertura-piece > figure,
+  .obertura-main--pieza .obertura-piece > blockquote,
+  .obertura-main--pieza .obertura-piece > h2,
+  .obertura-main--pieza .obertura-piece > h3 { clear: right; }
+  .obertura-main--pieza .obertura-piece > .laboratorio { margin-left: 0; margin-right: 0; }
 
   /* ── Encabezado de pieza abierta (title oro + subtítulo) ────── */
   .piece-header { margin: 0 0 2.25rem; }
@@ -240,7 +249,6 @@ const allSchemas = [{ '@context': 'https://schema.org', '@graph': baseGraph }, .
     font-size: 1.5rem; line-height: 1.3; color: var(--obertura-ink);
     margin: 0.75rem 0 0; text-wrap: balance;
   }
-  .piece-header__orn { text-align: left; margin: 1.75rem 0 0; font-size: 0.85rem; letter-spacing: 0; }
   /* el título de la pieza lo pone .piece-header (frontmatter); ocultamos el
      eyebrow-título que el MDX abre, para no duplicarlo. */
   .obertura-main--pieza .obertura-piece > .section-eyebrow-bold { display: none; }

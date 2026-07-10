@@ -19,8 +19,6 @@ const SECTION_LABELS: Record<Section, string> = {
   marco: 'Marco',
   cierre: 'Cierre',
 };
-const SECTION_ORDER: Section[] = ['apertura', 'capacidades', 'marco', 'cierre'];
-
 interface Props {
   /** Slug de la pieza actual. */
   current: string;
@@ -38,45 +36,23 @@ for (const entry of all) {
 
 const currentEntry = all.find((e) => e.id === current);
 const currentSection = (currentEntry?.data.section as Section) ?? 'apertura';
-const pieceNumber = all.findIndex((e) => e.id === current) + 1;
-
-// Rango de un grupo colapsado · "05–09", "iii–11" (primer–último chapterNum).
-const rangeOf = (sec: Section) => {
-  const g = grouped[sec];
-  if (!g.length) return '';
-  const first = g[0].data.chapterNum;
-  const last = g[g.length - 1].data.chapterNum;
-  return first === last ? first : `${first}–${last}`;
-};
 ---
 
 <aside class="piece-rail" aria-label="Navegación de la Obertura">
-  {SECTION_ORDER.map((sec) => {
-    if (!grouped[sec].length) return null;
-    if (sec === currentSection) {
-      return (
-        <nav class="piece-rail__group" aria-label={`Obertura · ${SECTION_LABELS[sec]}`}>
-          <p class="piece-rail__eyebrow">Obertura · {SECTION_LABELS[sec]}</p>
-          <ol class="piece-rail__list">
-            {grouped[sec].map((entry) => {
-              const isCurrent = entry.id === current;
-              return (
-                <li class={`piece-rail__item${isCurrent ? ' is-current' : ''}`}>
-                  <a href={`/obertura/${entry.id}`} aria-current={isCurrent ? 'page' : undefined}>
-                    <span class="piece-rail__num">{entry.data.chapterNum}</span>
-                    <span class="piece-rail__name">{entry.data.title}</span>
-                  </a>
-                </li>
-              );
-            })}
-          </ol>
-        </nav>
-      );
-    }
-    return (
-      <p class="piece-rail__collapsed">{SECTION_LABELS[sec]} · {rangeOf(sec)}</p>
-    );
-  })}
-
-  <p class="piece-rail__foot">Pieza {pieceNumber} de {all.length}</p>
+  <nav class="piece-rail__group" aria-label={`Obertura · ${SECTION_LABELS[currentSection]}`}>
+    <p class="piece-rail__eyebrow">Obertura · {SECTION_LABELS[currentSection]}</p>
+    <ol class="piece-rail__list">
+      {grouped[currentSection].map((entry) => {
+        const isCurrent = entry.id === current;
+        return (
+          <li class={`piece-rail__item${isCurrent ? ' is-current' : ''}`}>
+            <a href={`/obertura/${entry.id}`} aria-current={isCurrent ? 'page' : undefined}>
+              <span class="piece-rail__num">{entry.data.chapterNum}</span>
+              <span class="piece-rail__name">{entry.data.title}</span>
+            </a>
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
 </aside>
