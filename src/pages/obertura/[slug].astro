@@ -156,6 +156,15 @@ const pieceSchema = wrapGraph([
     <BloquePuerta tipo="obertura-pieza" />
   )}
 
+  {!tieneAcceso && (
+    <p class="lectura-libre-hint">
+      Mientras tanto, de lectura libre — sin registro:
+      <a href="/obertura/00-frontispicio">Frontispicio</a>
+      <span aria-hidden="true"> · </span>
+      <a href="/obertura/01-anclaje">Anclaje Experiencial</a>
+    </p>
+  )}
+
   {tieneAcceso && (
     <nav class="prev-next" aria-label="Navegación entre capítulos">
       <div class="pn-cell pn-cell--prev">
@@ -258,4 +267,22 @@ const pieceSchema = wrapGraph([
     margin: 0;
     text-wrap: balance;
   }
+  /* Pista «de lectura libre» bajo la puerta · da a los anónimos un camino a las
+     piezas gratuitas (00/01) sin registro. */
+  .lectura-libre-hint {
+    text-align: center;
+    font-family: var(--obertura-sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--reposo);
+    margin: 2.5rem auto 0;
+    max-width: 34rem;
+  }
+  .lectura-libre-hint a {
+    color: var(--oro-texto);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--oro-texto) 40%, transparent);
+    white-space: nowrap;
+  }
+  .lectura-libre-hint a:hover { color: var(--oro-suave); border-bottom-color: var(--oro-suave); }
 </style>
