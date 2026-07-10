@@ -9,22 +9,73 @@ import LitLink from '@/components/book/LitLink.astro';
   description="La sala de los tejedores: un espacio para conversar entre quienes leen el libro al mismo tiempo. Antesala abierta cuando haya lectores acompañando el libro."
   pageId="comunidad"
 >
-  <article class="measure pt-7">
-    <header class="center">
-      <p class="eyebrow">Antesala</p>
-      <h1 class="title-1" style="font-style: italic; font-size: 2.75rem; color: var(--oro);">La sala de los tejedores</h1>
+  <article class="com vib-stage">
+    <canvas id="c-7a" aria-hidden="true"></canvas>
+
+    <header>
+      <p class="eyebrow com-eyebrow">Antesala</p>
+      <h1 class="com-h1">La sala de los tejedores</h1>
     </header>
 
-    <div class="flourish flourish--triple mt-3"></div>
-
-    <section class="prose section-gap">
+    <div class="prose com-prose">
       <p class="no-indent">Cuando haya un primer grupo de lectores acompañando el libro capítulo a capítulo, esta sala se va a abrir. Será un espacio para conversar entre quienes lean el libro al mismo tiempo, compartir lecturas adyacentes, encontrarse en la pregunta.</p>
 
-      <p>Por ahora la antesala está silenciosa. Recibir los capítulos por correo es la primera forma de pertenecer.</p>
-    </section>
+      <p><em>Por ahora la antesala está silenciosa. Recibir los capítulos por correo es la primera forma de pertenecer.</em></p>
+    </div>
 
-    <p class="center mt-4 mb-8">
+    <div class="flourish flourish--rule com-flourish"></div>
+
+    <p class="com-cta">
       <LitLink href="/recibir">Recibir los capítulos</LitLink>
     </p>
   </article>
 </LecturaLarga>
+
+<script is:inline src="/js/vib-hero.js"></script>
+
+<style>
+  .com {
+    position: relative;
+    isolation: isolate;
+    max-width: 38.75rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem);
+    text-align: center;
+    min-height: min(520px, 64vh);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  /* ondas casi imperceptibles en la mitad inferior */
+  #c-7a {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .com > :not(#c-7a) { position: relative; z-index: 1; }
+  .com-eyebrow {
+    letter-spacing: 0.24em;
+    color: var(--oro-texto);
+  }
+  .com-h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.6rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--oro-titulo);
+    margin: 1.25rem 0 0;
+    text-wrap: balance;
+  }
+  .com-prose {
+    max-width: 34rem;
+    margin: 2.5rem auto 0;
+  }
+  .com-prose p { font-size: 1.1875rem; line-height: 1.65; }
+  .com-prose p em { color: var(--tinta-suave); }
+  .com-flourish { margin: 2.5rem 0; }
+  .com-cta { margin: 0; }
+</style>

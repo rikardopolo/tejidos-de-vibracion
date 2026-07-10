@@ -9,39 +9,71 @@ import LitLink from '@/components/book/LitLink.astro';
   description="Tejidos de Vibración: qué es, cómo se publica, para quién está escrito y quién lo escribe. Volumen I del proyecto Tejidos de Realidad."
   pageId="sobre"
 >
-  <article class="measure pt-5">
-    <header>
-      <p class="eyebrow">Sobre el libro</p>
-      <h1 class="title-1">¿Qué es Tejidos de Vibración?</h1>
-      <p class="title-1__sub">Volumen I de un proyecto sostenido durante años</p>
-    </header>
+  <article class="sobre pt-5">
+   <div class="sobre-grid">
+    <div class="sobre-izq">
+      <header>
+        <p class="eyebrow">Sobre el libro</p>
+        <h1 class="sobre-h1">¿Qué es Tejidos de Vibración?</h1>
+        <p class="sobre-sub">Volumen I de un proyecto sostenido durante años</p>
+      </header>
 
-    <div class="flourish flourish--rule"></div>
+      <section class="prose section-gap">
+        <p class="no-indent">Tejidos de Vibración es un libro escrito durante años en la frontera entre dos lenguajes. El primero, el de la ciencia rigurosa que aprendió a medir el latido de los electrones y la edad del universo. El segundo, el de la contemplación profunda que aprendió a cartografiar el silencio interior. El libro no intenta reconciliarlos. Intenta mostrar que, mirados con paciencia, dicen lo mismo en idiomas incompatibles.</p>
 
-    <section class="prose section-gap">
-      <p class="no-indent">Tejidos de Vibración es un libro escrito durante años en la frontera entre dos lenguajes. El primero, el de la ciencia rigurosa que aprendió a medir el latido de los electrones y la edad del universo. El segundo, el de la contemplación profunda que aprendió a cartografiar el silencio interior. El libro no intenta reconciliarlos. Intenta mostrar que, mirados con paciencia, dicen lo mismo en idiomas incompatibles.</p>
+        <p>El proyecto al que pertenece se llama Tejidos de Realidad y vive en su propio sitio, con un laboratorio de simuladores, una constelación de pensadores y ensayos que se publican aparte. Este sitio es solo el libro. <em>Está hecho para ser leído, no para ser usado.</em></p>
+      </section>
 
-      <p>El proyecto al que pertenece se llama Tejidos de Realidad y vive en su propio sitio, con un laboratorio de simuladores, una constelación de pensadores y ensayos que se publican aparte. Este sitio es solo el libro. Está hecho para ser leído, no para ser usado.</p>
-    </section>
+      <section class="prose section-gap">
+        <h2 class="title-3">Cómo se publica</h2>
+        <p class="no-indent">El libro se publica por entregas. La Obertura, el Capítulo 1, el Capítulo 2 y el Capítulo 3 ya están abiertos. Los siete capítulos siguientes se publican a medida que se tejen. No hay calendario fijo. Hay un ritmo: el del trabajo paciente que el libro pide para ser escrito y el que pide para ser leído.</p>
+        <p>Quienes acompañen el libro a medida que se entrega lo harán recibiendo cada capítulo en su correo, junto con una carta del Tejedor con notas sobre el proceso. Esa carta no se publica en ningún otro lugar.</p>
+      </section>
 
-    <section class="prose section-gap">
-      <h2 class="title-3">Cómo se publica</h2>
-      <p class="no-indent">El libro se publica por entregas. La Obertura, el Capítulo 1, el Capítulo 2 y el Capítulo 3 ya están abiertos. Los siete capítulos siguientes se publican a medida que se tejen. No hay calendario fijo. Hay un ritmo: el del trabajo paciente que el libro pide para ser escrito y el que pide para ser leído.</p>
-      <p>Quienes acompañen el libro a medida que se entrega lo harán recibiendo cada capítulo en su correo, junto con una carta del Tejedor con notas sobre el proceso. Esa carta no se publica en ningún otro lugar.</p>
-    </section>
+      <section class="section-gap">
+        <h2 class="title-3">Para quién está escrito</h2>
+        <div class="arquetipos">
+          <div class="arq arq--ingeniera">
+            <p class="arq-nombre">La ingeniera escéptica</p>
+            <p class="arq-desc">Necesita ver rigor antes de creer en una metáfora.</p>
+          </div>
+          <div class="arq arq--buscadora">
+            <p class="arq-nombre">La buscadora espiritual</p>
+            <p class="arq-desc">Necesita sentir invitación antes de aceptar un argumento.</p>
+          </div>
+          <div class="arq arq--estudiante">
+            <p class="arq-nombre">El estudiante de filosofía</p>
+            <p class="arq-desc">Ama un aparato erudito bien construido y una voz literaria que no se disculpa por serlo.</p>
+          </div>
+        </div>
+        <p class="arq-coda">El libro está pensado para servir a los tres simultáneamente, y los tres están invitados a perdonar lo que el libro no resuelva.</p>
+      </section>
 
-    <section class="prose section-gap">
-      <h2 class="title-3">Para quién está escrito</h2>
-      <p class="no-indent">Para la ingeniera escéptica que necesita ver rigor antes de creer en una metáfora. Para la buscadora que necesita sentir invitación antes de aceptar un argumento. Para el estudiante de filosofía que ama un aparato erudito bien construido y una voz literaria que no se disculpa por serlo. El libro está pensado para servir a los tres simultáneamente, y los tres están invitados a perdonar lo que el libro no resuelva.</p>
-    </section>
+    </div>
 
-    <aside class="marginalia">
-      <p class="marginalia__kind">Voz del tejido</p>
-      <h3 class="marginalia__title">Sobre el formato impreso</h3>
-      <div class="marginalia__body">
-        <p class="no-indent">El libro estará disponible en formato impreso cuando termine la gestación del Volumen I. Por ahora vive en su versión digital, abierta a todos, sin pago. Si quieres que se te avise cuando exista la edición de papel, basta con estar suscrito a los envíos.</p>
+    <aside class="sobre-der">
+      <div class="marginalia marginalia--voz sobre-formato">
+        <p class="marginalia__kind">Voz del tejido</p>
+        <h3 class="marginalia__title">Sobre el formato impreso</h3>
+        <div class="marginalia__body">
+          <p class="no-indent">El libro estará disponible en formato impreso cuando termine la gestación del Volumen I. Por ahora vive en su versión digital, abierta a todos, sin pago. Si quieres que se te avise cuando exista la edición de papel, basta con estar suscrito a los envíos.</p>
+        </div>
+      </div>
+
+      <div class="sobre-autor">
+        <figure class="sobre-retrato">
+          <img
+            src="/images/autor-orion.webp"
+            alt="Retrato de Ricardo Polo · Orion sobre fondo cósmico"
+            width="800" height="800" loading="lazy" />
+          <figcaption>Ricardo Polo · Orion.</figcaption>
+        </figure>
+        <h2 class="title-3">El autor</h2>
+        <p class="no-indent">Ricardo Polo · Orion lleva años sentado en la frontera entre la ecuación y el silencio. No es físico de laboratorio ni monje de monasterio. Es alguien que se atrevió a sostener la pregunta hasta que un libro creció a su alrededor.</p>
+        <p>El nombre Orion firma todos los textos del proyecto. Es la forma canónica de la firma. El nombre civil aparece donde la ley lo exige.</p>
       </div>
     </aside>
+   </div>
 
     <!-- ── INVITACIÓN A REGISTRARSE ────────────────────────── -->
     <section class="invitacion-registro">
@@ -100,27 +132,111 @@ import LitLink from '@/components/book/LitLink.astro';
       .inv-cta:hover { background: var(--oro-suave, #B68914); }
     </style>
 
-    <section class="prose section-gap" style="display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: start;">
-      <div>
-        <h2 class="title-3 mt-0">El autor</h2>
-        <p class="no-indent">Ricardo Polo · Orion lleva años sentado en la frontera entre la ecuación y el silencio. No es físico de laboratorio ni monje de monasterio. Es alguien que se atrevió a sostener la pregunta hasta que un libro creció a su alrededor.</p>
-        <p>El nombre Orion firma todos los textos del proyecto. Es la forma canónica de la firma. El nombre civil aparece donde la ley lo exige.</p>
-      </div>
-      <figure style="margin: 0; max-width: 22rem;">
-        <img
-          src="/images/autor-orion.webp"
-          alt="Retrato de Ricardo Polo · Orion sobre fondo cósmico"
-          width="800"
-          height="800"
-          loading="lazy"
-          style="width: 100%; height: auto; display: block; border-radius: 2px; filter: contrast(0.95) brightness(0.96);"
-        />
-        <figcaption class="meta" style="margin-top: 0.75rem; font-style: italic;">Ricardo Polo · Orion.</figcaption>
-      </figure>
-    </section>
-
     <p class="center mt-5 mb-6">
       <LitLink href="/obertura">Empezar por la Obertura</LitLink>
     </p>
   </article>
 </LecturaLarga>
+
+<style>
+  .sobre { max-width: 68rem; margin: 0 auto; }
+  .sobre-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 51rem) 1fr;
+    gap: clamp(2.5rem, 5vw, 5.5rem);
+    align-items: start;
+  }
+  .sobre-h1 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.4rem, 4vw, 3.625rem);
+    line-height: 1.06;
+    color: var(--oro-titulo);
+    margin: 0.5rem 0 0.5rem;
+    text-wrap: balance;
+  }
+  .sobre-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--reposo);
+    margin: 0 0 1.5rem;
+  }
+
+  /* Trío de arquetipos · borde superior del color de la voz */
+  .arquetipos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.6rem;
+    margin: 1.6rem 0 0;
+  }
+  .arq { border-top: 2px solid; padding-top: 0.9rem; }
+  .arq--ingeniera { border-top-color: var(--indigo); }
+  .arq--buscadora { border-top-color: var(--verde); }
+  .arq--estudiante { border-top-color: var(--oro-suave); }
+  .arq-nombre {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin: 0 0 0.45rem;
+  }
+  .arq--ingeniera .arq-nombre { color: var(--indigo); }
+  .arq--buscadora .arq-nombre { color: var(--verde-texto); }
+  .arq--estudiante .arq-nombre { color: var(--oro-texto); }
+  .arq-desc {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--tinta-suave);
+    margin: 0;
+  }
+  .arq-coda {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--reposo);
+    margin: 1.75rem 0 0;
+    text-wrap: pretty;
+  }
+
+  /* Rail derecho · tarjeta verde + retrato del autor */
+  .sobre-der {
+    border-left: 1px solid var(--pergamino-2);
+    padding-left: clamp(1.5rem, 3vw, 3rem);
+  }
+  .sobre-formato {
+    border-left: 2px solid var(--verde);
+    background: color-mix(in srgb, var(--verde) 7%, transparent);
+    padding: 1.3rem 1.4rem;
+    margin: 0;
+  }
+  .sobre-formato .marginalia__kind { color: var(--verde-texto); }
+  .sobre-autor { margin-top: 2.75rem; }
+  .sobre-retrato { margin: 0 0 1.25rem; max-width: 20rem; }
+  .sobre-retrato img {
+    width: 100%; height: auto; display: block;
+    border: 1px solid var(--pergamino-2);
+    border-radius: 4px;
+    filter: contrast(0.95) brightness(0.96);
+  }
+  .sobre-retrato figcaption {
+    font-family: var(--serif); font-style: italic;
+    font-size: 0.9rem; color: var(--reposo);
+    margin-top: 0.6rem;
+  }
+  .sobre-autor .title-3 { margin-top: 0; }
+
+  @media (max-width: 40rem) { .arquetipos { grid-template-columns: 1fr; gap: 1.25rem; } }
+  @media (max-width: 56rem) {
+    .sobre-grid { grid-template-columns: 1fr; gap: 2.75rem; }
+    .sobre-der {
+      border-left: 0;
+      border-top: 1px solid var(--pergamino-2);
+      padding-left: 0;
+      padding-top: 2.25rem;
+    }
+    .sobre-retrato { max-width: 16rem; }
+  }
+</style>
