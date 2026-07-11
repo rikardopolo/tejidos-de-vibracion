@@ -56,21 +56,8 @@ import LitLink from '@/components/book/LitLink.astro';
         <p class="marginalia__kind">Voz del tejido</p>
         <h3 class="marginalia__title">Sobre el formato impreso</h3>
         <div class="marginalia__body">
-          <p class="no-indent">El libro estará disponible en formato impreso cuando termine la gestación del Volumen I. Por ahora vive en su versión digital, abierta a todos, sin pago. Si quieres que se te avise cuando exista la edición de papel, basta con estar suscrito a los envíos.</p>
+          <p class="no-indent">El libro estará disponible en formato impreso cuando termine la gestación del Volumen I. Por ahora vive en su versión digital: la Obertura y los tres primeros capítulos son de lectura libre; el resto del Volumen I llega con la edición completa. Si quieres que se te avise cuando exista la edición de papel, basta con estar suscrito a los envíos.</p>
         </div>
-      </div>
-
-      <div class="sobre-autor">
-        <figure class="sobre-retrato">
-          <img
-            src="/images/autor-orion.webp"
-            alt="Retrato de Ricardo Polo · Orion sobre fondo cósmico"
-            width="800" height="800" loading="lazy" />
-          <figcaption>Ricardo Polo · Orion.</figcaption>
-        </figure>
-        <h2 class="title-3">El autor</h2>
-        <p class="no-indent">Ricardo Polo · Orion lleva años sentado en la frontera entre la ecuación y el silencio. No es físico de laboratorio ni monje de monasterio. Es alguien que se atrevió a sostener la pregunta hasta que un libro creció a su alrededor.</p>
-        <p>El nombre Orion firma todos los textos del proyecto. Es la forma canónica de la firma. El nombre civil aparece donde la ley lo exige.</p>
       </div>
     </aside>
    </div>
@@ -131,6 +118,60 @@ import LitLink from '@/components/book/LitLink.astro';
       }
       .inv-cta:hover { background: var(--oro-suave, #B68914); }
     </style>
+
+    <!-- ── EL TEJEDOR · el autor + las tres figuras ─────────── -->
+    <section class="tejedor">
+      <div class="tejedor-hero">
+        <figure class="tejedor-retrato">
+          <img src="/images/autor-orion.webp" alt="Ricardo Polo · Orion sobre fondo cósmico" width="800" height="800" loading="lazy" />
+          <figcaption>
+            <span>Ricardo Polo · Orion</span>
+            <span class="tejedor-lugar">Cali · Colombia</span>
+          </figcaption>
+        </figure>
+        <div class="tejedor-intro">
+          <p class="eyebrow">El Tejedor</p>
+          <h2 class="tejedor-title">¿Quién <em>teje</em> este texto?</h2>
+          <p class="tejedor-cap">El Tejedor <span aria-hidden="true">◇</span> El Meta-Observador</p>
+          <div class="prose tejedor-prose">
+            <p class="no-indent">No soy físico de laboratorio, ni monje de monasterio. Soy alguien que lleva años sentado en la frontera entre la ecuación y el silencio, preguntándome si esa frontera <em>existe</em>.</p>
+            <p>Como ingeniero, aprendí el lenguaje de los sistemas, la precisión de las medidas, el rigor que no negocia con los deseos. Como investigador de la conciencia, aprendí que hay territorios donde la ecuación más elegante no llega, y donde la experiencia directa es el único instrumento de medición válido.</p>
+            <p><em>Tejidos de Vibración</em> es el resultado de esa pregunta sostenida durante años. No pretende dar respuestas definitivas. Pretende cambiar la calidad de las preguntas.</p>
+          </div>
+          <p class="tejedor-credencial">
+            Ricardo Polo — Orion · Ingeniero Eléctrico · Ensayista por vocación<br />
+            Autor del proyecto <em>Tejidos de Realidad</em><br />
+            Cali, Valle del Cauca, Colombia
+          </p>
+        </div>
+      </div>
+
+      <div class="tejedor-figuras">
+        <p class="eyebrow">Las tres figuras del libro</p>
+        <h3 class="figuras-title">Tres <em>nombres</em> para una misma escucha.</h3>
+        <p class="figuras-body">El libro ofrece tres figuras como herramientas de orientación interior. No son metáforas decorativas: cada una es una dimensión específica de la consciencia operativa que el lector irá calibrando capítulo a capítulo. Aquí van las definiciones mínimas — la Obertura las desarrolla con detalle.</p>
+        <ul class="figuras-cards">
+          <li class="fig fig--oro">
+            <span class="fig-glyph" aria-hidden="true">◉</span>
+            <h4 class="fig-name">El Meta-Observador</h4>
+            <p class="fig-desc">La consciencia que se observa observando. La capacidad de presenciar pensamientos, emociones y creencias sin identificarse automáticamente con ellos. Es la raíz: sin Meta-Observador las otras dos figuras se vuelven hipervigilancia o manipulación interior.</p>
+            <a class="fig-link" href="/obertura/02-meta-observador">Leer en la Obertura →</a>
+          </li>
+          <li class="fig fig--indigo">
+            <span class="fig-glyph" aria-hidden="true">∿</span>
+            <h4 class="fig-name">El Interferómetro</h4>
+            <p class="fig-desc">La sensibilidad que aprende a notar diferencias mínimas en el estado interior, como un instrumento óptico mide variaciones de fase. No es introspección obsesiva: es calibración. La precisión que recoge la señal donde otros solo ven ruido.</p>
+            <a class="fig-link" href="/obertura/03-interferometro">Leer en la Obertura →</a>
+          </li>
+          <li class="fig fig--verde">
+            <span class="fig-glyph" aria-hidden="true">⌬</span>
+            <h4 class="fig-name">El Tejedor</h4>
+            <p class="fig-desc">Quien participa activamente en la configuración de su experiencia. No fabrica realidad ni la decreta: la teje, en diálogo con lo que ya está. Cada experimento del laboratorio es esta figura puesta en práctica — la frecuencia que esculpe, la observación que colapsa.</p>
+            <a class="fig-link" href="/obertura/04-tejedor">Leer en la Obertura →</a>
+          </li>
+        </ul>
+      </div>
+    </section>
 
     <p class="center mt-5 mb-6">
       <LitLink href="/obertura">Empezar por la Obertura</LitLink>
@@ -213,22 +254,106 @@ import LitLink from '@/components/book/LitLink.astro';
     margin: 0;
   }
   .sobre-formato .marginalia__kind { color: var(--verde-texto); }
-  .sobre-autor { margin-top: 2.75rem; }
-  .sobre-retrato { margin: 0 0 1.25rem; max-width: 20rem; }
-  .sobre-retrato img {
+
+  /* ═══ El Tejedor · autor + tres figuras (equiv. /autor de TDR, tema claro) ═══ */
+  .tejedor {
+    max-width: 68rem;
+    margin: 4.5rem auto 0;
+    padding-top: 3.5rem;
+    border-top: 1px solid var(--pergamino-2);
+  }
+  .tejedor-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 20rem) 1fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+  .tejedor-retrato { margin: 0; }
+  .tejedor-retrato img {
     width: 100%; height: auto; display: block;
-    border: 1px solid var(--pergamino-2);
+    border: 1px solid color-mix(in srgb, var(--oro) 30%, transparent);
     border-radius: 4px;
-    filter: contrast(0.95) brightness(0.96);
+    filter: contrast(0.97) brightness(0.97);
   }
-  .sobre-retrato figcaption {
-    font-family: var(--serif); font-style: italic;
-    font-size: 0.9rem; color: var(--reposo);
-    margin-top: 0.6rem;
+  .tejedor-retrato figcaption {
+    display: flex; justify-content: space-between; gap: 1rem;
+    margin-top: 0.75rem;
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--reposo);
   }
-  .sobre-autor .title-3 { margin-top: 0; }
+  .tejedor-lugar { color: var(--oro-texto); }
+  .tejedor-title {
+    font-family: var(--serif); font-weight: 500;
+    font-size: clamp(2.2rem, 4.5vw, 3.25rem); line-height: 1.05;
+    color: var(--tinta); margin: 0.4rem 0 0;
+    text-wrap: balance;
+  }
+  .tejedor-title em { font-style: italic; color: var(--oro-titulo); }
+  .tejedor-cap {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.72rem; letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--oro-texto); margin: 1.1rem 0 0;
+  }
+  .tejedor-prose { margin-top: 1.75rem; }
+  .tejedor-prose p { font-size: var(--fs-body); line-height: 1.75; }
+  .tejedor-prose em { font-style: italic; color: var(--oro-suave); }
+  .tejedor-credencial {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.8rem; line-height: 1.7; color: var(--reposo);
+    border-left: 1px solid color-mix(in srgb, var(--oro) 30%, transparent);
+    padding-left: 1.1rem; margin-top: 2rem;
+  }
+  .tejedor-credencial em { font-family: var(--serif); font-style: italic; color: var(--oro-texto); }
+
+  .tejedor-figuras { margin-top: 4rem; }
+  .figuras-title {
+    font-family: var(--serif); font-weight: 500;
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem); line-height: 1.15;
+    color: var(--tinta); margin: 0.5rem 0 1rem;
+  }
+  .figuras-title em { font-style: italic; color: var(--oro-titulo); }
+  .figuras-body {
+    font-family: var(--serif); font-size: 1.08rem; line-height: 1.7;
+    color: var(--tinta-suave); max-width: 42rem; margin: 0 0 2rem;
+  }
+  .figuras-cards {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+  }
+  .fig { display: flex; flex-direction: column; padding: 1.5rem; border-top: 2px solid; }
+  .fig--oro    { border-top-color: var(--oro-suave); background: color-mix(in srgb, var(--oro) 6%, transparent); }
+  .fig--indigo { border-top-color: var(--indigo);    background: color-mix(in srgb, var(--indigo) 6%, transparent); }
+  .fig--verde  { border-top-color: var(--verde);     background: color-mix(in srgb, var(--verde) 6%, transparent); }
+  .fig-glyph { font-size: 1.75rem; line-height: 1; margin-bottom: 0.6rem; }
+  .fig--oro .fig-glyph    { color: var(--oro-suave); }
+  .fig--indigo .fig-glyph { color: var(--indigo); }
+  .fig--verde .fig-glyph  { color: var(--verde-texto); }
+  .fig-name {
+    font-family: var(--serif); font-style: italic; font-weight: 500;
+    font-size: 1.3rem; margin: 0 0 0.5rem; color: var(--tinta);
+  }
+  .fig-desc {
+    font-family: var(--serif); font-size: 0.95rem; line-height: 1.55;
+    color: var(--tinta-suave); margin: 0 0 1rem; flex: 1;
+  }
+  .fig-link {
+    font-family: var(--cornisa, var(--sans));
+    font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase;
+    text-decoration: none; border-bottom: 1px solid; padding-bottom: 2px;
+    align-self: flex-start;
+  }
+  .fig--oro .fig-link    { color: var(--oro-texto);   border-color: color-mix(in srgb, var(--oro-texto) 40%, transparent); }
+  .fig--indigo .fig-link { color: var(--indigo);      border-color: color-mix(in srgb, var(--indigo) 40%, transparent); }
+  .fig--verde .fig-link  { color: var(--verde-texto); border-color: color-mix(in srgb, var(--verde-texto) 40%, transparent); }
+  .fig-link:hover { border-bottom-color: currentColor; }
 
   @media (max-width: 40rem) { .arquetipos { grid-template-columns: 1fr; gap: 1.25rem; } }
+  @media (max-width: 52rem) {
+    .tejedor-hero { grid-template-columns: 1fr; }
+    .tejedor-retrato { max-width: 18rem; }
+    .figuras-cards { grid-template-columns: 1fr; }
+  }
   @media (max-width: 56rem) {
     .sobre-grid { grid-template-columns: 1fr; gap: 2.75rem; }
     .sobre-der {
@@ -237,6 +362,5 @@ import LitLink from '@/components/book/LitLink.astro';
       padding-left: 0;
       padding-top: 2.25rem;
     }
-    .sobre-retrato { max-width: 16rem; }
   }
 </style>
