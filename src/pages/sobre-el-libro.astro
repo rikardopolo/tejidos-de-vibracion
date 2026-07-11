@@ -120,7 +120,7 @@ import LitLink from '@/components/book/LitLink.astro';
     </style>
 
     <!-- ── EL TEJEDOR · el autor + las tres figuras ─────────── -->
-    <section class="tejedor">
+    <section class="tejedor" id="el-tejedor">
       <div class="tejedor-hero">
         <figure class="tejedor-retrato">
           <img src="/images/autor-orion.webp" alt="Ricardo Polo · Orion sobre fondo cósmico" width="800" height="800" loading="lazy" />
@@ -261,6 +261,7 @@ import LitLink from '@/components/book/LitLink.astro';
     margin: 4.5rem auto 0;
     padding-top: 3.5rem;
     border-top: 1px solid var(--pergamino-2);
+    scroll-margin-top: 6rem;   /* el ancla #el-tejedor no queda bajo el header sticky */
   }
   .tejedor-hero {
     display: grid;
