@@ -1,6 +1,7 @@
 ---
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import LitLink from '@/components/book/LitLink.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
 ---
 
 <LecturaLarga
@@ -62,62 +63,8 @@ import LitLink from '@/components/book/LitLink.astro';
     </aside>
    </div>
 
-    <!-- ── INVITACIÓN A REGISTRARSE ────────────────────────── -->
-    <section class="invitacion-registro">
-      <p class="inv-eyebrow">La lectura empieza ahora</p>
-      <h2 class="inv-titulo">Lee la Obertura y el Acto I</h2>
-      <p class="inv-cuerpo">
-        Los primeros capítulos de <em>Tejidos de Vibración</em> están disponibles
-        de forma libre. Regístrate y se abren para que los leas aquí, junto con un
-        aviso en tu correo cuando cada nuevo capítulo se abre.
-      </p>
-      <a href="/recibir" class="inv-cta">Comenzar a leer →</a>
-    </section>
-
-    <style>
-      .invitacion-registro {
-        border-top   : 1px solid color-mix(in srgb, var(--oro) 28%, transparent);
-        border-bottom: 1px solid color-mix(in srgb, var(--oro) 28%, transparent);
-        background   : var(--pergamino-2);
-        padding      : 3.5rem 2rem;
-        margin       : 3rem 0 4rem;
-        text-align   : center;
-      }
-      .inv-eyebrow {
-        font-family   : var(--sans, 'Inter', sans-serif);
-        font-size     : 0.72rem;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color         : var(--oro);
-        margin-bottom : 0.75rem;
-      }
-      .inv-titulo {
-        font-family  : var(--serif, 'EB Garamond', Georgia, serif);
-        font-size    : clamp(1.6rem, 3.5vw, 2.2rem);
-        font-weight  : 400;
-        color        : var(--tinta-suave, #3A3530);
-        margin-bottom: 1rem;
-      }
-      .inv-cuerpo {
-        font-family: var(--serif, 'EB Garamond', Georgia, serif);
-        font-size  : 1.1rem;
-        line-height: 1.7;
-        max-width  : 520px;
-        margin     : 0 auto 2rem;
-      }
-      .inv-cta {
-        display        : inline-block;
-        font-family    : var(--sans, 'Inter', sans-serif);
-        font-size      : 0.88rem;
-        letter-spacing : 0.04em;
-        color          : var(--pergamino, #F2EAD5);
-        background     : var(--oro, #D4A017);
-        padding        : 0.8rem 1.8rem;
-        text-decoration: none;
-        transition     : background 0.2s;
-      }
-      .inv-cta:hover { background: var(--oro-suave, #B68914); }
-    </style>
+    <!-- ── INVITACIÓN A REGISTRARSE · bloque canónico ───────── -->
+    <BloquePuerta tipo="obertura-pieza" eyebrow="Cruza el umbral" titulo="La Obertura te espera" />
 
     <!-- ── EL TEJEDOR · el autor + las tres figuras ─────────── -->
     <section class="tejedor" id="el-tejedor">

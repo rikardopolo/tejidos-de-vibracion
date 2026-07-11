@@ -1,6 +1,6 @@
 ---
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
-import FormularioTejedor from '@/components/book/FormularioTejedor.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import { getNivel, gatingActivo } from '@/lib/gating';
 
 export const prerender = false;
@@ -15,53 +15,16 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
 >
   <article class="recibir pt-5">
     {nivel === 0 ? (
-      <>
-        <div class="recibir-grid">
-          <div class="recibir-izq">
-            <p class="eyebrow">Tejidos de Vibración · Recibir</p>
-            <h1 class="recibir-h1">Lee la Obertura completa · <em>gratis</em></h1>
-            <div class="prose">
-              <p class="no-indent">
-                Un nombre y un correo. Con eso, la Obertura del libro se abre completa para ti, y la primera
-                sección del Capítulo 1 te espera al final.
-              </p>
-              <p>
-                Esta es la primera forma de pertenecer al tejido — la que abre la puerta. Más adelante habrá
-                otras: cartas íntimas del Tejedor, acceso a los siguientes capítulos a medida que se vayan
-                tejiendo, el libro completo cuando esté terminado.
-              </p>
-            </div>
-            <blockquote class="pullquote recibir-quote">Es la decisión más liviana del libro. Y la más importante.</blockquote>
-          </div>
-
-          <div class="recibir-der">
-            <div class="recibir-form-wrap">
-              <FormularioTejedor id="form-tejedor-recibir" variant="page" />
-            </div>
-
-            <div class="recibes">
-              <p class="recibes-eyebrow">Al entrar</p>
-              <ul class="recibes-list">
-                <li>La Obertura completa, para leer aquí — las quince piezas.</li>
-                <li>Un aviso en tu correo cuando cada capítulo nuevo se abre.</li>
-                <li>La carta del Tejedor — no se publica en ningún otro lugar.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <p class="recibir-footer"><em>Tres actos · Diez capítulos · Una Obertura ya abierta</em></p>
-      </>
+      <BloquePuerta tipo="obertura-pieza" eyebrow="Cruza el umbral" titulo="La Obertura te espera" />
     ) : (
       <>
         <header>
           <p class="eyebrow">Tejidos de Vibración · Recibir</p>
-          <h1 class="title-1">Lee la Obertura completa · <em>gratis</em></h1>
+          <h1 class="title-1">Ya estás dentro del tejido</h1>
         </header>
         <div class="flourish flourish--rule"></div>
         <div class="prose measure">
-          <p class="no-indent">Ya estás dentro del tejido.</p>
-          <p>
+          <p class="no-indent">
             La Obertura y los capítulos publicados están abiertos para tu lectura, aquí en el portal.
             Te aviso al correo cuando cada nueva entrega se abre.
           </p>
@@ -73,74 +36,3 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
     )}
   </article>
 </LecturaLarga>
-
-<style>
-  .recibir { max-width: 62rem; margin: 0 auto; }
-  .recibir-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 40rem) 1fr;
-    gap: clamp(2.5rem, 5.5vw, 5.5rem);
-    align-items: start;
-  }
-  .recibir-h1 {
-    font-family: var(--serif);
-    font-weight: 600;
-    font-size: clamp(2.4rem, 4.5vw, 3.5rem);
-    line-height: 1.05;
-    color: var(--oro-titulo);
-    margin: 0.75rem 0 1.5rem;
-    text-wrap: balance;
-  }
-  .recibir-h1 em { font-style: italic; font-weight: 500; }
-  .recibir-izq .prose p { font-size: var(--fs-body); line-height: var(--lh-body); }
-  .recibir-quote { margin-top: 2rem; }
-  .recibir-der {
-    border-left: 1px solid var(--pergamino-2);
-    padding-left: clamp(1.5rem, 3vw, 3.5rem);
-  }
-  .recibes { margin-top: 2.5rem; }
-  .recibes-eyebrow {
-    font-family: var(--cornisa, var(--sans));
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--oro-texto);
-    margin: 0 0 1rem;
-  }
-  .recibes-list { list-style: none; padding: 0; margin: 0; }
-  .recibes-list li {
-    position: relative;
-    padding-left: 1.5rem;
-    font-family: var(--serif);
-    font-size: 1.0625rem;
-    line-height: 1.5;
-    color: var(--tinta-suave);
-    margin: 0 0 0.9rem;
-  }
-  .recibes-list li::before {
-    content: '◆';
-    position: absolute;
-    left: 0;
-    top: 0.05em;
-    color: var(--oro-suave);
-    font-size: 0.7rem;
-  }
-  .recibir-footer {
-    text-align: center;
-    margin: 3.5rem 0 1rem;
-    font-family: var(--serif);
-    font-style: italic;
-    color: var(--reposo);
-  }
-
-  @media (max-width: 52rem) {
-    .recibir-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-    .recibir-der {
-      border-left: 0;
-      border-top: 1px solid var(--pergamino-2);
-      padding-left: 0;
-      padding-top: 2rem;
-    }
-  }
-</style>

@@ -1,6 +1,6 @@
 ---
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
-import LitLink from '@/components/book/LitLink.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
 ---
 
 <LecturaLarga
@@ -25,9 +25,7 @@ import LitLink from '@/components/book/LitLink.astro';
 
     <div class="flourish flourish--rule com-flourish"></div>
 
-    <p class="com-cta">
-      <LitLink href="/recibir">Empezar a leer</LitLink>
-    </p>
+    <BloquePuerta tipo="obertura-pieza" eyebrow="Cruza el umbral" titulo="La Obertura te espera" />
   </article>
 </LecturaLarga>
 
@@ -77,5 +75,4 @@ import LitLink from '@/components/book/LitLink.astro';
   .com-prose p { font-size: 1.1875rem; line-height: 1.65; }
   .com-prose p em { color: var(--tinta-suave); }
   .com-flourish { margin: 2.5rem 0; }
-  .com-cta { margin: 0; }
 </style>
