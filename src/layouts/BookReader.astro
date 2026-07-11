@@ -161,6 +161,7 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
   <!-- ── Header chrome · TOC · breadcrumb/back · LECTURA ─────────────── -->
   <header class="book-chrome" id="book-chrome">
     <div class="book-chrome__slot book-chrome__slot--left">
+      <a class="book-chrome__home" href="/" aria-label="Volver al inicio de Tejidos de Vibración"><em>Tejidos de </em>Vibración</a>
       <slot name="toc" />
     </div>
 
@@ -283,9 +284,25 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
       box-shadow: 0 2px 14px rgba(26, 22, 18, 0.05);
     }
     .book-chrome__slot { display: flex; align-items: center; min-width: 0; }
-    .book-chrome__slot--left { justify-content: flex-start; }
+    .book-chrome__slot--left { justify-content: flex-start; gap: 0.9rem; }
     .book-chrome__slot--center { justify-content: center; }
     .book-chrome__slot--right { justify-content: flex-end; }
+
+    /* Wordmark = enlace a inicio (el lector es chrome propio, sin el header
+       del sitio). Mismo wordmark que BookHeader, en clave sobria de chrome. */
+    .book-chrome__home {
+      font-family: var(--serif);
+      font-size: 0.92rem;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      color: var(--tinta);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    .book-chrome__home em { font-style: italic; color: var(--reposo); transition: color 0.2s; }
+    .book-chrome__home:hover,
+    .book-chrome__home:hover em { color: var(--oro-suave); }
 
     /* Pills TOC / LECTURA */
     .book-chrome__btn {
@@ -341,6 +358,9 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
     @media (max-width: 640px) {
       .book-chrome { padding: 0.7rem 1rem; gap: 0.5rem; }
       .book-chrome__btn-label { display: none; }
+      .book-chrome__slot--left { gap: 0.55rem; }
+      .book-chrome__home { font-size: 0.82rem; }
+      .book-chrome__home em { display: none; }   /* compacta a «Vibración» */
       .book-breadcrumb { font-size: 0.62rem; letter-spacing: 0.18em; }
       .book-reader.reader-controls { right: 1rem; top: 3.4rem; }
     }
