@@ -17,7 +17,7 @@ export const prerender = false;
  * (evidencia legal · Ley 1581/2012). Debe coincidir con lo que el usuario ve.
  */
 const CONSENT_TEXT_LIBRO =
-  'Acepto recibir los capítulos por correo y que se registre mi avance de lectura para mejorar el libro. Conozco la política de privacidad.';
+  'Acepto recibir por correo los avisos de nuevos capítulos y las cartas del Tejedor, y que se registre mi avance de lectura para mejorar el libro. Conozco la política de privacidad.';
 
 const readEnv = (key: string): string | undefined => {
   if (typeof process !== 'undefined' && process.env) {
