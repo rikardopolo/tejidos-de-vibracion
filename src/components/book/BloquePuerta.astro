@@ -19,9 +19,11 @@ export interface Props {
   capitulo?: string;
   titulo?: string;
   subtitulo?: string;
+  /** Override del eyebrow (para invitaciones de registro fuera del lector). */
+  eyebrow?: string;
 }
 
-const { tipo, capitulo, titulo, subtitulo } = Astro.props;
+const { tipo, capitulo, titulo, subtitulo, eyebrow } = Astro.props;
 
 // Defaults según tipo
 const defaults = {
@@ -73,7 +75,7 @@ const formId = `form-tejedor-puerta-${tipo}`;
 <aside class={`bloque-puerta bloque-puerta--${tipo}`} data-bloque-puerta>
   <div class="bloque-puerta__ornament" aria-hidden="true">◆</div>
 
-  <p class="bloque-puerta__eyebrow">{d.eyebrow}</p>
+  <p class="bloque-puerta__eyebrow">{eyebrow ?? d.eyebrow}</p>
 
   <h2 class="bloque-puerta__titulo">{tituloFinal}</h2>
 
@@ -119,7 +121,7 @@ const formId = `form-tejedor-puerta-${tipo}`;
   }
   .bloque-puerta--obertura-pieza .bloque-puerta__ornament {
     font-size: 1.25rem;
-    color: var(--obertura-thread, #8b2e2e);
+    color: var(--obertura-thread, var(--oro-suave));
     margin: 0 0 1.5rem 0;
     letter-spacing: 0;
   }
@@ -132,7 +134,7 @@ const formId = `form-tejedor-puerta-${tipo}`;
     font-weight: 500;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--obertura-thread, #8b2e2e);
+    color: var(--obertura-thread, var(--oro-suave));
     margin: 0 0 1.4rem 0;
   }
   .bloque-puerta--obertura-pieza .bloque-puerta__titulo {
@@ -199,7 +201,7 @@ const formId = `form-tejedor-puerta-${tipo}`;
   }
   .bloque-puerta--obertura-pieza :global(.form-tejedor input:focus) {
     outline: none;
-    border-color: var(--obertura-thread, #8b2e2e);
+    border-color: var(--obertura-thread, var(--oro-suave));
   }
   .bloque-puerta--obertura-pieza :global(.form-tejedor__consent) {
     display: flex;
@@ -214,7 +216,7 @@ const formId = `form-tejedor-puerta-${tipo}`;
     width: 1.1rem;
     height: 1.1rem;
     margin-top: 0.2em;
-    accent-color: var(--obertura-thread, #8b2e2e);
+    accent-color: var(--obertura-thread, var(--oro-suave));
     flex-shrink: 0;
   }
   .bloque-puerta--obertura-pieza :global(.form-tejedor__honeypot) {
@@ -231,16 +233,16 @@ const formId = `form-tejedor-puerta-${tipo}`;
     font-size: 1.05rem;
     font-weight: 500;
     color: var(--obertura-paper, #f2ead5);
-    background: var(--obertura-thread, #8b2e2e);
-    border: 1px solid var(--obertura-thread, #8b2e2e);
+    background: var(--obertura-thread, var(--oro-suave));
+    border: 1px solid var(--obertura-thread, var(--oro-suave));
     border-radius: 2px;
     cursor: pointer;
     transition: background 180ms ease, border-color 180ms ease;
     letter-spacing: 0.02em;
   }
   .bloque-puerta--obertura-pieza :global(.form-tejedor__submit:hover) {
-    background: var(--obertura-thread-deep, #5a1818);
-    border-color: var(--obertura-thread-deep, #5a1818);
+    background: var(--obertura-thread-deep, var(--oro-texto));
+    border-color: var(--obertura-thread-deep, var(--oro-texto));
   }
   .bloque-puerta--obertura-pieza :global(.form-tejedor__submit:disabled) {
     opacity: 0.6;
@@ -258,13 +260,13 @@ const formId = `form-tejedor-puerta-${tipo}`;
     font-family: var(--obertura-serif, 'EB Garamond', serif);
     font-size: 1.05rem;
     font-style: italic;
-    color: var(--obertura-thread, #8b2e2e);
+    color: var(--obertura-thread, var(--oro-suave));
     text-align: center;
     margin: 1.25rem 0 0;
     min-height: 1.5em;
   }
   .bloque-puerta--obertura-pieza :global(.form-tejedor a.lit-link) {
-    color: var(--obertura-thread, #8b2e2e);
+    color: var(--obertura-thread, var(--oro-suave));
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;

@@ -1,6 +1,6 @@
 ---
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
-import LitLink from '@/components/book/LitLink.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
 ---
 
 <LecturaLarga
@@ -20,14 +20,12 @@ import LitLink from '@/components/book/LitLink.astro';
     <div class="prose com-prose">
       <p class="no-indent">Cuando haya un primer grupo de lectores acompañando el libro capítulo a capítulo, esta sala se va a abrir. Será un espacio para conversar entre quienes lean el libro al mismo tiempo, compartir lecturas adyacentes, encontrarse en la pregunta.</p>
 
-      <p><em>Por ahora la antesala está silenciosa. Recibir los capítulos por correo es la primera forma de pertenecer.</em></p>
+      <p><em>Por ahora la antesala está silenciosa. Registrarte para leer la Obertura —un nombre y un correo— es la primera forma de pertenecer.</em></p>
     </div>
 
     <div class="flourish flourish--rule com-flourish"></div>
 
-    <p class="com-cta">
-      <LitLink href="/recibir">Recibir los capítulos</LitLink>
-    </p>
+    <BloquePuerta tipo="obertura-pieza" eyebrow="Cruza el umbral" titulo="La Obertura te espera" />
   </article>
 </LecturaLarga>
 
@@ -77,5 +75,4 @@ import LitLink from '@/components/book/LitLink.astro';
   .com-prose p { font-size: 1.1875rem; line-height: 1.65; }
   .com-prose p em { color: var(--tinta-suave); }
   .com-flourish { margin: 2.5rem 0; }
-  .com-cta { margin: 0; }
 </style>
