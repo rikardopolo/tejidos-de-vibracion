@@ -1170,6 +1170,7 @@ html[data-reader-mode="night"] {
   --oro-titulo:  #d4a017;
   --oro-texto:   #b68914;
   --verde-texto: #1d9e75;
+  --indigo:      #8b95c4;  /* índigo claro en noche · el #2D1B69 de día falla sobre el fondo oscuro (F6) */
 }
 
 /* Reading sizes — applied via [data-reader-size] on <html> */
