@@ -12,6 +12,7 @@
  *   iv.  Cierre       · interludio iii · 10 · 11
  */
 import OberturaLayout from '@/layouts/OberturaLayout.astro';
+import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import { getCollection } from 'astro:content';
 import { getNivel, gatingActivo } from '@/lib/gating';
 
@@ -193,15 +194,7 @@ const grouped = sectionOrder.map((key) => ({
     ))}
   </div>
 
-  <footer class="biblio-pie">
-    <p class="biblio-puerta">La Obertura completa — las quince piezas, los tres interludios, el mapa conceptual — es libre para los tejedores registrados. Un nombre y un correo. Eso es todo.</p>
-    <form class="form-tejedor form-tejedor--linea biblio-form" action="/recibir" method="get">
-      <input type="email" name="correo" placeholder="tu@correo.com"
-             aria-label="Tu correo" maxlength="254" autocomplete="email" />
-      <button type="submit" class="form-tejedor__submit">Entrar al tejido&nbsp;&rarr;</button>
-    </form>
-    <p class="form-tejedor__nota biblio-form-nota">Sin spam. Sin venta de datos.</p>
-  </footer>
+  <BloquePuerta tipo="obertura-pieza" eyebrow="Cruza el umbral" titulo="La Obertura te espera" />
 </OberturaLayout>
 
 <!-- Ondas ambientales del héroe · preset c-6a de vib-hero.js (externo · CSP) -->
@@ -371,25 +364,6 @@ const grouped = sectionOrder.map((key) => ({
     transition: transform 0.2s;
   }
   .toc-section a:hover .arrow { transform: translateX(4px); }
-
-  /* ── Pie · frase de la puerta + captura de correo ────────── */
-  .biblio-pie {
-    margin-top: 4.5rem;
-    padding-top: 2.5rem;
-    border-top: 1px solid var(--obertura-rule-soft);
-    text-align: center;
-  }
-  .biblio-puerta {
-    font-family: var(--obertura-serif);
-    font-size: 1.0625rem;
-    line-height: 1.6;
-    color: var(--obertura-ink-soft);
-    max-width: 34rem;
-    margin: 0 auto 1.75rem;
-    text-wrap: pretty;
-  }
-  .biblio-form { margin: 0 auto; }
-  .biblio-form-nota { text-align: center; margin-top: 0.5rem; }
 
   /* ── Responsive: grupos a 1 columna ──────────────────────── */
   @media (max-width: 46rem) {

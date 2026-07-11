@@ -36,19 +36,8 @@ import LitLink from '@/components/book/LitLink.astro';
 
         <div class="lit-link-row portada-secundarios">
           <LitLink size="secondary" href="/indice">Recorrer el índice</LitLink>
-          <LitLink size="secondary" href="/recibir">Empezar a leer</LitLink>
           <LitLink size="secondary" href="/sobre-el-libro#el-tejedor">Conocer al Tejedor</LitLink>
         </div>
-
-        <!-- Captura de correo · GET a /recibir (allí vive el form consentido
-             completo: nombre + consentimiento legal). NO hace POST inline —
-             preserva la evidencia de consentimiento (Ley 1581/2012). -->
-        <form class="form-tejedor form-tejedor--linea portada-form" action="/recibir" method="get">
-          <input type="email" name="correo" placeholder="tu@correo.com"
-                 aria-label="Tu correo" maxlength="254" autocomplete="email" />
-          <button type="submit" class="form-tejedor__submit">Recibir&nbsp;&rarr;</button>
-        </form>
-        <p class="form-tejedor__nota portada-form-nota">Sin spam. Sin venta de datos.</p>
       </div>
     </div>
 
@@ -124,8 +113,6 @@ import LitLink from '@/components/book/LitLink.astro';
   }
   .portada-cta { margin: 1.75rem 0 0; }
   .portada-secundarios { margin-top: 1.5rem; }
-  .portada-form { margin-top: 1.875rem; }
-  .portada-form-nota { text-align: left; margin-top: 0.5rem; }
 
   /* ── Pie ───────────────────────────────────────────────── */
   .portada-pie { margin-top: clamp(3rem, 6vw, 5rem); }
