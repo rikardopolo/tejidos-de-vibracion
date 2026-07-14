@@ -49,3 +49,4 @@ $RECYCLE.BIN/
 .tmp-*
 public/assets/**/backup-*/
 
+.gstack/
