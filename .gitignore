@@ -49,3 +49,14 @@ $RECYCLE.BIN/
 .tmp-*
 public/assets/**/backup-*/
 
+# Graphify · output de análisis (regenerable)
+**/graphify-out/
+**/graphify-*out/
+.graphify_*
+
+# Build outputs locales (PDFs, exports)
+out/
+
+# Tooling local
+.gstack/
+
