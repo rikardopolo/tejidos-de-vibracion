@@ -321,6 +321,22 @@ const ogImageAlt = chapterOgAlt(resolvedChapterLabel, chapterTitle ?? title);
     opacity: 0.8;
   }
 
+  /* ── Cuerpo poético del Umbral (pieza kind=umbral) · «Umbral» (F4) ──
+     Tratamiento itálico centrado del cuerpo SIN el eyebrow del componente
+     UmbralPoetico (el piece-header ya titula la pieza «Umbral Poético»).
+     Envuelve los párrafos en <div class="umbral-cuerpo"> en 01-umbral.mdx. */
+  .cap-main--pieza .prose .umbral-cuerpo {
+    max-width: 34rem;
+    margin: 1.5rem auto 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: var(--tinta-suave);
+  }
+  .cap-main--pieza .prose .umbral-cuerpo p { text-align: left; hyphens: manual; margin: 0 0 1.1rem; }
+  .cap-main--pieza .prose .umbral-cuerpo p:last-child { margin-bottom: 0; }
+
   /* ── Justify + hyphens · SOLO cuerpo .prose (decisión 4) ──────── */
   .capitulo-body .prose > p {
     text-align: justify;
