@@ -133,7 +133,7 @@ const breadcrumbText = `${pieceLabel} · Cap. ${chapterNum}`;
   nivel={nivel}
   pageId={`capitulo-${chapterNum}-${section}`}
 >
-  <article class="measure">
+  <article class={`ca-lectura kind-${kind}`}>
     {/* Eyebrow del cuerpo eliminado (sub-tarea 3.5): el breadcrumb sticky
         del CapituloLayout ya comunica "◆ §N · Cap. N" de forma persistente.
         El index biblioteca SÍ conserva su eyebrow (no tiene breadcrumb).

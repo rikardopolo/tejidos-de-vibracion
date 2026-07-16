@@ -1,0 +1,51 @@
+---
+/**
+ * <CapituloRail> · raíl de navegación lateral de una pieza de capítulo
+ * (rediseño «Umbral» · F2). Hermano de <CapituloToc> (la ☰ del header,
+ * que se conserva para móvil): este raíl es la navegación permanente de
+ * escritorio, análogo a <PieceRail> de la Obertura.
+ *
+ * Reusa la MISMA query de datos que <CapituloToc> (getCollection sobre
+ * chapter-sections, ordenado por `order`) · lista plana (el capítulo no
+ * tiene secciones internas como la Obertura). Se oculta <1100px (vuelve
+ * al ☰) vía CSS en CapituloLayout. El markup .piece-rail* y su CSS viven
+ * en CapituloLayout <style is:global> (portados 1:1 de OberturaLayout).
+ */
+import { getCollection } from 'astro:content';
+import { pieceMarker, type PieceKind } from '@/lib/piece-num';
+
+interface Props {
+  /** Slug del capítulo padre (ej. "cap-1-universo-sinfonia"). */
+  chapter: string;
+  /** Slug-hoja de la pieza actual · se marca `.is-current`. */
+  current?: string;
+  /** Etiqueta del capítulo para el eyebrow (ej. "Capítulo I"). */
+  chapterLabel?: string;
+}
+const { chapter, current, chapterLabel } = Astro.props;
+
+const all = await getCollection('chapter-sections', ({ data }) => data.chapter === chapter);
+all.sort((a, b) => a.data.order - b.data.order);
+
+const leaf = (slug: string): string => slug.split('/').pop() ?? slug;
+---
+
+<aside class="piece-rail" aria-label={`Navegación · ${chapterLabel ?? 'Capítulo'}`}>
+  <nav class="piece-rail__group">
+    <p class="piece-rail__eyebrow">{chapterLabel ?? 'Capítulo'}</p>
+    <ol class="piece-rail__list">
+      {all.map((entry) => {
+        const slug = leaf(entry.id);
+        const isCurrent = slug === current;
+        return (
+          <li class={`piece-rail__item${isCurrent ? ' is-current' : ''}`}>
+            <a href={`/capitulo/${chapter}/${slug}`} aria-current={isCurrent ? 'page' : undefined}>
+              <span class="piece-rail__num">{pieceMarker({ kind: entry.data.kind as PieceKind, num: entry.data.num })}</span>
+              <span class="piece-rail__name">{entry.data.title}</span>
+            </a>
+          </li>
+        );
+      })}
+    </ol>
+  </nav>
+</aside>

@@ -19,6 +19,7 @@
  */
 import BookReader from '@/layouts/BookReader.astro';
 import CapituloToc from '@/components/book/CapituloToc.astro';
+import CapituloRail from '@/components/book/CapituloRail.astro';
 import { chapterOgAlt, chapterOgImage } from '@/lib/seo';
 
 interface Props {
@@ -73,11 +74,17 @@ const ogImageAlt = chapterOgAlt(resolvedChapterLabel, chapterTitle ?? title);
   nivel={nivel}
   pageId={pageId}
   bodyClass="capitulo-body"
-  mainClass="cap-main"
+  mainClass={currentSlug ? 'cap-main cap-main--pieza' : 'cap-main'}
   breadcrumb={breadcrumbText ? { ornament: breadcrumbOrnament, text: breadcrumbText } : undefined}
   track={currentSlug ? { surface: 'capitulo', chapter, section: currentSlug } : undefined}
 >
   <CapituloToc slot="toc" chapter={chapter} current={currentSlug} chapterLabel={chapterLabel} />
+  {/* Raíl lateral permanente (escritorio) · solo en piezas de lectura, no en
+      la biblioteca (index sin currentSlug). El ☰ CapituloToc queda de fallback
+      móvil. Análogo a PieceRail de la Obertura (OberturaLayout:83). */}
+  {currentSlug && (
+    <CapituloRail chapter={chapter} current={currentSlug} chapterLabel={chapterLabel} />
+  )}
   <slot />
 </BookReader>
 
@@ -127,6 +134,86 @@ const ogImageAlt = chapterOgAlt(resolvedChapterLabel, chapterTitle ?? title);
     text-transform: uppercase;
     color: var(--reposo);
     margin: 0 0 0.5rem;
+  }
+
+  /* ── Retícula raíl│columna · formato «Umbral» (F2) ──────────────
+     Portado 1:1 de OberturaLayout .obertura-main--pieza / .piece-rail con
+     tokens del libro. SOLO en piezas de lectura (mainClass lleva --pieza);
+     la biblioteca (index · cap-main a secas) NO lo hereda. El raíl lo
+     inyecta CapituloLayout (CapituloRail) como hermano del <article>. */
+  .cap-main--pieza {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 3.25rem 1.5rem 6rem;
+    display: grid;
+    grid-template-columns: [rail] 12.25rem [content] minmax(0, 41.25rem);
+    column-gap: 4rem;
+    justify-content: center;
+    align-items: start;
+  }
+  .cap-main--pieza > :not(.piece-rail) { grid-column: content; min-width: 0; }
+
+  /* Raíl izquierdo (sticky) */
+  .piece-rail {
+    grid-column: rail;
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+    font-family: var(--sans);
+  }
+  .piece-rail__eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--oro-texto);
+    margin: 0;
+  }
+  .piece-rail__list { list-style: none; padding: 0; margin: 1.4rem 0 0; }
+  .piece-rail__item a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.28rem 0 0.28rem 0.65rem;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    color: var(--reposo);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    transition: color 0.15s;
+  }
+  .piece-rail__item a:hover { color: var(--tinta); }
+  .piece-rail__num {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--reposo-claro);
+    flex-shrink: 0;
+  }
+  .piece-rail__name { min-width: 0; }
+  .piece-rail__item.is-current a {
+    border-left-color: var(--oro-suave);
+    color: var(--tinta);
+    font-weight: 500;
+  }
+  .piece-rail__item.is-current .piece-rail__num { color: var(--oro-texto); }
+
+  /* La portada (kind='portada') conserva su composición ceremonial: escapa
+     la retícula y oculta el raíl (su MDX ya renderiza <Frontispicio>). */
+  .cap-main--pieza:has(.kind-portada) {
+    display: block;
+    max-width: var(--col);
+    padding: 2.5rem 1.5rem 6rem;
+  }
+  .cap-main--pieza:has(.kind-portada) .piece-rail { display: none; }
+
+  /* Responsive · <1100px el raíl vuelve al ☰ del header (CapituloToc). */
+  @media (max-width: 68.75rem) {
+    .cap-main--pieza {
+      display: block;
+      max-width: var(--col);
+      padding: 2.5rem 1.5rem 6rem;
+    }
+    .cap-main--pieza .piece-rail { display: none; }
   }
 
   /* ── Justify + hyphens · SOLO cuerpo .prose (decisión 4) ──────── */
