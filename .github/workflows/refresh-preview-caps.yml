@@ -1,0 +1,48 @@
+name: Refrescar preview caps 1-3
+
+# Cada vez que avanza main, recrea la rama de revisión `preview/chapters-1-2-3`
+# = main + `status: published` en los 3 capítulos (que en main viven como
+# `fragmento-permanente`). Vercel auto-despliega el preview desde esa rama, con
+# el gate abierto porque `gatingActivo()` es false en cualquier rama != main.
+# NO toca main ni producción. Runbook: tdv_runbook_preview_caps_sin_publicar.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# El push a la rama de preview necesita permiso de escritura.
+permissions:
+  contents: write
+
+# Si llegan varios push a main seguidos, quedarse solo con el último.
+concurrency:
+  group: refresh-preview-caps
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Recrear preview/chapters-1-2-3 = main + abrir caps 1-3
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B preview/chapters-1-2-3
+          for c in cap-1-universo-sinfonia cap-2-ciencia-escuchar cap-3-mundo-cuantico; do
+            sed -i 's/^status: "fragmento-permanente"/status: "published"/' "src/content/book/$c.mdx"
+          done
+          git add src/content/book/cap-1-universo-sinfonia.mdx \
+                  src/content/book/cap-2-ciencia-escuchar.mdx \
+                  src/content/book/cap-3-mundo-cuantico.mdx
+          if git diff --cached --quiet; then
+            echo "Sin flips de status (¿caps ya published en main?). La rama queda == main."
+          else
+            git commit -m "preview(caps 1-3): status published para revisión · auto-refresh desde main ${GITHUB_SHA} · NO merge a main"
+          fi
+          git push -f origin preview/chapters-1-2-3
