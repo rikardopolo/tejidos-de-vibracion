@@ -144,9 +144,9 @@ const breadcrumbText = `${pieceLabel} · Cap. ${chapterNum}`;
         editorialmente indeseado. Las demás piezas conservan su header. */}
     {kind !== 'portada' && (
       <>
-        <header class="stack-sm">
-          <h1 class="title-1">{title}</h1>
-          {subtitle && <p class="title-1__sub">{subtitle}</p>}
+        <header class="piece-header">
+          <h1 class="piece-title">{title}</h1>
+          {subtitle && <p class="piece-subtitle">{subtitle}</p>}
         </header>
 
         <div class="flourish flourish--rule"></div>

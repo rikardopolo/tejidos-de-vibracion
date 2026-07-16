@@ -89,6 +89,46 @@ const ogImageAlt = chapterOgAlt(resolvedChapterLabel, chapterTitle ?? title);
     padding: 2.5rem 1.5rem 6rem;
   }
 
+  /* ── Header ceremonial de pieza · formato «Umbral» (F1) ─────────
+     Portado de OberturaLayout `.piece-title`/`.piece-subtitle` con tokens
+     del libro (--serif, --oro-titulo). Scoped a `.capitulo-body` para no
+     tocar la Obertura ni subir reglas a system.css global. Sustituye al
+     `.title-1`/`.title-1__sub` genérico (3rem, --oro brillante). */
+  .capitulo-body .piece-header { margin: 0 0 2.25rem; }
+  .capitulo-body .piece-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.6rem, 4vw, 3.375rem);
+    line-height: 1.05;
+    letter-spacing: -0.005em;
+    color: var(--oro-titulo);
+    margin: 0;
+    text-wrap: balance;
+  }
+  .capitulo-body .piece-subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.3;
+    color: var(--tinta);
+    margin: 0.75rem 0 0;
+    text-wrap: balance;
+  }
+
+  /* ── Eyebrow de la biblioteca del capítulo · hueco real (F0) ────
+     `.section-eyebrow` se usaba en index.astro sin ninguna regla CSS
+     (solo existía `.section-eyebrow-bold` de la Obertura) → se veía como
+     párrafo plano. Reusa el patrón de `.eyebrow`. */
+  .capitulo-body .section-eyebrow {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--reposo);
+    margin: 0 0 0.5rem;
+  }
+
   /* ── Justify + hyphens · SOLO cuerpo .prose (decisión 4) ──────── */
   .capitulo-body .prose > p {
     text-align: justify;
