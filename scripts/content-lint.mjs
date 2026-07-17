@@ -98,6 +98,8 @@ export function analizarCorpus(capitulos, baseDir) {
     const andamiajeHits = [];
     let enfasisSospechoso = 0;
     const enfasisEjemplos = [];
+    let marcadorFaltante = 0;
+    const marcadorEjemplos = [];
 
     for (const file of files) {
       const text = readFileSync(file, 'utf8');
@@ -130,22 +132,39 @@ export function analizarCorpus(capitulos, baseDir) {
             promesas.push({ file: rel(file, baseDir), line: i + 1, ref, contexto: line.trim().slice(0, 120).replace(/\t/g, ' ') });
           }
         }
-        // Énfasis sospechoso: línea de blockquote con número impar de asteriscos.
-        if (/^\s*>/.test(line)) {
-          const ast = (line.match(/\*/g) || []).length;
-          if (ast % 2 === 1) {
-            enfasisSospechoso++;
-            if (enfasisEjemplos.length < 3) enfasisEjemplos.push({ file: rel(file, baseDir), line: i + 1 });
-          }
-        }
       });
+
+      // Énfasis sospechoso: blockquote (bloque contiguo de líneas '>') con número
+      // IMPAR de asteriscos en total → énfasis sin cerrar. Una cursiva/negrita
+      // multi-línea bien formada suma par (apertura + cierre), y no se marca.
+      for (let k = 0; k < lines.length; k++) {
+        if (!/^\s*>/.test(lines[k])) continue;
+        let ast = 0, start = k;
+        while (k < lines.length && /^\s*>/.test(lines[k])) { ast += (lines[k].match(/\*/g) || []).length; k++; }
+        if (ast % 2 === 1) {
+          enfasisSospechoso++;
+          if (enfasisEjemplos.length < 3) enfasisEjemplos.push({ file: rel(file, baseDir), line: start + 1 });
+        }
+      }
+
+      // Consistencia de marcadores de práctica (REPORTA): cada componente de
+      // práctica (LaboratorioInterior/PausaReflexiva) debe llevar el marcador
+      // unificado "Carril B" en sus primeras líneas.
+      for (let k = 0; k < lines.length; k++) {
+        if (!/<(LaboratorioInterior|PausaReflexiva)\b/.test(lines[k])) continue;
+        const ventana = lines.slice(k, k + 7).join('\n');
+        if (!/PRÁCTICA CONTEMPLATIVA · Carril B/.test(ventana)) {
+          marcadorFaltante++;
+          if (marcadorEjemplos.length < 3) marcadorEjemplos.push({ file: rel(file, baseDir), line: k + 1 });
+        }
+      }
     }
 
     const moOk = moTotal >= cap.moMin && moTotal <= cap.moMax;
     if (!moOk) violaciones++;
     if (andamiajeHits.length > 0) violaciones++;
 
-    report.push({ cap, files: files.length, moTotal, moOk, muletillaTotal, andamiajeHits, enfasisSospechoso, enfasisEjemplos });
+    report.push({ cap, files: files.length, moTotal, moOk, muletillaTotal, andamiajeHits, enfasisSospechoso, enfasisEjemplos, marcadorFaltante, marcadorEjemplos });
   }
 
   return { report, promesas, violaciones };
@@ -193,6 +212,17 @@ for (const r of report) {
     console.log(`  ${r.cap.tag.padEnd(9)} ${r.enfasisSospechoso}  (ej: ${ej})`);
   }
 }
+
+console.log('\nPrácticas sin marcador unificado "Carril B" (REPORTA · backlog de retrofit)');
+let marcadorGlobal = 0;
+for (const r of report) {
+  if (r.marcadorFaltante > 0) {
+    const ej = r.marcadorEjemplos.map((e) => `${e.file}:${e.line}`).join(', ');
+    console.log(`  ${r.cap.tag.padEnd(9)} ${r.marcadorFaltante}  (ej: ${ej})`);
+    marcadorGlobal += r.marcadorFaltante;
+  }
+}
+if (marcadorGlobal === 0) console.log('  OK · todas las prácticas llevan el marcador unificado');
 
 console.log(`\nPromesas cruzadas → out/promesas.tsv (${promesas.length} referencias)`);
 console.log(`\n${violaciones === 0 ? '✅ SIN violaciones de reglas FALLA' : `✗ ${violaciones} regla(s) FALLA violada(s)`}\n`);
