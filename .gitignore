@@ -49,3 +49,6 @@ $RECYCLE.BIN/
 .tmp-*
 public/assets/**/backup-*/
 
+# Salida generada por content-lint (reporte de promesas cruzadas)
+out/
+
