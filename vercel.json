@@ -48,6 +48,7 @@
     { "source": "/comprar/acto-2", "destination": "/comprar/preventa", "permanent": true },
     { "source": "/libro", "destination": "/", "permanent": true },
     { "source": "/libro/obertura", "destination": "/obertura", "permanent": true },
-    { "source": "/libro/:path*", "destination": "/:path*", "permanent": true }
+    { "source": "/libro/:path*", "destination": "/:path*", "permanent": true },
+    { "source": "/:path+/", "destination": "/:path+", "permanent": true }
   ]
 }

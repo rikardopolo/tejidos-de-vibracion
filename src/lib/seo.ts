@@ -13,7 +13,8 @@
  */
 
 export const SITE = 'https://tejidosdevibracion.com';
-export const OG_SITE = 'https://www.tejidosdevibracion.com';
+/** OG usa el MISMO host canónico que el resto de señales (no www). */
+export const OG_SITE = SITE;
 /** Sitio hermano (portal · laboratorio + constelación + autor). */
 export const SITE_PORTAL = 'https://tejidosderealidad.com';
 export const OG_IMAGE_WIDTH = 1200;
@@ -24,6 +25,16 @@ export const DEFAULT_OG_IMAGE = `${OG_SITE}${DEFAULT_OG_IMAGE_PATH}`;
 export const DEFAULT_OG_ALT = 'Tejidos de Vibración';
 
 export type SchemaNode = Record<string, unknown>;
+
+/**
+ * Canonical absoluta para un pathname, normalizada: sin barra final salvo la
+ * raíz. Evita el «canonical-eco» (que /x y /x/ se declaren canónicas a sí
+ * mismas). Usar en TODOS los <head> cuando no se pasa un canonical explícito.
+ */
+export function canonicalFor(pathname: string): string {
+  const clean = pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
+  return new URL(clean, SITE).toString();
+}
 
 export function resolveOgImage(image?: string): string {
   const source = image ?? DEFAULT_OG_IMAGE_PATH;
