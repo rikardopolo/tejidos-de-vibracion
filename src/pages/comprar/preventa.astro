@@ -5,15 +5,54 @@
 // al checkout de Lemon Squeezy. Sustituye a /comprar/acto-2 (301 en vercel.json).
 // Layout LecturaLarga = nav + footer del sitio.
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import { SITE } from '@/lib/seo';
 
 const SEO = {
   title: 'Bundle de pre-venta — Tejidos de Vibración',
   description:
     'El Capítulo 4, el Acto II y el Acto III de «Tejidos de Vibración» al precio de pre-venta: $26 USD, el más bajo que existirá. Sube a $32 en septiembre 2026.',
 };
+
+// Product/Offer JSON-LD · describe la oferta para buscadores y motores
+// generativos. availability=PreOrder: es una pre-venta (Acto II desde sep-2026,
+// Acto III desde ene-2027) y además el checkout aún NO está en Live Mode. La
+// página hereda noindex,nofollow,noarchive de Base → este schema es inerte
+// hasta el flip (ver checklist abajo). price DEBE coincidir con el copy ($26)
+// y con la variant de Lemon Squeezy.
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Bundle de pre-venta · Capítulo 4, Acto II y Acto III — Tejidos de Vibración',
+  description:
+    'El Capítulo 4 y los Actos II y III (capítulos 5 a 10) de Tejidos de Vibración, en formato digital, entregados a medida que se publican.',
+  brand: { '@type': 'Brand', name: 'Tejidos de Vibración' },
+  url: `${SITE}/comprar/preventa`,
+  image: `${SITE}/og/og-obertura.jpg`,
+  offers: {
+    '@type': 'Offer',
+    price: '26',
+    priceCurrency: 'USD',
+    priceValidUntil: '2026-08-31',
+    availability: 'https://schema.org/PreOrder',
+    url: `${SITE}/comprar/preventa`,
+    seller: { '@type': 'Organization', name: 'Tejidos de Vibración' },
+  },
+};
+
+/*
+  ── FLIP A LIVE MODE (cuando el checkout de Lemon Squeezy cobre) ────────────
+  La pre-venta está DESPUBLICADA hasta Live Mode (envs LS live pendientes ·
+  ver indice.astro:155). Al activar la venta real, en un cambio:
+   1. Pasar robots="index,follow" al <LecturaLarga> de abajo (hoy hereda el
+      noindex,nofollow,noarchive por defecto de Base).
+   2. Enlazar la página desde home (index.astro), /indice (restaurar el bloque
+      .toc-preventa) y /sobre-el-libro.
+   3. Añadir '/comprar/preventa' a STATIC_PUBLIC_URLS en sitemap.xml.ts.
+   4. Cambiar availability de PreOrder a InStock en productSchema si procede.
+*/
 ---
 
-<LecturaLarga title={SEO.title} description={SEO.description} pageId="comprar-preventa">
+<LecturaLarga title={SEO.title} description={SEO.description} pageId="comprar-preventa" jsonLd={productSchema}>
   <article class="preventa measure pt-5">
 
     <!-- ── HERO + CTA ───────────────────────────────────────── -->
