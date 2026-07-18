@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, resolveOgImage } from '@/lib/seo';
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, baseSchemaGraph, resolveOgImage } from '@/lib/seo';
 
 const HOME_OG_IMAGE_PATH = '/og/og-home.jpg';
 const HOME_OG_IMAGE_ALT = 'Tejidos de Vibración · Volumen I';
@@ -35,19 +35,11 @@ const siteUrl = 'https://tejidosdevibracion.com';
 const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).href;
 const ogImageUrl = resolveOgImage(ogImage);
 
-const defaultJsonLd: Record<string, unknown> = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Tejidos de Vibración',
-  description: 'Tejidos de Vibración · Volumen I del proyecto Tejidos de Realidad · Por Ricardo Polo',
-  url: siteUrl,
-  author: {
-    '@type': 'Person',
-    name: 'Ricardo Polo',
-  },
-};
-
-const schema = jsonLd ?? defaultJsonLd;
+// Grafo base (Organization + WebSite + Person) en TODA página estática que use
+// este layout — no solo un WebSite mínimo. El jsonLd por página (si se pasa) se
+// emite como bloque adicional; sus @id (p.ej. sobre-el-libro#person) resuelven
+// contra este grafo.
+const baseGraph = { '@context': 'https://schema.org', '@graph': baseSchemaGraph() };
 ---
 
 <!doctype html>
@@ -87,8 +79,9 @@ const schema = jsonLd ?? defaultJsonLd;
     <meta name="twitter:image" content={ogImageUrl} />
     <meta name="twitter:image:alt" content={ogImageAlt} />
 
-    <!-- JSON-LD -->
-    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <!-- JSON-LD · grafo base siempre + schema de página si lo hay -->
+    <script type="application/ld+json" set:html={JSON.stringify(baseGraph)} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body class={bodyClass} data-page={pageId} data-nivel={nivel}>
     <a href="#main-content" class="skip-link">Saltar al contenido</a>
