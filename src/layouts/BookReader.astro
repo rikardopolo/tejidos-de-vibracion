@@ -95,6 +95,12 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  {/* Favicon · emblema Mandala estelar (marca TDV) */}
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
   {/* Preload de las caras críticas del cuerpo del libro (EB Garamond 400 normal
       + itálica) · el LCP de la lectura es texto. Vite dedupe con @fontsource CSS. */}
   <link rel="preload" href={ebGaramond400} as="font" type="font/woff2" crossorigin />

@@ -50,6 +50,11 @@ const baseGraph = { '@context': 'https://schema.org', '@graph': baseSchemaGraph(
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    {/* Favicon · emblema Mandala estelar (marca TDV) */}
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
     {/* Preload de las caras críticas del cuerpo (EB Garamond 400 normal + itálica).
         Vite dedupe: la misma URL hasheada que pide @fontsource vía CSS → el preload
         se usa, no se desperdicia. Solo 2: precargar las 6 penalizaría. */}
