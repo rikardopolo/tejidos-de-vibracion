@@ -17,6 +17,7 @@
  */
 import OberturaLayout from '@/layouts/OberturaLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
+import FormularioTejedor from '@/components/book/FormularioTejedor.astro';
 import { getCollection, getEntry, render } from 'astro:content';
 import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
 import { SITE, breadcrumb, wrapGraph } from '@/lib/seo';
@@ -108,7 +109,19 @@ const pieceSchema = wrapGraph([
     ),
     publisher: { '@id': `${SITE}/#organization` },
     isPartOf: { '@id': `${SITE}/obertura#article` },
-    isAccessibleForFree: true,
+    // Paywall structured data (Google) · las piezas cerradas sirven el texto
+    // completo a los bots (allowlist arriba) pero el humano ve el muro; marcar
+    // isAccessibleForFree:false + hasPart legitima ese bypass (evita cloaking).
+    isAccessibleForFree: esPublica,
+    ...(esPublica
+      ? {}
+      : {
+          hasPart: {
+            '@type': 'WebPageElement',
+            isAccessibleForFree: false,
+            cssSelector: '.obertura-piece',
+          },
+        }),
     mainEntityOfPage: `${SITE}${canonicalPath}`,
     position: idx + 1,
   },
@@ -151,6 +164,16 @@ const pieceSchema = wrapGraph([
       </header>
     )}
   </article>
+
+  {/* Captura · lector ANÓNIMO (nivel 0) leyendo una pieza PÚBLICA (los bots
+      tienen nivel 1 → excluidos; las piezas cerradas ya muestran BloquePuerta). */}
+  {tieneAcceso && nivel === 0 && (
+    <aside class="pieza-captura">
+      <p class="pieza-captura__eyebrow">Cruza el umbral</p>
+      <p class="pieza-captura__linea">La Obertura completa —las quince piezas— es libre para los tejedores registrados. Un nombre y un correo. Eso es todo.</p>
+      <FormularioTejedor id="form-obertura-pieza" variant="inline" />
+    </aside>
+  )}
 
   {!tieneAcceso && (
     <BloquePuerta tipo="obertura-pieza" />
@@ -285,4 +308,30 @@ const pieceSchema = wrapGraph([
     white-space: nowrap;
   }
   .lectura-libre-hint a:hover { color: var(--oro-suave); border-bottom-color: var(--oro-suave); }
+
+  /* Captura bajo una pieza pública · lector anónimo (nivel 0) */
+  .pieza-captura {
+    margin: 4rem auto 0;
+    max-width: 32rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--obertura-rule);
+    text-align: center;
+  }
+  .pieza-captura__eyebrow {
+    font-family: var(--obertura-sans);
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--obertura-thread);
+    margin: 0 0 0.75rem;
+  }
+  .pieza-captura__linea {
+    font-family: var(--obertura-serif);
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--obertura-ink-faded);
+    margin: 0 0 1.5rem;
+    text-wrap: pretty;
+  }
 </style>
