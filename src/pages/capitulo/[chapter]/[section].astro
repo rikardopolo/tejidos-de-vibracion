@@ -123,7 +123,7 @@ const breadcrumbText = `${pieceLabel} · Cap. ${chapterNum}`;
 
 <CapituloLayout
   title={`${title} · Cap. ${romanChapter} · Tejidos de Vibración`}
-  description={subtitle ?? `${headerLabel} · Capítulo ${romanChapter}`}
+  description={`${subtitle ? subtitle + ' · ' : ''}Capítulo ${romanChapter} de Tejidos de Vibración, un libro de física cuántica y conciencia por Ricardo Polo`}
   chapter={chapter}
   chapterLabel={capitulo}
   chapterTitle={chapterEntry.data.title}

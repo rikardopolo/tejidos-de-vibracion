@@ -18,7 +18,6 @@ tags:
   - "efecto-fotoelectrico"
 ---
 
-import VozTejido from '@/components/book/VozTejido.astro';
 import PausaCientifica from '@/components/book/PausaCientifica.astro';
 import FiguraTDV from '@/components/FiguraTDV.astro';
 import Formula from '@/components/book/Formula.astro';
@@ -269,8 +268,40 @@ alemán de Einstein. (El término *fotón* lo acuñaría Gilbert Lewis
 veintiún años después, en 1926, en una carta a *Nature*. Einstein nunca
 lo usó.)
 
-Esta extensión resolvía elegantemente un fenómeno que la teoría
-ondulatoria de Maxwell no podía explicar.
+Esta extensión resolvía de un golpe un fenómeno que la teoría
+ondulatoria de Maxwell no podía explicar. Cuando la luz incide sobre un
+metal, arranca electrones de su superficie —eso era conocido desde
+Hertz—. Pero los detalles desconcertaban. Según la física ondulatoria
+clásica, una luz más intensa debería entregar más energía a cada
+electrón: subir el brillo tendría que arrancarlos con más fuerza. Y
+cualquier color de luz, si se la hacía suficientemente intensa, debería
+terminar por arrancarlos. Los experimentos decían lo contrario. La
+energía de cada electrón expulsado no dependía del brillo, sino del
+**color** —de la frecuencia—. Por debajo de cierta frecuencia umbral no
+salía ningún electrón, por más que se aumentara la intensidad hasta
+deslumbrar. Y por encima de ese umbral, subir el brillo producía **más**
+electrones, no electrones más veloces.
+
+La imagen de los cuantos de luz lo explicaba sin esfuerzo. Si la luz
+llega en paquetes de energía *hν*, cada electrón es expulsado por el
+impacto de **un solo** cuanto. La energía que se lleva es la del cuanto
+menos lo que cuesta arrancarlo del metal —una cantidad fija para cada
+material, la *función trabajo* Φ—. En una sola línea, la energía cinética
+máxima del electrón expulsado es:
+
+$$K_{\text{max}} = h\nu - \Phi$$
+
+Todo lo demás se sigue de ahí. Como el brillo es el número de cuantos,
+no la energía de cada uno, subir la intensidad multiplica los electrones
+pero no los acelera. Y por debajo de la frecuencia umbral *ν₀ = Φ/h*,
+donde *hν* ya no alcanza para pagar la función trabajo, no sale ningún
+electrón por más que se aumente el brillo. La luz tenue del color
+correcto arranca electrones que la luz intensa del color equivocado no
+puede tocar. La ecuación era falsable, arriesgada, y —cuando Robert
+Millikan la puso a prueba entre 1914 y 1916, convencido al principio de
+que la refutaría— resultó exacta. De su pendiente, Millikan extrajo la
+constante de Planck con cinco cifras significativas, midiendo la luz con
+la precisión de un relojero.**<sup>4</sup>**
 
 — ◇ —
 
@@ -284,3 +315,89 @@ ondulatoria de Maxwell no podía explicar.
   alt="Diagrama del efecto fotoeléctrico mostrando fotones expulsando electrones de una superficie metálica solo cuando la frecuencia supera el umbral"
   descripcion="El efecto fotoeléctrico explicado por Einstein en 1905. Cada fotón incidente con frecuencia ν sobre el metal puede liberar un electrón si su energía hν supera la función trabajo Φ del material. La energía cinética máxima del electrón emitido es K_max = hν − Φ. La pendiente de la recta es la constante de Planck h, universal para todos los metales. Por debajo de la frecuencia umbral ν₀ = Φ/h no hay emisión sin importar la intensidad luminosa — un resultado imposible de explicar con la teoría ondulatoria clásica de Maxwell."
 />
+
+Con Planck y Einstein, la vibración había dejado de ser continua. La
+energía de un oscilador, la luz que emite y absorbe: ambas venían en
+paquetes. Pero quedaba una pregunta que ninguno de los dos había tocado
+todavía. Si la luz —la vibración electromagnética— está cuantizada,
+¿qué pasa con la vibración de la materia misma? ¿Con el temblor de los
+átomos en un sólido, el calor entendido como movimiento? Esa vibración,
+¿también viene en paquetes? La respuesta —que Einstein empezaría a
+esbozar en 1907— es el tema de la siguiente sección.
+
+<PausaCientifica titulo="Qué está establecido y qué no sobre «lo cuántico»">
+
+**Está documentado y forma parte del consenso científico actual:**
+
+— La energía de la radiación de cuerpo negro se distribuye según la ley
+de Planck, y esa ley solo se deduce si la energía de los osciladores
+está cuantizada en múltiplos de *hν*. La constante *h* está medida con
+enorme precisión y es una de las constantes fundamentales de la física.
+
+— El efecto fotoeléctrico obedece la relación *K*<sub>max</sub> = *hν* −
+Φ, confirmada experimentalmente por Millikan (1914–1916). La luz
+intercambia energía con la materia en cuantos discretos. Esto es física
+de primer año, replicada en incontables laboratorios.
+
+**Requiere cautela o matización histórica:**
+
+— Es un error común decir que «Planck descubrió que la energía es
+discreta». Planck cuantizó los **osciladores** que emiten y absorben
+radiación, no el campo electromagnético, y durante años consideró el
+cuanto un artificio matemático, no una verdad física. La cuantización de
+la luz misma fue el paso —más audaz— de Einstein en 1905, resistido por
+la comunidad (incluido Planck) durante más de una década.
+
+— «Cuántico» no significa «todo o nada místico». Significa, en este
+contexto, que ciertas magnitudes solo toman valores discretos en vez de
+un continuo. Es una restricción precisa y matemática, no una metáfora
+espiritual.
+
+**Lo que la evidencia no respalda:**
+
+— Que la cuantización de la energía implique que «la realidad es
+pensamiento», que «el observador crea la materia» o que exista una
+«vibración de la consciencia» sintonizable. Ninguna de esas
+afirmaciones se sigue de la física del cuanto. El salto de *E = nhν* a
+tesis sobre la mente es un salto de carril —de la física a la
+metáfora—, y este libro lo marca como tal cada vez que aparece.
+
+*Referencia primaria (cuerpo negro):* Planck, M. (1901). «Über das
+Gesetz der Energieverteilung im Normalspectrum.» *Annalen der Physik*,
+4, 553–563. *Referencia primaria (fotoeléctrico):* Einstein, A. (1905),
+*Annalen der Physik*, 17, 132–148; confirmación en Millikan, R. A.
+(1916), *Physical Review*, 7, 355–388.
+
+</PausaCientifica>
+
+**◆ ◆ ◆**
+
+— ◇ —
+
+**Notas y referencias**
+
+**<sup>1</sup>** Max Planck (1858–1947) ocupaba la cátedra de física
+teórica de la Universidad de Berlín desde 1889, cuando sucedió a
+Gustav Kirchhoff. Para su biografía intelectual, ver: Heilbron, J. L.
+(1986). *The Dilemmas of an Upright Man: Max Planck as Spokesman for
+German Science*. Berkeley: University of California Press.
+
+**<sup>2</sup>** La comunicación de Planck del 14 de diciembre de 1900
+—«Zur Theorie des Gesetzes der Energieverteilung im Normalspectrum»,
+*Verhandlungen der Deutschen Physikalischen Gesellschaft*, 2, 237—
+se considera convencionalmente el acta de nacimiento de la teoría
+cuántica. El desarrollo completo apareció en Planck (1901), *Annalen
+der Physik*, 4, 553–563.
+
+**<sup>3</sup>** Einstein, A. (1905). «Über einen die Erzeugung und
+Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt.»
+*Annalen der Physik*, 17, 132–148. El adjetivo *heuristischen*
+(heurístico) del título es deliberado: Einstein presentó la
+cuantización de la luz como hipótesis de trabajo, no como afirmación
+ontológica cerrada.
+
+**<sup>4</sup>** Millikan, R. A. (1916). «A Direct Photoelectric
+Determination of Planck's *h*.» *Physical Review*, 7(3), 355–388.
+Millikan emprendió el experimento esperando refutar a Einstein; midió
+en cambio la constante de Planck con cinco cifras significativas y
+confirmó la relación *K*<sub>max</sub> = *hν* − Φ.

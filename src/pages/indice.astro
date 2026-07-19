@@ -17,6 +17,15 @@ const SLUG_MAP: Record<number, string> = {
   3: '/capitulo/cap-3-mundo-cuantico',
 };
 
+// Acto I · mes de apertura por capítulo (metadato editorial). El ESTADO
+// (soon vs abierto) NO vive aquí: se deriva del frontmatter `status` de cada
+// MDX más abajo, la misma fuente única que gobierna el gating y el sitemap.
+const ACTO_I = [
+  { n: 1, roman: 'I', mes: 'agosto' },
+  { n: 2, roman: 'II', mes: 'septiembre' },
+  { n: 3, roman: 'III', mes: 'octubre' },
+];
+
 // Load chapters visibles en el índice · 'published' renderiza contenido,
 // 'fragmento-permanente' renderiza BloquePuerta 'espera' (mismo runtime
 // behavior que un cap N1 no publicado · ver capitulo/[slug].astro).
@@ -70,50 +79,31 @@ const gestatingChapters = [
       </h2>
 
       {/*
-        Estrategia de monetización v2.0 · estados del Acto I:
-        - Cap. I  → libre con registro · abre en agosto 2026 (soon · fragmento-permanente hasta lanzamiento)
-        - Cap. II → libre con registro · abre en septiembre 2026 (soon)
-        - Cap. III → libre con registro · abre en octubre 2026 (soon)
-        Los caps IV-X siguen como `gestating` (Acto II y III · pagos).
-        Pre-venta del Acto II en el bloque `.toc-preventa` más abajo.
+        Estados del Acto I DERIVADOS del frontmatter `status` de cada MDX
+        (fuente única de verdad · la misma que gobierna el gating runtime y el
+        sitemap):
+        - status 'fragmento-permanente' → soon=true · badge "Libre · abre en {mes}"
+        - status 'published'            → soon=false · badge "Libre · requiere registro" · link activo
+        Los caps IV-X siguen `gestating` (Acto II/III · pagos).
 
-        En agosto 2026 (lanzamiento): cambiar Cap. I a
-          { soon: false, access: 'Libre · requiere registro' }
-          + status: "published" en cap-1-universo-sinfonia.mdx
+        Para ABRIR un capítulo del Acto I: cambiar SOLO su MDX a status:
+        "published" (un edit) → /indice, el gating y el sitemap se actualizan
+        juntos. Los meses viven en ACTO_I (frontmatter, arriba).
       */}
-      {[
-        {
-          n: 1,
-          roman: 'I',
-          access: 'Libre · abre en agosto',
-          soon: true,
-        },
-        {
-          n: 2,
-          roman: 'II',
-          access: 'Libre · abre en septiembre',
-          soon: true,
-        },
-        {
-          n: 3,
-          roman: 'III',
-          access: 'Libre · abre en octubre',
-          soon: true,
-        },
-      ].map(({ n, roman, access, soon }) => {
+      {ACTO_I.map(({ n, roman, mes }) => {
         const data = publishedByNumber.get(n);
-        const href = SLUG_MAP[n];
-        return data ? (
+        if (!data) return <TocEntry num={roman} title={`Capítulo ${roman}`} subtitle="" gestating />;
+        const soon = data.status !== 'published';
+        const access = soon ? `Libre · abre en ${mes}` : 'Libre · requiere registro';
+        return (
           <TocEntry
             num={roman}
             title={data.title}
             subtitle={data.subtitle ?? ''}
-            href={href}
+            href={SLUG_MAP[n]}
             access={access}
             soon={soon}
           />
-        ) : (
-          <TocEntry num={roman} title={`Capítulo ${roman}`} subtitle="" gestating />
         );
       })}
     </section>

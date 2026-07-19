@@ -11,6 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
+    "lint:contenido": "node scripts/content-lint.mjs",
     "optimize:images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
