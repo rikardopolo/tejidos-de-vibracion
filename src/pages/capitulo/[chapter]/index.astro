@@ -89,7 +89,7 @@ const leaf = (slug: string) => slug.split('/').pop() ?? slug;
 
 <CapituloLayout
   title={`Cap. ${romanChapter} · ${data.title} · Tejidos de Vibración`}
-  description={data.subtitle ?? `Capítulo ${romanChapter} del Volumen I`}
+  description={`${data.subtitle ? data.subtitle + ' · ' : ''}Capítulo ${romanChapter} de Tejidos de Vibración, un libro de física cuántica y conciencia por Ricardo Polo`}
   chapter={chapter}
   chapterLabel={capitulo}
   chapterTitle={data.title}
