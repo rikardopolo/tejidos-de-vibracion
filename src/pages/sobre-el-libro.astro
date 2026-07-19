@@ -2,6 +2,26 @@
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import LitLink from '@/components/book/LitLink.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
+import { SITE } from '@/lib/seo';
+
+// Book · misma entidad (@id) que referencia el portal hermano (TDR). El nodo
+// Person (author) lo define el grafo base global de Base.astro.
+const bookSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Book',
+  '@id': `${SITE}/#book`,
+  name: 'Tejidos de Vibración',
+  alternateName: 'Tejidos de Vibración · Volumen I',
+  author: { '@id': `${SITE}/sobre-el-libro#person` },
+  publisher: { '@id': `${SITE}/#organization` },
+  inLanguage: 'es',
+  bookFormat: 'https://schema.org/EBook',
+  datePublished: '2026',
+  url: `${SITE}/sobre-el-libro`,
+  image: `${SITE}/og/og-obertura.jpg`,
+  isPartOf: { '@type': 'BookSeries', name: 'Tejidos de Realidad' },
+  description: 'Volumen I del proyecto Tejidos de Realidad: una Obertura, tres actos y diez capítulos, en la frontera entre física cuántica rigurosa y contemplación.',
+};
 ---
 
 <LecturaLarga
@@ -9,6 +29,7 @@ import BloquePuerta from '@/components/book/BloquePuerta.astro';
   title="Sobre el libro · Tejidos de Vibración"
   description="Tejidos de Vibración: qué es, cómo se publica, para quién está escrito y quién lo escribe. Volumen I del proyecto Tejidos de Realidad."
   pageId="sobre"
+  jsonLd={bookSchema}
 >
   <article class="sobre pt-5">
    <div class="sobre-grid">

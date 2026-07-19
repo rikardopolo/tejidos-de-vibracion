@@ -19,7 +19,7 @@
  */
 import BookReader from '@/layouts/BookReader.astro';
 import CapituloToc from '@/components/book/CapituloToc.astro';
-import { chapterOgAlt, chapterOgImage } from '@/lib/seo';
+import { baseSchemaGraph, chapterOgAlt, chapterOgImage } from '@/lib/seo';
 
 interface Props {
   /** Título HTML del <head>. */
@@ -58,9 +58,15 @@ const {
 const resolvedChapterLabel = chapterLabel ?? 'Capítulo';
 const ogImage = chapterOgImage(chapter);
 const ogImageAlt = chapterOgAlt(resolvedChapterLabel, chapterTitle ?? title);
+
+// Grafo base (Organization + WebSite + Person) para los capítulos, que hoy no
+// emiten JSON-LD (BookReader default schemas=[]). El Article/Breadcrumb por
+// sección y el marcado de paywall (isAccessibleForFree) los añade F7.
+const baseGraph = { '@context': 'https://schema.org', '@graph': baseSchemaGraph() };
 ---
 
 <BookReader
+  schemas={[baseGraph]}
   title={title}
   description={description}
   og={{
