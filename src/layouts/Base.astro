@@ -2,6 +2,9 @@
 import '../styles/global.css';
 import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, baseSchemaGraph, canonicalFor, resolveOgImage } from '@/lib/seo';
 
+import ebGaramond400 from '@fontsource/eb-garamond/files/eb-garamond-latin-400-normal.woff2?url';
+import ebGaramond400i from '@fontsource/eb-garamond/files/eb-garamond-latin-400-italic.woff2?url';
+
 const HOME_OG_IMAGE_PATH = '/og/og-home.jpg';
 const HOME_OG_IMAGE_ALT = 'Tejidos de Vibración · Volumen I';
 
@@ -46,6 +49,12 @@ const baseGraph = { '@context': 'https://schema.org', '@graph': baseSchemaGraph(
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* Preload de las caras críticas del cuerpo (EB Garamond 400 normal + itálica).
+        Vite dedupe: la misma URL hasheada que pide @fontsource vía CSS → el preload
+        se usa, no se desperdicia. Solo 2: precargar las 6 penalizaría. */}
+    <link rel="preload" href={ebGaramond400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={ebGaramond400i} as="font" type="font/woff2" crossorigin />
 
     <title>{title}</title>
     <meta name="description" content={description} />

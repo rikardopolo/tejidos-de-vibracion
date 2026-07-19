@@ -24,6 +24,8 @@
  */
 import '@/styles/global.css';
 import SchemaJsonLd from '@/components/SchemaJsonLd.astro';
+import ebGaramond400 from '@fontsource/eb-garamond/files/eb-garamond-latin-400-normal.woff2?url';
+import ebGaramond400i from '@fontsource/eb-garamond/files/eb-garamond-latin-400-italic.woff2?url';
 import { DEFAULT_OG_ALT, OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, canonicalFor, resolveOgImage } from '@/lib/seo';
 
 interface Props {
@@ -93,6 +95,10 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  {/* Preload de las caras críticas del cuerpo del libro (EB Garamond 400 normal
+      + itálica) · el LCP de la lectura es texto. Vite dedupe con @fontsource CSS. */}
+  <link rel="preload" href={ebGaramond400} as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href={ebGaramond400i} as="font" type="font/woff2" crossorigin />
   <title>{title}</title>
   {description && <meta name="description" content={description} />}
 
