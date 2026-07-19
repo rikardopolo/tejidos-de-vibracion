@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, resolveOgImage } from '@/lib/seo';
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, SITE, canonicalFor, resolveOgImage } from '@/lib/seo';
 
 const HOME_OG_IMAGE_PATH = '/og/og-home.jpg';
 const HOME_OG_IMAGE_ALT = 'Tejidos de Vibración · Volumen I';
@@ -31,8 +31,7 @@ const {
   nivel = 0,
 } = Astro.props;
 
-const siteUrl = 'https://tejidosdevibracion.com';
-const canonicalUrl = canonical ?? new URL(Astro.url.pathname, siteUrl).href;
+const canonicalUrl = canonical ?? canonicalFor(Astro.url.pathname);
 const ogImageUrl = resolveOgImage(ogImage);
 
 const defaultJsonLd: Record<string, unknown> = {
@@ -40,7 +39,7 @@ const defaultJsonLd: Record<string, unknown> = {
   '@type': 'WebSite',
   name: 'Tejidos de Vibración',
   description: 'Tejidos de Vibración · Volumen I del proyecto Tejidos de Realidad · Por Ricardo Polo',
-  url: siteUrl,
+  url: `${SITE}/`,
   author: {
     '@type': 'Person',
     name: 'Ricardo Polo',
@@ -77,7 +76,7 @@ const schema = jsonLd ?? defaultJsonLd;
     <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
     <meta property="og:image:type" content={OG_IMAGE_TYPE} />
     <meta property="og:image:alt" content={ogImageAlt} />
-    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale" content="es_CO" />
     <meta property="og:site_name" content="Tejidos de Vibración" />
 
     <!-- Twitter / X -->
