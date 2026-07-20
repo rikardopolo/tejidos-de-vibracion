@@ -19,6 +19,7 @@
  */
 import BookReader from '@/layouts/BookReader.astro';
 import CapituloToc from '@/components/book/CapituloToc.astro';
+import CapituloRail from '@/components/book/CapituloRail.astro';
 import { baseSchemaGraph, chapterOgAlt, chapterOgImage } from '@/lib/seo';
 
 interface Props {
@@ -79,11 +80,17 @@ const baseGraph = { '@context': 'https://schema.org', '@graph': baseSchemaGraph(
   nivel={nivel}
   pageId={pageId}
   bodyClass="capitulo-body"
-  mainClass="cap-main"
+  mainClass={currentSlug ? 'cap-main cap-main--pieza' : 'cap-main'}
   breadcrumb={breadcrumbText ? { ornament: breadcrumbOrnament, text: breadcrumbText } : undefined}
   track={currentSlug ? { surface: 'capitulo', chapter, section: currentSlug } : undefined}
 >
   <CapituloToc slot="toc" chapter={chapter} current={currentSlug} chapterLabel={chapterLabel} />
+  {/* Raíl lateral permanente (escritorio) · solo en piezas de lectura, no en
+      la biblioteca (index sin currentSlug). El ☰ CapituloToc queda de fallback
+      móvil. Análogo a PieceRail de la Obertura (OberturaLayout:83). */}
+  {currentSlug && (
+    <CapituloRail chapter={chapter} current={currentSlug} chapterLabel={chapterLabel} />
+  )}
   <slot />
 </BookReader>
 
@@ -94,6 +101,247 @@ const baseGraph = { '@context': 'https://schema.org', '@graph': baseSchemaGraph(
     z-index: 1;
     padding: 2.5rem 1.5rem 6rem;
   }
+
+  /* ── Header ceremonial de pieza · formato «Umbral» (F1) ─────────
+     Portado de OberturaLayout `.piece-title`/`.piece-subtitle` con tokens
+     del libro (--serif, --oro-titulo). Scoped a `.capitulo-body` para no
+     tocar la Obertura ni subir reglas a system.css global. Sustituye al
+     `.title-1`/`.title-1__sub` genérico (3rem, --oro brillante). */
+  .capitulo-body .piece-header { margin: 0 0 2.25rem; }
+  .capitulo-body .piece-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.6rem, 4vw, 3.375rem);
+    line-height: 1.05;
+    letter-spacing: -0.005em;
+    color: var(--oro-titulo);
+    margin: 0;
+    text-wrap: balance;
+  }
+  .capitulo-body .piece-subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.5rem;
+    line-height: 1.3;
+    color: var(--tinta);
+    margin: 0.75rem 0 0;
+    text-wrap: balance;
+  }
+
+  /* ── Eyebrow de la biblioteca del capítulo · hueco real (F0) ────
+     `.section-eyebrow` se usaba en index.astro sin ninguna regla CSS
+     (solo existía `.section-eyebrow-bold` de la Obertura) → se veía como
+     párrafo plano. Reusa el patrón de `.eyebrow`. */
+  .capitulo-body .section-eyebrow {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--reposo);
+    margin: 0 0 0.5rem;
+  }
+
+  /* ── Retícula raíl│columna · formato «Umbral» (F2) ──────────────
+     Portado 1:1 de OberturaLayout .obertura-main--pieza / .piece-rail con
+     tokens del libro. SOLO en piezas de lectura (mainClass lleva --pieza);
+     la biblioteca (index · cap-main a secas) NO lo hereda. El raíl lo
+     inyecta CapituloLayout (CapituloRail) como hermano del <article>. */
+  .cap-main--pieza {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 3.25rem 1.5rem 6rem;
+    display: grid;
+    grid-template-columns: [rail] 12.25rem [content] minmax(0, 41.25rem);
+    column-gap: 4rem;
+    justify-content: center;
+    align-items: start;
+  }
+  .cap-main--pieza > :not(.piece-rail) { grid-column: content; min-width: 0; }
+
+  /* Raíl izquierdo (sticky) */
+  .piece-rail {
+    grid-column: rail;
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+    font-family: var(--sans);
+  }
+  .piece-rail__eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--oro-texto);
+    margin: 0;
+  }
+  .piece-rail__list { list-style: none; padding: 0; margin: 1.4rem 0 0; }
+  .piece-rail__item a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.28rem 0 0.28rem 0.65rem;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    color: var(--reposo);
+    font-size: 0.78rem;
+    line-height: 1.35;
+    transition: color 0.15s;
+  }
+  .piece-rail__item a:hover { color: var(--tinta); }
+  .piece-rail__num {
+    font-family: var(--mono);
+    font-size: 0.6875rem;
+    color: var(--reposo-claro);
+    flex-shrink: 0;
+  }
+  .piece-rail__name { min-width: 0; }
+  .piece-rail__item.is-current a {
+    border-left-color: var(--oro-suave);
+    color: var(--tinta);
+    font-weight: 500;
+  }
+  .piece-rail__item.is-current .piece-rail__num { color: var(--oro-texto); }
+
+  /* La portada (kind='portada') conserva su composición ceremonial: escapa
+     la retícula y oculta el raíl (su MDX ya renderiza <Frontispicio>). */
+  .cap-main--pieza:has(.kind-portada) {
+    display: block;
+    max-width: var(--col);
+    padding: 2.5rem 1.5rem 6rem;
+  }
+  .cap-main--pieza:has(.kind-portada) .piece-rail { display: none; }
+
+  /* Responsive · <1100px el raíl vuelve al ☰ del header (CapituloToc). */
+  @media (max-width: 68.75rem) {
+    .cap-main--pieza {
+      display: block;
+      max-width: var(--col);
+      padding: 2.5rem 1.5rem 6rem;
+    }
+    .cap-main--pieza .piece-rail { display: none; }
+  }
+
+  /* ── Marginalia = tarjetas tintadas por voz · «Umbral» (F3) ──────
+     Las cajas del Cap.1 (PausaCientifica/VozTejido/Laboratorio… ·
+     adaptadores del MISMO Marginalia.astro) YA emiten .marginalia--
+     cientifica/--voz, y system.css:630-631 YA colorea sus rótulos +
+     :1217 invierte --indigo en noche. Aquí solo AÑADIMOS el FONDO
+     tintado + borde por voz + padding de tarjeta (portado de
+     OberturaLayout:207-229). CSS GLOBAL: la marginalia sale del MDX
+     (innerHTML), el scoped no la alcanza. 3-clases → gana a system.css:573. */
+  .cap-main--pieza .prose .marginalia {
+    margin: 2.75rem 0;
+    padding: 1.6rem 1.9rem;
+    border-left: 2px solid var(--oro-suave);
+    background: color-mix(in srgb, var(--oro-suave) 9%, transparent);
+  }
+  .cap-main--pieza .prose .marginalia--cientifica {
+    border-left-color: var(--indigo);
+    background: color-mix(in srgb, var(--indigo) 8%, transparent);
+  }
+  .cap-main--pieza .prose .marginalia--voz {
+    border-left-color: var(--verde);
+    background: color-mix(in srgb, var(--verde) 8%, transparent);
+  }
+  /* rótulo de la Voz del Tejido a AA (el --verde de la base falla contraste). */
+  .cap-main--pieza .prose .marginalia--voz .marginalia__kind { color: var(--verde-texto); }
+
+  /* ── Encabezados de sección numerados · «Umbral» (F4) ────────────
+     Portado de OberturaLayout:365-448 con tokens del libro. Estiliza los
+     headers HTML crudos <h2 class="chapter"> / <h3 class="sub"> /
+     <h4 class="sub-sub"> de las piezas §. .cap-main--pieza .prose h_.clase
+     → gana a `.prose h_` base de system.css. */
+  .cap-main--pieza .prose h2.chapter {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+    line-height: 1.15;
+    margin: 5rem 0 2rem;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+    color: var(--tinta);
+  }
+  .cap-main--pieza .prose h2.chapter .num {
+    display: block;
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--oro-suave);
+    margin-bottom: 0.5rem;
+  }
+  .cap-main--pieza .prose h3.sub {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-style: italic;
+    font-size: 1.42em;
+    line-height: 1.22;
+    margin: 3rem 0 1.4rem;
+    color: var(--tinta);
+    letter-spacing: 0.003em;
+    text-wrap: balance;
+    padding-top: 1.2rem;
+    border-top: 1px solid color-mix(in srgb, var(--tinta) 8%, transparent);
+    position: relative;
+  }
+  .cap-main--pieza .prose h3.sub::before {
+    content: "◆";
+    position: absolute;
+    top: -0.55em;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--pergamino);
+    padding: 0 0.6em;
+    font-size: 0.55em;
+    color: var(--oro-suave);
+    font-style: normal;
+    letter-spacing: 0;
+  }
+  .cap-main--pieza .prose h3.sub .num {
+    font-family: var(--sans);
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.78em;
+    color: var(--reposo);
+    margin-right: 0.55em;
+    letter-spacing: 0.05em;
+  }
+  .cap-main--pieza .prose h4.sub-sub {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-style: italic;
+    font-size: 1.06em;
+    line-height: 1.3;
+    margin: 2.4rem 0 1rem;
+    color: var(--oro-suave);
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+  .cap-main--pieza .prose h4.sub-sub::before {
+    content: "◇ ";
+    color: var(--oro-suave);
+    font-style: normal;
+    margin-right: 0.4em;
+    opacity: 0.8;
+  }
+
+  /* ── Cuerpo poético del Umbral (pieza kind=umbral) · «Umbral» (F4) ──
+     Tratamiento itálico centrado del cuerpo SIN el eyebrow del componente
+     UmbralPoetico (el piece-header ya titula la pieza «Umbral Poético»).
+     Envuelve los párrafos en <div class="umbral-cuerpo"> en 01-umbral.mdx. */
+  .cap-main--pieza .prose .umbral-cuerpo {
+    max-width: 34rem;
+    margin: 1.5rem auto 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: var(--tinta-suave);
+  }
+  .cap-main--pieza .prose .umbral-cuerpo p { text-align: left; hyphens: manual; margin: 0 0 1.1rem; }
+  .cap-main--pieza .prose .umbral-cuerpo p:last-child { margin-bottom: 0; }
 
   /* ── Justify + hyphens · SOLO cuerpo .prose (decisión 4) ──────── */
   .capitulo-body .prose > p {

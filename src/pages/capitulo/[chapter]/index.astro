@@ -97,10 +97,10 @@ const leaf = (slug: string) => slug.split('/').pop() ?? slug;
   pageId={`capitulo-${chapterNum}`}
 >
   <article class="measure">
-    <header class="stack-sm">
+    <header class="piece-header">
       <p class="eyebrow">Acto {data.act} · Capítulo {romanChapter}</p>
-      <h1 class="title-1">{data.title}</h1>
-      {data.subtitle && <p class="title-1__sub">{data.subtitle}</p>}
+      <h1 class="piece-title">{data.title}</h1>
+      {data.subtitle && <p class="piece-subtitle">{data.subtitle}</p>}
     </header>
 
     <div class="flourish flourish--rule"></div>
