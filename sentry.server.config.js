@@ -29,7 +29,10 @@ function limpiarUrl(urlLike) {
 
 const dsn = (process.env.SENTRY_DSN || '').trim();
 
-if (dsn) {
+// Idempotente: la auto-inyección de @sentry/astro NO corre bajo Astro 7, así que
+// este módulo se importa explícitamente desde src/middleware.ts (donde sí se evalúa
+// en la función serverless). El guard !getClient() lo hace seguro ante doble import.
+if (dsn && !Sentry.getClient()) {
   Sentry.init({
     dsn,
     environment: process.env.VERCEL_ENV || 'development',
