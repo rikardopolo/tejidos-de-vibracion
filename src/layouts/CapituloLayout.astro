@@ -8,14 +8,17 @@
  * Este wrapper sólo inyecta:
  *   - su TOC (CapituloToc) en el slot izquierdo del header
  *   - su breadcrumb central (◆ §N · Cap. N)
- *   - su SEO (index,follow heredado de BookReader · OG "Tejidos de Vibración" · sin schema)
+ *   - su SEO (robots reenviado a BookReader · OG "Tejidos de Vibración" · sin schema)
  *   - sus overrides de cuerpo (.prose justify+hyphens · .measure h2)
  *
  * El cuerpo de lectura (.prose, .measure, .marginalia) y la tipografía
  * vienen de system.css (importado por BookReader vía global.css).
  *
- * SEO: indexable (index,follow) por el default de BookReader — los capítulos
- * son contenido público del libro.
+ * SEO: por defecto indexable (index,follow de BookReader). Las páginas de
+ * capítulo pasan `robots="noindex,follow"` mientras su capítulo siga
+ * `fragmento-permanente` (sirven muro a todos, incl. bots = thin content);
+ * al publicarse pasan `undefined` → cae al default indexable. Coherente con
+ * el sitemap, que filtra por `status === 'published'`.
  */
 import BookReader from '@/layouts/BookReader.astro';
 import CapituloToc from '@/components/book/CapituloToc.astro';
@@ -41,6 +44,8 @@ interface Props {
   /** Nivel de acceso (gating) · propagado a body[data-nivel]. */
   nivel?: 0 | 1 | 2 | 3;
   pageId?: string;
+  /** <meta robots> · reenviado a BookReader. undefined → default indexable. */
+  robots?: string;
 }
 
 const {
@@ -54,6 +59,7 @@ const {
   breadcrumbText,
   nivel = 1,
   pageId,
+  robots,
 } = Astro.props;
 
 const resolvedChapterLabel = chapterLabel ?? 'Capítulo';
@@ -70,6 +76,7 @@ const baseGraph = { '@context': 'https://schema.org', '@graph': baseSchemaGraph(
   schemas={[baseGraph]}
   title={title}
   description={description}
+  robots={robots}
   og={{
     type: 'article',
     siteName: 'Tejidos de Vibración',

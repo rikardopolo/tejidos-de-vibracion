@@ -95,6 +95,7 @@ const leaf = (slug: string) => slug.split('/').pop() ?? slug;
   chapterTitle={data.title}
   nivel={nivel}
   pageId={`capitulo-${chapterNum}`}
+  robots={data.status === 'published' ? undefined : 'noindex,follow'}
 >
   <article class="measure">
     <header class="piece-header">
