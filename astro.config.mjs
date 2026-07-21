@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import vercel from '@astrojs/vercel';
+import sentry from '@sentry/astro';
 import { unified } from '@astrojs/markdown-remark';
 import remarkSeparators from './src/lib/remark-separators.mjs';
 import remarkMath from 'remark-math';
@@ -38,7 +39,20 @@ export default defineConfig({
   markdown: {
     processor: markdownProcessor,
   },
-  integrations: [mdx({ processor: markdownProcessor })],
+  // Sentry · SOLO servidor. enabled.client:false es imprescindible: sin él la
+  // integración inyecta el SDK de navegador en cada página AUNQUE no exista
+  // sentry.client.config.* (fallback buildClientSnippet) y la CSP script-src 'self'
+  // lo bloquearía. Server-only ⇒ cero cambios de CSP. Con output:'static' solo
+  // instrumenta las funciones serverless (/api/* + prerender=false). Sin subida
+  // de source maps (no hay SENTRY_AUTH_TOKEN). Init + scrubbing en
+  // sentry.server.config.js.
+  integrations: [
+    sentry({
+      enabled: { client: false, server: true },
+      sourceMapsUploadOptions: { enabled: false },
+    }),
+    mdx({ processor: markdownProcessor }),
+  ],
   build: {
     inlineStylesheets: 'auto',
   },
