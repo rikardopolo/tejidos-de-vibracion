@@ -39,6 +39,28 @@ const ANDAMIAJE = [
   { nombre: 'Nota técnica de producción', re: /Nota t[ée]cnica:/gi },
   { nombre: 'Test del Triple/Triple Lector', re: /(Test del )?Tripl[e] Lector/gi },
   { nombre: 'personas del Triple Lector (Sara/Lucía/Mateo)', re: /Sara\b[\s\S]{0,40}?\bLuc[íi]a\b|Luc[íi]a\b[\s\S]{0,40}?\bMateo\b/gi },
+
+  // --- Retoques book-wide del Acto I (F1-F3, 2026-07) ---
+  // El rigor se EJERCE, no se anuncia ni se tabula. Estas reglas impiden la
+  // recaída en los tics que el art pass del Cap. 4 eliminó y que F1-F3
+  // limpiaron del Acto I. Ver Plan_Retoques_BookWide_ActoI_TDV_v1.md.
+
+  // F1 · rúbrica tabulada y fugas del taller (rompen la ficción de libro terminado)
+  { nombre: 'rótulo [PAUSA CIENTÍFICA] en texto plano', re: /\[\s*P\s*A\s*U\s*S\s*A\s+C\s*I\s*E\s*N\s*T\s*[ÍI]\s*F\s*I\s*C\s*A\s*\]/gi },
+  { nombre: 'fuga del taller (manuscrito/material original/Plan vN)', re: /manuscrito antiguo|material\s+original de Ricardo|\bPlan v\d/gi },
+
+  // F2 · tabulación del veredicto (el juicio va DENTRO de la frase)
+  { nombre: 'rúbrica "Veredicto epistemológico"', re: /Veredicto epistemol[óo]gico/gi },
+  { nombre: 'estribillo "El puente honesto"', re: /puente honesto/gi },
+  { nombre: 'rótulo "Posición editorial honesta"', re: /Posici[óo]n editorial honesta/gi },
+
+  // F3 · el método hablando de sí mismo en vez del mundo
+  // OJO: NO usar el patrón desnudo "del libro entero". En obertura/09-estados
+  // (§9.4-9.5, seguridad psicológica) marca énfasis legítimo sobre contenido
+  // clínico —"uno de los más importantes del libro entero"— y una regla amplia
+  // presionaría a debilitar ese copy. Se exige el contexto de rigor/honestidad.
+  { nombre: 'meta-elogio del propio rigor', re: /(rigor|honestidad epist[ée]mica) del libro entero|que sostiene este libro|el compromiso editorial|es decisiva para el rigor|aqu[íi] es donde el rigor importa|libre de especulaci[óo]n/gi },
+  { nombre: 'invocación mecánica del método', re: /disciplina del Doble Carril|Doble Carril editorial|marco epist[ée]mico apropiado/gi },
 ];
 
 // --- Muletillas (REPORTA, conteo por capítulo) ---
