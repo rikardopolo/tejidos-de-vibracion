@@ -91,16 +91,30 @@ const chapterSections = defineCollection({
      * - 'cierre'   · Cierre Vibracional (síntesis + mantra final)
      */
     kind: z.enum(['portada', 'umbral', 'anclaje', 'numbered', 'cierre']),
-    /** Número §N.M para secciones tipo 'numbered' (ej. "1.1"). */
-    num: z.string().optional(),
+    /**
+     * Número §N.M para secciones tipo 'numbered' (ej. "1.1").
+     * E3 · SE ALMACENA PELADO, sin «§»: el prefijo lo pone quien lo muestra
+     * (`pieceMarker()` devuelve el pelado; `breadcrumbLabel()` antepone el §).
+     * El regex convierte en invariante lo que hoy es disciplina humana (33/33).
+     */
+    num: z.string().regex(/^\d+(\.\d+)+$/, 'num va PELADO, sin «§» (ej. "4.1")').optional(),
     /** Título principal de la sección. */
     title: z.string(),
     /** Subtítulo opcional. */
     subtitle: z.string().optional(),
     /** Orden global dentro del capítulo (0, 1, 2, …). */
     order: z.number(),
-    /** Etiqueta corta del header sticky (ej. "Capítulo 1 · §1.1"). */
-    headerLabel: z.string(),
+    /**
+     * Etiqueta corta del header sticky (ej. "Cap. 1 · §1.1").
+     * E3 · aquí el número SÍ lleva «§» porque es superficie de render.
+     * Verificado sobre las 48 piezas vivas: 0 incumplimientos.
+     */
+    headerLabel: z
+      .string()
+      .regex(
+        /^Cap\. \d+ · (§\d+(\.\d+)+|Portada|Umbral|Anclaje|Cierre)$/,
+        'headerLabel debe ser "Cap. N · §N.M" (o · Portada|Umbral|Anclaje|Cierre)',
+      ),
     /**
      * Estado editorial · mismo significado que en colección `book`:
      * - 'fragmento-permanente' · escrito pero no disponible · BloquePuerta espera

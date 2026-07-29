@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { analizarCorpus } from './content-lint.mjs';
+import { analizarCorpus, flattenBody } from './content-lint.mjs';
 
 // --- Fixture: dos capítulos con contenido de conteo conocido ---
 const base = mkdtempSync(path.join(tmpdir(), 'content-lint-'));
@@ -43,14 +43,33 @@ Confirmado con precisión absoluta, con precisión absoluta.
 `,
 );
 
+// Cap.4 (F2): el mismo tic de meta-elogio, pero PARTIDO por el hard-wrap a ~70
+// caracteres, como están los MDX reales de Cap.2 y Cap.3. Antes del aplanado de
+// párrafo esto era invisible al matcher línea-a-línea y se colaba: es el caso
+// exacto de cap-2/12-schrodinger.mdx:394-395, que sobrevivió a la poda F3.
+mkdirSync(path.join(base, 'cap4'), { recursive: true });
+writeFileSync(
+  path.join(base, 'cap4', 'z.mdx'),
+  `---
+title: "C4"
+---
+La pregunta será otra, más sutil y más bonita. Y la honestidad
+epistémica del libro, modelada en cada Pausa Científica, será la brújula.
+
+Este párrafo aparte NO debe fundirse con el anterior.
+`,
+);
+
 const capitulos = [
   { tag: 'Obertura', root: 'obertura', moMin: 2, moMax: 10 }, // 3 en rango → OK
   { tag: 'Cap.3', root: 'cap3', moMin: 0, moMax: 0 }, // 0 en rango → OK; falla por andamiaje
+  { tag: 'Cap.4', root: 'cap4', moMin: 0, moMax: 0 }, // 0 en rango → OK; falla por andamiaje partido
 ];
 
 const { report, promesas, violaciones } = analizarCorpus(capitulos, base);
 const ober = report.find((r) => r.cap.tag === 'Obertura');
 const c3 = report.find((r) => r.cap.tag === 'Cap.3');
+const c4 = report.find((r) => r.cap.tag === 'Cap.4');
 
 test('cuenta Meta-Observador case-insensitive (3 en el fixture)', () => {
   assert.equal(ober.moTotal, 3);
@@ -79,8 +98,25 @@ test('énfasis sospechoso: blockquote con asteriscos impares', () => {
 });
 
 test('regla FALLA: andamiaje suma violación aunque MO esté en rango', () => {
-  // Obertura OK (0 viol), Cap.3 MO OK pero andamiaje presente → 1 violación total.
-  assert.equal(violaciones, 1);
+  // Obertura OK (0 viol); Cap.3 y Cap.4 con andamiaje → 2 violaciones.
+  assert.equal(violaciones, 2);
+});
+
+// --- F2 · el arreglo del hard-wrap -----------------------------------------
+test('atrapa el andamiaje PARTIDO por el salto de línea', () => {
+  const hit = c4.andamiajeHits.find((h) => h.nombre.includes('meta-elogio'));
+  assert.ok(hit, 'debe atrapar "honestidad\\nepistémica del libro" partida en dos líneas');
+});
+
+test('el reporte señala la línea REAL, no un offset del texto aplanado', () => {
+  const hit = c4.andamiajeHits.find((h) => h.nombre.includes('meta-elogio'));
+  // "honestidad" está en la línea 4 del archivo (tras el frontmatter de 3 líneas).
+  assert.equal(hit.line, 4);
+});
+
+test('el aplanado NO cruza párrafos (una línea en blanco corta el match)', () => {
+  const { flat } = flattenBody(['uno', 'dos', '', 'tres']);
+  assert.equal(flat, 'uno dos\ntres');
 });
 
 test.after(() => rmSync(base, { recursive: true, force: true }));
