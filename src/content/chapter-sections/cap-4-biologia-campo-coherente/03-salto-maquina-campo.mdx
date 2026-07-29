@@ -21,9 +21,10 @@ tags:
 
 import VozTejido from '@/components/book/VozTejido.astro';
 import PausaReflexiva from '@/components/book/PausaReflexiva.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
 
 
-*Del cuerpo-máquina de Descartes al cuerpo que negocia con la física cuántica*
+*Cuando la máquina resultó estar escuchando*
 
 — ◇ —
 
@@ -47,6 +48,8 @@ La mejor manera de sentir lo que eso significa es esta. Piensa en un taxi que re
 
 Hay incluso casos en que la vida parece burlar la torpeza del azar. Una proteína que debe hallar un único sitio en la larguísima cinta del ADN —un solo renglón en una biblioteca de miles de millones de letras— lo encuentra más rápido de lo que un tanteo ciego en tres dimensiones predeciría. ¿Su truco? No dar tumbos por el espacio abriendo páginas al azar, sino combinar ese nado libre con un deslizamiento a lo largo de la hebra, como quien busca una palabra pasando el dedo por el renglón en vez de hojear el libro entero. Reduce así la dimensión del problema, y gana un factor de decenas o cientos.³
 
+{/*SIMULADOR SIM 4.1.1 «Encuentro enzima-sustrato»: comparar la búsqueda por difusión libre en 3D frente al deslizamiento 1D a lo largo de la hebra; el techo de Smoluchowski como límite físico del encuentro.*/}
+
 Aquí es donde hay que resistir la tentación fácil. Nada de esto exige invocar un campo místico, una energía sutil, una fuerza vital que organice el baile. Basta con la geometría, con la química, con una organización del espacio afinada por miles de millones de años de ensayo y error. La respuesta honesta al enigma de la puntería celular no es "hay magia". Es algo mucho más interesante: la vida ha aprendido a operar en el límite mismo de lo que la materia consiente.
 
 Pero justo esa constatación abre una puerta más honda. Porque si la vida vive al filo de lo que la física clásica permite, la pregunta inevitable es si no habrá cruzado, en alguno de sus gestos más antiguos, ese filo. Si no estará usando —para lograr lo que el mundo clásico no explica— la capa más profunda y más extraña de la materia: la capa cuántica, ese sótano del universo donde una cosa puede estar en varios sitios a la vez, y donde las certezas de nuestra escala se disuelven.
@@ -67,13 +70,24 @@ Para ver la forma exacta de ese viaje, Engel y Fleming enfrían su muestra —el
 
 Lo que ven, en cambio, son latidos.
 
-La señal no decae limpiamente. Pulsa: va y viene, va y viene, con un ritmo que se sostiene mucho más de lo que cualquier proceso de saltos ciegos podría mantener. Es la firma inconfundible de una *superposición coherente*. Durante esos instantes, la excitación no está tomando una ruta y luego otra: está explorando todas a la vez. Imagínalo como un excursionista que, en lugar de probar un sendero del bosque y desandarlo si se equivoca, pudiera recorrer todos los senderos simultáneamente, tantear el bosque entero de una vez, y salir por el atajo. La palabra que Engel escribirá, con el cuidado de quien mide cada término, es la que nadie esperaba encontrar en un ser vivo: *coherencia cuántica*. En un pigmento vegetal. En una molécula que la vida lleva usando desde hace más de tres mil millones de años.
+La señal no decae limpiamente. Pulsa: va y viene, va y viene, con un ritmo que se sostiene mucho más de lo que cualquier proceso de saltos ciegos podría mantener. Es la firma inconfundible de una *superposición coherente*. Durante esos instantes, la excitación no está tomando una ruta y luego otra: está explorando todas a la vez. Imagínalo como un excursionista que, en lugar de probar un sendero del bosque y desandarlo si se equivoca, pudiera recorrer todos los senderos simultáneamente, tantear el bosque entero de una vez, y salir por el atajo. La palabra que Engel escribirá, con el cuidado de quien mide cada término, es la que nadie esperaba encontrar en un ser vivo: *coherencia cuántica*.⁵ En un pigmento vegetal. En una molécula que la vida lleva usando desde hace más de tres mil millones de años.
 
 Aquí tengo que detener la escena para serte fiel, porque la historia real es más honesta —y, para mi gusto, más hermosa— que su leyenda. Aquel experimento se hizo en frío, a setenta y siete grados sobre el cero absoluto, no al calor de una hoja bajo el sol de la tarde. Y el entusiasmo que estalló después —la idea de que la vida *usa* la coherencia cuántica para ser eficiente incluso a la temperatura de tu cuerpo— resultó, con los años, bastante más enredado de lo que aquella primavera prometía. Otros laboratorios miraron con más cuidado, y hacia 2020 el veredicto se había afinado: las coherencias puramente electrónicas, esas que tanto emocionaron, se deshacen demasiado rápido a temperatura corporal como para gobernar nada; y buena parte de las oscilaciones de larga vida que se habían tomado por magia cuántica eran, en realidad, de origen vibracional, algo más terrenal.⁴ La ventaja que lo cuántico aporta sobre un buen modelo clásico, cuando se la mide con lupa, es de apenas un puñado por ciento.
 
 Podría parecer una decepción. No lo es. Porque un puñado por ciento, para una planta que pelea por sobrevivir en la penumbra del sotobosque, puede ser la diferencia entre vivir y morir —y porque la pregunta que Engel y Fleming legitimaron con su medición ya no pudo volver a cerrarse. Antes de ellos, sugerir que la vida usaba mecánica cuántica era casi una herejía romántica. Después de ellos, se convirtió en una pregunta científica seria, con laboratorios, con presupuestos, con debate. Esa es su verdadera herencia: el veterano que aprendió a leer el femtosegundo y el joven que firmó primero el artículo no demostraron que la hoja fuera un ordenador cuántico. Demostraron algo más duradero —que la pregunta era legítima—, y nos obligaron a volverla hacia adentro, hacia la célula que somos.
 
 </VozTejido>
+
+<FiguraTDV
+  imagen="/assets/cap-4/figura-4-1-1.png"
+  numero="4.1.1"
+  titulo="El complejo FMO como antena"
+  subtitulo="lo esperado decae; lo medido pulsa"
+  alt="Lámina en tres paneles: el complejo FMO con siete pigmentos y la medición a 77 K; una gráfica donde la curva clásica decae limpiamente mientras la señal observada oscila con amplitud decreciente; y un bosque cuyos senderos se recorren a la vez."
+  descripcion="La diferencia entre lo esperado y lo que Engel y Fleming observaron en 2007. A 77 K, la señal del complejo FMO no siguió un decaimiento clásico y monótono: pulsó alrededor de él. Esas oscilaciones fueron interpretadas como firma de coherencia cuántica, una excitación que explora rutas simultáneas en vez de tantearlas una por una. El experimento se hizo en frío, no a temperatura corporal."
+  ancho={1536}
+  alto={1024}
+/>
 
 **◆**
 
@@ -83,15 +97,50 @@ Y al volver la mirada hacia adentro, ocurre algo curioso: descubrimos que lo cu�
 
 Piensa en el hierro. No en el de los clavos, sino en el que llevas en la sangre: el átomo de hierro alojado en el grupo hemo de tu hemoglobina, el que en este instante transporta oxígeno a cada célula de tu cuerpo. Ese átomo funciona como un interruptor, pero su clic no es mecánico, no es una palanca que sube y baja: es un reacomodo cuántico de sus electrones. Cuando el hierro no lleva oxígeno, cuatro de sus electrones andan, por decirlo así, descasados, y el átomo asoma levemente fuera del anillo plano que lo sostiene. En el preciso instante en que atrapa una molécula de aire, esos electrones se reordenan, el hierro pierde su carácter magnético y cae al plano del anillo. Y ese desplazamiento minúsculo —apenas unas décimas de milmillonésima de metro— tira de toda la proteína circundante como quien tira de un hilo suelto, y hace que la hemoglobina agarre el siguiente oxígeno con más avidez cuanto más ya lleva encima. Linus Pauling midió ese clic magnético en 1936, y con esa medición fundó una ciencia entera, la química bioinorgánica: un puñado de electrones en sus peldaños cuánticos gobernando, con toda literalidad, tu respiración.⁸
 
+<FiguraTDV
+  imagen="/assets/cap-4/figura-4-1-2.png"
+  numero="4.1.2"
+  titulo="El hierro del hemo y el salto de espín"
+  subtitulo="cuatro electrones cambian de peldaño"
+  alt="Lámina comparativa en tres paneles: sin oxígeno, el átomo de hierro bermellón sobresale del plano de una porfirina con cuatro nitrógenos y cuatro espines paralelos; con O₂, los espines se emparejan y el hierro cae al plano; una hemoglobina de cuatro sitios muestra la cooperatividad resultante."
+  descripcion="El interruptor de la hemoglobina es electrónico. Sin oxígeno, cuatro electrones están descasados y el hierro asoma fuera del anillo de porfirina. Al atrapar O₂ se reordenan, el átomo pierde su carácter magnético y cae unas décimas de nanómetro hasta el plano. Ese movimiento diminuto cambia la proteína completa y aumenta su avidez por el siguiente oxígeno, el clic magnético que Pauling y Coryell midieron en 1936."
+  ancho={1536}
+  alto={1024}
+/>
+
 Hay un lugar aún más asombroso. En las plantas y las cianobacterias, un diminuto engranaje de cuatro átomos de manganeso y uno de calcio, cosidos por puentes de oxígeno, hace algo que ninguna industria humana sabe imitar con esa eficiencia: rompe la molécula de agua para arrancarle los electrones y devolver a la atmósfera el oxígeno que respiramos. Su estructura exacta no se conoció hasta 2011, y es, otra vez, química de orbitales cuánticos, una maquinaria de precisión que la evolución ensambló hace más de dos mil millones de años y que sostiene, calladamente, casi toda la vida del planeta.⁹
 
 Conviene, eso sí, no embriagarse, porque el asombro sin disciplina se vuelve crédulo. No todos los metales de la vida hacen la misma magia. El zinc de algunas enzimas, por ejemplo, no es un interruptor sino una tenaza: sujeta una molécula, la coloca en su sitio, la prepara para reaccionar, pero él mismo no cambia de estado ni cicla. Distinguir el hierro que conmuta del zinc que solo sujeta no es un tecnicismo de químicos: es exactamente el gesto que separa el asombro serio —el que mira con cuidado— de la fascinación indiscriminada que ve prodigios cuánticos en cada rincón. En este libro haremos ese gesto una y otra vez.
+
+<FiguraTDV
+  imagen="/assets/cap-4/figura-4-1-3.png"
+  numero="4.1.3"
+  titulo="Los metales de la vida"
+  subtitulo="interruptor, engranaje y tenaza"
+  alt="Tabla ilustrada de tres filas y cuatro columnas que compara hierro, manganeso y zinc. El hierro del hemo conmuta al atrapar oxígeno; el cúmulo Mn₄CaO₅ cicla para romper agua; el zinc sujeta una molécula sin cambiar de estado. Viñetas laterales muestran la porfirina, el cúmulo de cuatro manganesos, un calcio y cinco oxígenos, y la tenaza de zinc."
+  descripcion="Tres metales, tres comportamientos que no deben confundirse. El hierro del hemo cambia su configuración electrónica; el cúmulo Mn₄CaO₅ de plantas y cianobacterias ejecuta el ciclo que extrae electrones del agua; el zinc de algunas enzimas solo coloca y sujeta el sustrato. La tabla separa el metal que conmuta del que hace de tenaza, el gesto de precisión que evita llamar «cuántico» a todo lo asombroso."
+  ancho={1536}
+  alto={1024}
+/>
 
 Y no son solo los metales. Una vez que la ciencia empezó a mirar con lentes nuevas, la vida cuántica apareció en lugares insospechados. Toma el caso del petirrojo europeo, ese pájaro pequeño y familiar que cada otoño emprende, de noche, un viaje de cientos de kilómetros. ¿Cómo encuentra el rumbo en la oscuridad, sin estrellas fijas por las que guiarse? En los años setenta, los biólogos Wolfgang y Roswitha Wiltschko encerraron petirrojos en jaulas rodeadas de bobinas capaces de alterar a voluntad el campo magnético, y descubrieron algo desconcertante. Los pájaros llevaban, en efecto, una brújula interna; pero no era una brújula como la nuestra. No distinguía el norte del sur por la polaridad del campo, sino por su *inclinación* —el ángulo con que las líneas magnéticas se hunden hacia la tierra—. Y había algo más raro todavía: la brújula solo funcionaba con luz. En la oscuridad total, o bajo una luz roja, el petirrojo perdía el rumbo; bajo luz azul o verde, lo recuperaba. Una brújula que necesita luz para funcionar no se parece a ningún imán conocido. Se parece a un ojo.
 
 La explicación que hoy se acepta —y que sigue siendo un modelo, no un dogma cerrado— es que en la retina del ave hay una proteína, el criptocromo, en la que la luz arranca un par de electrones y los deja momentáneamente "hermanados" en un estado cuántico delicadísimo. El ángulo del campo magnético terrestre inclina la balanza de ese estado hacia un lado o hacia otro, y de esa inclinación nace la señal del rumbo. Es un efecto genuinamente cuántico —una danza de espines correlacionados— y tiene una huella que lo delata: si a los pájaros se los expone a campos de radiofrecuencia muy débiles, del tipo exacto que perturbaría esa danza de espines, la brújula se desorienta. La física predijo esa vulnerabilidad; el experimento la confirmó.⁶
 
+<FiguraTDV
+  imagen="/assets/cap-4/figura-4-1-4.png"
+  numero="4.1.4"
+  titulo="La brújula del petirrojo"
+  subtitulo="un campo que el ave probablemente ve"
+  alt="Lámina en tres paneles: un petirrojo junto a líneas magnéticas que se hunden hacia la tierra y una cota angular; un ojo con criptocromo y dos electrones correlacionados en bermellón; dos vistas nocturnas iguales, con patrón bajo luz azul o verde y sin él bajo luz roja u oscuridad, junto a ondas de radiofrecuencia."
+  descripcion="La brújula del petirrojo europeo no distingue polaridad: lee la inclinación del campo terrestre. Solo funciona con luz azul o verde y se pierde con luz roja o a oscuras. El modelo del par de radicales sitúa el mecanismo en el criptocromo de la retina, donde dos electrones correlacionados responden al ángulo del campo. La desorientación causada por radiofrecuencias muy débiles fue una predicción física confirmada por el experimento; el mecanismo sigue siendo un modelo, no un dogma cerrado."
+  ancho={1536}
+  alto={1024}
+/>
+
 Detente un instante en lo que esto implica, porque es fácil que la jerga te lo robe. El petirrojo no *calcula* el campo magnético como quien lee una brújula de latón. Muy probablemente lo *ve*: el campo se superpone a su visión como un tenue patrón de luz y sombra, un mapa que se desplaza cuando el ave gira la cabeza, y por el que orienta su vuelo del mismo modo que tú orientas tus pasos por lo que ves. Hay un pájaro, ahora mismo, cruzando la noche de un continente, guiado por una imagen cuántica del planeta pintada sobre su propia mirada.
+
+{/*SIMULADOR SIM 4.1.2 «La brújula viva»: girar el campo magnético y cambiar el color de la luz; ver al ave orientarse (azul/verde), perderse (roja/oscuridad) y romperse bajo radiofrecuencia.*/}
 
 En las enzimas, por su parte, se confirmó que a veces los protones no *superan* la barrera de energía que separa a los reactivos de los productos: la *atraviesan*, como un fantasma que cruzara una pared en lugar de saltarla. Es el tunelamiento cuántico —prohibido en el mundo de las cosas grandes, cotidiano en el de lo diminuto—, y la vida lo emplea para acelerar reacciones que de otro modo serían desesperadamente lentas.⁷
 
@@ -105,17 +154,28 @@ Queda en pie una objeción, la misma que persiguió a Engel y a Fleming desde el
 
 La respuesta más fina la dio el físico Wojciech Zurek, y vale la pena traducirla con calma, porque es sutil. Una superposición cuántica —eso de "estar en varios estados a la vez"— es como un susurro extraordinariamente frágil. Y el interior de una célula, con sus billones de moléculas en agitación perpetua, es como un estadio lleno de gente gritando. Aquí está la clave: el estadio no necesita "escuchar" el susurro para borrarlo. Le basta con rozarlo. Cualquier interacción incontrolada entre el frágil estado cuántico y el tumulto que lo rodea disuelve el susurro en el ruido, casi instantáneamente. A ese roce implacable que deja en pie solo lo robusto y borra lo delicado, Zurek lo llamó *decoherencia*.¹⁰ Por eso mantener un estado cuántico dentro de una célula viva es, de verdad, dificilísimo: el estadio ruge sin descanso.
 
+{/*SIMULADOR SIM 4.1.3 «Coherencia vs Decoherencia»: dial de ruido térmico; subir el rugido del estadio y ver desaparecer el susurro. El hilo conductor del capítulo, el más reutilizable.*/}
+
 Pero difícil no es imposible, y aquí está la salida que la vida parece haber hallado. Un susurro puede sobrevivir en un estadio si es más veloz que el rugido —si dice lo que tiene que decir antes de que el ruido lo alcance—, o si se refugia en un rincón lo bastante aislado, o si —y esto es lo más elegante— en lugar de pelear contra el ruido aprende a usarlo, como el surfista que no vence a la ola sino que la cabalga. Eso es, en buena medida, lo que la historia madura de la fotosíntesis terminó enseñando: la vida no derrota a la decoherencia sosteniendo coherencias imposibles; la aprovecha, la negocia, la convierte en aliada. La coherencia cuántica funcional en biología es real donde está medida, más frágil de lo que el primer entusiasmo creyó, y en ningún caso prohibida por la física. Es una posibilidad que se gana dato a dato, con paciencia. No un decreto que pueda proclamarse desde un escenario.
 
 Hay todavía un último umbral, más incierto que todos los anteriores, que este capítulo debe nombrar por pura honestidad. En un capítulo anterior quedó pendiente una promesa: la de los *fonones*, esas ondas de vibración coordinada que recorren una estructura ordenada, como el temblor que viaja por una fila de fichas de dominó sin que ninguna llegue a caer. Hace medio siglo, dos físicos de talla imaginaron que la vida podría sostener vibraciones coherentes de largo alcance. Herbert Fröhlich propuso que, bajo cierto bombeo de energía, un sistema vivo podría condensar toda esa energía en un único modo vibratorio —como una multitud dispersa que de pronto dejara de murmurar cada cual por su lado y cantara al unísono una sola nota sostenida.¹¹ Y Alexander Davydov propuso que la energía liberada por la célula podría viajar por el interior de una proteína en forma de *solitón*: una de esas olas solitarias y tercas que a veces recorren un canal estrecho durante kilómetros sin deshacerse, porque se sostienen a sí mismas.¹²
 
 Son ideas de una elegancia que enamora. También son ideas que la mayoría de los físicos no da hoy por buenas: cuando se hacen las cuentas a la temperatura del cuerpo, ese solitón difícilmente duraría lo suficiente para hacer nada. Las traigo aquí no porque estén probadas —no lo están, y sería una traición sugerirlo—, sino porque marcan con precisión el borde de lo que hoy se sabe. Y saber exactamente dónde termina la evidencia y empieza la conjetura no es una debilidad de este relato: es su columna vertebral.
 
+<FiguraTDV
+  imagen="/assets/cap-4/figura-4-1-5.png"
+  numero="4.1.5"
+  titulo="Línea de tiempo de la biología cuántica"
+  subtitulo="una idea madura cuando aprende sus límites"
+  alt="Línea de tiempo horizontal con tres etapas: en 2007, la medición de coherencia en el complejo FMO a 77 K; una franja de entusiasmo que se extiende más allá de lo medido; y en 2020, un medallón bermellón donde el veredicto se afina al distinguir coherencias electrónicas breves de oscilaciones vibracionales. Debajo, una banda separa lo medido de lo que hubo que corregir."
+  descripcion="La historia madura de la coherencia en fotosíntesis no termina en desengaño, sino en precisión. La medición de 2007 a 77 K legitimó la pregunta; el entusiasmo posterior llevó la hipótesis más allá de la evidencia; hacia 2020 se estableció que las coherencias puramente electrónicas se deshacen demasiado rápido a temperatura corporal y que buena parte de las oscilaciones duraderas eran vibracionales. La ventaja cuántica quedó reducida a un puñado por ciento, mientras la pregunta se convertía en ciencia seria."
+  ancho={1536}
+  alto={1024}
+/>
+
 **◆**
 
 <PausaReflexiva titulo="Una pausa, antes de bajar más">
-
-> **◆ PRÁCTICA CONTEMPLATIVA · Carril B (lectura simbólica)**
 
 Lleva la atención al interior de tu mano derecha. No la muevas. Solo obsérvala desde adentro, como si pudieras mirar hacia dentro de ella.
 
@@ -127,7 +187,11 @@ No tienes que creer nada para sentir esto. Solo detenerte el tiempo suficiente p
 
 </PausaReflexiva>
 
+{/*SIMULADOR SIM 4.1.4 «El hemo y el espín»: unir y soltar O₂ y ver el reordenamiento electrónico, la caída al plano del anillo y la cooperatividad de la hemoglobina.*/}
+
 **◆**
+
+## **Cierre del §4.1 y puente al §4.2**
 
 El cuerpo, entonces, no es aquella máquina de piezas que se gastan y se cambian. Es algo más extraño y más digno: un sistema que trabaja al filo mismo de lo posible, que en algunos de sus actos echa mano de la capa cuántica del mundo como recurso y no como estorbo, que lee su entorno con una finura que el viejo modelo jamás sospechó, y que sostiene su orden desde dentro, en una negociación incesante con el ruido del que está hecho. No es una afirmación mística; es, sencillamente, hasta dónde ha llegado la mirada de la ciencia con sus instrumentos más finos. El paradigma de la máquina no era falso. Era incompleto. Y la distancia entre un modelo incompleto y uno más entero, cuando lo que está en juego es el cuerpo que habitamos, no es un detalle técnico: es una invitación, callada y enorme, a tratarnos de otra manera.
 
