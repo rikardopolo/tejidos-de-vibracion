@@ -154,7 +154,12 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
   <script is:inline src="/js/book-scroll-restore.js"></script>
 
   <slot name="head" />
-</head>
+    <!-- Analítica · PostHog. Script EXTERNO a propósito: la CSP es
+         `script-src 'self'` sin `unsafe-inline`, así que un snippet inline
+         quedaría bloqueado y la medición sería muda. Config y compromisos
+         (sin replay, sin autocapture, sin heatmaps) en /posthog-init.js. -->
+    <script src="/posthog-init.js" defer></script>
+  </head>
 <body
   class={bodyClass}
   data-page={pageId}
