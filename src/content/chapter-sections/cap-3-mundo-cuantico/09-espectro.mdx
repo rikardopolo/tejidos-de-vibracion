@@ -103,7 +103,16 @@ Fotón visible verde: E ≈ 4 × 10⁻¹⁹ J ≈ 2.5 eV.*
 </Formula>
 
 donde h es la constante de Planck (6,626 × 10⁻³⁴ J·s) y ν es la
-frecuencia.
+frecuencia. Dibujada, no dice más que eso, y por eso lo dice
+tan bien: una recta que sube, y la pendiente es h.
+
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-15.png"
+  numero="3.15"
+  titulo="Relación Energía-Frecuencia del fotón (E = hν)"
+  alt="Gráfica de la relación lineal E = hν entre energía y frecuencia del fotón, con la constante de Planck como pendiente y puntos representativos de cada banda del espectro"
+  descripcion="La energía de cada fotón es estrictamente proporcional a su frecuencia, con la constante de Planck h como factor de proporcionalidad. La línea recta hace visible que la cuantización es proporcionalidad absoluta: cada fotón individual tiene una energía dictada solo por su frecuencia, sin valores intermedios posibles."
+/>
 
 Esta fórmula simple tiene una consecuencia profunda cuando se aplica al
 espectro entero. Las distintas regiones del espectro electromagnético
@@ -142,6 +151,59 @@ ultravioleta tenue sí lo hace; por qué los espectros atómicos son
 discretos y no continuos; por qué las reacciones químicas requieren
 energías mínimas específicas; por qué el calor y la luz son intercambios
 cuantizados de energía y no flujos continuos.
+
+El primero de esos cuatro es el que Einstein midió. Si la energía de
+cada fotón depende solo de su frecuencia, entonces existe una frecuencia
+por debajo de la cual ningún fotón alcanza para arrancar un electrón del
+metal — y por encima de ella, lo que crece con la frecuencia es la
+velocidad del electrón, no su número.
+
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-16.png"
+  numero="3.16"
+  titulo="Energía cinética vs función trabajo en el efecto fotoeléctrico"
+  alt="Gráfica del efecto fotoeléctrico con rectas paralelas de energía cinética máxima frente a frecuencia para distintos metales, cada uno con su frecuencia umbral y la misma pendiente h"
+  descripcion="La gráfica de Einstein 1905 que desafió la teoría ondulatoria clásica. La energía cinética máxima de los electrones emitidos depende linealmente de la frecuencia (no de la intensidad), y la pendiente es h (universal para todos los metales). Cada metal tiene su propia frecuencia umbral, por debajo de la cual no hay emisión sin importar cuánta luz se aplique."
+/>
+
+<Formula num="3.7" titulo="Ecuación del efecto fotoeléctrico de Einstein">
+
+$$K_{\max} = h\nu - \Phi$$
+
+<Fragment slot="donde">
+
+**K_max** · energía cinética máxima de los electrones emitidos
+(joules)
+
+**h** · constante de Planck
+
+**ν** · frecuencia de la radiación incidente (hercios)
+
+**Φ** · función trabajo del metal: energía mínima para extraer un
+electrón (joules). Léase «fi».
+
+*Propuesta por Einstein en su artículo de 1905 en Annalen der Physik. La
+frecuencia umbral ν₀ = Φ/h es el corte por debajo del cual ningún
+fotón tiene energía suficiente para liberar electrones, sin importar
+la intensidad de la luz. Este resultado, no la relatividad, fue lo que
+mereció el Premio Nobel de Física de Einstein en 1921. Cesio: Φ ≈ 2.1
+eV. Oro: Φ ≈ 5.1 eV.*
+
+</Fragment>
+
+</Formula>
+
+El segundo tiene su propia firma, y es la más antigua de todas: mucho
+antes de que existiera una teoría cuántica, los átomos ya emitían luz
+solo en líneas separadas, nunca en un continuo.
+
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-14.png"
+  numero="3.14"
+  titulo="Series espectrales del hidrógeno"
+  alt="Series espectrales del hidrógeno (Lyman, Balmer, Paschen, Brackett) como líneas verticales coloreadas en escala logarítmica de longitud de onda"
+  descripcion="El espectro discreto del hidrógeno es la firma experimental directa de la cuantización atómica. Cada línea corresponde a una transición electrónica específica entre niveles cuantizados. La serie de Balmer (1885), descubierta empíricamente antes de la mecánica cuántica, fue el dato que Bohr explicó por primera vez con su modelo de 1913."
+/>
 
 Veinticuatro órdenes de magnitud separan las ondas de radio de los rayos
 gamma, y la banda que los ojos humanos alcanzan es, dentro de esa
@@ -284,57 +346,6 @@ de realidad.
 — ◇ —
 
 **◆**
-
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-14.png"
-  numero="3.14"
-  titulo="Series espectrales del hidrógeno"
-  alt="Series espectrales del hidrógeno (Lyman, Balmer, Paschen, Brackett) como líneas verticales coloreadas en escala logarítmica de longitud de onda"
-  descripcion="El espectro discreto del hidrógeno es la firma experimental directa de la cuantización atómica. Cada línea corresponde a una transición electrónica específica entre niveles cuantizados. La serie de Balmer (1885), descubierta empíricamente antes de la mecánica cuántica, fue el dato que Bohr explicó por primera vez con su modelo de 1913."
-/>
-
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-15.png"
-  numero="3.15"
-  titulo="Relación Energía-Frecuencia del fotón (E = hν)"
-  alt="Gráfica de la relación lineal E = hν entre energía y frecuencia del fotón, con la constante de Planck como pendiente y puntos representativos de cada banda del espectro"
-  descripcion="La energía de cada fotón es estrictamente proporcional a su frecuencia, con la constante de Planck h como factor de proporcionalidad. La línea recta hace visible que la cuantización es proporcionalidad absoluta: cada fotón individual tiene una energía dictada solo por su frecuencia, sin valores intermedios posibles."
-/>
-
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-16.png"
-  numero="3.16"
-  titulo="Energía cinética vs función trabajo en el efecto fotoeléctrico"
-  alt="Gráfica del efecto fotoeléctrico con rectas paralelas de energía cinética máxima frente a frecuencia para distintos metales, cada uno con su frecuencia umbral y la misma pendiente h"
-  descripcion="La gráfica de Einstein 1905 que desafió la teoría ondulatoria clásica. La energía cinética máxima de los electrones emitidos depende linealmente de la frecuencia (no de la intensidad), y la pendiente es h (universal para todos los metales). Cada metal tiene su propia frecuencia umbral, por debajo de la cual no hay emisión sin importar cuánta luz se aplique."
-/>
-
-<Formula num="3.7" titulo="Ecuación del efecto fotoeléctrico de Einstein">
-
-$$K_{\max} = h\nu - \Phi$$
-
-<Fragment slot="donde">
-
-**K_max** · energía cinética máxima de los electrones emitidos
-(joules)
-
-**h** · constante de Planck
-
-**ν** · frecuencia de la radiación incidente (hercios)
-
-**Φ** · función trabajo del metal: energía mínima para extraer un
-electrón (joules). Léase «fi».
-
-*Propuesta por Einstein en su artículo de 1905 en Annalen der Physik. La
-frecuencia umbral ν₀ = Φ/h es el corte por debajo del cual ningún
-fotón tiene energía suficiente para liberar electrones, sin importar
-la intensidad de la luz. Este resultado, no la relatividad, fue lo que
-mereció el Premio Nobel de Física de Einstein en 1921. Cesio: Φ ≈ 2.1
-eV. Oro: Φ ≈ 5.1 eV.*
-
-</Fragment>
-
-</Formula>
 
 ## **La extrapolación pseudocientífica · "frecuencias curativas" y el malentendido del "Hertz"**
 
@@ -727,13 +738,12 @@ ser y lo que es se vuelve aún más radical.
 
 </LaboratorioInterior>
 
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-17.png"
-  numero="3.17"
-  titulo="Comparación de las Leyes de Rayleigh-Jeans, Wien y Planck"
-  alt="Gráfico comparativo de las curvas de Rayleigh-Jeans divergente, Wien incompleta y Planck perfecta para el espectro del cuerpo negro"
-  descripcion="Comparación de las tres leyes que intentaron describir la radiación del cuerpo negro. La ley de Rayleigh-Jeans (clásica) diverge al infinito en altas frecuencias, generando la 'catástrofe ultravioleta'. La ley de Wien funciona bien solo en alta frecuencia. La ley de Planck (1900), introduciendo la cuantización E = hν, reconcilia ambos extremos y reproduce el espectro experimental con precisión absoluta."
-/>
+Queda una deuda de esta sección con su propia constante. La h que aparece en
+cada una de sus fórmulas no se dedujo de ningún principio: Planck la encontró
+buscando una curva que ajustara el espectro medido de un cuerpo caliente, y
+durante años la consideró un artificio de cálculo. Las dos ecuaciones que
+siguen son ese hallazgo y el fracaso que lo obligó. La primera reproduce el
+espectro observado a todas las frecuencias.
 
 <Formula num="3.5" titulo="Ley de radiación del cuerpo negro de Planck">
 
@@ -764,6 +774,11 @@ Rayleigh-Jeans (Fórmula 3.6) hace divergir.*
 </Fragment>
 
 </Formula>
+
+La segunda es la que la física clásica predecía, y es exacta en frecuencias
+bajas. Lo que hace en las altas —crecer sin límite, prometer energía infinita
+en cada horno— es la catástrofe ultravioleta que la cuantización vino a
+disolver.
 
 <Formula num="3.6" titulo="Ley clásica de Rayleigh-Jeans">
 
