@@ -106,7 +106,10 @@ const CERROJOS = [
   // E8 · fórmulas (Fase 6)
   { id: 'dd-suelto', nombre: 'bloque $$ fuera de <Formula>', re: null, custom: 'ddSuelto' },
   // E4 · un solo sistema de referencias (Fase 5b)
-  { id: 'ref-suelta', nombre: 'párrafo «**Referencia…:**» suelto (debe ser nota numerada)', re: /^\*\*Referencia[^:*]*:\*\*/gm },
+  // E4 tiene DOS superficies (decisión de Ricardo, Fase 5b): la nota numerada del
+  // cuerpo y la bibliografía dentro de caja. La segunda es legítima, pero su rótulo
+  // es cerrado: solo «**Referencias:**» y «**Para profundizar:**».
+  { id: 'ref-etiqueta', nombre: 'rótulo de bibliografía en caja no canónico (solo «**Referencias:**»)', re: /^\*\*(?!Referencias:\*\*)Referencia[^:*]*:\*\*/gm },
   { id: 'rotulo-notas', nombre: 'rótulo de notas no canónico (debe ser «## **Notas**»)', re: /^\*\*Notas y referencias\*\*|^#{2,4}\s*Referencias seleccionadas|^#{2,4}\s*Para profundizar|^Referencias:/gm },
   // E2 · título duplicado (Fase 8 / Fase 3) · necesita frontmatter → custom
   { id: 'dup-titulo', nombre: 'el cuerpo repite el título o el subtítulo del frontmatter', re: null, custom: 'dupTitulo' },
