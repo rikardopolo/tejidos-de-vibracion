@@ -38,7 +38,42 @@ export const DESTINO_FALLBACK = 'https://tejidosdevibracion.com/obertura';
 
 export const PIEZAS: Record<string, Pieza> = {
   // ── Reels TDR · julio 2026 ────────────────────────────────────────────────
-  // Los 07-08 apuntan al portal (simuladores); los 09-12, al libro.
+  // Los 01-04, 06-08 apuntan al portal (simuladores); el 05 y los 09-12, al libro.
+  // `campaign` y `destino` salen del registro canónico de cada pieza:
+  // `04-Produccion/remotion-reels/data/reel-NN.json`, campo `acts.cta.bioUrl`.
+  // Ojo: el `kickoff-dN` de ahí es el día PLANIFICADO, no el de publicación real
+  // (reel-07 es d12 y salió el 20-jul). Se respeta el valor canónico porque es el
+  // que ya viajó con la pieza y con el que se leyeron sus métricas.
+  'reel-01': {
+    destino: 'https://tejidosderealidad.com/simuladores/doble-rendija',
+    campaign: 'kickoff-d1',
+    titulo: 'Observar no es mirar',
+  },
+  'reel-02': {
+    destino: 'https://tejidosderealidad.com/simuladores/doble-rendija',
+    campaign: 'kickoff-d3',
+    titulo: 'La placa es un observador',
+  },
+  'reel-03': {
+    destino: 'https://tejidosderealidad.com/simuladores',
+    campaign: 'kickoff-d5',
+    titulo: 'Correlación no es comunicación',
+  },
+  'reel-04': {
+    destino: 'https://tejidosderealidad.com/simuladores/tejido',
+    campaign: 'kickoff-d7',
+    titulo: 'Vibrar no es sintonizar',
+  },
+  'reel-05': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'kickoff-d8',
+    titulo: 'Dos orillas, un río',
+  },
+  'reel-06': {
+    destino: 'https://tejidosderealidad.com/simuladores',
+    campaign: 'kickoff-d10',
+    titulo: 'Placebo no es cuántico',
+  },
   'reel-07': {
     destino: 'https://tejidosderealidad.com/simuladores',
     campaign: 'kickoff-d12',
@@ -61,13 +96,75 @@ export const PIEZAS: Record<string, Pieza> = {
   },
   'reel-11': {
     destino: 'https://tejidosdevibracion.com/obertura',
-    campaign: 'kickoff-d30',
+    // Compartía `kickoff-d30` con reel-12 —las dos salen el 31-jul— así que en
+    // PostHog eran una sola fila. Se desempata por AQUÍ y no por reel-12 porque
+    // reel-12 ya tiene un pageview registrado con `kickoff-d30` (29-jul) y
+    // renombrarlo dejaría ese dato huérfano.
+    campaign: 'kickoff-d30-recap',
     titulo: 'Treinta días de mitos',
   },
   'reel-12': {
     destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'kickoff-d30',
     titulo: 'Esto no termina. Empieza.',
+  },
+
+  // ── Carruseles TDR · julio 2026 ───────────────────────────────────────────
+  // Los carruseles no pasan por Remotion, así que no tienen JSON canónico:
+  //   · `campaign` = `kickoff-d<N>`, con N = fecha de publicación − 2026-07-01.
+  //     La fórmula la confirman los propios títulos de la cola: «Reel 01 · D1»
+  //     salió el 02-jul y «Carrusel C01 · D2» el 03-jul. Ninguno de los días que
+  //     salen aquí choca con los de los reels (1,3,5,7,8,10,12,14,26,29,30).
+  //   · `destino` = el `enlace` que su fila de Facebook guarda en `content_queue`
+  //     (C01-C06). C07 no tiene fila de FB → catálogo de simuladores. C08 es «la
+  //     puerta a Tejidos de Vibración» y va a la Obertura.
+  'carrusel-01': {
+    destino: 'https://tejidosderealidad.com/simuladores',
+    campaign: 'kickoff-d2',
+    medium: 'carrusel',
+    titulo: 'El método Doble Carril',
+  },
+  'carrusel-02': {
+    destino: 'https://tejidosderealidad.com/simuladores',
+    campaign: 'kickoff-d6',
+    medium: 'carrusel',
+    titulo: 'Doble rendija explicada',
+  },
+  'carrusel-03': {
+    destino: 'https://tejidosderealidad.com/simuladores',
+    campaign: 'kickoff-d9',
+    medium: 'carrusel',
+    titulo: 'Entrelazamiento sin mitos',
+  },
+  'carrusel-04': {
+    destino: 'https://tejidosderealidad.com/simuladores',
+    campaign: 'kickoff-d13',
+    medium: 'carrusel',
+    titulo: 'Frecuencia y sintonía',
+  },
+  'carrusel-05': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'kickoff-d17',
+    medium: 'carrusel',
+    titulo: 'El placebo honesto',
+  },
+  'carrusel-06': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'kickoff-d20',
+    medium: 'carrusel',
+    titulo: 'Observador cuántico vs consciente',
+  },
+  'carrusel-07': {
+    destino: 'https://tejidosderealidad.com/simuladores',
+    campaign: 'kickoff-d24',
+    medium: 'carrusel',
+    titulo: 'Superposición: el gato de Schrödinger',
+  },
+  'carrusel-08': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'kickoff-d27',
+    medium: 'carrusel',
+    titulo: 'Cierre: la puerta a Tejidos de Vibración',
   },
 
   // ── Fragmentos de la Obertura · cuenta TDV ────────────────────────────────
