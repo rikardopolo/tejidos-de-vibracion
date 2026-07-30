@@ -18,9 +18,14 @@ interface Props {
 const { label, title } = Astro.props;
 ---
 
+<!-- F8 · gesto 1 · el titulo poetico pasa de <p> a <h1>. La pagina dejo de
+     pintar su encabezado generico para estas piezas (duplicaba label y title),
+     asi que este es ahora el unico titulo del documento: tiene que ser el h1.
+     La regla .interludio-title ya fija familia, peso, tamano y margen, de modo
+     que el cambio de etiqueta no altera una sola pixel de la apariencia. -->
 <section class="interludio">
   <p class="interludio-label">{label}</p>
-  <p class="interludio-title">{title}</p>
+  <h1 class="interludio-title">{title}</h1>
   <div class="content">
     <slot />
   </div>
