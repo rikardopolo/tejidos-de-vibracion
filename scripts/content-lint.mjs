@@ -1,4 +1,4 @@
-/**
+﻿/**
  * content-lint.mjs · gate mecánico de estilo del libro · stdlib node, sin deps.
  * Correr: node scripts/content-lint.mjs   (o `pnpm lint:contenido`)
  *
@@ -115,11 +115,17 @@ const CERROJOS = [
   { id: 'dup-titulo', nombre: 'el cuerpo repite el título o el subtítulo del frontmatter', re: null, custom: 'dupTitulo' },
 ];
 
-// E5+E9 · lemas con techo por unidad (‰ = por cada 1.000 palabras del cuerpo).
+// E5+E9 · lemas con techo por unidad, medido POR CADA 10.000 PALABRAS del cuerpo.
 // El candado de F3 era de FRASE FIJA y por eso las 82 ocurrencias de «honest*»
 // sobrevivieron intactas: ninguna contenía las tres cadenas literales vigiladas.
+// La UNIDAD era el problema. El plan y el manual miden por 10.000 palabras
+// (Obertura 1,61 · Cap.1 10,76 · Cap.4 6,09) y este cerrojo medía por 1.000 con
+// techo 2,0 — es decir, 20 por diez mil: DIEZ VECES más flojo que el objetivo
+// del plan, que es ≤2 por diez mil. Así nunca podía morder: la peor unidad
+// marcaba 1,03 contra un techo de 2,0 y pasaba sin avisar.
+// Se cambia la unidad, no solo el número, para que la confusión no vuelva.
 const LEMAS = [
-  { id: 'honest', nombre: 'familia «honesto/honestidad»', re: /honest\w*/gi, techoPorMil: 2.0 },
+  { id: 'honest', nombre: 'familia «honesto/honestidad»', re: /honest\w*/gi, techoPorDiezMil: 2.0 },
 ];
 
 /**
@@ -320,15 +326,15 @@ export function analizarCorpus(capitulos, baseDir) {
 
     // Cerrojos y lemas: AVISO por defecto; solo cuentan como violación con
     // LINT_ESTRICTO=1, cuando su fase correspondiente ya ha cerrado.
-    const lemaPorMil = Object.fromEntries(
-      LEMAS.map((l) => [l.id, palabrasCuerpo ? (lemaHits[l.id] * 1000) / palabrasCuerpo : 0]),
+    const lemaPorDiezMil = Object.fromEntries(
+      LEMAS.map((l) => [l.id, palabrasCuerpo ? (lemaHits[l.id] * 10000) / palabrasCuerpo : 0]),
     );
     if (MODO_ESTRICTO) {
       for (const c of CERROJOS) if (cerrojoHits[c.id].length > 0) violaciones++;
-      for (const l of LEMAS) if (lemaPorMil[l.id] > l.techoPorMil) violaciones++;
+      for (const l of LEMAS) if (lemaPorDiezMil[l.id] > l.techoPorDiezMil) violaciones++;
     }
 
-    report.push({ cap, files: files.length, moTotal, moOk, muletillaTotal, andamiajeHits, enfasisSospechoso, enfasisEjemplos, marcadorCarril, marcadorEjemplos, cerrojoHits, lemaHits, lemaPorMil, palabrasCuerpo });
+    report.push({ cap, files: files.length, moTotal, moOk, muletillaTotal, andamiajeHits, enfasisSospechoso, enfasisEjemplos, marcadorCarril, marcadorEjemplos, cerrojoHits, lemaHits, lemaPorDiezMil, palabrasCuerpo });
   }
 
   return { report, promesas, violaciones };
@@ -398,8 +404,8 @@ for (const c of CERROJOS) {
   console.log(`  ${(total === 0 ? '✅ ' : '·  ') + c.nombre}`.padEnd(46) + fila);
 }
 for (const l of LEMAS) {
-  const fila = report.map((r) => (r.lemaPorMil[l.id]).toFixed(2).padStart(8)).join(' ');
-  console.log(`  ·  ${l.nombre} ‰ (techo ${l.techoPorMil})`.padEnd(46) + fila);
+  const fila = report.map((r) => (r.lemaPorDiezMil[l.id]).toFixed(2).padStart(8)).join(' ');
+  console.log(`  ·  ${l.nombre} por 10.000 (techo ${l.techoPorDiezMil})`.padEnd(46) + fila);
 }
 console.log('  Para hacerlos bloqueantes cuando su fase cierre:  LINT_ESTRICTO=1 node scripts/content-lint.mjs');
 
