@@ -25,7 +25,7 @@ import { getCollection, getEntry, render } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import PaginacionCards from '@/components/book/PaginacionCards.astro';
-import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
+import { getAcceso, puedeAcceder, gatingActivo, esPreview, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceOrnament, type PieceKind } from '@/lib/piece-num';
 
@@ -80,7 +80,14 @@ const nivelRequerido = Math.max(
   entry.data.nivelRequerido,
 ) as Nivel;
 const productoSlug = entry.data.productoSlug ?? chapterEntry.data.productoSlug;
-const tieneAcceso = chapterEntry.data.status === 'published'
+// En un deploy de PREVIEW (rama distinta de main) se levanta la exigencia de
+// `status === 'published'` para que el revisor interno pueda leer el capítulo
+// completo antes de publicarlo. No se toca el `status` del contenido: ese campo
+// es el interruptor de visibilidad pública y moverlo para una revisión sería
+// publicar por accidente. `esPreview()` es false en producción por construcción
+// (allí VERCEL_GIT_COMMIT_REF === 'main'), así que esta condición no puede
+// filtrarse a main ni depende de ninguna env var que pueda quedar mal puesta.
+const tieneAcceso = (chapterEntry.data.status === 'published' || esPreview())
   && puedeAcceder(acceso, nivelRequerido, productoSlug);
 const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
