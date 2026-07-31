@@ -5,6 +5,8 @@ import {
   mapProductToNivel,
   parseOrderEvent,
   persistOrderAtomic,
+  claimAccesoEnvio,
+  releaseAccesoEnvio,
 } from '@/lib/lemonsqueezy-webhook.mjs';
 import { generatePurchaseToken } from '@/lib/purchase-token.mjs';
 import { sendTransactionalEmail, tagContactSafe } from '@/lib/brevo';
@@ -196,15 +198,26 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
-  // Fase 4 · otorgar acceso: email con el enlace de acceso (solo en compra NUEVA,
-  // no en reembolso ni en reintentos). El enlace lleva un token de compra firmado.
-  if (isFirstEffect && parsed.status === 'paid' && parsed.email) {
+  // Fase 4 · otorgar acceso: email con el enlace de acceso. El enlace lleva un
+  // token de compra firmado.
+  //
+  // NO cuelga de `isFirstEffect`: si el email falla devolvemos 500 para que LS
+  // reintente, y en el reintento isFirstEffect ya es false — el email no se
+  // reenviaría nunca y el comprador se quedaría sin enlace. El candado correcto
+  // es la transición única sobre `acceso_enviado_at`, que además se libera si el
+  // envío falla para que el reintento pueda volver a tomarlo.
+  if (parsed.status === 'paid' && parsed.email) {
     const tokenSecret = readEnv('ACCESS_TOKEN_SECRET');
     const apiKey = readEnv('BREVO_API_KEY');
     const templateIdRaw = readEnv('BREVO_TEMPLATE_BUNDLE_PREVENTA');
     const siteUrl = readEnv('PUBLIC_SITE_URL') || readEnv('SITE_URL') || 'https://tejidosdevibracion.com';
     const templateId = Number(templateIdRaw);
-    if (tokenSecret && apiKey && templateIdRaw && !Number.isNaN(templateId)) {
+    const { claimed, error: claimErr } = await claimAccesoEnvio(supabase, parsed.lsOrderId);
+    if (claimErr) {
+      console.error('[webhooks/lemonsqueezy] no se pudo reclamar el envío de acceso:', claimErr);
+      return json(500, { ok: false, error: 'claim_failed' });
+    }
+    if (claimed && tokenSecret && apiKey && templateIdRaw && !Number.isNaN(templateId)) {
       const accessToken = generatePurchaseToken(
         { email: parsed.email, nivel, slugs: [slug], orderId: parsed.lsOrderId },
         tokenSecret,
@@ -219,15 +232,17 @@ export const POST: APIRoute = async ({ request }) => {
         apiKey,
       });
       if (!sent.ok) {
-        // El email ES la entrega del acceso: si falla, 500 para que LS reintente.
-        // El order ya quedó persistido (insert atómico); en el retry el upsert con
-        // ignoreDuplicates choca con la fila existente → [] → isFirstEffect=false y
-        // NO reenviaremos el email. Trade-off ponytail: preferimos no duplicar email a
-        // garantizar entrega ante un fallo transitorio de Brevo (raro; queda el log).
+        // El email ES la entrega del acceso: si falla, liberamos la marca y
+        // devolvemos 500 para que LS reintente. Gracias a la liberación, el
+        // reintento SÍ vuelve a enviar (antes se perdía para siempre).
+        await releaseAccesoEnvio(supabase, parsed.lsOrderId);
         console.error('[webhooks/lemonsqueezy] email de acceso falló · 500 para reintento de LS:', sent);
         return json(500, { ok: false, error: 'email_failed' });
       }
-    } else {
+    } else if (claimed) {
+      // Reclamamos el envío pero no podemos mandarlo: liberar, o la orden queda
+      // marcada como entregada sin haberlo estado.
+      await releaseAccesoEnvio(supabase, parsed.lsOrderId);
       console.warn('[webhooks/lemonsqueezy] email de acceso omitido · faltan ACCESS_TOKEN_SECRET/BREVO_API_KEY/BREVO_TEMPLATE_BUNDLE_PREVENTA');
     }
   }
