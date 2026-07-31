@@ -80,15 +80,22 @@ const nivelRequerido = Math.max(
   entry.data.nivelRequerido,
 ) as Nivel;
 const productoSlug = entry.data.productoSlug ?? chapterEntry.data.productoSlug;
-// En un deploy de PREVIEW (rama distinta de main) se levanta la exigencia de
-// `status === 'published'` para que el revisor interno pueda leer el capítulo
-// completo antes de publicarlo. No se toca el `status` del contenido: ese campo
-// es el interruptor de visibilidad pública y moverlo para una revisión sería
-// publicar por accidente. `esPreview()` es false en producción por construcción
-// (allí VERCEL_GIT_COMMIT_REF === 'main'), así que esta condición no puede
-// filtrarse a main ni depende de ninguna env var que pueda quedar mal puesta.
-const tieneAcceso = (chapterEntry.data.status === 'published' || esPreview())
-  && puedeAcceder(acceso, nivelRequerido, productoSlug);
+// En un deploy de PREVIEW (rama distinta de main) el revisor interno lo ve TODO.
+//
+// Corta la decisión entera, no solo una de sus dos mitades: la primera versión
+// de esto solo levantaba la exigencia de `status === 'published'` y el Cap. 4
+// seguía cerrado, porque su shell pide `nivelRequerido: 2` con
+// `productoSlug: 'acto-2'` y `puedeAcceder` lo bloqueaba por la otra mitad del
+// AND. Con dos candados independientes hay que abrir los dos.
+//
+// No se toca el `status` del contenido: ese campo es el interruptor de
+// visibilidad PÚBLICA y moverlo para una revisión sería publicar por accidente
+// en cuanto la rama se mergee. `esPreview()` es false en producción por
+// construcción (allí VERCEL_GIT_COMMIT_REF === 'main') y no depende de ninguna
+// env var que pueda quedar mal puesta, así que esto no puede filtrarse a main.
+const tieneAcceso = esPreview()
+  || (chapterEntry.data.status === 'published'
+      && puedeAcceder(acceso, nivelRequerido, productoSlug));
 const tipoBloquePuerta = nivel === 0 ? 'cap-bloqueado' : 'cap-espera';
 
 let Content: any = null;
