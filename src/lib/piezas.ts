@@ -203,6 +203,16 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'bio',
     titulo: 'El laboratorio: simuladores',
   },
+  // Destino de la pieza de anuncio del Cap. 1 (hito de agosto). Apunta al
+  // índice del capítulo, no a una pieza suelta: desde ahí se ven las 9.
+  // El capítulo se abre con el flip de `status` en su MDX; este atajo puede
+  // existir antes, porque redirigir no publica nada.
+  'cap-1': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'agosto-c1',
+    medium: 'bio',
+    titulo: 'Capítulo 1 · La Historia Secreta del Sonido',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
