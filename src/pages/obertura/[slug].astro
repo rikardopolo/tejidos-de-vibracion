@@ -148,7 +148,13 @@ const pieceSchema = wrapGraph([
   <article class={`obertura-piece kind-${kind}`}>
     {tieneAcceso && Content ? (
       <>
-        {kind !== 'frontispicio' && (
+        {/* F8 · gesto 1 · el frontispicio y los interludios traen su propio
+            encabezado y el genérico los duplicaba. El frontispicio lo pone con
+            su eyebrow; el interludio, con el `label` y el `title` que
+            <Interludio> pinta dentro de su bloque etéreo. Sin esta exclusión la
+            pieza mostraba las mismas dos cadenas CUATRO veces. Mismo criterio
+            que capitulo/[chapter]/[section].astro:144 aplicó a las portadas. */}
+        {kind !== 'frontispicio' && kind !== 'interludio' && (
           <header class="piece-header">
             <h1 class="piece-title">{title}</h1>
             {subtitle && <p class="piece-subtitle">{subtitle}</p>}

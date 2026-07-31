@@ -55,6 +55,24 @@ export function getNivel(cookies: AstroCookies): Nivel {
 // páginas la consuman desde un único punto. Ver gate-decision.mjs para la regla.
 export { puedeAcceder } from './gate-decision.mjs';
 
+/**
+ * `true` SOLO en un deploy de Vercel de rama distinta de `main`.
+ *
+ * Sirve para que el revisor interno lea en preview lo que todavía no está
+ * publicado, sin tocar el `status` del contenido — que es el interruptor de
+ * visibilidad PÚBLICA y no debe moverse para una revisión.
+ *
+ * Es seguro por construcción: en producción `VERCEL_GIT_COMMIT_REF === 'main'`,
+ * así que esta función devuelve `false` ahí SIEMPRE. A diferencia de
+ * `gatingActivo()`, no depende de ninguna variable de entorno que pueda estar
+ * mal puesta: si la rama es `main`, o si no hay rama (build local), es `false`.
+ */
+export function esPreview(): boolean {
+  if (typeof process === 'undefined' || !process.env) return false;
+  const branch = process.env.VERCEL_GIT_COMMIT_REF ?? '';
+  return branch !== '' && branch !== 'main';
+}
+
 export function gatingActivo(): boolean {
   // En cualquier rama Vercel distinta de `main` se desactiva el gating por
   // completo para que el revisor interno vea el contenido sin pasar por la puerta.

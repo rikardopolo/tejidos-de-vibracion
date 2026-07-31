@@ -42,13 +42,13 @@ Lo que la sección §3.5 hace es algo más limitado y más específico. Tras
 las §§3.1 a 3.4, el Tejedor tiene en la mano una mecánica cuántica
 madura: dualidad onda-partícula, superposición, entrelazamiento,
 incertidumbre, átomo como geometría de probabilidad. Con esa mecánica
-cuántica en la mano, conviene **revisitar brevemente el espectro
-electromagnético**, porque el espectro continuo que Maxwell describió en
+cuántica en la mano, conviene revisitar brevemente el espectro
+electromagnético, porque el espectro continuo que Maxwell describió en
 lenguaje clásico tiene una segunda lectura, posterior a 1905, que cambia
 su significado físico sin alterar su estructura matemática. Esa segunda
-lectura es la de Einstein-Planck del Cap. 2 §2.6: **la radiación
+lectura es la de Einstein-Planck del Cap. 2 §2.6: la radiación
 electromagnética no es solo onda continua; es también flujo de fotones
-discretos**, cada uno con energía E = hν proporcional a su frecuencia.
+discretos, cada uno con energía E = hν proporcional a su frecuencia.
 
 Esta sección entrega esa segunda lectura aplicada al espectro entero, y
 cierra con un bloqueo epistémico necesario sobre las extrapolaciones
@@ -76,7 +76,7 @@ La cuantización de Planck (1900) y de Einstein (1905) que el Cap. 2 §2.6
 narró introduce un cambio de perspectiva. La radiación electromagnética
 sigue propagándose como onda —ese aspecto no se elimina—, pero al
 interactuar con la materia lo hace mediante intercambios discretos de
-energía, paquetes mínimos llamados **fotones**. Cada fotón transporta
+energía, paquetes mínimos llamados fotones. Cada fotón transporta
 una energía exactamente determinada por su frecuencia:
 
 <Formula num="3.4" titulo="Cuanto de energía de Planck-Einstein">
@@ -103,12 +103,21 @@ Fotón visible verde: E ≈ 4 × 10⁻¹⁹ J ≈ 2.5 eV.*
 </Formula>
 
 donde h es la constante de Planck (6,626 × 10⁻³⁴ J·s) y ν es la
-frecuencia.
+frecuencia. Dibujada, no dice más que eso, y por eso lo dice
+tan bien: una recta que sube, y la pendiente es h.
+
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-15.png"
+  numero="3.15"
+  titulo="Relación Energía-Frecuencia del fotón (E = hν)"
+  alt="Gráfica de la relación lineal E = hν entre energía y frecuencia del fotón, con la constante de Planck como pendiente y puntos representativos de cada banda del espectro"
+  descripcion="La energía de cada fotón es estrictamente proporcional a su frecuencia, con la constante de Planck h como factor de proporcionalidad. La línea recta hace visible que la cuantización es proporcionalidad absoluta: cada fotón individual tiene una energía dictada solo por su frecuencia, sin valores intermedios posibles."
+/>
 
 Esta fórmula simple tiene una consecuencia profunda cuando se aplica al
 espectro entero. Las distintas regiones del espectro electromagnético
 dejan de ser solo bandas de frecuencias distintas y pasan a ser
-**escalas de fotones de energías muy distintas**. Un fotón de radio AM
+escalas de fotones de energías muy distintas. Un fotón de radio AM
 de un megahertz tiene una energía del orden de 10⁻²⁷ joule —una cantidad
 tan pequeña que se necesitan miles de millones de fotones para producir
 cualquier efecto medible sobre la materia—. Un fotón de luz visible
@@ -143,9 +152,62 @@ discretos y no continuos; por qué las reacciones químicas requieren
 energías mínimas específicas; por qué el calor y la luz son intercambios
 cuantizados de energía y no flujos continuos.
 
-— ◇ —
+El primero de esos cuatro es el que Einstein midió. Si la energía de
+cada fotón depende solo de su frecuencia, entonces existe una frecuencia
+por debajo de la cual ningún fotón alcanza para arrancar un electrón del
+metal — y por encima de ella, lo que crece con la frecuencia es la
+velocidad del electrón, no su número.
 
-**◆**
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-16.png"
+  numero="3.16"
+  titulo="Energía cinética vs función trabajo en el efecto fotoeléctrico"
+  alt="Gráfica del efecto fotoeléctrico con rectas paralelas de energía cinética máxima frente a frecuencia para distintos metales, cada uno con su frecuencia umbral y la misma pendiente h"
+  descripcion="La gráfica de Einstein 1905 que desafió la teoría ondulatoria clásica. La energía cinética máxima de los electrones emitidos depende linealmente de la frecuencia (no de la intensidad), y la pendiente es h (universal para todos los metales). Cada metal tiene su propia frecuencia umbral, por debajo de la cual no hay emisión sin importar cuánta luz se aplique."
+/>
+
+<Formula num="3.7" titulo="Ecuación del efecto fotoeléctrico de Einstein">
+
+$$K_{\max} = h\nu - \Phi$$
+
+<Fragment slot="donde">
+
+**K_max** · energía cinética máxima de los electrones emitidos
+(joules)
+
+**h** · constante de Planck
+
+**ν** · frecuencia de la radiación incidente (hercios)
+
+**Φ** · función trabajo del metal: energía mínima para extraer un
+electrón (joules). Léase «fi».
+
+*Propuesta por Einstein en su artículo de 1905 en Annalen der Physik. La
+frecuencia umbral ν₀ = Φ/h es el corte por debajo del cual ningún
+fotón tiene energía suficiente para liberar electrones, sin importar
+la intensidad de la luz. Este resultado, no la relatividad, fue lo que
+mereció el Premio Nobel de Física de Einstein en 1921. Cesio: Φ ≈ 2.1
+eV. Oro: Φ ≈ 5.1 eV.*
+
+</Fragment>
+
+</Formula>
+
+El segundo tiene su propia firma, y es la más antigua de todas: mucho
+antes de que existiera una teoría cuántica, los átomos ya emitían luz
+solo en líneas separadas, nunca en un continuo.
+
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-14.png"
+  numero="3.14"
+  titulo="Series espectrales del hidrógeno"
+  alt="Series espectrales del hidrógeno (Lyman, Balmer, Paschen, Brackett) como líneas verticales coloreadas en escala logarítmica de longitud de onda"
+  descripcion="El espectro discreto del hidrógeno es la firma experimental directa de la cuantización atómica. Cada línea corresponde a una transición electrónica específica entre niveles cuantizados. La serie de Balmer (1885), descubierta empíricamente antes de la mecánica cuántica, fue el dato que Bohr explicó por primera vez con su modelo de 1913."
+/>
+
+Veinticuatro órdenes de magnitud separan las ondas de radio de los rayos
+gamma, y la banda que los ojos humanos alcanzan es, dentro de esa
+extensión, mínima.
 
 <FiguraTDV
   imagen="/assets/cap-3/figura-3-12.png"
@@ -155,13 +217,9 @@ cuantizados de energía y no flujos continuos.
   descripcion="El espectro electromagnético abarca aproximadamente 24 órdenes de magnitud en frecuencia. La ventana visible humana (380-700 nm) corresponde a menos de una octava — minúscula comparada con el espectro completo. Lo que llamamos 'luz' en sentido cotidiano es solo una franja muy estrecha de la realidad electromagnética que el cosmos sostiene continuamente."
 />
 
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-13.png"
-  numero="3.13"
-  titulo="Patrón visual del experimento del punto ciego"
-  alt="Patrón visual del experimento del punto ciego con un punto sólido a la izquierda y una cruz a la derecha para demostrar el disco óptico de la retina"
-  descripcion="Patrón visual para ejecutar el ejercicio del punto ciego. Cubrir el ojo izquierdo, mirar fijo el punto izquierdo, acercar la página gradualmente: a cierta distancia la cruz desaparece. La cruz cae sobre el disco óptico de la retina derecha, donde no hay fotorreceptores. El cerebro completa la imagen automáticamente."
-/>
+— ◇ —
+
+**◆**
 
 ## **La ventana visible y la sintonización evolutiva**
 
@@ -196,9 +254,9 @@ energías electromagnéticas que existe. Y la visión humana, en esa playa,
 alcanzaría a percibir apenas un grano. Uno solo.
 
 La imagen es deliberadamente desproporcionada. Y es, en su exageración,
-fiel a la sustancia: **la fracción del espectro electromagnético que los
+fiel a la sustancia: la fracción del espectro electromagnético que los
 ojos humanos detectan es, efectivamente, minúscula comparada con el
-espectro total disponible**. Mientras las ondas de radio se extienden
+espectro total disponible. Mientras las ondas de radio se extienden
 por longitudes de onda comparables a edificios o continentes y los rayos
 gamma comprimen su existencia en escalas más pequeñas que núcleos
 atómicos, la retina humana se ha sintonizado con una sola octava
@@ -207,14 +265,14 @@ información electromagnética que el universo emite, refleja y propaga
 continuamente es enorme; lo que biológicamente leemos es comparable a
 una sola página de un solo libro de esa biblioteca.
 
-La analogía de la playa es, como toda analogía vívida, **una escalera
-intuitiva**, no una afirmación cuantitativa rigurosa. Conviene saber por
+La analogía de la playa es, como toda analogía vívida, una escalera
+intuitiva, no una afirmación cuantitativa rigurosa. Conviene saber por
 qué. Las cifras concretas que circulan en la divulgación —"el espectro
 visible representa apenas el 0,000000000000000000035% del espectro
 electromagnético total" y variantes similares— son matemáticamente
 correctas dentro del rango específico que cada cálculo considere, pero
-**el rango total del espectro electromagnético no tiene un límite
-superior ni inferior absoluto en la teoría**. Si se incluyen frecuencias
+el rango total del espectro electromagnético no tiene un límite
+superior ni inferior absoluto en la teoría. Si se incluyen frecuencias
 arbitrariamente bajas (como la radiación de longitud de onda comparable
 al diámetro terrestre o al universo observable) y arbitrariamente altas
 (como los rayos gamma cósmicos de las energías más extremas detectados
@@ -226,7 +284,7 @@ fracción que estés contando. Cualquier otra elección de límites daría
 una proporción distinta.
 
 Lo que la analogía sí transmite correctamente, sin necesidad de una
-cifra única, es la **estructura cualitativa**: vemos una banda muy
+cifra única, es la estructura cualitativa: vemos una banda muy
 estrecha de algo mucho más amplio. Esa estructura es robusta y no
 depende del rango exacto considerado. La analogía de la playa funciona
 como funciona la imagen escalada del átomo del §3.4: como ilustración
@@ -255,8 +313,8 @@ organismos terrestres para detectar fotones en exactamente esa franja,
 porque era la franja más abundante e informativa disponible.
 
 La banda visible, en otras palabras, no es una elección arbitraria de la
-biología humana. Es una **adaptación a las condiciones físicas concretas
-del planeta donde la vida apareció**. Ojos como los humanos, en otro
+biología humana. Es una adaptación a las condiciones físicas concretas
+del planeta donde la vida apareció. Ojos como los humanos, en otro
 mundo con una estrella distinta y una atmósfera distinta, podrían haber
 evolucionado para detectar otra franja completamente. La playa de
 Copacabana es la playa que nos tocó —como hijos de este Sol específico,
@@ -276,9 +334,9 @@ gamma que mapean los procesos más violentos del universo. Cada uno de
 estos instrumentos extiende lo que sabemos del cosmos a regiones del
 espectro que biológicamente no vemos.
 
-Cabe decir, además, una cosa importante: **el hecho de que no veamos directamente la
+Cabe decir, además, una cosa importante: el hecho de que no veamos directamente la
 mayor parte del espectro electromagnético no implica que esa mayor parte
-sea "energía oculta", "vibración sutil" o "frecuencia espiritual"**. Las
+sea "energía oculta", "vibración sutil" o "frecuencia espiritual". Las
 regiones invisibles del espectro son tan físicas, tan ordinarias y tan
 bien comprendidas como las visibles. Son simplemente fotones de energías
 distintas a las que la retina humana puede detectar. Lo que está fuera
@@ -289,57 +347,6 @@ de realidad.
 
 **◆**
 
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-14.png"
-  numero="3.14"
-  titulo="Series espectrales del hidrógeno"
-  alt="Series espectrales del hidrógeno (Lyman, Balmer, Paschen, Brackett) como líneas verticales coloreadas en escala logarítmica de longitud de onda"
-  descripcion="El espectro discreto del hidrógeno es la firma experimental directa de la cuantización atómica. Cada línea corresponde a una transición electrónica específica entre niveles cuantizados. La serie de Balmer (1885), descubierta empíricamente antes de la mecánica cuántica, fue el dato que Bohr explicó por primera vez con su modelo de 1913."
-/>
-
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-15.png"
-  numero="3.15"
-  titulo="Relación Energía-Frecuencia del fotón (E = hν)"
-  alt="Gráfica de la relación lineal E = hν entre energía y frecuencia del fotón, con la constante de Planck como pendiente y puntos representativos de cada banda del espectro"
-  descripcion="La energía de cada fotón es estrictamente proporcional a su frecuencia, con la constante de Planck h como factor de proporcionalidad. La línea recta hace visible que la cuantización es proporcionalidad absoluta: cada fotón individual tiene una energía dictada solo por su frecuencia, sin valores intermedios posibles."
-/>
-
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-16.png"
-  numero="3.16"
-  titulo="Energía cinética vs función trabajo en el efecto fotoeléctrico"
-  alt="Gráfica del efecto fotoeléctrico con rectas paralelas de energía cinética máxima frente a frecuencia para distintos metales, cada uno con su frecuencia umbral y la misma pendiente h"
-  descripcion="La gráfica de Einstein 1905 que desafió la teoría ondulatoria clásica. La energía cinética máxima de los electrones emitidos depende linealmente de la frecuencia (no de la intensidad), y la pendiente es h (universal para todos los metales). Cada metal tiene su propia frecuencia umbral, por debajo de la cual no hay emisión sin importar cuánta luz se aplique."
-/>
-
-<Formula num="3.7" titulo="Ecuación del efecto fotoeléctrico de Einstein">
-
-$$K_{\max} = h\nu - \Phi$$
-
-<Fragment slot="donde">
-
-**K_max** · energía cinética máxima de los electrones emitidos
-(joules)
-
-**h** · constante de Planck
-
-**ν** · frecuencia de la radiación incidente (hercios)
-
-**Φ** · función trabajo del metal: energía mínima para extraer un
-electrón (joules). Léase «fi».
-
-*Propuesta por Einstein en su paper de 1905 en Annalen der Physik. La
-frecuencia umbral ν₀ = Φ/h es el corte por debajo del cual ningún
-fotón tiene energía suficiente para liberar electrones, sin importar
-la intensidad de la luz. Este resultado, no la relatividad, fue lo que
-mereció el Premio Nobel de Física de Einstein en 1921. Cesio: Φ ≈ 2.1
-eV. Oro: Φ ≈ 5.1 eV.*
-
-</Fragment>
-
-</Formula>
-
 ## **La extrapolación pseudocientífica · "frecuencias curativas" y el malentendido del "Hertz"**
 
 Alrededor del concepto de "frecuencia" ha crecido durante las últimas
@@ -348,14 +355,14 @@ tratar con cuidado, porque son uno de los puntos donde con más
 frecuencia se confunde lenguaje contemplativo legítimo con pretensiones
 científicas indebidas.
 
-La afirmación más extendida sostiene que existen **"frecuencias
-curativas"** específicas —típicamente las llamadas *frecuencias
-Solfeggio*: 174 Hz, 285 Hz, 396 Hz, 417 Hz, **528 Hz** ("frecuencia del
+La afirmación más extendida sostiene que existen "frecuencias
+curativas" específicas —típicamente las llamadas *frecuencias
+Solfeggio*: 174 Hz, 285 Hz, 396 Hz, 417 Hz, 528 Hz ("frecuencia del
 amor", supuestamente capaz de "reparar el ADN"), 639 Hz, 741 Hz, 852 Hz,
 963 Hz— que tendrían propiedades terapéuticas, espirituales o
 energéticas particulares por encima de cualquier otra frecuencia. Una
-segunda afirmación relacionada sostiene que la afinación musical **A =
-432 Hz** (en lugar del estándar moderno A = 440 Hz) está "alineada con
+segunda afirmación relacionada sostiene que la afinación musical A =
+432 Hz (en lugar del estándar moderno A = 440 Hz) está "alineada con
 la frecuencia natural del cosmos" y produce efectos beneficiosos
 específicos. Estas afirmaciones circulan ampliamente en redes sociales,
 productos de bienestar y meditaciones guiadas.
@@ -367,18 +374,18 @@ El Cap. 1 §1.6 dedicó atención cuidadosa a estas seis frecuencias
 diferencia entre la práctica contemplativa válida y la afirmación
 específica sobre 528 Hz que no se sostiene—. Lo que sigue retoma la
 cuestión desde el lado puramente físico, sin repetir lo allí elaborado y
-reconociendo que la honestidad rigurosa no requiere descalificar la
-experiencia de quien escucha estas frecuencias con atención sostenida.
+sin descalificar la experiencia de quien escucha estas frecuencias con
+atención sostenida.
 
 **Primero, sobre el origen de las frecuencias Solfeggio**: estas
-frecuencias **no provienen de la antigüedad ni de tradiciones
-espirituales históricas**. Fueron derivadas en los años 1970 por Joseph
+frecuencias no provienen de la antigüedad ni de tradiciones
+espirituales históricas. Fueron derivadas en los años 1970 por Joseph
 Puleo, un naturópata estadounidense, a partir de un patrón numerológico
 que él identificó en el Libro de Números del Antiguo Testamento. El
 propio concepto de medir frecuencias en Hertz no existió hasta el siglo
 XIX, cuando Heinrich Hertz desarrolló los métodos experimentales para
-medir ondas electromagnéticas. **Las civilizaciones antiguas no podían
-medir ni reproducir frecuencias específicas en Hertz** — no tenían los
+medir ondas electromagnéticas. Las civilizaciones antiguas no podían
+medir ni reproducir frecuencias específicas en Hertz — no tenían los
 instrumentos ni la teoría para hacerlo. La presentación de las
 frecuencias Solfeggio como "saber ancestral" es históricamente
 incorrecta.
@@ -387,9 +394,9 @@ incorrecta.
 los estudios controlados existentes muestran que la música suave en
 general —independientemente de la frecuencia exacta de afinación—
 produce efectos de relajación, reducción de cortisol, y mejora del
-estado de ánimo en sujetos humanos. Estos efectos son reales pero **no
+estado de ánimo en sujetos humanos. Estos efectos son reales pero no
 son específicos de 528 Hz, 432 Hz, o cualquier otra frecuencia
-particular**: son efectos generales de la escucha musical asociados con
+particular: son efectos generales de la escucha musical asociados con
 relajación, atención focalizada y respuesta placebo. Cuando se comparan
 rigurosamente música a 440 Hz versus música a 432 Hz, las diferencias en
 respuesta fisiológica son nulas o estadísticamente no significativas. La
@@ -401,8 +408,8 @@ afirmación es, en términos científicos, una afirmación falsa.
 
 **Tercero, sobre la conspiración nazi de la afinación 440 Hz**: la idea
 de que los nazis cambiaron deliberadamente la afinación estándar de A =
-432 Hz a A = 440 Hz para "manipular a la población" es una **teoría
-conspirativa falsa**, desmentida por verificadores de hechos como
+432 Hz a A = 440 Hz para "manipular a la población" es una teoría
+conspirativa falsa, desmentida por verificadores de hechos como
 Reuters. La estandarización en A = 440 Hz se debe a un proceso
 técnico-musical iniciado mucho antes del nazismo y formalizado
 internacionalmente por la ISO —recomendado en 1955 y fijado como norma
@@ -412,21 +419,20 @@ de manipulación social.
 **Cuarto, sobre la cita atribuida a Nikola Tesla**: la frase
 frecuentemente citada *"Si quieres encontrar los secretos del universo,
 piensa en términos de energía, frecuencia y vibración"* atribuida a
-Tesla **no aparece en ninguno de sus escritos verificables**. Es una
+Tesla no aparece en ninguno de sus escritos verificables. Es una
 atribución apócrifa que circula en internet desde aproximadamente 2010
 sin fuente primaria identificable. Tesla escribió mucho sobre
 electromagnetismo y fue un pensador brillante; pero esa frase
 específica, en esa formulación, no es suya.
 
-Hay aquí una distinción importante que el libro debe sostener: **la
+Hay aquí una distinción importante que el libro debe sostener: la
 música tiene efectos reales sobre los seres humanos, y esos efectos son
-legítimos y pueden ser explorados**. Escuchar música suave reduce
+legítimos y pueden ser explorados. Escuchar música suave reduce
 cortisol; cantar libera endorfinas; el ritmo sincroniza grupos humanos
 en actos colectivos; ciertas armonías evocan estados emocionales
-específicos. Todo esto es real y bien documentado. Lo que **no** es
-legítimo —y conviene marcarlo con la honestidad que la obra entera
-reclama— es presentar **frecuencias específicas en Hertz** como
-portadoras de propiedades curativas particulares derivadas de
+específicos. Todo esto es real y bien documentado. Lo que no es
+legítimo es presentar frecuencias específicas en Hertz como portadoras
+de propiedades curativas particulares derivadas de
 "alineación cósmica", "saber ancestral" o "armonía universal". Esa
 presentación cruza el plano científico con el simbólico sin marcar el
 cruce, distorsiona tanto la física como la apertura simbólica, y termina
@@ -449,19 +455,19 @@ no**
 
 **Está documentado y forma parte del consenso científico actual:**
 
-— El **espectro electromagnético** está unificado teóricamente por las
+— El espectro electromagnético está unificado teóricamente por las
 ecuaciones de Maxwell (1865) y se extiende continuamente desde
 frecuencias arbitrariamente bajas hasta frecuencias arbitrariamente
 altas. La velocidad de propagación en el vacío es la misma para toda
 frecuencia: aproximadamente 299.792.458 m/s.
 
-— La radiación electromagnética se cuantiza en **fotones** según la
+— La radiación electromagnética se cuantiza en fotones según la
 fórmula de Planck-Einstein E = hν, donde h es la constante de Planck.
 Cada región del espectro corresponde a fotones de energía cuantizada
 distinta, lo cual explica las distintas formas en que cada región
 interactúa con la materia.
 
-— La **ventana visible humana** (aproximadamente 380-700 nm) es una
+— La ventana visible humana (aproximadamente 380-700 nm) es una
 adaptación evolutiva a las condiciones de iluminación solar y
 transparencia atmosférica del planeta Tierra. Otros organismos
 terrestres detectan otras franjas: las abejas ven en ultravioleta
@@ -469,32 +475,33 @@ cercano, las víboras infrarrojas detectan calor corporal, ciertos peces
 de aguas profundas detectan luz roja muy débil. La banda visible humana
 no tiene primacía cosmológica.
 
-— Los **estudios sobre efectos de la música sobre los seres humanos**
+— Los estudios sobre efectos de la música sobre los seres humanos
 muestran que la escucha musical en general reduce niveles de cortisol,
 modula la actividad del sistema nervioso autónomo, y puede afectar el
 estado de ánimo. Estos efectos son reales pero generales, asociados con
 la relajación y la respuesta atencional, no específicos de frecuencias
 particulares.
 
-**Requiere matización honesta:**
+**Requiere matización:**
 
 — La cifra exacta de "qué porcentaje del espectro electromagnético
 constituye la luz visible" depende fuertemente de cómo se acota
 matemáticamente el rango total. Si se incluyen frecuencias
-arbitrariamente bajas (radiación de ELF de longitud de onda comparable
-al diámetro terrestre) y arbitrariamente altas (rayos gamma de origen
+arbitrariamente bajas (radiación de frecuencia extremadamente baja,
+ELF, de longitud de onda comparable al diámetro terrestre) y
+arbitrariamente altas (rayos gamma de origen
 cósmico de las energías más extremas), el cociente puede hacerse
 arbitrariamente pequeño. La afirmación cualitativa de que "vemos una
 franja muy estrecha" es correcta; las cifras cuantitativas exactas tipo
 "0,000000000000000000035%" son artefactos del rango específico
 considerado.
 
-— La **imagen pedagógica de la playa** (cuatro kilómetros de arena de
+— La imagen pedagógica de la playa (cuatro kilómetros de arena de
 los cuales la visión humana percibiría un solo grano) conserva valor
 didáctico cuando se reconoce explícitamente como tal. Transmite
 correctamente la estructura cualitativa —vemos una banda muy estrecha de
 algo mucho más amplio— sin pretender ser una proporción cuantitativa
-exacta. Es una **escalera intuitiva** legítima si se reconoce que es
+exacta. Es una escalera intuitiva legítima si se reconoce que es
 escalera.
 
 **Lo que la evidencia no respalda y conviene marcar con energía:**
@@ -506,15 +513,15 @@ experimental, y la conspiración sobre el cambio nazi de afinación es
 desinformación documentada. El detalle de cada una quedó desmontado más
 arriba, en esta misma sección.
 
-— La cita atribuida a **Tesla** sobre "energía, frecuencia y vibración"
-como secretos del universo **no aparece en ninguna fuente primaria
-verificable**. Es una atribución apócrifa que circula desde
+— La cita atribuida a Tesla sobre "energía, frecuencia y vibración"
+como secretos del universo no aparece en ninguna fuente primaria
+verificable. Es una atribución apócrifa que circula desde
 aproximadamente 2010. Citar a Tesla con esta frase es propagar una
 atribución falsa.
 
-— La afirmación de que **"todo en el universo es vibración"** o que
-**"todo tiene una frecuencia"** en sentido literal-físico es un **uso
-simbólico legítimo si se marca como tal**. No deriva del
+— La afirmación de que "todo en el universo es vibración" o que
+"todo tiene una frecuencia" en sentido literal-físico es un uso
+simbólico legítimo si se marca como tal. No deriva del
 electromagnetismo: el universo contiene materia bariónica (átomos),
 materia oscura (cuya naturaleza no está caracterizada como onda),
 energía oscura (cuya naturaleza es campo de presión negativa, no
@@ -522,40 +529,27 @@ oscilación), y radiación electromagnética. Decir poéticamente que "todo
 vibra" es legítimo en lenguaje contemplativo; presentarlo como
 derivación física es incorrecto.
 
-**Referencia primaria:** Maxwell, J. C. (1865). «A Dynamical Theory of
-the Electromagnetic Field.» *Philosophical Transactions of the Royal
-Society of London*, 155, 459-512.
-
-**Referencia primaria:** Planck, M. (1901). «Über das Gesetz der
+**Referencias:** Maxwell, J. C. (1865). «A Dynamical Theory of the
+Electromagnetic Field.» *Philosophical Transactions of the Royal Society
+of London*, 155, 459-512. · Planck, M. (1901). «Über das Gesetz der
 Energieverteilung im Normalspektrum.» *Annalen der Physik*, 309(3),
-553-563.
-
-**Referencia primaria:** Einstein, A. (1905). «Über einen die Erzeugung
-und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt.»
-*Annalen der Physik*, 322(6), 132-148.
-
-**Referencia académica sobre desmentido de las frecuencias Solfeggio:**
-Science Feedback (2022). «There is no evidence to support claim that
-Solfeggio frequencies remove toxins from the body.» Health Feedback
-review.
-
-**Referencia académica sobre el origen histórico de las frecuencias
-Solfeggio:** Reisenweaver, A. J. (2012). «Guido of Arezzo and His
-Influence on Music Learning.» *Musical Offerings*, 3(1), Article 4.
-
-**Referencia académica sobre la estandarización A = 440 Hz:** ISO
-16:1975. *Acoustics — Standard tuning frequency (Standard musical
-pitch)*. International Organization for Standardization.
-
-**Referencia académica sobre efectos generales de la música:** Koelsch,
-S. (2014). «Brain correlates of music-evoked emotions.» *Nature Reviews
-Neuroscience*, 15(3), 170-180.
+553-563. · Einstein, A. (1905). «Über einen die Erzeugung und
+Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt.»
+*Annalen der Physik*, 322(6), 132-148. · Sobre desmentido de las
+frecuencias Solfeggio: Science Feedback (2022). «There is no evidence to
+support claim that Solfeggio frequencies remove toxins from the body.»
+Health Feedback review. · Reisenweaver, A. J. (2012). «Guido of Arezzo
+and His Influence on Music Learning.» *Musical Offerings*, 3(1), Article
+4. · Sobre la estandarización A = 440 Hz: ISO 16:1975. *Acoustics —
+Standard tuning frequency (Standard musical pitch)*. International
+Organization for Standardization. · Sobre efectos generales de la
+música: Koelsch, S. (2014). «Brain correlates of music-evoked emotions.»
+*Nature Reviews Neuroscience*, 15(3), 170-180.
 
 **◆**
 
 <LaboratorioInterior titulo="El experimento del punto ciego" variant="formal">
 
-> **◆ PRÁCTICA CONTEMPLATIVA · Carril B (lectura simbólica)**
 >
 > *Lo que sigue es un experimento
 > neurofisiológico verificable que demuestra cómo el cerebro humano
@@ -587,6 +581,14 @@ Si no tienes papel y bolígrafo, puedes usar la imaginación: visualiza
 esos dos símbolos en una hoja imaginaria. El experimento funcionará
 menos vívidamente pero seguirá funcionando.
 
+<FiguraTDV
+  imagen="/assets/cap-3/figura-3-13.png"
+  numero="3.13"
+  titulo="Patrón visual del experimento del punto ciego"
+  alt="Patrón visual del experimento del punto ciego con un punto sólido a la izquierda y una cruz a la derecha para demostrar el disco óptico de la retina"
+  descripcion="Patrón visual para ejecutar el ejercicio del punto ciego. Cubrir el ojo izquierdo, mirar fijo el punto izquierdo, acercar la página gradualmente: a cierta distancia la cruz desaparece. La cruz cae sobre el disco óptico de la retina derecha, donde no hay fotorreceptores. El cerebro completa la imagen automáticamente."
+/>
+
 — ◇ —
 
 **Fase 1 · Preparación** *(2 minutos)*
@@ -604,7 +606,7 @@ visual, sin tratar de interpretarlo místicamente*.
 **Fase 2 · El protocolo** *(3 minutos)*
 
 Con el ojo izquierdo cerrado, fija la mirada del ojo derecho
-**completamente en el punto** (•). El punto está a la izquierda. Tu
+completamente en el punto (•). El punto está a la izquierda. Tu
 mirada permanece en él, fija.
 
 La cruz (+) queda en tu visión periférica derecha. La ves, pero no la
@@ -613,15 +615,15 @@ miras directamente.
 Esto es importante: tu mirada NO se mueve hacia la cruz. La cruz solo
 está en periferia.
 
-Ahora, manteniendo la mirada fija en el punto, **acerca la hoja
-lentamente hacia tu rostro**. Muy lentamente. No más de un centímetro
+Ahora, manteniendo la mirada fija en el punto, acerca la hoja
+lentamente hacia tu rostro. Muy lentamente. No más de un centímetro
 por segundo.
 
 Sigue mirando solo el punto. La cruz queda visible periféricamente.
 
-A medida que la hoja se acerca, **algo va a ocurrir**: en algún momento,
+A medida que la hoja se acerca, algo va a ocurrir: en algún momento,
 generalmente cuando la hoja está a unos 15-20 centímetros de tu ojo, la
-cruz **desaparecerá completamente de tu visión**.
+cruz desaparecerá completamente de tu visión.
 
 No se va a desvanecer gradualmente. No se va a hacer borrosa.
 Simplemente, en cierto punto, dejará de existir en tu experiencia
@@ -632,7 +634,7 @@ más despacio. Asegúrate de que tu ojo izquierdo está cerrado. Asegúrate
 de que tu mirada está fija en el punto y la cruz solo en periferia.
 Mueve lentamente, con paciencia.
 
-Cuando la cruz desaparezca, **detente ahí**.
+Cuando la cruz desaparezca, detente ahí.
 
 **Fase 3 · La observación** *(2 minutos)*
 
@@ -641,18 +643,18 @@ Con la cruz desaparecida, observa.
 Dos cosas notables:
 
 **Primero**, donde estaba la cruz no hay un agujero negro, ni
-borrosidad, ni hueco. Hay **el color blanco de la hoja**, completo,
+borrosidad, ni hueco. Hay el color blanco de la hoja, completo,
 normal, como si nunca hubiera habido cruz allí.
 
-**Segundo**, tu cerebro ha **inventado** ese blanco. No lo recibe de tu
+**Segundo**, tu cerebro ha *inventado* ese blanco. No lo recibe de tu
 retina. La cruz cae sobre el punto ciego — la zona donde el nervio
 óptico sale del globo ocular y no hay células fotorreceptoras. En ese
-punto tu retina **no recibe ninguna información visual**. Cero. Y sin
+punto tu retina no recibe ninguna información visual. Cero. Y sin
 embargo, no experimentas oscuridad ni vacío. Experimentas blanco
 coherente.
 
 El blanco es construcción. Tu corteza visual rellena el área del punto
-ciego con la información de los pixeles vecinos, generando una
+ciego con la información de los píxeles vecinos, generando una
 experiencia perceptiva continua donde la fisiología registra
 interrupción.
 
@@ -675,8 +677,8 @@ Esta pregunta es legítima. Es exactamente la pregunta que la
 neurociencia visual contemporánea hace. No es especulación. Es campo de
 investigación activo.
 
-Y la respuesta — desde la neurociencia — es: **muchísimo más de lo que
-sentimos**. La percepción del color, la percepción del espacio, la
+Y la respuesta — desde la neurociencia — es: muchísimo más de lo que
+sentimos. La percepción del color, la percepción del espacio, la
 percepción de objetos, la percepción de causalidad, la percepción de
 tiempo: todas tienen componentes constructivos importantes.
 
@@ -708,7 +710,7 @@ constructivo. La distinción importa.
 
 Esto no te aliena del mundo. Te enseña algo más útil: la realidad es más
 rica que tu experiencia inmediata, y al mismo tiempo, tu experiencia
-inmediata es **suficiente para vivir**, porque está calibrada por la
+inmediata es suficiente para vivir, porque está calibrada por la
 evolución para los problemas que tu especie enfrenta.
 
 **Cierre**
@@ -724,7 +726,7 @@ de "lo dado" es en realidad construido.
 
 Este experimento es neurofisiología clásica, no mecánica cuántica. La
 construcción visual ocurre por procesamiento neural a escalas
-completamente clásicas (decoherencia es total a esa escala). No se
+completamente clásicas (la decoherencia es total a esa escala). No se
 requiere mecánica cuántica para explicar el punto ciego ni el llenado
 perceptivo.
 
@@ -733,13 +735,14 @@ inmediata con realidad objetiva — disciplina transferible a muchos otros
 dominios, incluido el cuántico, donde la diferencia entre lo que parece
 ser y lo que es se vuelve aún más radical.
 
-<FiguraTDV
-  imagen="/assets/cap-3/figura-3-17.png"
-  numero="3.17"
-  titulo="Comparación de las Leyes de Rayleigh-Jeans, Wien y Planck"
-  alt="Gráfico comparativo de las curvas de Rayleigh-Jeans divergente, Wien incompleta y Planck perfecta para el espectro del cuerpo negro"
-  descripcion="Comparación de las tres leyes que intentaron describir la radiación del cuerpo negro. La ley de Rayleigh-Jeans (clásica) diverge al infinito en altas frecuencias, generando la 'catástrofe ultravioleta'. La ley de Wien funciona bien solo en alta frecuencia. La ley de Planck (1900), introduciendo la cuantización E = hν, reconcilia ambos extremos y reproduce el espectro experimental con precisión absoluta."
-/>
+</LaboratorioInterior>
+
+Queda una deuda de esta sección con su propia constante. La h que aparece en
+cada una de sus fórmulas no se dedujo de ningún principio: Planck la encontró
+buscando una curva que ajustara el espectro medido de un cuerpo caliente, y
+durante años la consideró un artificio de cálculo. Las dos ecuaciones que
+siguen son ese hallazgo y el fracaso que lo obligó. La primera reproduce el
+espectro observado a todas las frecuencias.
 
 <Formula num="3.5" titulo="Ley de radiación del cuerpo negro de Planck">
 
@@ -771,6 +774,11 @@ Rayleigh-Jeans (Fórmula 3.6) hace divergir.*
 
 </Formula>
 
+La segunda es la que la física clásica predecía, y es exacta en frecuencias
+bajas. Lo que hace en las altas —crecer sin límite, prometer energía infinita
+en cada horno— es la catástrofe ultravioleta que la cuantización vino a
+disolver.
+
 <Formula num="3.6" titulo="Ley clásica de Rayleigh-Jeans">
 
 $$u(\nu,T) = \dfrac{8\pi\nu^2 kT}{c^3}$$
@@ -799,7 +807,6 @@ cuando hν ≪ kT.*
 
 </Formula>
 
-</LaboratorioInterior>
 ## **Cierre del §3.5 y puente al §3.6**
 
 El espectro electromagnético, leído desde la mecánica cuántica madura
@@ -819,13 +826,12 @@ han desplegado, en conjunto, una mecánica cuántica madura: la fractura
 del paradigma clásico, la dualidad onda-partícula, las tres grandes
 paradojas (superposición, entrelazamiento, incertidumbre), el átomo como
 geometría de probabilidad, el espectro como escala de fotones
-cuantizados. Lo que queda del capítulo es el **Parlamento Cuántico**:
-la presentación honesta de las cinco
-interpretaciones canónicas que la física contemporánea sostiene sobre
-**qué significa todo esto**, ontológicamente.
+cuantizados. Lo que queda del capítulo es el *Parlamento Cuántico*: la
+presentación de las cinco interpretaciones canónicas que la física
+contemporánea sostiene sobre qué significa todo esto, ontológicamente.
 
-Porque hasta aquí, el capítulo ha presentado **lo que la mecánica
-cuántica predice y verifica experimentalmente**, sin pronunciarse sobre
+Porque hasta aquí, el capítulo ha presentado lo que la mecánica
+cuántica predice y verifica experimentalmente, sin pronunciarse sobre
 la pregunta filosófica más profunda: ¿qué es realmente lo que está
 ocurriendo? ¿Existe la función de onda como entidad física? ¿Hay
 variables ocultas guiando los procesos cuánticos? ¿Se ramifica el
@@ -837,8 +843,8 @@ Estas preguntas no tienen una respuesta única en la física actual.
 Tienen cinco respuestas serias —Copenhague, Muchos Mundos, De
 Broglie-Bohm, QBism, Rovelli relacional— que cohabitan en la disciplina
 sin que ningún experimento haya logrado todavía decidir entre ellas. El
-§3.6 las despliega en formato de Parlamento honesto. Las cinco voces en
-sus propios términos. Sin colapso prematuro hacia ninguna.
+§3.6 las despliega en formato de Parlamento. Las cinco voces en sus
+propios términos. Sin colapso prematuro hacia ninguna.
 
 David Bohm, Hugh Everett y Carlo Rovelli te esperan al otro lado del
 umbral.

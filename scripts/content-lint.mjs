@@ -1,4 +1,4 @@
-/**
+﻿/**
  * content-lint.mjs · gate mecánico de estilo del libro · stdlib node, sin deps.
  * Correr: node scripts/content-lint.mjs   (o `pnpm lint:contenido`)
  *
@@ -106,17 +106,26 @@ const CERROJOS = [
   // E8 · fórmulas (Fase 6)
   { id: 'dd-suelto', nombre: 'bloque $$ fuera de <Formula>', re: null, custom: 'ddSuelto' },
   // E4 · un solo sistema de referencias (Fase 5b)
-  { id: 'ref-suelta', nombre: 'párrafo «**Referencia…:**» suelto (debe ser nota numerada)', re: /^\*\*Referencia[^:*]*:\*\*/gm },
+  // E4 tiene DOS superficies (decisión de Ricardo, Fase 5b): la nota numerada del
+  // cuerpo y la bibliografía dentro de caja. La segunda es legítima, pero su rótulo
+  // es cerrado: solo «**Referencias:**» y «**Para profundizar:**».
+  { id: 'ref-etiqueta', nombre: 'rótulo de bibliografía en caja no canónico (solo «**Referencias:**»)', re: /^\*\*(?!Referencias:\*\*)Referencia[^:*]*:\*\*/gm },
   { id: 'rotulo-notas', nombre: 'rótulo de notas no canónico (debe ser «## **Notas**»)', re: /^\*\*Notas y referencias\*\*|^#{2,4}\s*Referencias seleccionadas|^#{2,4}\s*Para profundizar|^Referencias:/gm },
   // E2 · título duplicado (Fase 8 / Fase 3) · necesita frontmatter → custom
   { id: 'dup-titulo', nombre: 'el cuerpo repite el título o el subtítulo del frontmatter', re: null, custom: 'dupTitulo' },
 ];
 
-// E5+E9 · lemas con techo por unidad (‰ = por cada 1.000 palabras del cuerpo).
+// E5+E9 · lemas con techo por unidad, medido POR CADA 10.000 PALABRAS del cuerpo.
 // El candado de F3 era de FRASE FIJA y por eso las 82 ocurrencias de «honest*»
 // sobrevivieron intactas: ninguna contenía las tres cadenas literales vigiladas.
+// La UNIDAD era el problema. El plan y el manual miden por 10.000 palabras
+// (Obertura 1,61 · Cap.1 10,76 · Cap.4 6,09) y este cerrojo medía por 1.000 con
+// techo 2,0 — es decir, 20 por diez mil: DIEZ VECES más flojo que el objetivo
+// del plan, que es ≤2 por diez mil. Así nunca podía morder: la peor unidad
+// marcaba 1,03 contra un techo de 2,0 y pasaba sin avisar.
+// Se cambia la unidad, no solo el número, para que la confusión no vuelva.
 const LEMAS = [
-  { id: 'honest', nombre: 'familia «honesto/honestidad»', re: /honest\w*/gi, techoPorMil: 2.0 },
+  { id: 'honest', nombre: 'familia «honesto/honestidad»', re: /honest\w*/gi, techoPorDiezMil: 2.0 },
 ];
 
 /**
@@ -255,13 +264,38 @@ export function analizarCorpus(capitulos, baseDir) {
             }
           }
         } else if (c.custom === 'dupTitulo') {
+          // Dispara cuando una LÍNEA SUELTA de la cabecera del cuerpo ES el
+          // título o el subtítulo: encabezado, eyebrow o glosa que repite lo que
+          // la plantilla ya pinta. Esa es la duplicación que el lector encuentra
+          // como texto, y la que la Fase 8 retiró de nueve piezas de la Obertura.
+          //
+          // NO dispara en dos casos, y distinguirlos es todo el valor del cerrojo:
+          //  · el valor viaja como PROP de un componente —<Frontispicio subtitulo>,
+          //    <AnclajeExperiencial titulo>, <Interludio title>, <VozTejido name>—.
+          //    Ahí el componente pinta su propio marco rotulado; si además debe
+          //    aparecer el encabezado genérico es una decisión de maquetación, no
+          //    un defecto del contenido.
+          //  · una MENCIÓN EN PROSA. Que §1.0 diga «El umbral ha sido cruzado» en
+          //    una pieza subtitulada «El umbral» es escribir, no duplicar.
+          // La versión anterior usaba `cab.includes(val)` y marcaba los tres casos
+          // por igual: 16 aciertos de los que solo uno era real.
           const fm = lines.slice(0, bodyStart).join('\n');
-          const cab = cuerpoLines.slice(0, 16).join('\n');
+          const desnuda = (l) => l
+            .replace(/^\s*#{1,6}\s*/, '')            // encabezado markdown
+            .replace(/^\s*<h[1-6][^>]*>|<\/h[1-6]>\s*$/g, '')
+            .replace(/<span class="num">[^<]*<\/span>/g, '')
+            .replace(/^\s*<p[^>]*>|<\/p>\s*$/g, '')
+            .replace(/^[*_\s]+|[*_\s]+$/g, '')        // cursiva/negrita de la glosa
+            .trim();
           for (const campo of ['title', 'subtitle']) {
             const mm = fm.match(new RegExp(`^${campo}:\\s*"?(.+?)"?\\s*$`, 'm'));
             const val = mm && mm[1].trim();
-            if (val && val.length > 8 && cab.includes(val)) {
-              cerrojoHits[c.id].push({ file: rel(file, baseDir), line: bodyStart + 1, texto: `${campo}: ${val.slice(0, 60)}` });
+            if (!val || val.length <= 8) continue;
+            for (let k = 0; k < Math.min(16, cuerpoLines.length); k++) {
+              if (desnuda(cuerpoLines[k]) === val) {
+                cerrojoHits[c.id].push({ file: rel(file, baseDir), line: bodyStart + k + 1, texto: `${campo}: ${val.slice(0, 60)}` });
+                break;
+              }
             }
           }
         }
@@ -317,15 +351,15 @@ export function analizarCorpus(capitulos, baseDir) {
 
     // Cerrojos y lemas: AVISO por defecto; solo cuentan como violación con
     // LINT_ESTRICTO=1, cuando su fase correspondiente ya ha cerrado.
-    const lemaPorMil = Object.fromEntries(
-      LEMAS.map((l) => [l.id, palabrasCuerpo ? (lemaHits[l.id] * 1000) / palabrasCuerpo : 0]),
+    const lemaPorDiezMil = Object.fromEntries(
+      LEMAS.map((l) => [l.id, palabrasCuerpo ? (lemaHits[l.id] * 10000) / palabrasCuerpo : 0]),
     );
     if (MODO_ESTRICTO) {
       for (const c of CERROJOS) if (cerrojoHits[c.id].length > 0) violaciones++;
-      for (const l of LEMAS) if (lemaPorMil[l.id] > l.techoPorMil) violaciones++;
+      for (const l of LEMAS) if (lemaPorDiezMil[l.id] > l.techoPorDiezMil) violaciones++;
     }
 
-    report.push({ cap, files: files.length, moTotal, moOk, muletillaTotal, andamiajeHits, enfasisSospechoso, enfasisEjemplos, marcadorCarril, marcadorEjemplos, cerrojoHits, lemaHits, lemaPorMil, palabrasCuerpo });
+    report.push({ cap, files: files.length, moTotal, moOk, muletillaTotal, andamiajeHits, enfasisSospechoso, enfasisEjemplos, marcadorCarril, marcadorEjemplos, cerrojoHits, lemaHits, lemaPorDiezMil, palabrasCuerpo });
   }
 
   return { report, promesas, violaciones };
@@ -395,8 +429,8 @@ for (const c of CERROJOS) {
   console.log(`  ${(total === 0 ? '✅ ' : '·  ') + c.nombre}`.padEnd(46) + fila);
 }
 for (const l of LEMAS) {
-  const fila = report.map((r) => (r.lemaPorMil[l.id]).toFixed(2).padStart(8)).join(' ');
-  console.log(`  ·  ${l.nombre} ‰ (techo ${l.techoPorMil})`.padEnd(46) + fila);
+  const fila = report.map((r) => (r.lemaPorDiezMil[l.id]).toFixed(2).padStart(8)).join(' ');
+  console.log(`  ·  ${l.nombre} por 10.000 (techo ${l.techoPorDiezMil})`.padEnd(46) + fila);
 }
 console.log('  Para hacerlos bloqueantes cuando su fase cierre:  LINT_ESTRICTO=1 node scripts/content-lint.mjs');
 
