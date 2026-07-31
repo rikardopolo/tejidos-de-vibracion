@@ -212,11 +212,16 @@ export const POST: APIRoute = async ({ request }) => {
     const templateIdRaw = readEnv('BREVO_TEMPLATE_BUNDLE_PREVENTA');
     const siteUrl = readEnv('PUBLIC_SITE_URL') || readEnv('SITE_URL') || 'https://tejidosdevibracion.com';
     const templateId = Number(templateIdRaw);
-    const { claimed, error: claimErr } = await claimAccesoEnvio(supabase, parsed.lsOrderId);
+    const { claimed: claimedRaw, error: claimErr } = await claimAccesoEnvio(supabase, parsed.lsOrderId);
     if (claimErr) {
-      console.error('[webhooks/lemonsqueezy] no se pudo reclamar el envío de acceso:', claimErr);
-      return json(500, { ok: false, error: 'claim_failed' });
+      // El candado no está disponible (p.ej. la migración de `acceso_enviado_at`
+      // aún no se aplicó en esta base). DEGRADAMOS al comportamiento anterior —
+      // entregar la primera vez — en vez de devolver 500 y dejar a TODO comprador
+      // sin enlace. Devolver 500 aquí haría el despliegue dependiente del orden
+      // migración→código, y sería estrictamente peor que antes del cambio.
+      console.error('[webhooks/lemonsqueezy] candado de entrega no disponible · degradando a isFirstEffect:', claimErr);
     }
+    const claimed = claimErr ? isFirstEffect : claimedRaw;
     if (claimed && tokenSecret && apiKey && templateIdRaw && !Number.isNaN(templateId)) {
       const accessToken = generatePurchaseToken(
         { email: parsed.email, nivel, slugs: [slug], orderId: parsed.lsOrderId },
@@ -235,15 +240,37 @@ export const POST: APIRoute = async ({ request }) => {
         // El email ES la entrega del acceso: si falla, liberamos la marca y
         // devolvemos 500 para que LS reintente. Gracias a la liberación, el
         // reintento SÍ vuelve a enviar (antes se perdía para siempre).
-        await releaseAccesoEnvio(supabase, parsed.lsOrderId);
+        const { error: relErr } = await releaseAccesoEnvio(supabase, parsed.lsOrderId);
+        if (relErr) {
+          // La liberación es lo único que hace recuperable el fallo. Si ELLA falla,
+          // la marca queda tomada y el reintento no reenviará: hace falta mano.
+          console.error(
+            `[webhooks/lemonsqueezy] CRÍTICO · order ${parsed.lsOrderId}: no se pudo liberar acceso_enviado_at · el reintento NO reenviará · arreglo manual: update orders set acceso_enviado_at = null where ls_order_id = '${parsed.lsOrderId}'`,
+            relErr,
+          );
+        }
         console.error('[webhooks/lemonsqueezy] email de acceso falló · 500 para reintento de LS:', sent);
         return json(500, { ok: false, error: 'email_failed' });
       }
     } else if (claimed) {
       // Reclamamos el envío pero no podemos mandarlo: liberar, o la orden queda
       // marcada como entregada sin haberlo estado.
-      await releaseAccesoEnvio(supabase, parsed.lsOrderId);
+      const { error: relErr } = await releaseAccesoEnvio(supabase, parsed.lsOrderId);
+      if (relErr) {
+        console.error(
+          `[webhooks/lemonsqueezy] CRÍTICO · order ${parsed.lsOrderId} queda marcada como entregada sin haberlo estado (liberación fallida):`,
+          relErr,
+        );
+      }
       console.warn('[webhooks/lemonsqueezy] email de acceso omitido · faltan ACCESS_TOKEN_SECRET/BREVO_API_KEY/BREVO_TEMPLATE_BUNDLE_PREVENTA');
+    } else if (parsed.status === 'paid') {
+      // No se obtuvo el candado. Puede ser lo normal (reintento de una entrega ya
+      // hecha) o el rastro de una entrega perdida — un claim que se tomó y murió
+      // antes de enviar. Sin esta línea el caso es completamente mudo: el webhook
+      // devolvería 200 para siempre y nadie sabría que falta un enlace.
+      console.warn(
+        `[webhooks/lemonsqueezy] order ${parsed.lsOrderId} · sin candado de entrega (ya marcada o no 'paid') · si el comprador no recibió el enlace, revisar acceso_enviado_at`,
+      );
     }
   }
 

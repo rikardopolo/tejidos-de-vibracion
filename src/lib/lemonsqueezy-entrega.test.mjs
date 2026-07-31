@@ -112,6 +112,36 @@ test('order inexistente → no reclama (no inventa entrega)', async () => {
   assert.equal(r.claimed, false);
 });
 
+// --- La orden reembolsada no entrega acceso ---
+// Antes lo impedía `isFirstEffect` por accidente (la fila ya existía). Al quitarlo,
+// un order_created reprocesado tras el reembolso emitiría un token NUEVO de 365 días.
+
+test('orden refunded → NO reclama, aunque nunca se haya entregado', async () => {
+  const sb = makeMockSupabase([orden({ status: 'refunded' })]);
+  const r = await claimAccesoEnvio(sb, '9999');
+  assert.equal(r.claimed, false, 'no se entrega acceso sobre una compra devuelta');
+  assert.equal(sb._rows[0].acceso_enviado_at, null, 'ni se marca como entregada');
+});
+
+test('refund huérfano (nace refunded, sin paid previo) → NO reclama', async () => {
+  const sb = makeMockSupabase([orden({ status: 'refunded', acceso_enviado_at: null })]);
+  assert.equal((await claimAccesoEnvio(sb, '9999')).claimed, false);
+});
+
+test('la orden paid del flujo normal sigue reclamando (no-regresión del filtro)', async () => {
+  const sb = makeMockSupabase([orden({ status: 'paid' })]);
+  assert.equal((await claimAccesoEnvio(sb, '9999')).claimed, true);
+});
+
+test('liberación fallida → error propagado y la marca sigue tomada (exige mano)', async () => {
+  const sb = makeMockSupabase([orden()]);
+  await claimAccesoEnvio(sb, '9999');
+  sb._failNext({ message: 'boom' });
+  const { error } = await releaseAccesoEnvio(sb, '9999');
+  assert.notEqual(error, null, 'el caller debe poder loguear que la entrega se perdió');
+  assert.equal((await claimAccesoEnvio(sb, '9999')).claimed, false, 'el reintento NO se auto-cura');
+});
+
 test('error de base al reclamar → claimed=false y error propagado', async () => {
   const sb = makeMockSupabase([orden()]);
   sb._failNext({ message: 'boom' });

@@ -87,6 +87,12 @@ export async function getAccesoVerificado(
     .from('orders')
     .select('status')
     .eq('ls_order_id', orderId)
+    // Acota la consulta ENTERA, reintentos de postgrest incluidos. Sin esto, la
+    // política de "fail-OPEN ante fallo de infraestructura" no se cumple en el caso
+    // que más se parece a una caída: un Supabase LENTO no devuelve error, se cuelga,
+    // agota la función SSR y el comprador ve un 504 — nunca llegaríamos a abrir.
+    // El abort vuelve como `error`, que es justo lo que activa el fail-OPEN.
+    .abortSignal(AbortSignal.timeout(2000))
     .maybeSingle();
 
   return resolveRefundGate(otorgado, {

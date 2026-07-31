@@ -142,6 +142,12 @@ export async function sendTransactionalEmail(opts: {
   try {
     const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
       method: 'POST',
+      // Sin límite, una Brevo COLGADA (no caída) agota la función y la plataforma
+      // la mata: el `catch` de abajo nunca corre, la marca de entrega queda tomada
+      // y el enlace se pierde en silencio. Con el abort, un cuelgue se convierte en
+      // el fallo que el llamador YA sabe manejar (liberar la marca y devolver 500
+      // para que Lemon Squeezy reintente).
+      signal: AbortSignal.timeout(8000),
       headers: {
         'accept': 'application/json',
         'api-key': opts.apiKey,

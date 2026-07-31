@@ -115,6 +115,13 @@ export async function claimAccesoEnvio(supabase, lsOrderId) {
     .from('orders')
     .update({ acceso_enviado_at: new Date().toISOString() })
     .eq('ls_order_id', lsOrderId)
+    // Solo una orden VIVA entrega acceso. Sin este filtro, un `order_created`
+    // reprocesado DESPUÉS de un reembolso reclamaría y emitiría un token nuevo de
+    // 365 días sobre una compra ya devuelta. Antes lo impedía `isFirstEffect` por
+    // accidente (la fila ya existía); al quitarlo hay que decirlo explícitamente.
+    // Consulta el estado PERSISTIDO, no el derivado del nombre del evento, así que
+    // cubre también las entregas fuera de orden y los resend de órdenes viejas.
+    .eq('status', 'paid')
     .is('acceso_enviado_at', null)
     .select('id');
   if (error) return { claimed: false, error };
