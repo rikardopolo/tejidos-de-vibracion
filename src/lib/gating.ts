@@ -10,6 +10,8 @@
 import type { AstroCookies } from 'astro';
 import { verifyAccessToken } from './token';
 import { verifyPurchaseToken, looksLikePurchaseToken } from './purchase-token.mjs';
+import { resolveRefundGate } from './refund-gate.mjs';
+import { getServerClient } from './supabase';
 
 export type Nivel = 0 | 1 | 2 | 3;
 
@@ -48,6 +50,60 @@ export function getAcceso(cookies: AstroCookies): { nivel: Nivel; slugs: string[
 
 export function getNivel(cookies: AstroCookies): Nivel {
   return getAcceso(cookies).nivel;
+}
+
+/**
+ * Igual que `getAcceso`, pero cruza el token de COMPRA contra `orders.status`
+ * para que un reembolso corte el acceso de verdad.
+ *
+ * Por qué existe aparte y no dentro de `getAcceso`: solo el nivel ≥ 2 nace de una
+ * compra, así que solo ahí hay algo que revocar. Dejar `getAcceso` síncrona evita
+ * volver async —y tocar— las cuatro superficies de nivel 1 (Obertura, /recibir,
+ * LecturaLarga), y evita una consulta a la base por cada lector registrado.
+ *
+ * Úsala en toda página que gatee contenido PAGADO. La política de qué hacer
+ * cuando la comprobación no se puede completar vive en `refund-gate.mjs`.
+ */
+export async function getAccesoVerificado(
+  cookies: AstroCookies,
+): Promise<{ nivel: Nivel; slugs: string[] }> {
+  const granted = getAcceso(cookies);
+  if (granted.nivel < 2) return granted;
+
+  const otorgado = { nivel: granted.nivel as 2 | 3, slugs: granted.slugs };
+  const orderId = orderIdDeCookie(cookies);
+
+  // Sin orderId no hay nada que consultar: la política decide (hoy, revocar).
+  if (!orderId) {
+    return resolveRefundGate(otorgado, { orderId: null, hasClient: false, queryError: false, order: null });
+  }
+
+  const client = getServerClient();
+  if (!client) {
+    return resolveRefundGate(otorgado, { orderId, hasClient: false, queryError: false, order: null });
+  }
+
+  const { data, error } = await client
+    .from('orders')
+    .select('status')
+    .eq('ls_order_id', orderId)
+    .maybeSingle();
+
+  return resolveRefundGate(otorgado, {
+    orderId,
+    hasClient: true,
+    queryError: Boolean(error),
+    order: data ? { status: String(data.status) } : null,
+  });
+}
+
+/** `ls_order_id` que viaja dentro del token de compra, o null si no lo lleva. */
+function orderIdDeCookie(cookies: AstroCookies): string | null {
+  const secret = readEnv('ACCESS_TOKEN_SECRET');
+  const value = cookies.get('tejedor-access')?.value;
+  if (!secret || !value || !looksLikePurchaseToken(value)) return null;
+  const r = verifyPurchaseToken(value, secret);
+  return r.valid ? (r.orderId ?? null) : null;
 }
 
 // Decisión PURA de acceso (nivel + scope de producto). Vive en gate-decision.mjs

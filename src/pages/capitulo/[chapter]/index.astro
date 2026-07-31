@@ -24,7 +24,7 @@
 import { getCollection, getEntry, render } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
-import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
+import { getAccesoVerificado, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceMarker, type PieceKind } from '@/lib/piece-num';
 
@@ -38,7 +38,8 @@ if (!chapterEntry || chapterEntry.data.kind !== 'capitulo') {
   return Astro.redirect('/indice');
 }
 
-const acceso = gatingActivo() ? getAcceso(Astro.cookies) : { nivel: 1 as Nivel, slugs: [] };
+// getAccesoVerificado (no getAcceso): gatea contenido PAGADO → cruza contra `orders.status`.
+const acceso = gatingActivo() ? await getAccesoVerificado(Astro.cookies) : { nivel: 1 as Nivel, slugs: [] };
 const nivel = acceso.nivel;
 const data = chapterEntry.data;
 const chapterNum = data.chapter ?? 0;
