@@ -264,13 +264,38 @@ export function analizarCorpus(capitulos, baseDir) {
             }
           }
         } else if (c.custom === 'dupTitulo') {
+          // Dispara cuando una LÍNEA SUELTA de la cabecera del cuerpo ES el
+          // título o el subtítulo: encabezado, eyebrow o glosa que repite lo que
+          // la plantilla ya pinta. Esa es la duplicación que el lector encuentra
+          // como texto, y la que la Fase 8 retiró de nueve piezas de la Obertura.
+          //
+          // NO dispara en dos casos, y distinguirlos es todo el valor del cerrojo:
+          //  · el valor viaja como PROP de un componente —<Frontispicio subtitulo>,
+          //    <AnclajeExperiencial titulo>, <Interludio title>, <VozTejido name>—.
+          //    Ahí el componente pinta su propio marco rotulado; si además debe
+          //    aparecer el encabezado genérico es una decisión de maquetación, no
+          //    un defecto del contenido.
+          //  · una MENCIÓN EN PROSA. Que §1.0 diga «El umbral ha sido cruzado» en
+          //    una pieza subtitulada «El umbral» es escribir, no duplicar.
+          // La versión anterior usaba `cab.includes(val)` y marcaba los tres casos
+          // por igual: 16 aciertos de los que solo uno era real.
           const fm = lines.slice(0, bodyStart).join('\n');
-          const cab = cuerpoLines.slice(0, 16).join('\n');
+          const desnuda = (l) => l
+            .replace(/^\s*#{1,6}\s*/, '')            // encabezado markdown
+            .replace(/^\s*<h[1-6][^>]*>|<\/h[1-6]>\s*$/g, '')
+            .replace(/<span class="num">[^<]*<\/span>/g, '')
+            .replace(/^\s*<p[^>]*>|<\/p>\s*$/g, '')
+            .replace(/^[*_\s]+|[*_\s]+$/g, '')        // cursiva/negrita de la glosa
+            .trim();
           for (const campo of ['title', 'subtitle']) {
             const mm = fm.match(new RegExp(`^${campo}:\\s*"?(.+?)"?\\s*$`, 'm'));
             const val = mm && mm[1].trim();
-            if (val && val.length > 8 && cab.includes(val)) {
-              cerrojoHits[c.id].push({ file: rel(file, baseDir), line: bodyStart + 1, texto: `${campo}: ${val.slice(0, 60)}` });
+            if (!val || val.length <= 8) continue;
+            for (let k = 0; k < Math.min(16, cuerpoLines.length); k++) {
+              if (desnuda(cuerpoLines[k]) === val) {
+                cerrojoHits[c.id].push({ file: rel(file, baseDir), line: bodyStart + k + 1, texto: `${campo}: ${val.slice(0, 60)}` });
+                break;
+              }
             }
           }
         }
