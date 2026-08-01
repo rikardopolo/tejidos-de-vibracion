@@ -50,9 +50,28 @@ test('URL sin query, propiedad ausente y evento vacio no explotan', () => {
   assert.deepEqual(limpiarEvento({ event: 'x' }), { event: 'x' });
 });
 
-test('URL no parseable pierde la query entera (preferimos perder dato a filtrar)', () => {
+test('una ruta relativa se limpia SIN inventarse un dominio', () => {
   const r = limpiarEvento(evento({ $current_url: `/acceso/libro?t=${TOKEN}` }));
-  assert.equal(r.properties.$current_url, '/acceso/libro');
+  assert.equal(r.properties.$current_url, '/acceso/libro?t=REDACTED');
+  assert.ok(!r.properties.$current_url.includes('invalid'));
+});
+
+// ── El caso que se escapo a la primera version ──────────────────────
+test('$session_entry_url tambien se limpia: NO se enumeran nombres de propiedad', () => {
+  const r = limpiarEvento(evento({ $session_entry_url: `https://tejidosdevibracion.com/acceso/libro?t=${TOKEN}` }));
+  assert.ok(!r.properties.$session_entry_url.includes(TOKEN));
+});
+
+test('una propiedad de URL que PostHog invente manana queda cubierta', () => {
+  const r = limpiarEvento(evento({ $propiedad_futura_url: `https://x.com/a?token=${TOKEN}` }));
+  assert.ok(!r.properties.$propiedad_futura_url.includes(TOKEN));
+});
+
+test('el texto libre con interrogacion NO se toca (no todo string con ? es una URL)', () => {
+  const texto = 'y ahora que? nada, seguimos';
+  const r = limpiarEvento(evento({ $intencion: texto, nota: 'sin interrogante' }));
+  assert.equal(r.properties.$intencion, texto);
+  assert.equal(r.properties.nota, 'sin interrogante');
 });
 
 test('devuelve el evento, no null (devolver falsy lo DESCARTARIA)', () => {
