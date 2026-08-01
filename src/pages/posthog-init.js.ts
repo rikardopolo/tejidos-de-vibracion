@@ -20,8 +20,19 @@
  * `autocapture:false`, `disable_session_recording:true`, `enable_heatmaps:false`
  * y `person_profiles:'identified_only'`. No activar ninguno sin cambiar antes
  * la política.
+ *
+ * ─── POR QUÉ ADEMÁS HAY UN `before_send` ───────────────────────────────────
+ * Bloquear cabeceras en el proxy no basta: el SDK compone la URL DENTRO del
+ * evento (`$current_url`, `$referrer`, y los `$initial_*`, que se persisten).
+ * Como `/acceso/<producto>` recibe el token de compra por `?t=`, ese token
+ * acababa en el payload. `limpiarEvento` lo redacta antes de salir.
+ *
+ * Va serializado con `.toString()` porque el navegador recibe el TEXTO de este
+ * snippet, no el módulo — de ahí que la función tenga que ser autocontenida.
+ * Esa restricción está probada en `posthog-scrub.test.mjs`, no solo comentada.
  */
 import type { APIRoute } from 'astro';
+import { limpiarEvento } from '@/lib/posthog-scrub.mjs';
 
 export const prerender = false;
 
@@ -65,7 +76,8 @@ export const GET: APIRoute = () => {
       autocapture: false,
       disable_session_recording: true,
       enable_heatmaps: false,
-      disable_surveys: true
+      disable_surveys: true,
+      before_send: ${limpiarEvento.toString()}
     });
   };
   (window.requestIdleCallback||function(c){return setTimeout(c,1)})(boot,{timeout:4000});
