@@ -14,47 +14,28 @@
  *   /api/ingest/decide           → https://eu.i.posthog.com/decide
  *   /api/ingest/e/ · /i/v0/e/    → https://eu.i.posthog.com/…
  *
- * ─── 🔴 POR QUÉ ESTO NO ES UNA COPIA DEL PROXY DEL PORTAL ──────────────────
- * El equivalente en `tejidos-de-realidad` (`apps/portal/src/pages/api/ingest/`)
- * reenvía TODAS las cabeceras salvo las hop-by-hop — y `cookie` no está en esa
- * lista, así que las cookies del navegador viajan a PostHog. La SecReview del
- * 13-jul-2026 lo marcó como hallazgo abierto.
+ * ─── 🔴 QUÉ SALE DE CASA Y QUÉ NO ─────────────────────────────────────────
+ * `/api/ingest` es **same-origin**: el navegador le adjunta exactamente lo mismo
+ * que a cualquier página nuestra. Aquí eso importa más que en el portal, porque
+ * en este sitio vive `tejedor-access`, la cookie que da acceso a los capítulos
+ * de pago — filtrarla a un tercero sería regalar credenciales de lectura.
  *
- * Aquí ese fallo NO se replica: `cookie` y `authorization` se eliminan
- * explícitamente. En este sitio importa todavía más que en el portal, porque
- * aquí vive `tejedor-access`, la cookie que da acceso a los capítulos de pago:
- * filtrarla a un tercero sería regalar credenciales de lectura.
+ * Este proxy nació ya bloqueando `cookie` y `authorization` (el portal tardó
+ * hasta el 31-jul-2026 en hacerlo; su hallazgo de la SecReview del 13-jul quedó
+ * cerrado en `tejidos-de-realidad` PR #246). Pero la denylist dejaba salir dos
+ * cosas más, que se cierran ahora pasando a **allowlist** — ver el porqué y las
+ * dos fugas concretas en `@/lib/ingest-headers.mjs`.
  *
- * PostHog no necesita ninguna de las dos: su identidad viaja en el cuerpo del
- * evento (`distinct_id`), no en cabeceras.
+ * PostHog no necesita nada de eso: su identidad viaja en el cuerpo del evento
+ * (`distinct_id`), no en cabeceras.
  */
 import type { APIRoute } from 'astro';
+import { filtrarPeticion, filtrarRespuesta } from '@/lib/ingest-headers.mjs';
 
 export const prerender = false;
 
 const POSTHOG_API_HOST = 'https://eu.i.posthog.com';
 const POSTHOG_ASSETS_HOST = 'https://eu-assets.i.posthog.com';
-
-/** Cabeceras que nunca se reenvían aguas arriba. */
-const HEADERS_BLOQUEADAS = new Set([
-  // ── Credenciales · el fix respecto del portal ──
-  'cookie',
-  'authorization',
-  // ── Hop-by-hop (RFC 9110) ──
-  'connection',
-  'keep-alive',
-  'proxy-authenticate',
-  'proxy-authorization',
-  'te',
-  'trailer',
-  'transfer-encoding',
-  'upgrade',
-  'host',
-  'content-length',
-  // El runtime descomprime el body pero conserva el header; reenviar ambos hace
-  // que el cliente intente descomprimir bytes ya descomprimidos → respuesta vacía.
-  'content-encoding',
-]);
 
 const handler: APIRoute = async ({ request, params }) => {
   const path = (params.path as string | undefined) ?? '';
@@ -64,10 +45,7 @@ const handler: APIRoute = async ({ request, params }) => {
   const upstream = esAsset ? POSTHOG_ASSETS_HOST : POSTHOG_API_HOST;
   const target = `${upstream}/${path}${incomingUrl.search}`;
 
-  const headers = new Headers();
-  request.headers.forEach((value, key) => {
-    if (!HEADERS_BLOQUEADAS.has(key.toLowerCase())) headers.set(key, value);
-  });
+  const headers = filtrarPeticion(request.headers);
 
   const init: RequestInit = { method: request.method, headers, redirect: 'manual' };
   if (request.method !== 'GET' && request.method !== 'HEAD') {
@@ -82,14 +60,7 @@ const handler: APIRoute = async ({ request, params }) => {
     return new Response('Bad Gateway', { status: 502 });
   }
 
-  const responseHeaders = new Headers();
-  upstreamResponse.headers.forEach((value, key) => {
-    const k = key.toLowerCase();
-    // `set-cookie` del upstream tampoco se propaga: PostHog no debe poder
-    // escribir cookies en nuestro dominio a través del proxy.
-    if (k === 'set-cookie' || HEADERS_BLOQUEADAS.has(k)) return;
-    responseHeaders.set(key, value);
-  });
+  const responseHeaders = filtrarRespuesta(upstreamResponse.headers);
 
   return new Response(upstreamResponse.body, {
     status: upstreamResponse.status,
