@@ -19,6 +19,7 @@ import { z } from 'zod';
 import { getCollection } from 'astro:content';
 import { getServerClient } from '@/lib/supabase';
 import { verifyAccessToken } from '@/lib/token';
+import { purgarEventosLectura, tocaPurgar } from '@/lib/retencion-lectura.mjs';
 
 export const prerender = false;
 
@@ -157,6 +158,11 @@ export const POST: APIRoute = async ({ request, cookies, clientAddress }) => {
   } catch (err) {
     console.error('[track] reading_events insert threw:', err);
   }
+
+  // Purga probabilística (1 de cada 100) del stream crudo de eventos. Sin cron,
+  // espejo del mecanismo del portal. No se espera: la respuesta es 204 siempre y
+  // un fallo aquí no puede afectar al lector.
+  if (tocaPurgar()) void purgarEventosLectura(supabase);
 
   // ── 2. Rollup de progreso · solo identificado ───────────────────────────
   if (leadId) {

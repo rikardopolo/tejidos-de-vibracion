@@ -21,14 +21,38 @@
   var section = body.getAttribute('data-track-section');
   if (!surface || !chapter || !section) return; // solo páginas de sección
 
-  // ── session id estable first-party ───────────────────────────────────────
+  // ── session id first-party, CON CADUCIDAD ────────────────────────────────
+  //
+  // Antes se guardaba a secas en localStorage y vivía PARA SIEMPRE: un lector no
+  // registrado arrastraba el mismo identificador indefinidamente, y sus eventos
+  // (qué sección, cuánto scroll, cuántos ms) quedaban atados a él sin fecha de
+  // caducidad. Eso es un identificador de dispositivo permanente, que es
+  // exactamente lo que no queremos para quien no se ha identificado.
+  //
+  // Con TTL, el id se renueva cada 24 h: sigue sirviendo para lo único que hace
+  // falta —coser los eventos de UNA sesión de lectura— y deja de servir para
+  // seguir a nadie a lo largo del tiempo.
   var SID_KEY = 'tdv-session-id';
+  var SID_TTL_MS = 24 * 60 * 60 * 1000;
   var sessionId;
   try {
-    sessionId = localStorage.getItem(SID_KEY);
-    if (!sessionId) {
+    var crudo = localStorage.getItem(SID_KEY);
+    var guardado = null;
+    if (crudo) {
+      // Formato nuevo: {v,t}. El formato viejo era un string pelado; se descarta
+      // en silencio (los ids sin marca de tiempo no se pueden caducar).
+      try {
+        var obj = JSON.parse(crudo);
+        if (obj && typeof obj.v === 'string' && typeof obj.t === 'number' && Date.now() - obj.t < SID_TTL_MS) {
+          guardado = obj.v;
+        }
+      } catch (e) { /* string pelado del formato viejo → regenerar */ }
+    }
+    if (guardado) {
+      sessionId = guardado;
+    } else {
       sessionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
-      localStorage.setItem(SID_KEY, sessionId);
+      localStorage.setItem(SID_KEY, JSON.stringify({ v: sessionId, t: Date.now() }));
     }
   } catch (e) {
     sessionId = 'nostore-' + Date.now().toString(36);
