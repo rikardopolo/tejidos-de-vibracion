@@ -33,3 +33,15 @@ export function persistOrderAtomic(
   parsed: { lsOrderId: string; status: 'paid' | 'refunded' },
   row: Record<string, unknown>,
 ): Promise<{ isFirstEffect: boolean; error: { message: string } | null }>;
+
+/** Reclama ATÓMICAMENTE el derecho a enviar el email de acceso de una orden. */
+export function claimAccesoEnvio(
+  supabase: { from: (table: string) => any },
+  lsOrderId: string,
+): Promise<{ claimed: boolean; error: { message: string } | null }>;
+
+/** Devuelve el derecho a enviar cuando el email falló, para que el reintento lo recupere. */
+export function releaseAccesoEnvio(
+  supabase: { from: (table: string) => any },
+  lsOrderId: string,
+): Promise<{ error: { message: string } | null }>;

@@ -25,7 +25,7 @@ import { getCollection, getEntry, render } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import PaginacionCards from '@/components/book/PaginacionCards.astro';
-import { getAcceso, puedeAcceder, gatingActivo, esPreview, type Nivel } from '@/lib/gating';
+import { getAccesoVerificado, puedeAcceder, gatingActivo, esPreview, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceOrnament, type PieceKind } from '@/lib/piece-num';
 
@@ -67,9 +67,11 @@ const capitulo = `Capítulo ${romanChapter}`;
 // editorial interno (draft/review/published) pero NO afecta el gating
 // runtime. Lo único que define visibilidad pública es el status del
 // capítulo padre.
+// getAccesoVerificado (no getAcceso): esta página gatea contenido PAGADO, así que
+// el token de compra se cruza contra `orders.status` y un reembolso corta el acceso.
 const acceso = isBot
   ? { nivel: 1 as Nivel, slugs: [] }
-  : (gatingActivo() ? getAcceso(Astro.cookies) : { nivel: 1 as Nivel, slugs: [] });
+  : (gatingActivo() ? await getAccesoVerificado(Astro.cookies) : { nivel: 1 as Nivel, slugs: [] });
 const nivel = acceso.nivel;
 // Gating data-driven · requisito efectivo = el MAYOR entre el del capítulo
 // padre (unidad publicada) y el de la pieza; el productoSlug de la pieza tiene

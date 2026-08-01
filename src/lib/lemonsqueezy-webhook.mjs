@@ -96,6 +96,57 @@ export async function persistOrderAtomic(supabase, parsed, row) {
 }
 
 /**
+ * Reclama el derecho a enviar el email de acceso de una orden, de forma ATÓMICA.
+ *
+ * Por qué existe: la entrega colgaba de `isFirstEffect`, así que si el email
+ * fallaba se devolvía 500 para que LS reintentara — pero en el reintento el
+ * upsert ya no insertaba nada, `isFirstEffect` era false y el email NO se
+ * reenviaba jamás. Resultado posible: compra pagada, fila correcta, comprador
+ * sin enlace.
+ *
+ * El candado es la transición única sobre `acceso_enviado_at`, el mismo patrón
+ * que ya usa el refund con `.neq('status', 'refunded')`: solo envía quien gana
+ * la carrera, y el resto ve 0 filas afectadas.
+ *
+ * @returns {Promise<{claimed: boolean, error: any}>}
+ */
+export async function claimAccesoEnvio(supabase, lsOrderId) {
+  const { data, error } = await supabase
+    .from('orders')
+    .update({ acceso_enviado_at: new Date().toISOString() })
+    .eq('ls_order_id', lsOrderId)
+    // Solo una orden VIVA entrega acceso. Sin este filtro, un `order_created`
+    // reprocesado DESPUÉS de un reembolso reclamaría y emitiría un token nuevo de
+    // 365 días sobre una compra ya devuelta. Antes lo impedía `isFirstEffect` por
+    // accidente (la fila ya existía); al quitarlo hay que decirlo explícitamente.
+    // Consulta el estado PERSISTIDO, no el derivado del nombre del evento, así que
+    // cubre también las entregas fuera de orden y los resend de órdenes viejas.
+    .eq('status', 'paid')
+    .is('acceso_enviado_at', null)
+    .select('id');
+  if (error) return { claimed: false, error };
+  return { claimed: !!data && data.length > 0, error: null };
+}
+
+/**
+ * Devuelve el derecho a enviar cuando el email falló, para que el reintento de
+ * LS pueda intentarlo de nuevo.
+ *
+ * Sin esto, reclamar antes de enviar reproduciría el defecto original con otro
+ * nombre: el primer intento se quedaría la marca y el reintento la vería tomada.
+ * Si esta liberación falla, degradamos exactamente al comportamiento anterior
+ * (no se reenvía) — nunca a algo peor.
+ */
+export async function releaseAccesoEnvio(supabase, lsOrderId) {
+  const { error } = await supabase
+    .from('orders')
+    .update({ acceso_enviado_at: null })
+    .eq('ls_order_id', lsOrderId)
+    .select('id');
+  return { error: error ?? null };
+}
+
+/**
  * Normaliza el payload del webhook de orden de LS a un registro para `orders`.
  * Devuelve null si el evento no es una orden que manejemos.
  * @param {any} body  payload JSON del webhook
