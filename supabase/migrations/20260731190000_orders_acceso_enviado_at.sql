@@ -23,9 +23,10 @@
 -- IDEMPOTENTE: `add column if not exists` + backfill acotado a `is null`, aplicable
 -- sobre la tabla viva y repetible sin efecto.
 --
--- APLICACIÓN: MANUAL vía Supabase SQL Editor por Ricardo. NO aplicada por esta
--- sesión (gate de Ricardo · regla del proyecto: nada de `supabase db push` ni MCP
--- sin GO).
+-- APLICACIÓN: ✅ APLICADA en `tdv-prod` (ufwwqskofrtdjdwstnro) el 31-jul-2026, con
+-- GO explícito de Ricardo. Verificado tras aplicar: columna presente · 16 filas
+-- backfilleadas (las 16 órdenes existentes, todas `test_mode`, cero compradores
+-- reales) · 0 pagadas sin marcar · índice parcial creado.
 
 alter table public.orders
   add column if not exists acceso_enviado_at timestamptz;
