@@ -213,6 +213,12 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'bio',
     titulo: 'Capítulo 1 · La Historia Secreta del Sonido',
   },
+  'a01-cimatica': {
+    destino: 'https://tejidosderealidad.com/simuladores/cymatica',
+    campaign: 'agosto-a01',
+    medium: 'reel',
+    titulo: 'La arena que dibuja el sonido',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
