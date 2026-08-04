@@ -114,15 +114,34 @@ linea('E8 · citas cruzadas con destino', `${citaF.size + citaG.size} citadas`, 
 const ORN = /^\s*(\*\*◆\*\*|— ◇ —|<Diamond\s*\/>|◆|◇ ◆ ◇|<Flourish[^>]*\/>)\s*$/;
 const GLOSA = /^\s*[*_][^*_][\s\S]*[*_]\s*$/;
 const TABLA = /^\s*\|.*\|\s*$/;
-// MapaConceptual es un diagrama ASCII envuelto en componente. Cuenta como media a
-// efectos de esta regla: el lector lo ve como una lámina. (Gate G-E de Ricardo: si
-// decide que no cuenta, quítalo de aquí y el censo baja de 3 a 1.)
-const esPieza = (q) => /^\s*<(FiguraTDV|Formula|MapaConceptual)\b/.test(q) || TABLA.test(q.split('\n')[0] ?? '');
+// GATE G-E, resuelto por el hecho y no por criterio editorial (Fase 5): en la Fase 0
+// metí <MapaConceptual> aquí tratándolo como lámina, y NO lo es — abre y cierra
+// (`<MapaConceptual …>` … `</MapaConceptual>`) y dentro viven la glosa, el ornamento,
+// el arte ASCII y hasta las propias <FiguraTDV>. Es un CONTENEDOR, como una caja.
+// Marcarlo hacía que las dos piezas mapa-cierre salieran «abren con figura» cuando
+// lo que abren es su propio marco.
+//
+// Lo que SÍ es media dentro de ellas es el ARTE ASCII: un diagrama de caja dibujado
+// con ═ ║ ╔ ╝, que el lector ve como lámina y que la regla de Ricardo cubre
+// («ninguna sección debe comenzar con una tabla o figura»).
+const ASCII = /^[\s│├└─┌┐┘┴┬┼║╔╗╚╝═╠╣╦╩╬]*[║╔╗╚╝═╠╣╦╩╬]/;
+// DOS conceptos distintos, y confundirlos produce ruido:
+//  · esLamina  → lo que cuenta para GALERÍAS: piezas gráficas independientes.
+//  · esPieza   → lo que cuenta para ABRIR una sección: incluye además el arte ASCII.
+// Un diagrama ASCII va partido en muchos bloques por líneas en blanco, así que
+// tratarlo como lámina inventaba una «galería de 7» donde hay UN solo dibujo.
+const esLamina = (q) => /^\s*<(FiguraTDV|Formula)\b/.test(q) || TABLA.test(q.split('\n')[0] ?? '');
+const esPieza = (q) => esLamina(q) || ASCII.test(q.split('\n')[0] ?? '');
 const esRitual = (q) => ORN.test(q) || GLOSA.test(q.trim());
 const esProsa = (q) => {
   const t = q.trim();
   if (!t || esRitual(q) || esPieza(q)) return false;
   if (/^<\/?[A-Za-z]/.test(t) || /^#{1,6}\s/.test(t)) return false; // etiqueta o encabezado
+  // Una ENTREGA puede ser corta y seguir siendo entrega: «La velocidad predicha por
+  // las ecuaciones era:» son siete palabras y es el molde canónico para presentar
+  // una fórmula. El umbral de 12 la descartaba y marcaba como huérfana una figura
+  // perfectamente anclada. Los dos puntos finales son la señal de que entrega.
+  if (/[:;]\s*(⁰|¹|²|³|⁴|⁵|⁶|⁷|⁸|⁹)*$/.test(t) && t.split(/\s+/).length >= 4) return true;
   return t.split(/\s+/).length >= 12;
 };
 let abren = 0, galerias = 0;
@@ -137,7 +156,7 @@ for (const [, rel] of UNIDADES) for (const p of mdxDe(rel)) {
   }
   let run = 0;
   for (const q of pars) {
-    if (esPieza(q)) run++;
+    if (esLamina(q)) run++;
     else if (!ORN.test(q) && !/^\s*<\//.test(q)) { if (run >= 3) { galerias++; nota(`E9 · galería de ${run} en ${path.basename(p)}`); } run = 0; }
   }
   if (run >= 3) { galerias++; nota(`E9 · galería de ${run} en ${path.basename(p)}`); }
@@ -153,14 +172,19 @@ linea('E9 · piezas que abren con figura', String(abren), abren === 0);
 // figuras carecen hoy de cita nominal a propósito, porque E9 declara preferida la
 // llamada deíctica —«observa el mapa»— y lista la nominal sistemática como el
 // andamiaje que el libro evita. Ese check habría empujado al libro contra su canon.)
-let sinProsaDetras = 0;
+let sinProsaDetras = 0, parejas = 0;
 for (const [, rel] of UNIDADES) for (const p of mdxDe(rel)) {
   const { cuerpo } = cuerpoDe(readFileSync(p, 'utf8').replace(/\r\n/g, '\n'));
   const pars = cuerpo.replace(/^import .*$/gm, '').split('\n\n').filter((q) => q.trim());
   for (let i = 1; i < pars.length; i++) {
-    if (!esPieza(pars[i])) continue;
+    if (!esLamina(pars[i])) continue;
     const prev = pars[i - 1];
     if (esProsa(prev)) continue;
+    // PAREJA DELIBERADA, el caso que E9-(d) admite con gate: una lámina cuya
+    // anterior es otra lámina QUE SÍ está anclada — gráfica y su ecuación, o dos
+    // modelos que se comparan bajo una sola llamada. Se cuenta aparte, no como
+    // defecto: son 3 en el Acto I y las tres están documentadas en el Manual.
+    if (esLamina(prev) && i >= 2 && esProsa(pars[i - 2])) { parejas++; continue; }
     const causa = esPieza(prev) ? 'otra pieza' : ORN.test(prev) ? 'ornamento'
       : /^\s*<\//.test(prev.trim()) ? 'cierre de componente' : 'no-prosa';
     sinProsaDetras++;
@@ -169,6 +193,7 @@ for (const [, rel] of UNIDADES) for (const p of mdxDe(rel)) {
   }
 }
 linea('E9 · figuras/fórmulas sin prosa delante', String(sinProsaDetras), sinProsaDetras === 0);
+console.log(`      parejas deliberadas (E9-d, con gate): ${parejas}`);
 linea('E9 · galerías de 3+ sin prosa', String(galerias), galerias === 0);
 
 // ── E7 / G5 · dosificación de cajas ──────────────────────────────────────────
