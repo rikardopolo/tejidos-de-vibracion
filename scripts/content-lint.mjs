@@ -265,10 +265,6 @@ export function analizarCorpus(capitulos, baseDir) {
 
       moTotal += countMatches(text, /meta-observador/gi);
 
-      for (const m of MULETILLAS) {
-        muletillaTotal[m] += countMatches(text, new RegExp(m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'));
-      }
-
       // F2 · ANDAMIAJE y CERROJOS se evalúan sobre el CUERPO APLANADO. Antes se
       // evaluaban línea a línea y, con los MDX hard-wrapped a ~70 caracteres,
       // cualquier patrón de dos o más palabras se evadía solo con un salto de
@@ -276,6 +272,13 @@ export function analizarCorpus(capitulos, baseDir) {
       const cuerpoLines = lines.slice(bodyStart);
       const { flat, lineOf } = flattenBody(cuerpoLines);
       const aLinea = (n) => n + bodyStart; // offset del aplanado → línea del archivo
+
+      // También sobre el aplanado, y por la misma razón: una muletilla de dos
+      // palabras partida por el hard-wrap no existía para este contador. F2 arregló
+      // ANDAMIAJE y CERROJOS y dejó MULETILLAS midiendo el texto crudo.
+      for (const m of MULETILLAS) {
+        muletillaTotal[m] += countMatches(flat, new RegExp(m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'));
+      }
 
       for (const a of ANDAMIAJE) {
         for (const h of matchesConLinea(a.re, flat, lineOf)) {
@@ -298,28 +301,53 @@ export function analizarCorpus(capitulos, baseDir) {
             }
           }
         } else if (c.custom === 'refEncadenada') {
-          // Un bloque va del rótulo hasta la línea en blanco, el cierre de caja o
-          // el siguiente encabezado. Se APLANA antes de contar: con el hard-wrap a
-          // ~72 columnas, un separador puede quedar al final de una línea y su
-          // ficha empezar en la siguiente, y contar línea a línea lo perdería.
+          // E4 dice «una ficha por párrafo», así que la unidad que hay que mirar es
+          // el PÁRRAFO, y la pregunta es cuántas fichas caben dentro de uno.
+          //
+          // La versión anterior cortaba el bloque en la primera línea en blanco. Como
+          // el formato canónico que la propia Fase 3 impuso es «rótulo → línea en
+          // blanco → una ficha por párrafo», el bloque se quedaba SIEMPRE en la línea
+          // del rótulo: medido sobre el corpus, 34 de 34 bloques inspeccionaban una
+          // sola línea y 133 fichas caían fuera. Reportaba 0 sin mirar nada.
+          //
+          // El criterio sigue siendo el « · », que es como el formato viejo encadenaba
+          // las fichas y lo que F3 vino a deshacer. Lo único que estaba roto era la
+          // ventana. Contar «años entre paréntesis» en su lugar parece más general y
+          // no lo es: da 16 falsos positivos sobre el corpus, porque una ficha lleva
+          // legítimamente más de un año —el fascículo de la revista («*Science,
+          // 315*(5814)»), la obra comentada («commentary on Maxwell (1865)»), la
+          // reedición de una tesis—. El separador, en cambio, sólo aparece cuando
+          // alguien ha pegado dos fichas de verdad.
+          //
+          // Cada párrafo se aplana antes de contar, porque los MDX van hard-wrapped y
+          // el separador puede quedar al final de una línea con su ficha en la
+          // siguiente. Se exige además un año en rango, para que un « · » de prosa
+          // suelta bajo el rótulo no dispare.
           for (let k = 0; k < cuerpoLines.length; k++) {
             if (!/^\s*\*\*(Referencias|Para profundizar)[^:*]*:\*\*/.test(cuerpoLines[k])) continue;
-            const bloque = [];
-            for (let j = k; j < cuerpoLines.length; j++) {
-              if (j > k && cuerpoLines[j].trim() === '') break;
-              if (j > k && /^\s*<\/|^\s*#{2,4}\s|^\s*<h[1-6]/.test(cuerpoLines[j])) break;
-              bloque.push(cuerpoLines[j]);
+            let parrafo = [];
+            for (let j = k + 1; j <= cuerpoLines.length; j++) {
+              const l = cuerpoLines[j];
+              const cierra = l === undefined
+                || /^\s*<\/|^\s*#{2,4}\s|^\s*<h[1-6]/.test(l)
+                || /^\s*\*\*(Referencias|Para profundizar)[^:*]*:\*\*/.test(l);
+              if (l !== undefined && l.trim() !== '' && !cierra) { parrafo.push(l); continue; }
+              // fin de párrafo: contarlo
+              if (parrafo.length) {
+                const plano = parrafo.join(' ').replace(/\s+/g, ' ');
+                const encadenadas = (plano.match(/ · /g) ?? []).length;
+                const tieneAnio = /(?<!\d)\((1[5-9]\d{2}|20[0-2]\d)[a-z]?\)/.test(plano);
+                if (encadenadas > 0 && tieneAnio) {
+                  cerrojoHits[c.id].push({
+                    file: rel(file, baseDir),
+                    line: bodyStart + j - parrafo.length + 1,
+                    texto: `${encadenadas + 1} fichas encadenadas en un párrafo`,
+                  });
+                }
+                parrafo = [];
+              }
+              if (cierra) { k = j - 1; break; }
             }
-            const plano = bloque.join(' ').replace(/\s+/g, ' ');
-            const encadenadas = (plano.match(/ · /g) ?? []).length;
-            if (encadenadas > 0) {
-              cerrojoHits[c.id].push({
-                file: rel(file, baseDir),
-                line: bodyStart + k + 1,
-                texto: `${encadenadas + 1} fichas en un solo párrafo`,
-              });
-            }
-            k += bloque.length - 1;
           }
         } else if (c.custom === 'puntoMedio') {
           // Solo las tres superficies que E11 retira. El frontmatter se mira campo
