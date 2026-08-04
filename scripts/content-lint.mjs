@@ -113,6 +113,27 @@ const CERROJOS = [
   { id: 'rotulo-notas', nombre: 'rótulo de notas no canónico (debe ser «## **Notas**»)', re: /^\*\*Notas y referencias\*\*|^#{2,4}\s*Referencias seleccionadas|^#{2,4}\s*Para profundizar|^Referencias:/gm },
   // E2 · título duplicado (Fase 8 / Fase 3) · necesita frontmatter → custom
   { id: 'dup-titulo', nombre: 'el cuerpo repite el título o el subtítulo del frontmatter', re: null, custom: 'dupTitulo' },
+  // E11 · el punto medio (Fase 1) · ALLOWLIST POR CLASE, NUNCA PURGA.
+  //
+  // El «·» hace quince trabajos distintos en el Acto I y solo tres superficies
+  // sobran: `title`, `subtitle` y encabezado de cuerpo (117 de 710 ocurrencias).
+  // Este cerrojo vigila ESAS TRES Y NADA MÁS.
+  //
+  // Lo que NO toca, y por qué importa que no lo toque:
+  //   b3  headerLabel ......... chrome de plantilla
+  //   b4  dateline VozTejido .. «1813 — 1901 · Compositor italiano» ← ES EL
+  //       EJEMPLAR QUE RICARDO APROBÓ, y el que la Fase 4 replica en 33 voces.
+  //       Purgar el glifo lo destruiría; sustituirlo por raya es peor todavía,
+  //       porque la dateline YA usa raya para el rango de fechas.
+  //   b5  ficha bibliográfica · b6 pie de figura · b9 glosario de fórmula
+  //   b10 operador y unidades («fotones·cm⁻²·s⁻¹») · b15 frontispicio y colofón
+  //   b7 ornamento · b8 viñeta · b11 rótulo de acto · b12 prop · b14 celda
+  //       → los cinco últimos son GATE ABIERTO de Ricardo: 241 ocurrencias, más
+  //         del doble de lo que se retira, y ninguna en la superficie criticada.
+  //
+  // Moldes de sustitución y tabla completa por unidad: Manual §E11.
+  // Censo reproducible: node scripts/_censo-punto-medio.mjs
+  { id: 'punto-medio', nombre: '«·» en title, subtitle o encabezado (E11)', re: null, custom: 'puntoMedio' },
 ];
 
 // E5+E9 · lemas con techo por unidad, medido POR CADA 10.000 PALABRAS del cuerpo.
@@ -262,6 +283,20 @@ export function analizarCorpus(capitulos, baseDir) {
             if (!(ini !== -1 && ini > fin)) {
               cerrojoHits[c.id].push({ file: rel(file, baseDir), line: aLinea(lineOf[m.index] ?? 1), texto: '$$' });
             }
+          }
+        } else if (c.custom === 'puntoMedio') {
+          // Solo las tres superficies que E11 retira. El frontmatter se mira campo
+          // a campo —`headerLabel` lleva «·» por diseño y no debe disparar— y el
+          // cuerpo solo en las líneas de encabezado.
+          for (let k = 0; k < bodyStart; k++) {
+            if (!/^(title|subtitle):/.test(lines[k]) || !lines[k].includes('·')) continue;
+            const campo = lines[k].startsWith('title') ? 'title' : 'subtitle';
+            cerrojoHits[c.id].push({ file: rel(file, baseDir), line: k + 1, texto: `${campo}: ${lines[k].slice(0, 90)}` });
+          }
+          for (let k = 0; k < cuerpoLines.length; k++) {
+            const ln = cuerpoLines[k];
+            if (!/^\s*(#{1,6}\s|<h[1-6][\s>])/.test(ln) || !ln.includes('·')) continue;
+            cerrojoHits[c.id].push({ file: rel(file, baseDir), line: bodyStart + k + 1, texto: `encabezado: ${ln.trim().slice(0, 90)}` });
           }
         } else if (c.custom === 'dupTitulo') {
           // Dispara cuando una LÍNEA SUELTA de la cabecera del cuerpo ES el
