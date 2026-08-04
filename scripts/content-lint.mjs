@@ -279,6 +279,34 @@ export function analizarCorpus(capitulos, baseDir) {
           //    una pieza subtitulada «El umbral» es escribir, no duplicar.
           // La versión anterior usaba `cab.includes(val)` y marcaba los tres casos
           // por igual: 16 aciertos de los que solo uno era real.
+          // F0 · TRES DEFECTOS REPARADOS (3-ago-2026). La versión anterior daba 0
+          // sobre las 63 piezas teniendo casos dentro, por dos causas independientes:
+          //
+          //  1. VENTANA DE 16 LÍNEAS CRUDAS. `cuerpoLines` incluye blancos e
+          //     imports, así que en cap-1/04-tradiciones-olvidadas las 16 líneas se
+          //     gastaban en un blanco, cinco imports, la glosa, el ornamento y el
+          //     bloque de la figura: inspeccionaba UNA línea de prosa real. El
+          //     duplicado está en la 44. Ahora se recorre TODO el cuerpo y se filtra
+          //     por forma —encabezado, glosa en cursiva, eyebrow—, que es más
+          //     preciso que contar líneas y no depende de dónde empiece el cuerpo.
+          //     El defecto venía del canon: E2-(c) pedía «las primeras 14 líneas».
+          //
+          //  2. IGUALDAD CONTRA EL VALOR ENTERO. En cap-1/02-aum-primordial el
+          //     encabezado «La Cosmogonía Vibracional» SÍ caía dentro de la ventana
+          //     y aun así no disparaba, porque el subtitle es «La cosmogonía
+          //     vibracional · el AUM Primordial». El «·» parte el subtítulo en
+          //     trozos que reaparecen sueltos como encabezados: es la duplicación
+          //     que el lector percibe como «se repite, sobra algo», y ninguna
+          //     comparación contra el valor entero puede verla.
+          //
+          //  3. Y no veía la CONTENCIÓN, que se da en los dos sentidos: el
+          //     encabezado dentro del subtítulo (cap-4/04-telares-neurona:110) y el
+          //     subtítulo dentro del encabezado (obertura/09-estados:77).
+          //
+          // Se mantiene intacto lo que la versión anterior hizo bien: NO dispara con
+          // el valor viajando como PROP de un componente, ni con una mención en
+          // prosa. Que §1.0 diga «El umbral ha sido cruzado» en una pieza subtitulada
+          // «El umbral» es escribir, no duplicar.
           const fm = lines.slice(0, bodyStart).join('\n');
           const desnuda = (l) => l
             .replace(/^\s*#{1,6}\s*/, '')            // encabezado markdown
@@ -287,13 +315,57 @@ export function analizarCorpus(capitulos, baseDir) {
             .replace(/^\s*<p[^>]*>|<\/p>\s*$/g, '')
             .replace(/^[*_\s]+|[*_\s]+$/g, '')        // cursiva/negrita de la glosa
             .trim();
+          // Comparar por forma, no por bytes: sin tildes, sin puntuación, en minúscula.
+          // «La Cosmogonía Vibracional» y «La cosmogonía vibracional» son el mismo texto.
+          const norm = (s) => s
+            .normalize('NFD').replace(/[̀-ͯ]/g, '')
+            .toLowerCase()
+            .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+          // Línea candidata = la que el lector lee como rótulo, no como prosa:
+          // encabezado markdown o HTML, glosa/eyebrow en cursiva o negrita a línea
+          // completa. Esto sustituye a la ventana: filtra por forma, no por posición.
+          const esCandidata = (l) => {
+            const t = l.trim();
+            if (!t) return false;
+            if (/^(#{1,6}\s|<h[1-6][\s>])/.test(t)) return true;
+            if (/^<p[^>]*class="[^"]*eyebrow/.test(t)) return true;
+            return /^[*_]{1,2}[^*_].*[*_]{1,2}$/.test(t) && t.length < 160;
+          };
+          const MIN = 18; // por debajo de esto la contención produce falsos positivos
           for (const campo of ['title', 'subtitle']) {
             const mm = fm.match(new RegExp(`^${campo}:\\s*"?(.+?)"?\\s*$`, 'm'));
             const val = mm && mm[1].trim();
             if (!val || val.length <= 8) continue;
-            for (let k = 0; k < Math.min(16, cuerpoLines.length); k++) {
-              if (desnuda(cuerpoLines[k]) === val) {
-                cerrojoHits[c.id].push({ file: rel(file, baseDir), line: bodyStart + k + 1, texto: `${campo}: ${val.slice(0, 60)}` });
+            // El valor entero y, si lleva «·», cada uno de sus trozos.
+            const fragmentos = [val, ...(val.includes('·') ? val.split('·') : [])]
+              .map((f) => f.trim()).filter((f) => norm(f).length >= MIN);
+            let marcado = false;
+            for (let k = 0; k < cuerpoLines.length && !marcado; k++) {
+              if (!esCandidata(cuerpoLines[k])) continue;
+              const linea = norm(desnuda(cuerpoLines[k]));
+              if (linea.length < MIN) continue;
+              for (const frag of fragmentos) {
+                const f = norm(frag);
+                const igual = linea === f;
+                // El `title` NOMBRA el tema de la pieza, así que reaparece de forma
+                // legítima en los encabezados que hablan de ese tema: «Qué no es el
+                // Meta-Observador», «Lo que el Parlamento Cuántico sí establece y lo
+                // que no». Ahí el título es el SUJETO de una frase con predicado
+                // propio, no un rótulo repetido. Por eso el título solo dispara por
+                // igualdad —y hoy da cero, dato ya verificado en el censo—, mientras
+                // que el subtítulo, que es una formulación concreta y no un nombre,
+                // dispara también por contención en los dos sentidos.
+                const contiene = campo === 'subtitle'
+                  && !igual && (linea.includes(f) || f.includes(linea));
+                if (!igual && !contiene) continue;
+                cerrojoHits[c.id].push({
+                  file: rel(file, baseDir),
+                  line: bodyStart + k + 1,
+                  texto: `${campo}${frag === val ? '' : ' (fragmento)'} ${igual ? '=' : '⊃'} ${frag.slice(0, 52)}`,
+                });
+                marcado = true;
                 break;
               }
             }

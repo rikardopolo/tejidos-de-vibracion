@@ -60,10 +60,83 @@ Este párrafo aparte NO debe fundirse con el anterior.
 `,
 );
 
+// Cap.5 (F0) · los dos defectos del cerrojo dup-titulo, en un solo fixture.
+// (1) el encabezado duplicado vive MUY por debajo de la línea 16 del cuerpo — con
+//     la ventana vieja, esas 16 líneas se gastaban en blancos e imports;
+// (2) el encabezado no es el subtítulo ENTERO sino el fragmento que queda a la
+//     izquierda del «·», que es la forma real de la duplicación en el corpus.
+// Y dos casos que NO deben disparar: el título como sujeto de una frase con
+// predicado propio, y el valor viajando como prop de un componente.
+mkdirSync(path.join(base, 'cap5'), { recursive: true });
+writeFileSync(
+  path.join(base, 'cap5', 'dup.mdx'),
+  `---
+title: "El Meta-Observador"
+subtitle: "La cosmogonía vibracional · el AUM Primordial"
+---
+
+import Diamond from '@/components/book/Diamond.astro';
+import FiguraTDV from '@/components/FiguraTDV.astro';
+import VozTejido from '@/components/book/VozTejido.astro';
+import Checkpoint from '@/components/book/Checkpoint.astro';
+import Marginalia from '@/components/book/Marginalia.astro';
+
+*Una glosa que entona en vez de informar*
+
+— ◇ —
+
+Prosa de relleno cuya única función es empujar el encabezado duplicado más allá
+de la decimosexta línea del cuerpo, que es donde la ventana antigua dejaba de
+mirar y por donde se escapaba el defecto.
+
+<Marginalia titulo="La cosmogonía vibracional">
+Aquí el valor viaja como PROP de un componente: NO debe disparar el cerrojo.
+</Marginalia>
+
+Más relleno todavía, porque el objetivo del fixture es justamente que el
+encabezado quede lejos del principio y la prueba falle si alguien reintroduce
+una ventana de longitud fija.
+
+## **La Cosmogonía Vibracional**
+
+Este encabezado ES el fragmento del subtítulo que queda a la izquierda del «·».
+Debe dispararlo aunque no coincida con el subtítulo entero.
+
+<h3 class="sub">Qué no es el Meta-Observador</h3>
+
+Aquí el título es el SUJETO de una frase con predicado propio. Es escribir sobre
+el tema de la pieza, no repetir su nombre: NO debe disparar.
+`,
+);
+
+// Cap.6 (F0) · la glosa de apertura NO puede decir lo mismo que el subtítulo.
+// Hoy en el corpus da cero, pero la fase de subtítulos va a reescribir 27 y nada
+// impediría que uno acabe repitiendo la glosa que tiene tres líneas más abajo.
+mkdirSync(path.join(base, 'cap6'), { recursive: true });
+writeFileSync(
+  path.join(base, 'cap6', 'glosa.mdx'),
+  `---
+title: "Una pieza cualquiera"
+subtitle: "Cuando el silencio aprendió a cantar"
+---
+
+*Cuando el silencio aprendió a cantar*
+
+— ◇ —
+
+La glosa de arriba repite el subtítulo palabra por palabra: el lector lo lee dos
+veces seguidas, en dos tipografías. E1 pide que la glosa ENTONE, no que informe.
+`,
+);
+
 const capitulos = [
   { tag: 'Obertura', root: 'obertura', moMin: 2, moMax: 10 }, // 3 en rango → OK
   { tag: 'Cap.3', root: 'cap3', moMin: 0, moMax: 0 }, // 0 en rango → OK; falla por andamiaje
   { tag: 'Cap.4', root: 'cap4', moMin: 0, moMax: 0 }, // 0 en rango → OK; falla por andamiaje partido
+  // El fixture nombra «Meta-Observador» a propósito (es el falso positivo que hay
+  // que NO disparar), así que su rango lo admite: aquí no se prueba esa métrica.
+  { tag: 'Cap.5', root: 'cap5', moMin: 0, moMax: 5 },
+  { tag: 'Cap.6', root: 'cap6', moMin: 0, moMax: 0 }, // glosa == subtítulo
 ];
 
 const { report, promesas, violaciones } = analizarCorpus(capitulos, base);
@@ -117,6 +190,41 @@ test('el reporte señala la línea REAL, no un offset del texto aplanado', () =>
 test('el aplanado NO cruza párrafos (una línea en blanco corta el match)', () => {
   const { flat } = flattenBody(['uno', 'dos', '', 'tres']);
   assert.equal(flat, 'uno dos\ntres');
+});
+
+// --- F0 · el cerrojo dup-titulo reparado -----------------------------------
+const c5 = report.find((r) => r.cap.tag === 'Cap.5');
+const dup5 = c5.cerrojoHits['dup-titulo'];
+
+test('dup-titulo · caza el fragmento del subtítulo partido por «·»', () => {
+  assert.equal(dup5.length, 1, `esperaba 1 acierto, hubo ${dup5.length}: ${JSON.stringify(dup5)}`);
+  assert.match(dup5[0].texto, /^subtitle/);
+});
+
+test('dup-titulo · ve MÁS ALLÁ de la línea 16 del cuerpo', () => {
+  // El frontmatter ocupa 4 líneas, así que el cuerpo arranca en la 5. Con la
+  // ventana antigua (16 líneas crudas, imports y blancos incluidos) el cerrojo
+  // dejaba de mirar hacia la línea 20 del archivo. El encabezado está mucho
+  // más abajo: si esta prueba falla, alguien ha reintroducido una ventana fija.
+  assert.ok(dup5[0].line > 24, `el acierto está en la línea ${dup5[0].line}, demasiado arriba para probar nada`);
+});
+
+test('dup-titulo · NO dispara con el título como sujeto de una frase', () => {
+  // «Qué no es el Meta-Observador» contiene el title entero, pero es escribir
+  // sobre el tema de la pieza, no repetir su nombre. Por eso el título solo
+  // dispara por igualdad. Los 5 falsos positivos que esto evitaba en el corpus
+  // real eran todos de este patrón.
+  assert.ok(!dup5.some((h) => h.texto.startsWith('title')), 'el título no debe disparar por contención');
+});
+
+test('dup-titulo · NO dispara con el valor como prop de un componente', () => {
+  assert.ok(!dup5.some((h) => h.line === 22), 'la prop de <Marginalia> no es una duplicación de contenido');
+});
+
+test('dup-titulo · caza la glosa de apertura que repite el subtítulo', () => {
+  const dup6 = report.find((r) => r.cap.tag === 'Cap.6').cerrojoHits['dup-titulo'];
+  assert.equal(dup6.length, 1, `esperaba 1 acierto, hubo ${dup6.length}: ${JSON.stringify(dup6)}`);
+  assert.equal(dup6[0].line, 6, 'la glosa está en la línea 6 del fixture');
 });
 
 test.after(() => rmSync(base, { recursive: true, force: true }));
