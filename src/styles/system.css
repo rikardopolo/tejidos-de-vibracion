@@ -1559,6 +1559,110 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
   color: var(--oro);
 }
 
+/* ─────────────────────────── Tablas del libro · E10 (Fase 7)
+   Ricardo, sobre la tabla de §1.2: «formatea esta tabla […] recuerda que todo en
+   el libro debe ser como una obra de arte». Renderizaba con los estilos por
+   defecto del navegador —había CERO reglas de tabla en las 1.673 líneas de este
+   archivo— dentro de una columna de 41,25rem, y las columnas colisionaban.
+
+   RETÍCULA MIXTA, que es lo que manda E10-(a): línea CONTINUA entre filas y
+   PUNTEADA entre columnas. Así la tabla se lee por filas —que es como se lee una
+   tabla de consulta— y no cae en rejilla de cárcel. Referencia visual: la matriz
+   de interpretaciones de `public/assets/cap-3/figura-3-18.png`.
+
+   NO es un componente: E10-(a) dice «las tablas se escriben en markdown y se
+   estilan por CSS», y va aquí y no en un `<style>` de componente porque los
+   scoped NO alcanzan al HTML que sale de MDX en producción (gotcha documentado
+   en Formula.astro:22).
+
+   Hereda del único patrón del repo que ya resolvió esto: la «tabla de símbolos»
+   de Formula.astro:106-142 —21 instancias vivas—, de donde vienen el borde
+   punteado oro, el rótulo en versalitas, la columna de término en `--mono` y los
+   ganchos de modo noche y móvil. */
+.prose table,
+.capitulo-body table {
+  width: 100%;
+  max-width: var(--col-wide, 52rem);
+  margin: 2.4rem auto;
+  border-collapse: collapse;
+  font-family: var(--serif);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--tinta-suave);
+  text-indent: 0;
+}
+
+/* Cabecera · versalitas, como el rótulo «DONDE» de la fórmula.
+   El color es --oro-texto y NO --oro ni --oro-suave: es el único oro con
+   contraste AA >=4.5:1 sobre pergamino, y esto es texto pequeño. */
+.prose thead th,
+.capitulo-body thead th {
+  font-family: var(--cornisa, var(--sans));
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--oro-texto);
+  text-align: left;
+  padding: 0 1rem 0.7rem;
+  border-bottom: 1px solid var(--oro-suave);
+  white-space: nowrap;
+}
+
+.prose tbody td,
+.capitulo-body tbody td {
+  padding: 0.62rem 1rem;
+  border-bottom: 1px solid var(--reposo-claro);   /* continua entre FILAS */
+  border-right: 1px dotted var(--reposo-claro);   /* punteada entre COLUMNAS */
+  vertical-align: baseline;
+}
+
+/* Sin marco pesado: la retícula no cierra por los bordes exteriores. */
+.prose tbody td:last-child,
+.capitulo-body tbody td:last-child { border-right: 0; }
+.prose tbody tr:last-child td,
+.capitulo-body tbody tr:last-child td { border-bottom: 0; }
+
+/* Primera columna = la clave. Mismo gesto que `.formula__donde-body strong`:
+   el término en mono separa clave de valor sin necesidad de una regla vertical. */
+.prose tbody td:first-child strong,
+.capitulo-body tbody td:first-child strong {
+  font-family: var(--mono);
+  font-style: normal;
+  font-weight: 500;
+  color: var(--tinta);
+  white-space: nowrap;
+}
+
+/* Modo noche · mismo gancho que la fórmula (body.modo-tinta) */
+body.modo-tinta .prose table,
+body.modo-tinta .capitulo-body table { color: rgba(245, 240, 228, 0.78); }
+body.modo-tinta .prose tbody td,
+body.modo-tinta .capitulo-body tbody td {
+  border-bottom-color: rgba(245, 240, 228, 0.18);
+  border-right-color: rgba(245, 240, 228, 0.14);
+}
+body.modo-tinta .prose tbody td:first-child strong,
+body.modo-tinta .capitulo-body tbody td:first-child strong { color: var(--pergamino); }
+body.modo-tinta .prose thead th,
+body.modo-tinta .capitulo-body thead th { color: var(--oro); }
+
+/* Móvil · una tabla de tres columnas no cabe en 375px. Scroll horizontal DENTRO
+   de la tabla, para que el cuerpo de la página nunca se desplace en horizontal. */
+@media (max-width: 640px) {
+  .prose table,
+  .capitulo-body table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.88rem;
+  }
+  .prose thead th,
+  .capitulo-body thead th { padding: 0 0.6rem 0.6rem; }
+  .prose tbody td,
+  .capitulo-body tbody td { padding: 0.5rem 0.6rem; }
+}
+
 /* ─────────────────────────── Figuras del libro */
 .figura-libro {
   margin: 3rem 0;
