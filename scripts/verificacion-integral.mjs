@@ -98,6 +98,29 @@ const rotasG = [...citaG].filter((n) => !defG.has(n));
 if (rotasF.length || rotasG.length) nota(`E8 · citas sin destino: fórmulas ${rotasF} · figuras ${rotasG}`);
 linea('E8 · citas cruzadas con destino', `${citaF.size + citaG.size} citadas`, !rotasF.length && !rotasG.length);
 
+// E8 · TODA LÁMINA TIENE SU ARCHIVO (Fase 8).
+//
+// La red que faltaba, y era la más barata de todas: E8 validaba que los números
+// fueran únicos y que las citas tuvieran destino, pero NADIE comprobaba que el
+// `imagen="…"` apuntara a un archivo existente. Ocho <FiguraTDV> del Cap. 4
+// —las 4.1.1-4.1.5 y 4.2.1-4.2.3— referenciaban láminas que estaban en disco
+// pero SIN COMMITEAR: en un checkout limpio salían rotas. No se veía porque el
+// Cap. 4 está en `draft`, así que el defecto esperaba a la publicación.
+let sinArchivo = 0;
+for (const [, rel] of UNIDADES) for (const p of mdxDe(rel)) {
+  const t = readFileSync(p, 'utf8');
+  for (const m of t.matchAll(/<FiguraTDV\b[\s\S]*?\/>/g)) {
+    const img = (m[0].match(/imagen="([^"]+)"/) ?? [])[1];
+    if (!img) continue;
+    const abs = path.join(path.resolve(here, '..'), 'public', img.replace(/^\//, ''));
+    if (statSync(abs, { throwIfNoEntry: false })) continue;
+    sinArchivo++;
+    const num = (m[0].match(/numero="([^"]+)"/) ?? [])[1] ?? '?';
+    nota(`E8 · ${path.basename(p)} · lámina ${num} apunta a ${img}, que NO existe`);
+  }
+}
+linea('E8 · toda lámina tiene su archivo', String(sinArchivo), sinArchivo === 0);
+
 // ── E9 · ninguna pieza abre con figura; ninguna galería de 3+ sin prosa ──────
 //
 // F0 · DEFECTO REPARADO (3-ago-2026). La versión anterior era `esPieza(pars[0])`:
