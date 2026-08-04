@@ -111,6 +111,19 @@ const CERROJOS = [
   // es cerrado: solo «**Referencias:**» y «**Para profundizar:**».
   { id: 'ref-etiqueta', nombre: 'rótulo de bibliografía en caja no canónico (solo «**Referencias:**»)', re: /^\*\*(?!Referencias:\*\*)Referencia[^:*]*:\*\*/gm },
   { id: 'rotulo-notas', nombre: 'rótulo de notas no canónico (debe ser «## **Notas**»)', re: /^\*\*Notas y referencias\*\*|^#{2,4}\s*Referencias seleccionadas|^#{2,4}\s*Para profundizar|^Referencias:/gm },
+  // E4 · superficie 2 · UNA FICHA POR PÁRRAFO (Fase 3).
+  //
+  // Ricardo, leyendo §1.1: «las referencias, al estar agrupadas, no se diferencia
+  // claramente una de otra». La Fase 5b las habia dejado en un parrafo compacto con
+  // las fichas separadas por « · », y el render lo desmintio: ese separador compite
+  // con los puntos internos de cada ficha —«et al.», las iniciales, la abreviatura
+  // de editorial— y los MDX van hard-wrapped a ~72 columnas, asi que una ficha ocupa
+  // tres lineas y la siguiente empieza a mitad de la cuarta.
+  //
+  // Este cerrojo caza el bloque de bibliografia que aun encadena dos o mas fichas.
+  // El « · » PEGADO no cuenta: es operador de unidades. Solo el separador con
+  // espacio a ambos lados.
+  { id: 'ref-encadenada', nombre: 'bloque de bibliografía con fichas encadenadas por « · » (E4 · una ficha por párrafo)', re: null, custom: 'refEncadenada' },
   // E2 · título duplicado (Fase 8 / Fase 3) · necesita frontmatter → custom
   { id: 'dup-titulo', nombre: 'el cuerpo repite el título o el subtítulo del frontmatter', re: null, custom: 'dupTitulo' },
   // E11 · el punto medio (Fase 1) · ALLOWLIST POR CLASE, NUNCA PURGA.
@@ -283,6 +296,30 @@ export function analizarCorpus(capitulos, baseDir) {
             if (!(ini !== -1 && ini > fin)) {
               cerrojoHits[c.id].push({ file: rel(file, baseDir), line: aLinea(lineOf[m.index] ?? 1), texto: '$$' });
             }
+          }
+        } else if (c.custom === 'refEncadenada') {
+          // Un bloque va del rótulo hasta la línea en blanco, el cierre de caja o
+          // el siguiente encabezado. Se APLANA antes de contar: con el hard-wrap a
+          // ~72 columnas, un separador puede quedar al final de una línea y su
+          // ficha empezar en la siguiente, y contar línea a línea lo perdería.
+          for (let k = 0; k < cuerpoLines.length; k++) {
+            if (!/^\s*\*\*(Referencias|Para profundizar)[^:*]*:\*\*/.test(cuerpoLines[k])) continue;
+            const bloque = [];
+            for (let j = k; j < cuerpoLines.length; j++) {
+              if (j > k && cuerpoLines[j].trim() === '') break;
+              if (j > k && /^\s*<\/|^\s*#{2,4}\s|^\s*<h[1-6]/.test(cuerpoLines[j])) break;
+              bloque.push(cuerpoLines[j]);
+            }
+            const plano = bloque.join(' ').replace(/\s+/g, ' ');
+            const encadenadas = (plano.match(/ · /g) ?? []).length;
+            if (encadenadas > 0) {
+              cerrojoHits[c.id].push({
+                file: rel(file, baseDir),
+                line: bodyStart + k + 1,
+                texto: `${encadenadas + 1} fichas en un solo párrafo`,
+              });
+            }
+            k += bloque.length - 1;
           }
         } else if (c.custom === 'puntoMedio') {
           // Solo las tres superficies que E11 retira. El frontmatter se mira campo
