@@ -129,6 +129,62 @@ veces seguidas, en dos tipografías. E1 pide que la glosa ENTONE, no que informe
 `,
 );
 
+// --- F9: ref-encadenada en el FORMATO CANÓNICO que la Fase 3 impuso ---
+// El cerrojo antiguo cortaba el bloque en la primera línea en blanco. Como el
+// formato que la propia F3 dejó es «rótulo → línea en blanco → una ficha por
+// párrafo», el bloque se quedaba siempre en la línea del rótulo: 34 de 34 bloques
+// del corpus real inspeccionaban UNA línea, con 133 fichas fuera de su vista.
+// Este fixture reproduce ese formato, con dos fichas juntas en el último párrafo.
+mkdirSync(path.join(base, 'cap7'), { recursive: true });
+writeFileSync(
+  path.join(base, 'cap7', 'refs.mdx'),
+  `---
+title: "C7"
+---
+Prosa que introduce el aparato bibliográfico, para que la caja no abra en seco.
+
+**Referencias:**
+
+Casimir, H. B. G. (1948). *On the attraction between two perfectly conducting
+plates*. Proceedings of the Royal Netherlands Academy, 51, 793–795.
+
+Planck Collaboration (2020). *Planck 2018 results VI*. Astronomy & Astrophysics,
+641, A6. · Weinberg, S. (1989). *The cosmological constant problem*. Reviews of
+Modern Physics, 61(1), 1–23.
+
+Una muletilla partida por el hard-wrap, que el contador en crudo no veía: esto es
+divulgación
+apresurada, y debe contarse igual.
+`,
+);
+
+// Control negativo: el MISMO formato, sin ninguna ficha encadenada. Si esto
+// dispara, el cerrojo nuevo sobre-reporta y es tan inútil como el que ciega.
+mkdirSync(path.join(base, 'cap8'), { recursive: true });
+writeFileSync(
+  path.join(base, 'cap8', 'refs-ok.mdx'),
+  `---
+title: "C8"
+---
+Prosa que introduce el aparato bibliográfico.
+
+**Referencias:**
+
+Casimir, H. B. G. (1948). *On the attraction between two perfectly conducting
+plates*. Proceedings of the Royal Netherlands Academy, 51, 793–795.
+
+Jacques, V., Wu, E., Grosshans, F., et al. (2007). Experimental realization of
+Wheeler's delayed-choice gedanken experiment. *Science, 315*(5814), 966–968.
+
+Longair, M. (2015). «A commentary on Maxwell (1865) 'A dynamical theory of the
+electromagnetic field'.» *Philosophical Transactions A*, 373(2039), 20140473.
+
+**Para profundizar:**
+
+Milonni, P. W. (1994). *The Quantum Vacuum*. San Diego: Academic Press.
+`,
+);
+
 const capitulos = [
   { tag: 'Obertura', root: 'obertura', moMin: 2, moMax: 10 }, // 3 en rango → OK
   { tag: 'Cap.3', root: 'cap3', moMin: 0, moMax: 0 }, // 0 en rango → OK; falla por andamiaje
@@ -148,8 +204,16 @@ const capitulosDup = [
   { tag: 'Cap.6', root: 'cap6', moMin: 0, moMax: 0 }, // glosa == subtítulo
 ];
 
+const capitulosRef = [
+  { tag: 'Cap.7', root: 'cap7', moMin: 0, moMax: 0 },
+  { tag: 'Cap.8', root: 'cap8', moMin: 0, moMax: 0 },
+];
+
 const { report, promesas, violaciones } = analizarCorpus(capitulos, base);
 const reporteDup = analizarCorpus(capitulosDup, base).report;
+const reporteRef = analizarCorpus(capitulosRef, base).report;
+const c7 = reporteRef.find((r) => r.cap.tag === 'Cap.7');
+const c8 = reporteRef.find((r) => r.cap.tag === 'Cap.8');
 const ober = report.find((r) => r.cap.tag === 'Obertura');
 const c3 = report.find((r) => r.cap.tag === 'Cap.3');
 const c4 = report.find((r) => r.cap.tag === 'Cap.4');
@@ -247,6 +311,35 @@ test('dup-titulo · caza la glosa de apertura que repite el subtítulo', () => {
   const dup6 = reporteDup.find((r) => r.cap.tag === 'Cap.6').cerrojoHits['dup-titulo'];
   assert.equal(dup6.length, 1, `esperaba 1 acierto, hubo ${dup6.length}: ${JSON.stringify(dup6)}`);
   assert.equal(dup6[0].line, 6, 'la glosa está en la línea 6 del fixture');
+});
+
+test('ref-encadenada · ve las fichas que están DEBAJO de la línea en blanco', () => {
+  // Éste es el control positivo que faltaba. El cerrojo antiguo devolvía 0 aquí
+  // sin haber mirado una sola ficha: si esta prueba vuelve a fallar, alguien ha
+  // reintroducido un corte por línea en blanco y el 0 del corpus será mentira.
+  const hits = c7.cerrojoHits['ref-encadenada'];
+  assert.equal(hits.length, 1, `esperaba 1 acierto, hubo ${hits.length}: ${JSON.stringify(hits)}`);
+  assert.match(hits[0].texto, /^2 fichas encadenadas/);
+});
+
+test('ref-encadenada · NO dispara con una ficha por párrafo', () => {
+  // Control negativo, sobre el mismo formato y con DOS rótulos distintos, uno de
+  // ellos «Para profundizar», que E4-c legitima como segundo aparato.
+  //
+  // Dos de estas fichas contienen una SEGUNDA fecha legítima: el número de
+  // fascículo «*Science, 315*(5814)» y la obra comentada «Maxwell (1865)». Contar
+  // años en vez del separador da 16 aciertos falsos sobre el corpus real; los tres
+  // que sobreviven al acotado de rango son de este otro tipo. Una ficha puede
+  // llevar varias fechas; lo que no puede es llevar un « · » entre medias.
+  const hits = c8.cerrojoHits['ref-encadenada'];
+  assert.equal(hits.length, 0, `no debía disparar, disparó: ${JSON.stringify(hits)}`);
+});
+
+test('muletillas · cuenta la que el hard-wrap parte en dos líneas', () => {
+  // F2 pasó ANDAMIAJE y CERROJOS al cuerpo aplanado y dejó MULETILLAS en crudo,
+  // así que toda muletilla de dos palabras partida por el salto de línea se
+  // evadía sola. En el fixture, «divulgación\napresurada» va partida.
+  assert.equal(c7.muletillaTotal['divulgación apresurada'], 1);
 });
 
 test.after(() => rmSync(base, { recursive: true, force: true }));
