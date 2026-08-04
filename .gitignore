@@ -52,3 +52,18 @@ public/assets/**/backup-*/
 # Salida generada por content-lint (reporte de promesas cruzadas)
 out/
 
+# ─── Artefactos de analisis · NUNCA versionar ───────────────────────
+# Salida de la skill graphify. El glob cubre las cuatro variantes que genera
+# (graphify-out, -infra-out, -runtime-out, -content-out) y el `**/` las alcanza
+# tambien bajo docs/ y public/, donde este repo ya las tiene. Son regenerables:
+# se consumen, no se commitean.
+**/graphify-*out/
+.graphify_*
+
+# Tooling local de gstack (browse, qa, benchmarks). Nunca va al repo.
+.gstack/
+
+# Portado del portal (tejidos-de-realidad) el 1-ago-2026: alli estos patrones
+# existen desde hace meses Y hay un guard de CI que rechaza el commit. Aqui no
+# habia ninguna de las dos cosas, asi que los siete directorios de arriba
+# aparecian como `??` en `git status` — a un `git add -A` distraido de meterlos.
