@@ -273,11 +273,70 @@ for (const [nomU, rel] of UNIDADES) {
   }
   pctPorUnidad.push(`${nomU} ${totalU ? ((100 * dentroU) / totalU).toFixed(1) : '0.0'} %`);
 }
+// ── E7 · GATE DECLARADO (4-ago-2026, decisión de Ricardo) ───────────────────
+//
+// El techo no se levanta ni se silencia: se CONGELA la línea base medida, y el
+// check pasa a vigilar REGRESIONES. Falla si aparece una pieza que no está en la
+// lista, o si una de las listadas empeora más de E7_TOLERANCIA puntos.
+//
+// Por qué congelar y no trabajar ahora: la Fase 9 midió el % en caja de estas
+// piezas en cuatro commits (F0, tras F2, tras F3 y hoy) y salió IDÉNTICO hasta el
+// decimal. La predicción del plan —«la observación 3 es la palanca barata que
+// financia a la 9», sacando fichas de las cajas— resultó falsa: la vía A separó
+// las fichas en párrafos pero no las sacó de la caja, así que el margen que la
+// Fase 4 iba a gastar nunca se creó. Bajar del techo exige reescribir prosa, que
+// es trabajo editorial y no de una campaña de formato.
+//
+// Por qué ESTA lista y no la del Manual (8 piezas) ni la del plan (5): las tres
+// mediciones son incompatibles porque miden cosas distintas —para cap-1/02-aum
+// dan 84,2 %, 43,0 % y 45,2 %— y sólo ésta es reproducible con un comando. Las
+// otras dos quedan derogadas; ver Manual §E7.
+//
+// NO es una denylist de nombres: cada entrada lleva su porcentaje, y una pieza
+// sólo pasa mientras siga donde estaba. Si mejora y baja del techo, el check
+// avisa para sacarla, porque un gate que protege algo que ya no existe es ruido.
+const E7_TOLERANCIA = 0.5;
+const E7_GATE = new Map([
+  // (a) FUNCIÓN RITUAL con `kind: "capitulo"`. La Obertura numera TODAS sus piezas
+  //     como capítulo, así que su anclaje y su voz no se exentan como los de los
+  //     capítulos, que llevan `kind: "anclaje"`. Verificado abriendo las dos: la
+  //     caja ES la pieza, no un exceso dentro de ella. No son deuda editorial.
+  ['obertura/07-voz-transversal.mdx', 91.7],   // un párrafo de entrada + la voz de Weil
+  ['obertura/01-anclaje.mdx', 79.5],           // titulada «Anclaje Experiencial»
+  // (b) DEUDA PREEXISTENTE ya declarada en el plan (§«Las 5 piezas que ya
+  //     incumplen el techo»), anterior a esta campaña.
+  ['chapter-sections/cap-2-ciencia-escuchar/03-galileo.mdx', 56.5],
+  ['chapter-sections/cap-3-mundo-cuantico/05-superposicion.mdx', 49.1],
+  ['chapter-sections/cap-3-mundo-cuantico/04-dualidad.mdx', 48.1],
+  ['chapter-sections/cap-3-mundo-cuantico/03-fractura.mdx', 46.2],
+  ['chapter-sections/cap-2-ciencia-escuchar/06-helmholtz.mdx', 46.1],
+  // (c) SIN TRIAR. Entran por medición; nadie ha abierto el fichero para decidir
+  //     si son deuda o forma. Se declaran para no atribuirlas a esta campaña, no
+  //     para darlas por buenas.
+  ['obertura/02-meta-observador.mdx', 49.2],
+  ['obertura/03-interferometro.mdx', 47.2],
+  ['chapter-sections/cap-2-ciencia-escuchar/04-mersenne.mdx', 46.7],
+  ['chapter-sections/cap-3-mundo-cuantico/06-entrelazamiento.mdx', 45.4],
+  ['chapter-sections/cap-1-universo-sinfonia/02-aum-primordial.mdx', 45.2],
+]);
+
 sobreTecho.sort((a, b) => b.pct - a.pct);
-for (const s of sobreTecho) nota(`E7 · ${s.f} ${s.pct.toFixed(1)} % en caja (techo ${TECHO} %)`);
+const e7Nuevas = sobreTecho.filter((s) => !E7_GATE.has(s.f));
+const e7Peor = sobreTecho.filter((s) => E7_GATE.has(s.f) && s.pct > E7_GATE.get(s.f) + E7_TOLERANCIA);
+const e7Salidas = [...E7_GATE.keys()].filter((f) => !sobreTecho.some((s) => s.f === f));
+
+for (const s of e7Nuevas) nota(`E7 · ${s.f} ${s.pct.toFixed(1)} % en caja · NUEVA sobre el techo (${TECHO} %)`);
+for (const s of e7Peor) nota(`E7 · ${s.f} ${s.pct.toFixed(1)} % en caja · EMPEORA sobre su línea base (${E7_GATE.get(s.f)} %)`);
 for (const r of rachas) nota(`E7 · ${r.f} racha de ${r.n} cajas con <${MIN_ENTRE} palabras entre ellas`);
-linea(`E7 · piezas sobre el ${TECHO} % en caja`, String(sobreTecho.length), sobreTecho.length === 0);
+
+linea(`E7 · piezas NUEVAS sobre el ${TECHO} % en caja`, String(e7Nuevas.length), e7Nuevas.length === 0);
+linea('E7 · piezas que empeoran sobre su línea base', String(e7Peor.length), e7Peor.length === 0);
 linea('E7 · rachas de 3+ cajas sin prosa suficiente', String(rachas.length), rachas.length === 0);
+console.log(`      gate declarado: ${E7_GATE.size} piezas congeladas (2 rituales · 5 deuda del plan · 5 sin triar)`);
+if (e7Salidas.length) {
+  console.log(`      ▸ ${e7Salidas.length} pieza(s) del gate ya NO superan el techo — sácalas de E7_GATE:`);
+  for (const f of e7Salidas) console.log(`         ${f}`);
+}
 console.log(`      por unidad: ${pctPorUnidad.join(' · ')}`);
 
 // ── estructura · toda etiqueta de componente se cierra ───────────────────────
