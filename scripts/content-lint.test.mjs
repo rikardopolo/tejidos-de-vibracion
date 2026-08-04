@@ -133,6 +133,15 @@ const capitulos = [
   { tag: 'Obertura', root: 'obertura', moMin: 2, moMax: 10 }, // 3 en rango → OK
   { tag: 'Cap.3', root: 'cap3', moMin: 0, moMax: 0 }, // 0 en rango → OK; falla por andamiaje
   { tag: 'Cap.4', root: 'cap4', moMin: 0, moMax: 0 }, // 0 en rango → OK; falla por andamiaje partido
+];
+
+// Los fixtures de dup-titulo van en una llamada APARTE, y no es cosmético: sus
+// aciertos son, por definición, aciertos de cerrojo, y `analizarCorpus` suma los
+// cerrojos al contador de violaciones cuando LINT_ESTRICTO=1. Mezclarlos con los
+// capítulos de arriba hacía que «violaciones === 2» pasara o fallara según una
+// variable de entorno heredada de la shell — una prueba que depende de cómo la
+// invoques no prueba nada. Separadas, las dos quedan exactas en los dos modos.
+const capitulosDup = [
   // El fixture nombra «Meta-Observador» a propósito (es el falso positivo que hay
   // que NO disparar), así que su rango lo admite: aquí no se prueba esa métrica.
   { tag: 'Cap.5', root: 'cap5', moMin: 0, moMax: 5 },
@@ -140,6 +149,7 @@ const capitulos = [
 ];
 
 const { report, promesas, violaciones } = analizarCorpus(capitulos, base);
+const reporteDup = analizarCorpus(capitulosDup, base).report;
 const ober = report.find((r) => r.cap.tag === 'Obertura');
 const c3 = report.find((r) => r.cap.tag === 'Cap.3');
 const c4 = report.find((r) => r.cap.tag === 'Cap.4');
@@ -171,8 +181,20 @@ test('énfasis sospechoso: blockquote con asteriscos impares', () => {
 });
 
 test('regla FALLA: andamiaje suma violación aunque MO esté en rango', () => {
-  // Obertura OK (0 viol); Cap.3 y Cap.4 con andamiaje → 2 violaciones.
-  assert.equal(violaciones, 2);
+  // Obertura no tiene andamiaje; Cap.3 y Cap.4 sí, y ambos tienen el
+  // Meta-Observador dentro de rango: la violación viene del andamiaje.
+  //
+  // Se comprueba la AFIRMACIÓN, no un total. El total exacto depende de
+  // LINT_ESTRICTO, que suma además cerrojos y lemas: el fixture de Cap.4 dice
+  // «honestidad» en unas treinta palabras, densidad que dispara de sobra el techo
+  // de la familia honest*. Con `assert.equal(violaciones, 2)` esta prueba pasaba
+  // o fallaba según una variable de entorno heredada de la shell — y una prueba
+  // que depende de cómo la invoques no prueba nada. (Fragilidad anterior a la
+  // Fase 0: la versión de main del 3-ago fallaba igual con LINT_ESTRICTO=1.)
+  const conAndamiaje = report.filter((r) => r.andamiajeHits.length > 0);
+  assert.deepEqual(conAndamiaje.map((r) => r.cap.tag), ['Cap.3', 'Cap.4']);
+  assert.equal(ober.andamiajeHits.length, 0, 'la Obertura no debe aportar violación por andamiaje');
+  assert.ok(violaciones >= conAndamiaje.length, 'cada unidad con andamiaje suma al menos una violación');
 });
 
 // --- F2 · el arreglo del hard-wrap -----------------------------------------
@@ -193,7 +215,7 @@ test('el aplanado NO cruza párrafos (una línea en blanco corta el match)', () 
 });
 
 // --- F0 · el cerrojo dup-titulo reparado -----------------------------------
-const c5 = report.find((r) => r.cap.tag === 'Cap.5');
+const c5 = reporteDup.find((r) => r.cap.tag === 'Cap.5');
 const dup5 = c5.cerrojoHits['dup-titulo'];
 
 test('dup-titulo · caza el fragmento del subtítulo partido por «·»', () => {
@@ -222,7 +244,7 @@ test('dup-titulo · NO dispara con el valor como prop de un componente', () => {
 });
 
 test('dup-titulo · caza la glosa de apertura que repite el subtítulo', () => {
-  const dup6 = report.find((r) => r.cap.tag === 'Cap.6').cerrojoHits['dup-titulo'];
+  const dup6 = reporteDup.find((r) => r.cap.tag === 'Cap.6').cerrojoHits['dup-titulo'];
   assert.equal(dup6.length, 1, `esperaba 1 acierto, hubo ${dup6.length}: ${JSON.stringify(dup6)}`);
   assert.equal(dup6[0].line, 6, 'la glosa está en la línea 6 del fixture');
 });
