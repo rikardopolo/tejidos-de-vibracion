@@ -233,12 +233,27 @@ export const ORDEN_BIO = [
 ] as const;
 
 /**
+ * Cuenta que se atribuye cuando la pieza no declara `source`.
+ *
+ * Es `tdv-ig` porque este registro **solo** se sirve desde
+ * `tejidosdevibracion.com`: un `/r/<slug>` que sale de este dominio se pegó en
+ * la bio de @tejidosdevibracion, no en la de TDR. El portal tiene su propia
+ * copia del registro con su propio valor.
+ *
+ * Estaba en `tdr-ig`, copiado del portal al duplicar el archivo, y hacía que
+ * `tejidosdevibracion.com/r/obertura` y `/r/cap-1` —los dos enlaces de la bio
+ * de TDV— llegaran a PostHog etiquetados como tráfico de TDR. No fallaba: el
+ * 302 salía bien y la cifra aparecía, en la fila equivocada.
+ */
+const CUENTA_POR_DEFECTO = 'tdv-ig';
+
+/**
  * Construye la URL final con las UTMs selladas.
  * Si el destino ya trae parámetros, se conservan.
  */
 export function urlConAtribucion(slug: string, pieza: Pieza): string {
   const url = new URL(pieza.destino);
-  url.searchParams.set('utm_source', pieza.source ?? 'tdr-ig');
+  url.searchParams.set('utm_source', pieza.source ?? CUENTA_POR_DEFECTO);
   url.searchParams.set('utm_medium', pieza.medium ?? 'reel');
   url.searchParams.set('utm_campaign', pieza.campaign);
   url.searchParams.set('utm_content', slug);
