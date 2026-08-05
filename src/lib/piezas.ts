@@ -223,6 +223,7 @@ export const PIEZAS: Record<string, Pieza> = {
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
 export const ORDEN_BIO = [
+  'cap-1',
   'obertura',
   'p7-invitacion-final',
   'reel-12',
