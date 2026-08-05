@@ -2,6 +2,12 @@ import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { createCheckout } from '@/lib/payments';
 import { hashIp, isRateLimited } from '@/lib/brevo';
+import { getServerClient } from '@/lib/supabase';
+import {
+  registraIntento as registra,
+  type ClienteRegistro,
+  type Desenlace,
+} from '@/lib/checkout-intento.mjs';
 
 export const prerender = false;
 
@@ -33,18 +39,33 @@ const checkoutSchema = z.object({
   website: z.string().max(0), // honeypot: debe venir vacío
 });
 
+/**
+ * Registro del intento · la lógica y su porqué viven en `@/lib/checkout-intento`
+ * (allí se pueden testear; en `pages/api/*.ts` no). Aquí solo se inyecta el
+ * cliente y se llama en cada salida.
+ */
+async function registraIntento(desenlace: Desenlace, extra: Record<string, unknown> = {}) {
+  await registra(getServerClient() as ClienteRegistro | null, desenlace, extra);
+}
+
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  const iniciado = Date.now();
   const ct = request.headers.get('content-type') || '';
   if (!ct.includes('application/json')) {
+    await registraIntento('rechazado_formato', { motivo: 'content_type' });
     return new Response(JSON.stringify({ error: 'invalid_content_type' }), { status: 415 });
   }
 
   let body: unknown;
   try { body = await request.json(); }
-  catch { return new Response(JSON.stringify({ error: 'invalid_json' }), { status: 400 }); }
+  catch {
+    await registraIntento('rechazado_formato', { motivo: 'json_ilegible' });
+    return new Response(JSON.stringify({ error: 'invalid_json' }), { status: 400 });
+  }
 
   const parsed = checkoutSchema.safeParse(body);
   if (!parsed.success) {
+    await registraIntento('rechazado_datos', { campos: parsed.error.issues.map((i) => i.path.join('.')) });
     return new Response(
       JSON.stringify({ error: 'invalid_input', issues: parsed.error.issues.map((i) => i.path.join('.')) }),
       { status: 400 },
@@ -53,11 +74,17 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   // Honeypot: si lo llenan, rechazo sin crear checkout.
   if (parsed.data.website !== '') {
+    // Casi con seguridad un bot · se cuenta aparte para no inflar el número de
+    // personas que de verdad intentaron comprar.
+    await registraIntento('honeypot');
     return new Response(JSON.stringify({ error: 'invalid_input' }), { status: 400 });
   }
 
   const ipHash = hashIp(clientAddress || 'unknown');
   if (isRateLimited(ipHash)) {
+    // Se registra: un pico de intentos limitados es indistinguible del silencio
+    // si no se cuenta, y es justo la señal de que algo va mal.
+    await registraIntento('limitado_por_ritmo');
     return new Response(JSON.stringify({ error: 'rate_limited' }), {
       status: 429,
       headers: { 'Retry-After': '60' },
@@ -67,6 +94,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const variantId = readEnv('LS_VARIANT_BUNDLE_PREVENTA');
   if (!variantId) {
     console.error('[checkout/bundle-preventa] Falta LS_VARIANT_BUNDLE_PREVENTA');
+    await registraIntento('mal_configurado', { falta: 'LS_VARIANT_BUNDLE_PREVENTA' });
     return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
   }
 
@@ -79,10 +107,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   if (!result.ok) {
     console.error('[checkout/bundle-preventa] createCheckout falló:', result);
+    await registraIntento('error_proveedor', { motivo: result.reason ?? null });
     const status = result.reason === 'not_configured' ? 500 : 502;
     return new Response(JSON.stringify({ error: result.reason }), { status });
   }
 
+  await registraIntento('checkout_creado', {
+    con_correo: Boolean(parsed.data.correo),
+    lead_id: parsed.data.lead_id ?? null,
+    ms: Date.now() - iniciado,
+  });
   return new Response(JSON.stringify({ checkout_url: result.url }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
