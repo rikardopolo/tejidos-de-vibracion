@@ -72,13 +72,30 @@ const ANDAMIAJE = [
   { nombre: 'invocación mecánica del método', re: /disciplina del Doble Carril|Doble Carril editorial|marco epist[ée]mico apropiado/gi },
 ];
 
-// --- Muletillas (REPORTA, conteo por capítulo) ---
+// --- Muletillas · CERROJO DE DENSIDAD (REPORTA) ---
+//
+// Antes contaba ocurrencias por capítulo. Ese número no distinguía un vicio de un
+// vocabulario: la lectura a mano de Cap. 2 y Cap. 3 revisó las 27 ocurrencias una a
+// una y encontró que «divulgación apresurada» es PORTANTE en las 12 —es el nombre
+// propio que el libro le da a su antagonista, y en las doce es sujeto de un verbo
+// de acción: propaga, distorsiona, pretende derivar—. Un contador que dispara 27
+// veces sobre un tic real entrena al equipo a ignorarlo.
+//
+// Lo que sí es señal es la DENSIDAD: la misma locución tres veces en una pieza suena
+// a estribillo, aunque cada una por separado esté bien puesta. Medido sobre el
+// corpus, ese criterio señala exactamente los dos focos que la lectura marcó a mano
+// —tres «divulgación apresurada» en cap-3/06-entrelazamiento y otras tres en
+// cap-3/07-incertidumbre— y nada más.
+//
+// El total por capítulo se sigue imprimiendo como contexto, pero ya no es el
+// veredicto: el veredicto es la concentración.
 const MULETILLAS = [
   'precisión absoluta',
   'divulgación apresurada',
   'te espera al otro lado del umbral',
   'ya eres el Tejedor',
 ];
+const MULETILLA_TECHO_PIEZA = 3;
 
 // --- Promesas cruzadas (REPORTA → out/promesas.tsv) ---
 const RE_PROMESA_CAP = /Cap(?:[íi]tulo)?\.?\s*\d+/g;
@@ -243,6 +260,7 @@ export function analizarCorpus(capitulos, baseDir) {
     const files = walkMdx(path.join(baseDir, cap.root));
     let moTotal = 0;
     const muletillaTotal = Object.fromEntries(MULETILLAS.map((m) => [m, 0]));
+    const muletillaDensa = []; // { file, muletilla, n } · piezas con ≥ MULETILLA_TECHO_PIEZA
     const andamiajeHits = [];
     let enfasisSospechoso = 0;
     const enfasisEjemplos = [];
@@ -277,7 +295,10 @@ export function analizarCorpus(capitulos, baseDir) {
       // palabras partida por el hard-wrap no existía para este contador. F2 arregló
       // ANDAMIAJE y CERROJOS y dejó MULETILLAS midiendo el texto crudo.
       for (const m of MULETILLAS) {
-        muletillaTotal[m] += countMatches(flat, new RegExp(m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'));
+        const n = countMatches(flat, new RegExp(m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'));
+        muletillaTotal[m] += n;
+        // el veredicto es la concentración EN UNA PIEZA, no el total del capítulo
+        if (n >= MULETILLA_TECHO_PIEZA) muletillaDensa.push({ file: rel(file, baseDir), muletilla: m, n });
       }
 
       for (const a of ANDAMIAJE) {
@@ -531,7 +552,7 @@ export function analizarCorpus(capitulos, baseDir) {
       for (const l of LEMAS) if (lemaPorDiezMil[l.id] > l.techoPorDiezMil) violaciones++;
     }
 
-    report.push({ cap, files: files.length, moTotal, moOk, muletillaTotal, andamiajeHits, enfasisSospechoso, enfasisEjemplos, marcadorCarril, marcadorEjemplos, cerrojoHits, lemaHits, lemaPorDiezMil, palabrasCuerpo });
+    report.push({ cap, files: files.length, moTotal, moOk, muletillaTotal, muletillaDensa, andamiajeHits, enfasisSospechoso, enfasisEjemplos, marcadorCarril, marcadorEjemplos, cerrojoHits, lemaHits, lemaPorDiezMil, palabrasCuerpo });
   }
 
   return { report, promesas, violaciones };
@@ -566,10 +587,22 @@ for (const r of report) {
 }
 if (andamiajeGlobal === 0) console.log('  OK · 0 fugas');
 
-console.log('\nMuletillas (REPORTA)');
+console.log(`\nMuletillas · densidad por pieza (REPORTA · techo ${MULETILLA_TECHO_PIEZA})`);
+const densas = report.flatMap((r) => r.muletillaDensa.map((d) => ({ ...d, tag: r.cap.tag })));
+if (densas.length === 0) {
+  console.log(`  OK · ninguna pieza repite una muletilla ${MULETILLA_TECHO_PIEZA} veces o más`);
+} else {
+  for (const d of densas.sort((a, b) => b.n - a.n)) {
+    console.log(`  ✗ ${d.tag}  ${d.file}  ·  "${d.muletilla}" ×${d.n}`);
+  }
+}
+// El total sigue impreso como CONTEXTO, no como veredicto: la lectura a mano de las
+// 27 ocurrencias del Acto I encontró que 14 son portantes. Un número alto aquí no
+// prueba un vicio; una concentración en una pieza, sí.
+console.log('  totales por capítulo, como contexto:');
 for (const m of MULETILLAS) {
   const linea = report.map((r) => `${r.cap.tag}=${r.muletillaTotal[m]}`).join('  ');
-  console.log(`  "${m}"  →  ${linea}`);
+  console.log(`    "${m}"  →  ${linea}`);
 }
 
 console.log('\nÉnfasis markdown sospechoso en blockquote (REPORTA)');

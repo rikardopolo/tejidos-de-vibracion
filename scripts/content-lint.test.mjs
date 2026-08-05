@@ -204,9 +204,37 @@ const capitulosDup = [
   { tag: 'Cap.6', root: 'cap6', moMin: 0, moMax: 0 }, // glosa == subtítulo
 ];
 
+// --- F9: muletillas como cerrojo de DENSIDAD, no de total ---
+// El total por capítulo no distinguía un vicio de un vocabulario: la lectura a mano
+// de las 27 ocurrencias del Acto I encontró que 14 eran portantes. Lo que sí es
+// señal es la concentración: la misma locución 3 veces en UNA pieza. Estas dos
+// piezas suman 5 ocurrencias —el mismo total— pero solo una está concentrada.
+mkdirSync(path.join(base, 'cap9'), { recursive: true });
+writeFileSync(
+  path.join(base, 'cap9', 'densa.mdx'),
+  `---
+title: "C9 densa"
+---
+El experimento se verificó con precisión absoluta en 1998. La predicción se
+confirmó con precisión absoluta una década después, y el modelo sigue
+reproduciendo el espectro con precisión
+absoluta hasta hoy.
+`,
+);
+writeFileSync(
+  path.join(base, 'cap9', 'sobria.mdx'),
+  `---
+title: "C9 sobria"
+---
+La medida se confirmó con precisión absoluta en el laboratorio. Nada más se
+sigue de ahí, salvo que el aparato reproduce el patrón con precisión absoluta.
+`,
+);
+
 const capitulosRef = [
   { tag: 'Cap.7', root: 'cap7', moMin: 0, moMax: 0 },
   { tag: 'Cap.8', root: 'cap8', moMin: 0, moMax: 0 },
+  { tag: 'Cap.9', root: 'cap9', moMin: 0, moMax: 0 },
 ];
 
 const { report, promesas, violaciones } = analizarCorpus(capitulos, base);
@@ -214,6 +242,7 @@ const reporteDup = analizarCorpus(capitulosDup, base).report;
 const reporteRef = analizarCorpus(capitulosRef, base).report;
 const c7 = reporteRef.find((r) => r.cap.tag === 'Cap.7');
 const c8 = reporteRef.find((r) => r.cap.tag === 'Cap.8');
+const c9 = reporteRef.find((r) => r.cap.tag === 'Cap.9');
 const ober = report.find((r) => r.cap.tag === 'Obertura');
 const c3 = report.find((r) => r.cap.tag === 'Cap.3');
 const c4 = report.find((r) => r.cap.tag === 'Cap.4');
@@ -340,6 +369,35 @@ test('muletillas · cuenta la que el hard-wrap parte en dos líneas', () => {
   // así que toda muletilla de dos palabras partida por el salto de línea se
   // evadía sola. En el fixture, «divulgación\napresurada» va partida.
   assert.equal(c7.muletillaTotal['divulgación apresurada'], 1);
+});
+
+test('muletillas · señala la pieza CONCENTRADA, no el total del capítulo', () => {
+  // Las dos piezas suman 5 ocurrencias; solo una las concentra. El cerrojo viejo
+  // reportaba «Cap.9=5» y no distinguía cuál. Si esta prueba falla, alguien ha
+  // devuelto el veredicto al total y el número volverá a señalar vocabulario.
+  assert.equal(c9.muletillaTotal['precisión absoluta'], 5, 'el total sigue midiéndose');
+  const densas = c9.muletillaDensa.filter((d) => d.muletilla === 'precisión absoluta');
+  assert.equal(densas.length, 1, `esperaba 1 pieza densa, hubo ${densas.length}: ${JSON.stringify(densas)}`);
+  assert.match(densas[0].file, /densa\.mdx$/);
+  assert.equal(densas[0].n, 3);
+});
+
+test('muletillas · NO señala la pieza que la usa dos veces', () => {
+  // Control negativo. Dos usos no son un estribillo, y la lectura a mano demostró
+  // que la mayoría de las ocurrencias del corpus son portantes.
+  assert.ok(
+    !c9.muletillaDensa.some((d) => /sobria\.mdx$/.test(d.file)),
+    `la pieza sobria no debía disparar: ${JSON.stringify(c9.muletillaDensa)}`,
+  );
+});
+
+test('muletillas · la concentración se cuenta sobre el cuerpo APLANADO', () => {
+  // La tercera ocurrencia del fixture va partida por el salto de línea
+  // («con precisión\nabsoluta»). Contando en crudo saldrían 2 y la pieza no
+  // dispararía: el cerrojo de densidad depende de que el aplanado funcione.
+  const d = c9.muletillaDensa.find((x) => /densa\.mdx$/.test(x.file));
+  assert.ok(d, 'la pieza densa debe disparar aun con una ocurrencia partida por el wrap');
+  assert.equal(d.n, 3);
 });
 
 test.after(() => rmSync(base, { recursive: true, force: true }));
