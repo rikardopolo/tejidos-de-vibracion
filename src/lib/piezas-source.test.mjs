@@ -35,6 +35,21 @@ test('el default de utm_source es la cuenta del libro', () => {
   assert.equal(literal, 'tdv-ig', 'este repo se sirve desde tejidosdevibracion.com: su default no puede ser la cuenta de TDR');
 });
 
+test('todo slug de ORDEN_BIO existe en PIEZAS', () => {
+  // `bio.astro` hace `.filter((e) => e.destino)`, así que un slug mal escrito no
+  // da error: la entrada simplemente no aparece en /bio. La bio es la única
+  // superficie que las redes pueden enlazar — perder una entrada ahí es perder
+  // el único camino entre una pieza y el sitio, sin que nada lo avise.
+  const bio = [.../ORDEN_BIO = \[([^\]]*)\]/s.exec(fuente)[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
+  assert.ok(bio.length > 0, 'no se localizó ORDEN_BIO — revisar este test antes que el código');
+
+  const claves = [...fuente.matchAll(/^ {2}'?([a-z0-9-]+)'?: \{/gm)].map((m) => m[1]);
+  assert.ok(claves.length > bio.length, 'no se localizaron las claves de PIEZAS');
+
+  const huerfanos = bio.filter((s) => !claves.includes(s));
+  assert.deepEqual(huerfanos, [], 'slugs de ORDEN_BIO que no existen en PIEZAS');
+});
+
 test('ninguna pieza declara tdr-ig explícitamente', () => {
   // Un `source: 'tdr-ig'` puntual tendría el mismo efecto que el default malo.
   // Si alguna vez hace falta uno, este test es el sitio donde justificarlo.
