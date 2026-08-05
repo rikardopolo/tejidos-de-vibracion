@@ -11,9 +11,17 @@
   // podría crear dos checkouts. Flag global + deshabilitar TODOS los botones
   // (ambas instancias comparten este mismo guard).
   var inProgress = false;
-  // El checkout_url DEBE ser de Lemon Squeezy: defensa en profundidad contra una
-  // redirección abierta si la respuesta viniera contaminada.
-  var LS_URL = /^https:\/\/[a-z0-9-]+\.lemonsqueezy\.com\//i;
+  // Aquí NO se comprueba el dominio del checkout: eso lo hace el servidor, en
+  // `src/lib/url-pago.mjs`, donde hay tests. Este fichero tenía su propia lista
+  // (`/^https:\/\/[a-z0-9-]+\.lemonsqueezy\.com\//`) que no incluía el dominio
+  // propio de la tienda: el botón rechazaba su propio checkout y enseñaba «No se
+  // pudo abrir el pago» a todo el que pulsaba Comprar, durante semanas, sin que
+  // nada lo delatara. Una segunda lista aquí solo puede volver a desincronizarse.
+  // Se queda el esquema, que no depende de ningún dominio y frena un
+  // `javascript:` si la respuesta viniera contaminada.
+  function esHttps(u) {
+    return typeof u === 'string' && /^https:\/\//i.test(u);
+  }
 
   function setStatus(btn, msg) {
     var container = btn.closest('.pv-cta-bloque, .pv-cierre') || btn.parentElement;
@@ -40,7 +48,7 @@
           body: JSON.stringify({ website: '' }),
         });
         var data = await res.json().catch(function () { return {}; });
-        if (res.ok && data && typeof data.checkout_url === 'string' && LS_URL.test(data.checkout_url)) {
+        if (res.ok && data && esHttps(data.checkout_url)) {
           window.location.href = data.checkout_url; // navegamos; dejamos todo deshabilitado
           return;
         }

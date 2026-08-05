@@ -8,6 +8,7 @@ import {
   type ClienteRegistro,
   type Desenlace,
 } from '@/lib/checkout-intento.mjs';
+import { esUrlDePago } from '@/lib/url-pago.mjs';
 
 export const prerender = false;
 
@@ -110,6 +111,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     await registraIntento('error_proveedor', { motivo: result.reason ?? null });
     const status = result.reason === 'not_configured' ? 500 : 502;
     return new Response(JSON.stringify({ error: result.reason }), { status });
+  }
+
+  // El host del checkout se valida AQUÍ, donde se parsea la respuesta de LS y
+  // donde hay tests, no en el navegador: la lista de dominios que vivía en
+  // `public/comprar-checkout.js` caducó en silencio y tiró todas las ventas.
+  // Si esto salta, se ve en `events` en vez de morir dentro del navegador.
+  if (!esUrlDePago(result.url)) {
+    console.error('[checkout/bundle-preventa] host inesperado en checkout_url:', result.url);
+    await registraIntento('error_proveedor', { motivo: 'host_inesperado' });
+    return new Response(JSON.stringify({ error: 'invalid_checkout_url' }), { status: 502 });
   }
 
   await registraIntento('checkout_creado', {
