@@ -13,6 +13,7 @@
     "typecheck": "astro check",
     "test": "node --test \"scripts/*.test.mjs\" \"src/lib/*.test.mjs\"",
     "lint:contenido": "node scripts/content-lint.mjs",
+    "check:supabase-ledger": "node scripts/check-supabase-ledger.mjs",
     "optimize:images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {

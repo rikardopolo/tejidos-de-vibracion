@@ -5,6 +5,8 @@ export function verifyLemonSignature(
   secret: string,
 ): boolean;
 
+export function orderRef(lsOrderId: string): string;
+
 export function mapProductToNivel(
   productSlug: string | undefined | null,
 ): { nivel: 2 | 3; expira: string | null } | null;

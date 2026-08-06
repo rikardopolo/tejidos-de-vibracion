@@ -28,12 +28,11 @@ jobs:
         run: pnpm lint:contenido
       - name: Tests
         run: pnpm test
+      # El guard corre su propio self-test antes de comprobar nada, asi que este
+      # paso tambien vigila al vigilante.
+      - name: Guard del ledger Supabase
+        run: pnpm check:supabase-ledger
       - name: Typecheck
         run: pnpm typecheck
       - name: Build
         run: pnpm build
-      # ponytail: falta a proposito el `Guard del ledger Supabase`. El borrador de
-      # este workflow lo traia, pero ni `pnpm check:supabase-ledger` ni
-      # scripts/check-supabase-ledger.mjs estan en main —viven como cambio local
-      # sin commitear—, asi que ese paso saldria rojo en cada PR desde el dia uno.
-      # Anadirlo cuando el script aterrice, en el mismo PR que lo traiga.

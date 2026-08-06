@@ -107,8 +107,15 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   });
 
   if (!result.ok) {
+    // `result` ya no lleva cuerpo del proveedor (lemonsqueezy.ts devuelve reason +
+    // status), así que es seguro loguearlo entero y es lo único que distingue
+    // «LS caído» de «nuestro payload es inválido».
     console.error('[checkout/bundle-preventa] createCheckout falló:', result);
-    await registraIntento('error_proveedor', { motivo: result.reason ?? null });
+    await registraIntento('error_proveedor', {
+      motivo: result.reason ?? null,
+      estado_proveedor: result.status ?? null,
+      causa: result.causa ?? null,
+    });
     const status = result.reason === 'not_configured' ? 500 : 502;
     return new Response(JSON.stringify({ error: result.reason }), { status });
   }

@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { verifyLemonSignature, mapProductToNivel, parseOrderEvent } from './lemonsqueezy-webhook.mjs';
+import { verifyLemonSignature, orderRef, mapProductToNivel, parseOrderEvent } from './lemonsqueezy-webhook.mjs';
 
 const SECRET = 'test-signing-secret';
 const sign = (body) => crypto.createHmac('sha256', SECRET).update(body, 'utf8').digest('hex');
@@ -26,6 +26,16 @@ test('firma de distinta longitud falla sin lanzar', () => {
 test('sin firma o sin secret falla', () => {
   assert.equal(verifyLemonSignature('{}', null, SECRET), false);
   assert.equal(verifyLemonSignature('{}', sign('{}'), ''), false);
+});
+
+test('orderRef anonimiza el ID para correlacion operativa', () => {
+  const raw = 'order_ricardo_9999';
+  const ref = orderRef(raw);
+
+  assert.match(ref, /^[0-9a-f]{64}$/);
+  assert.equal(ref.includes(raw), false);
+  assert.equal(orderRef(raw), ref);
+  assert.notEqual(orderRef('otro-order'), ref);
 });
 
 test('mapeo producto→nivel', () => {

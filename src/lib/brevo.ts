@@ -32,7 +32,7 @@ export async function tagContactSafe(opts: {
   }
   const res = await addContactToList({ email: opts.email, listId: opts.listId, apiKey: opts.apiKey });
   if (!res.ok) {
-    console.warn(`[Brevo tag] ${opts.label} listId=${opts.listId} falló (no crítico): ${res.message}`);
+    console.warn(`[Brevo tag] ${opts.label} listId=${opts.listId} fallo (no critico), status=${res.status}`);
   }
 }
 
@@ -44,6 +44,17 @@ export const leadSchema = z.object({
 });
 
 export type Lead = z.infer<typeof leadSchema>;
+
+/**
+ * Fallo de red hacia Brevo. El cuerpo de la respuesta NO se loguea (puede traer
+ * datos del contacto), pero el NOMBRE de la excepción sí: sin él, un email de
+ * acceso que no sale es indistinguible de una API key mala, y el webhook solo
+ * sabría decir `email_failed`. Un nombre de error no lleva datos de nadie.
+ */
+function falloDeRed(donde: string, e: unknown): { ok: false; status: number; message: string } {
+  console.error(`[Brevo ${donde}] fallo de red:`, e instanceof Error ? e.name : 'unknown');
+  return { ok: false, status: 0, message: 'network_error' };
+}
 
 /**
  * Crea (o actualiza) un contacto en Brevo SIN añadirlo a ninguna lista.
@@ -74,17 +85,14 @@ export async function upsertContact(opts: {
     });
 
     const text = await res.text();
-    console.log(`[Brevo upsertContact] status=${res.status} body=${text.slice(0, 200)}`);
-
     if (res.status === 201 || res.status === 204) return { ok: true };
     // Contact ya existe (200 ok or 400 with "exist" message)
     if (res.status === 400 && (text.includes('already') || text.includes('exist'))) {
       return { ok: true };
     }
-    return { ok: false, status: res.status, message: text.slice(0, 300) };
+    return { ok: false, status: res.status, message: 'provider_error' };
   } catch (e) {
-    console.error('[Brevo upsertContact] fetch threw:', e);
-    return { ok: false, status: 0, message: String(e).slice(0, 300) };
+    return falloDeRed('upsertContact', e);
   }
 }
 
@@ -109,15 +117,12 @@ export async function addContactToList(opts: {
     });
 
     const text = await res.text();
-    console.log(`[Brevo addContactToList] status=${res.status} listId=${opts.listId} body=${text.slice(0, 200)}`);
-
     if (res.status === 201 || res.status === 204) return { ok: true };
     // El contacto ya está en la lista
     if (res.status === 400 && text.includes('already')) return { ok: true };
-    return { ok: false, status: res.status, message: text.slice(0, 300) };
+    return { ok: false, status: res.status, message: 'provider_error' };
   } catch (e) {
-    console.error('[Brevo addContactToList] fetch threw:', e);
-    return { ok: false, status: 0, message: String(e).slice(0, 300) };
+    return falloDeRed('addContactToList', e);
   }
 }
 
@@ -157,17 +162,14 @@ export async function sendTransactionalEmail(opts: {
     });
 
     const text = await res.text();
-    console.log(`[Brevo sendTransactionalEmail] status=${res.status} templateId=${opts.templateId} body=${text.slice(0, 200)}`);
-
     if (res.status === 201 || res.status === 200) {
       let messageId: string | undefined;
       try { messageId = JSON.parse(text).messageId; } catch { /* ignore */ }
       return { ok: true, messageId };
     }
-    return { ok: false, status: res.status, message: text.slice(0, 300) };
+    return { ok: false, status: res.status, message: 'provider_error' };
   } catch (e) {
-    console.error('[Brevo sendTransactionalEmail] fetch threw:', e);
-    return { ok: false, status: 0, message: String(e).slice(0, 300) };
+    return falloDeRed('sendTransactionalEmail', e);
   }
 }
 
