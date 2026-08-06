@@ -23,7 +23,7 @@
 import BookReader from '@/layouts/BookReader.astro';
 import CapituloToc from '@/components/book/CapituloToc.astro';
 import CapituloRail from '@/components/book/CapituloRail.astro';
-import { baseSchemaGraph, chapterOgAlt, chapterOgImage } from '@/lib/seo';
+import { baseSchemaGraph, chapterOgAlt, chapterOgImage, type SchemaNode } from '@/lib/seo';
 
 interface Props {
   /** Título HTML del <head>. */
@@ -52,7 +52,7 @@ interface Props {
    * prop exista— el marcado de paywall: sin él, una URL indexable que sirve el
    * texto completo al bot y el muro al humano es cloaking sin declarar.
    */
-  schemas?: unknown[];
+  schemas?: SchemaNode[];
 }
 
 const {
