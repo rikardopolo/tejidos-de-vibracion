@@ -22,9 +22,21 @@ function readEnv(key: string): string | undefined {
   return pick((import.meta.env as Record<string, string | undefined>)[key]);
 }
 
+/**
+ * El fallo NO lleva el cuerpo de la respuesta del proveedor (puede traer datos
+ * del comprador), pero sí `status` y `causa`. Sin esos dos, «LS está caído» y
+ * «nuestro payload es inválido» producen exactamente el mismo log — que es como
+ * una allowlist caducada llegó a rechazar el 100 % de las compras pareciendo
+ * una caída del proveedor.
+ */
 export type CheckoutResult =
   | { ok: true; url: string }
-  | { ok: false; reason: 'not_configured' | 'api_error'; status?: number; message?: string };
+  | {
+      ok: false;
+      reason: 'not_configured' | 'api_error';
+      status?: number;
+      causa?: 'sin_url' | 'estado_http' | 'red';
+    };
 
 /**
  * Crea un checkout en Lemon Squeezy y devuelve su URL. El modo test/live lo
@@ -59,17 +71,19 @@ export async function createCheckout(opts: {
       body: JSON.stringify(payload),
     });
 
-    const text = await res.text();
     if (res.status === 201) {
+      const text = await res.text();
       let url: string | null = null;
       try { url = extractCheckoutUrl(JSON.parse(text)); } catch { /* respuesta no-JSON */ }
       if (url) return { ok: true, url };
-      return { ok: false, reason: 'api_error', status: res.status, message: 'respuesta sin url' };
+      // 201 SIN url = problema de forma (payload o respuesta), no caída de LS.
+      return { ok: false, reason: 'api_error', status: res.status, causa: 'sin_url' };
     }
-    console.error(`[lemonsqueezy createCheckout] status=${res.status} body=${text.slice(0, 300)}`);
-    return { ok: false, reason: 'api_error', status: res.status, message: text.slice(0, 300) };
+    return { ok: false, reason: 'api_error', status: res.status, causa: 'estado_http' };
   } catch (e) {
-    console.error('[lemonsqueezy createCheckout] fetch threw:', e);
-    return { ok: false, reason: 'api_error', message: String(e).slice(0, 300) };
+    // El cuerpo no se loguea, pero sin el TIPO de fallo de red no hay forma de
+    // separar un DNS caído de un timeout. El nombre del error no lleva datos.
+    console.error('[lemonsqueezy createCheckout] fallo de red:', e instanceof Error ? e.name : 'unknown');
+    return { ok: false, reason: 'api_error', causa: 'red' };
   }
 }

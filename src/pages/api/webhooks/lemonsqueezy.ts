@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { getServerClient } from '@/lib/supabase';
 import {
   verifyLemonSignature,
+  orderRef,
   mapProductToNivel,
   parseOrderEvent,
   persistOrderAtomic,
@@ -42,6 +43,7 @@ const json = (status: number, obj: unknown) =>
   new Response(JSON.stringify(obj), { status, headers: { 'Content-Type': 'application/json' } });
 
 export const POST: APIRoute = async ({ request }) => {
+  const startedAt = Date.now();
   const secret = readEnv('LS_WEBHOOK_SECRET');
   if (!secret) {
     console.error('[webhooks/lemonsqueezy] Falta LS_WEBHOOK_SECRET · rechazando todo');
@@ -69,16 +71,38 @@ export const POST: APIRoute = async ({ request }) => {
     return json(200, { ok: true, ignored: eventName ?? 'unknown' });
   }
 
+  const eventRef = orderRef(parsed.lsOrderId);
+  const logWebhook = (
+    status: 'success' | 'error',
+    result: string,
+    errorCode: string | null = null,
+  ) => {
+    const entry = JSON.stringify({
+      event: 'webhook_run',
+      provider: 'lemonsqueezy',
+      event_ref: eventRef,
+      event_type: parsed.eventName,
+      product: parsed.productSlug ?? 'unknown',
+      status,
+      result,
+      error_code: errorCode,
+      duration_ms: Date.now() - startedAt,
+    });
+    if (status === 'success') console.info('[webhook/run]', entry);
+    else console.error('[webhook/run]', entry);
+  };
+
   // orders.email/product_slug son NOT NULL. Validamos ANTES del upsert para no
   // disparar un fallo de constraint → 500 → reintento infinito de LS.
   if (!parsed.email) {
-    console.error(`[webhooks/lemonsqueezy] order ${parsed.lsOrderId} sin user_email · 400 (no reintentable)`);
+    logWebhook('error', 'rejected', 'missing_email');
     return json(400, { ok: false, error: 'missing_email' });
   }
   const supabase = getServerClient();
   if (!supabase) {
     // Sin Supabase no podemos persistir. 500 → LS reintenta (la idempotencia cubre el retry).
     console.error('[webhooks/lemonsqueezy] Supabase no disponible · 500 para reintento');
+    logWebhook('error', 'retry', 'persist_unavailable');
     return json(500, { ok: false, error: 'persist_unavailable' });
   }
 
@@ -88,9 +112,6 @@ export const POST: APIRoute = async ({ request }) => {
   const productSlug = parsed.productSlug ?? null;
   const nivelInfo = productSlug ? mapProductToNivel(productSlug) : null;
   if (!productSlug || !nivelInfo) {
-    console.warn(
-      `[webhooks/lemonsqueezy] producto NO reconocido (slug=${productSlug ?? 'ausente'}, order ${parsed.lsOrderId}) · NO se otorga nivel de pago`,
-    );
     // Conciliación con leads para el log (best-effort).
     let unkLeadId = parsed.leadId;
     if (!unkLeadId && parsed.email) {
@@ -102,13 +123,14 @@ export const POST: APIRoute = async ({ request }) => {
       type: 'order_unknown_product',
       source: 'lemonsqueezy_webhook',
       metadata: {
-        ls_order_id: parsed.lsOrderId,
+        order_ref: eventRef,
         product_slug: productSlug,
         status: parsed.status,
         test_mode: parsed.testMode,
       },
     });
-    if (unkErr) console.error('[webhooks/lemonsqueezy] events insert (order_unknown_product) falló (no crítico):', unkErr.message);
+    if (unkErr) console.error('[webhooks/lemonsqueezy] events insert (order_unknown_product) fallo');
+    logWebhook('success', 'unknown_product');
     // 200 = ack a LS (no reintentar): el evento es válido, solo no lo monetizamos.
     return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, unknown_product: true });
   }
@@ -121,7 +143,7 @@ export const POST: APIRoute = async ({ request }) => {
   let leadId = parsed.leadId;
   if (!leadId && parsed.email) {
     const { data: lead, error: leadErr } = await supabase.from('leads').select('id').eq('email', parsed.email).maybeSingle();
-    if (leadErr) console.error('[webhooks/lemonsqueezy] lookup de lead por email falló (no crítico):', leadErr.message);
+    if (leadErr) console.error('[webhooks/lemonsqueezy] lookup de lead fallo (no critico)');
     if (lead?.id) leadId = String(lead.id);
   }
 
@@ -153,7 +175,8 @@ export const POST: APIRoute = async ({ request }) => {
   // no un SELECT previo. Misma fuente que el test del módulo puro.
   const { isFirstEffect, error: persistErr } = await persistOrderAtomic(supabase, parsed, row);
   if (persistErr) {
-    console.error('[webhooks/lemonsqueezy] persistencia atómica falló · 500 para reintento:', persistErr.message);
+    console.error('[webhooks/lemonsqueezy] persistencia atomica fallo');
+    logWebhook('error', 'retry', 'persist_failed');
     return json(500, { ok: false, error: 'persist_failed' });
   }
 
@@ -165,13 +188,13 @@ export const POST: APIRoute = async ({ request }) => {
       type: parsed.status === 'refunded' ? 'order_refunded' : 'order_paid',
       source: 'lemonsqueezy_webhook',
       metadata: {
-        ls_order_id: parsed.lsOrderId,
+        order_ref: eventRef,
         product_slug: slug,
         nivel,
         test_mode: parsed.testMode,
       },
     });
-    if (evErr) console.error('[webhooks/lemonsqueezy] events insert (no crítico):', evErr.message);
+    if (evErr) console.error('[webhooks/lemonsqueezy] events insert fallo (no critico)');
 
     // Tags Brevo (env-guarded, best-effort) · order_created → lista de comprador
     // según nivel; order_refunded → lista de reembolso. ponytail: sin ID el tag
@@ -249,7 +272,10 @@ export const POST: APIRoute = async ({ request }) => {
             relErr,
           );
         }
+        // `sent` ya no lleva cuerpo del proveedor (brevo.ts devuelve status + clase),
+        // así que sigue siendo seguro loguearlo y es lo único que dice POR QUÉ falló.
         console.error('[webhooks/lemonsqueezy] email de acceso falló · 500 para reintento de LS:', sent);
+        logWebhook('error', 'retry', 'email_failed');
         return json(500, { ok: false, error: 'email_failed' });
       }
     } else if (claimed) {
@@ -274,6 +300,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
   }
 
+  logWebhook('success', isFirstEffect ? 'processed' : 'duplicate');
   return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, nivel, new: isFirstEffect });
 };
 

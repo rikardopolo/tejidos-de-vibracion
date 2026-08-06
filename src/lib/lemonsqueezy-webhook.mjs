@@ -24,6 +24,15 @@ export function verifyLemonSignature(rawBody, signatureHeader, secret) {
   return crypto.timingSafeEqual(a, b);
 }
 
+/**
+ * Stable correlation key for telemetry. Raw provider order IDs stay in business data.
+ * @param {string} lsOrderId
+ * @returns {string}
+ */
+export function orderRef(lsOrderId) {
+  return crypto.createHash('sha256').update(`lemonsqueezy\0${String(lsOrderId)}`, 'utf8').digest('hex');
+}
+
 // SLUG_NIVEL (escalera producto→nivel) vive ahora en product-slugs.mjs · FUENTE
 // ÚNICA compartida con el schema de contenido (config.ts). Ver ese módulo.
 
