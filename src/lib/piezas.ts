@@ -219,6 +219,22 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'La arena que dibuja el sonido',
   },
+  // A02 es una pieza de @tejidosderealidad y su enlace real es el del portal.
+  // Existe aquí porque el gate de atribución de `encolar.mjs` pide el slug a los
+  // DOS dominios y mata la publicación si alguno cae al fallback.
+  //
+  // NO declara `source`: se atribuye a la cuenta del libro, como el resto de este
+  // registro. La primera versión sí lo declaraba —`tdr-ig`, «porque la pieza es de
+  // TDR»— y era un error de concepto: `utm_source` no dice de quién es la pieza,
+  // dice DÓNDE OCURRIÓ EL CLIC. Un clic servido desde tejidosdevibracion.com pasó
+  // por una superficie de TDV, y contarlo como TDR es el mismo fallo del PR #114
+  // al revés. Quien pegue el enlace en una red concreta añade `?c=<red>`.
+  'a02-forma-sonido': {
+    destino: 'https://tejidosderealidad.com/simuladores/cymatica',
+    campaign: 'agosto-a02',
+    medium: 'reel',
+    titulo: 'El sonido tiene forma',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
