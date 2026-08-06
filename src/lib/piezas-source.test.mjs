@@ -1,6 +1,6 @@
 /**
- * El puente `/r/` de ESTE repo no puede sellar la cuenta del portal.
- * Correr: node --test src/lib/piezas-source.test.mjs
+ * El puente `/r/` de ESTE repo no puede sellar la cuenta de otra marca ni de
+ * otra red. Correr: node --test src/lib/piezas-source.test.mjs
  *
  * `piezas.ts` está duplicado a propósito en los dos repos (portal y libro) y la
  * copia arrastró el default del portal, `tdr-ig`. Resultado: durante semanas
@@ -8,50 +8,73 @@
  * @tejidosdevibracion— llegaron a PostHog como tráfico de TDR. Nada falló: el
  * 302 salía correcto y el dato aparecía, en la fila de la otra marca.
  *
- * Por eso el test mira el FUENTE y no la salida de la función: lo que hay que
- * impedir es que la próxima sincronización entre repos reintroduzca el valor.
+ * Antes esto se comprobaba con un regex sobre el fuente, porque desde `.mjs` no
+ * se podía importar un `.ts`. Node ≥22.18 sí puede (type stripping), así que
+ * ahora se mide la SALIDA: cubre lo mismo sin depender de cómo esté escrita la
+ * línea, y de paso alcanza el caso nuevo —la red— que un regex no vería.
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
+import { PIEZAS, urlConAtribucion, cuentaDeRed } from './piezas.ts';
 
-const fuente = readFileSync(
-  path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'piezas.ts'),
-  'utf8',
-);
+const fuente = (slug, red) =>
+  new URL(urlConAtribucion(slug, PIEZAS[slug], red)).searchParams.get('utm_source');
 
-test('el default de utm_source es la cuenta del libro', () => {
-  // Control positivo PRIMERO: si un refactor renombra la constante, el regex deja
-  // de casar y este test debe FALLAR, no pasar en verde por no encontrar nada.
-  const m = /utm_source',\s*pieza\.source\s*\?\?\s*([A-Z_]+|'[a-z-]+')/.exec(fuente);
-  assert.ok(m, 'no se localizó el default de utm_source en piezas.ts — revisar este test antes que el código');
+// ── La marca ────────────────────────────────────────────────────────────────
 
-  const literal = m[1].startsWith("'")
-    ? m[1].slice(1, -1)
-    : new RegExp(`${m[1]}\\s*=\\s*'([a-z-]+)'`).exec(fuente)?.[1];
-
-  assert.equal(literal, 'tdv-ig', 'este repo se sirve desde tejidosdevibracion.com: su default no puede ser la cuenta de TDR');
+test('sin red declarada, el default es la cuenta del libro', () => {
+  assert.equal(fuente('obertura'), 'tdv-ig');
 });
 
-test('todo slug de ORDEN_BIO existe en PIEZAS', () => {
-  // `bio.astro` hace `.filter((e) => e.destino)`, así que un slug mal escrito no
-  // da error: la entrada simplemente no aparece en /bio. La bio es la única
-  // superficie que las redes pueden enlazar — perder una entrada ahí es perder
-  // el único camino entre una pieza y el sitio, sin que nada lo avise.
-  const bio = [.../ORDEN_BIO = \[([^\]]*)\]/s.exec(fuente)[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
-  assert.ok(bio.length > 0, 'no se localizó ORDEN_BIO — revisar este test antes que el código');
-
-  const claves = [...fuente.matchAll(/^ {2}'?([a-z0-9-]+)'?: \{/gm)].map((m) => m[1]);
-  assert.ok(claves.length > bio.length, 'no se localizaron las claves de PIEZAS');
-
-  const huerfanos = bio.filter((s) => !claves.includes(s));
-  assert.deepEqual(huerfanos, [], 'slugs de ORDEN_BIO que no existen en PIEZAS');
+test('NINGUNA pieza de este repo se atribuye a la otra marca', () => {
+  // Barre el registro entero, no una lista de sospechosas: si una sincronización
+  // entre repos trae una pieza del portal, aparece aquí.
+  for (const slug of Object.keys(PIEZAS)) {
+    const src = fuente(slug);
+    assert.ok(
+      src.startsWith('tdv-'),
+      `«${slug}» se atribuye a «${src}»; este repo se sirve desde tejidosdevibracion.com`,
+    );
+  }
 });
 
-test('ninguna pieza declara tdr-ig explícitamente', () => {
-  // Un `source: 'tdr-ig'` puntual tendría el mismo efecto que el default malo.
-  // Si alguna vez hace falta uno, este test es el sitio donde justificarlo.
-  assert.doesNotMatch(fuente, /source:\s*'tdr-ig'/);
+// ── La red · el fallo que WF-01b no podía evitar ────────────────────────────
+
+test('un enlace pegado en Facebook NO se cuenta como Instagram', () => {
+  // El puente descarta las UTMs que le llegan y sella las de la pieza, así que
+  // `?utm_source=facebook` —lo que WF-01b añadía— no hacía absolutamente nada.
+  // `?c=fb` es el único dato que el puente escucha.
+  assert.equal(fuente('obertura', 'fb'), 'tdv-fb');
+  assert.equal(fuente('obertura', 'yt'), 'tdv-yt');
+  assert.equal(fuente('obertura', 'tiktok'), 'tdv-tiktok');
+  assert.equal(fuente('obertura', 'ig'), 'tdv-ig');
+});
+
+test('la red gana al `source` que declara la pieza', () => {
+  // Los fragmentos de la Obertura declaran `source: 'tdv-ig'` porque nacieron
+  // para Instagram. Si uno se publica en Facebook, dónde se pegó DE VERDAD es
+  // el dato bueno; el de la pieza solo era el valor por defecto.
+  assert.equal(PIEZAS['p3-umbral'].source, 'tdv-ig', 'la premisa del test');
+  assert.equal(fuente('p3-umbral', 'fb'), 'tdv-fb');
+});
+
+// ── Lo que llega por la query de un enlace público ──────────────────────────
+
+test('una red desconocida degrada al default, no rompe el enlace', () => {
+  for (const basura of [undefined, null, '', '  ', 'facebook', 'FB!', 'no-existe']) {
+    assert.equal(fuente('obertura', basura), 'tdv-ig', `con «${basura}»`);
+  }
+});
+
+test('las claves heredadas del prototipo no se cuelan como cuenta', () => {
+  // `CUENTAS_POR_RED['constructor']` devuelve una función —truthy— y acabaría
+  // escrita dentro de la URL de destino. El valor viene de la query.
+  for (const clave of ['constructor', '__proto__', 'toString', 'hasOwnProperty']) {
+    assert.equal(cuentaDeRed(clave), null, `«${clave}» debe ser null`);
+    assert.equal(fuente('obertura', clave), 'tdv-ig');
+  }
+});
+
+test('la red se normaliza (mayúsculas y espacios) porque viene de una URL', () => {
+  assert.equal(fuente('obertura', ' FB '), 'tdv-fb');
 });

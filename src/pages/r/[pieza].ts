@@ -29,12 +29,19 @@ import { PIEZAS, DESTINO_FALLBACK, urlConAtribucion } from '@/lib/piezas';
 
 export const prerender = false;
 
-export const GET: APIRoute = ({ params }) => {
+export const GET: APIRoute = ({ params, url: peticion }) => {
   const slug = (params.pieza ?? '').trim().toLowerCase();
   const pieza = PIEZAS[slug];
 
+  // `?c=<red>` declara DÓNDE se pegó el enlace (fb, yt, ig, tiktok). Lo pone
+  // quien publica —WF-01b en las descripciones de Facebook y YouTube—, porque
+  // esta ruta descarta las UTMs que le llegan y sella siempre las de la pieza:
+  // sin este dato, un enlace de Facebook se contaba como tráfico de Instagram.
+  // Una red desconocida no rompe nada: se ignora y vale el default de la pieza.
+  const red = peticion.searchParams.get('c');
+
   const destino = pieza
-    ? urlConAtribucion(slug, pieza)
+    ? urlConAtribucion(slug, pieza, red)
     : (() => {
         // Slug desconocido: no se rompe el enlace, pero se deja rastro para
         // poder verlo en PostHog y corregir el registro.
