@@ -16,20 +16,33 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /**
- * Allowlist del ledger: nombre → SHA-256. Se comprueba en las DOS direcciones
- * (nada de sobra, nada de menos) porque enumerar solo lo prohibido seria una
- * denylist disfrazada: un fichero nuevo con nombre plausible pasaria.
+ * Allowlist del ledger: nombre → SHA-256 del contenido con finales de linea
+ * NORMALIZADOS a LF. Se comprueba en las DOS direcciones (nada de sobra, nada de
+ * menos) porque enumerar solo lo prohibido seria una denylist disfrazada: un
+ * fichero nuevo con nombre plausible pasaria.
  *
  * Anadir una entrada aqui es una decision consciente; el DDL se propone y revisa
  * en el ledger del portal (ver supabase/README.md).
  */
 const LEDGER = {
   '20260628165651_orders.sql':
-    '8998e5eb86f448389a0a5d7437059385d6528726dedc31294c697a66460a2951',
+    '3be4e7ac98188af011be73d707903d27d16469a64fc07340834c2bfec062f5ba',
   // Candado de entrega (`acceso_enviado_at`) · llego con el PR #95.
   '20260731190000_orders_acceso_enviado_at.sql':
-    '10e2decacb644524121197cc538fdcfe33f8a9d75ad06359d78150cee6ea6041',
+    '477451445f0747ffb17225886c549acb62928a3489831efed0ba866ce6f6b2ed',
 };
+
+/**
+ * Hashea el CONTENIDO, no los bytes del disco. En un checkout de Windows git
+ * deja estos .sql con CRLF y en Linux con LF, asi que hashear crudo hace que el
+ * guard falle segun el sistema operativo y no segun el contenido — y un guard
+ * que salta sin motivo ensena a ignorar el rojo. Lo cazo el CI: en local (CRLF)
+ * pasaba y en el runner (LF) reventaba el propio control positivo.
+ */
+function sha256Normalizado(ruta) {
+  const contenido = readFileSync(ruta, 'utf8').replace(/\r\n/g, '\n');
+  return createHash('sha256').update(contenido, 'utf8').digest('hex');
+}
 
 function check(dir) {
   const issues = [];
@@ -42,8 +55,7 @@ function check(dir) {
       issues.push(`migracion no autorizada fuera del ledger canonico: ${file}`);
       continue;
     }
-    const actual = createHash('sha256').update(readFileSync(join(dir, file))).digest('hex');
-    if (actual !== LEDGER[file]) issues.push(`${file} fue modificada`);
+    if (sha256Normalizado(join(dir, file)) !== LEDGER[file]) issues.push(`${file} fue modificada`);
   }
   for (const file of Object.keys(LEDGER)) {
     if (!presentes.includes(file)) issues.push(`falta la migracion historica bloqueada: ${file}`);
