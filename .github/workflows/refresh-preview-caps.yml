@@ -1,9 +1,23 @@
-name: Refrescar preview caps 1-3
+name: Refrescar preview del libro completo
 
-# Cada vez que avanza main, recrea la rama de revisión `preview/chapters-1-2-3`
-# = main + `status: published` en los 3 capítulos (que en main viven como
-# `fragmento-permanente`). Vercel auto-despliega el preview desde esa rama, con
-# el gate abierto porque `gatingActivo()` es false en cualquier rama != main.
+# Cada vez que avanza main, recrea la rama de revisión `preview/libro-completo`
+# = main + `status: published` en los CUATRO capítulos. Vercel auto-despliega el
+# preview desde esa rama con el gate abierto, porque `gatingActivo()` devuelve
+# false en cualquier rama != main.
+#
+# La Obertura NO necesita nada: sus 15 piezas ya están `published` y su gate cae
+# por la misma vía. Verificado el 5-ago-2026 sobre el preview: frontispicio 33
+# párrafos, 04-tejedor 118, 11-cierre 59.
+#
+# El Cap. 4 tampoco necesita tocar código, aunque el runbook viejo dijera que sí.
+# Pide `nivelRequerido: 2` + `productoSlug: 'acto-2'`, pero `[section].astro`
+# resuelve `tieneAcceso = esPreview() || (...)`: el corto-circuito abre la
+# decisión ENTERA, no una de sus dos mitades. Comprobado quitando el parche del
+# fallback de revisor y volviendo a medir: §4.1 sigue sirviendo 70 párrafos.
+# Por eso este workflow NO parchea ningún .astro — un `sed` sobre TypeScript en
+# CI falla mudo el día que el código se reformatea, y el preview se cerraría sin
+# que nadie se entere.
+#
 # NO toca main ni producción. Runbook: tdv_runbook_preview_caps_sin_publicar.
 
 on:
@@ -29,20 +43,43 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Recrear preview/chapters-1-2-3 = main + abrir caps 1-3
+      - name: Recrear preview/libro-completo = main + abrir los 4 capítulos
         run: |
+          set -euo pipefail
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B preview/chapters-1-2-3
-          for c in cap-1-universo-sinfonia cap-2-ciencia-escuchar cap-3-mundo-cuantico; do
-            sed -i 's/^status: "fragmento-permanente"/status: "published"/' "src/content/book/$c.mdx"
+          git checkout -B preview/libro-completo
+
+          CAPS="cap-1-universo-sinfonia cap-2-ciencia-escuchar cap-3-mundo-cuantico cap-4-biologia-campo-coherente"
+
+          # El sed es genérico a propósito: en main los cuatro llegan con status
+          # distinto —cap-1 published, cap-2 y cap-3 fragmento-permanente, cap-4
+          # draft— y un patrón por valor concreto dejaría fuera al que cambie.
+          for c in $CAPS; do
+            sed -i 's/^status: "[^"]*"/status: "published"/' "src/content/book/$c.mdx"
           done
-          git add src/content/book/cap-1-universo-sinfonia.mdx \
-                  src/content/book/cap-2-ciencia-escuchar.mdx \
-                  src/content/book/cap-3-mundo-cuantico.mdx
-          if git diff --cached --quiet; then
-            echo "Sin flips de status (¿caps ya published en main?). La rama queda == main."
-          else
-            git commit -m "preview(caps 1-3): status published para revisión · auto-refresh desde main ${GITHUB_SHA} · NO merge a main"
+
+          # CONTROL POSITIVO · sin esto, un sed que deje de casar produce un
+          # preview con capítulos cerrados y un workflow en verde. Se exige que
+          # los CUATRO queden published, contando sobre el fichero ya escrito.
+          abiertos=0
+          for c in $CAPS; do
+            if grep -q '^status: "published"' "src/content/book/$c.mdx"; then
+              abiertos=$((abiertos + 1))
+            else
+              echo "::error::$c NO quedó published — el sed no casó con su frontmatter"
+            fi
+          done
+          if [ "$abiertos" -ne 4 ]; then
+            echo "::error::se esperaban 4 capítulos abiertos y hay $abiertos"
+            exit 1
           fi
-          git push -f origin preview/chapters-1-2-3
+          echo "4/4 capítulos abiertos en la rama de preview"
+
+          git add $(for c in $CAPS; do echo "src/content/book/$c.mdx"; done)
+          if git diff --cached --quiet; then
+            echo "Sin flips de status (¿los 4 ya published en main?). La rama queda == main."
+          else
+            git commit -m "preview(libro completo): status published en los 4 capítulos · auto-refresh desde main ${GITHUB_SHA} · NO merge a main"
+          fi
+          git push -f origin preview/libro-completo
