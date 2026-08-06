@@ -28,6 +28,7 @@ import PaginacionCards from '@/components/book/PaginacionCards.astro';
 import { getAccesoVerificado, puedeAcceder, gatingActivo, esPreview, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceOrnament, type PieceKind } from '@/lib/piece-num';
+import { SITE, breadcrumb, wrapGraph, chapterOgImage } from '@/lib/seo';
 
 export const prerender = false;
 
@@ -135,6 +136,68 @@ const pieceLabel = kind === 'numbered' && num
   ? `§${num}`
   : ({ portada: 'Portada', umbral: 'Umbral', anclaje: 'Anclaje', cierre: 'Cierre' } as Record<string, string>)[kind] ?? '';
 const breadcrumbText = `${pieceLabel} · Cap. ${chapterNum}`;
+
+// ── JSON-LD · Article + BreadcrumbList + marcado de paywall ──────────────────
+//
+// El bot entra por la allowlist de arriba con nivel 1 y recibe la pieza ENTERA;
+// el humano anónimo es nivel 0 y recibe el muro. Medido el 5-ago-2026 sobre el
+// Cap. 1: 69.847 bytes al bot contra 22.985 al humano, en URLs `index,follow` y
+// en el sitemap. Servir dos contenidos distintos según quién pregunta es
+// cloaking salvo que se declare, y `isAccessibleForFree:false` + `hasPart` es
+// justamente la declaración que Google define para contenido tras muro.
+//
+// El criterio es el REQUISITO, no lo que este visitante recibió: la página es
+// de acceso libre sólo si no exige nivel alguno. Con el default de la colección
+// (nivelRequerido = 1, o sea registrado) el Acto I entero va marcado.
+//
+// Ejemplar vivo del mismo patrón: `obertura/[slug].astro:112-124`, que lo emite
+// desde antes y por la misma razón.
+const esAbierta = nivelRequerido === 0;
+const canonicalPath = `/capitulo/${chapter}/${section}`;
+const fechaIso = (chapterEntry.data.publishedAt instanceof Date
+  ? chapterEntry.data.publishedAt
+  : new Date('2026-01-01')).toISOString();
+
+const piezaSchema = wrapGraph([
+  {
+    '@type': ['Article', 'Chapter'],
+    '@id': `${SITE}${canonicalPath}#article`,
+    headline: title,
+    ...(subtitle ? { alternativeHeadline: subtitle } : {}),
+    description: subtitle ?? `${capitulo} de Tejidos de Vibración`,
+    url: `${SITE}${canonicalPath}`,
+    image: chapterOgImage(chapter),
+    datePublished: fechaIso,
+    dateModified: fechaIso,
+    inLanguage: 'es',
+    author: { '@id': `${SITE}/sobre-el-libro#person` },
+    publisher: { '@id': `${SITE}/#organization` },
+    isPartOf: { '@id': `${SITE}/capitulo/${chapter}#article` },
+    isAccessibleForFree: esAbierta,
+    ...(esAbierta
+      ? {}
+      : {
+          // `.prose` es el contenedor que sólo se renderiza con acceso — ver el
+          // ternario de `tieneAcceso` abajo. Si esa clase cambia, este selector
+          // deja de señalar la parte cerrada y el marcado miente.
+          hasPart: {
+            '@type': 'WebPageElement',
+            isAccessibleForFree: false,
+            cssSelector: '.ca-lectura .prose',
+          },
+        }),
+    mainEntityOfPage: `${SITE}${canonicalPath}`,
+  },
+  breadcrumb(
+    [
+      { name: 'Inicio', href: '/' },
+      { name: 'Índice', href: '/indice' },
+      { name: capitulo, href: `/capitulo/${chapter}` },
+      { name: title, href: canonicalPath },
+    ],
+    `${canonicalPath}#breadcrumb`,
+  ),
+]);
 ---
 
 <CapituloLayout
@@ -149,6 +212,7 @@ const breadcrumbText = `${pieceLabel} · Cap. ${chapterNum}`;
   nivel={nivel}
   pageId={`capitulo-${chapterNum}-${section}`}
   robots={chapterEntry.data.status === 'published' ? undefined : 'noindex,follow'}
+  schemas={[piezaSchema]}
 >
   <article class={`ca-lectura kind-${kind}`}>
     {/* Eyebrow del cuerpo eliminado (sub-tarea 3.5): el breadcrumb sticky

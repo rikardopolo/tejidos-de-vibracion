@@ -27,6 +27,7 @@ import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import { getAccesoVerificado, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceMarker, type PieceKind } from '@/lib/piece-num';
+import { SITE, breadcrumb, wrapGraph, chapterOgImage } from '@/lib/seo';
 
 export const prerender = false;
 
@@ -86,6 +87,48 @@ if (verContenido) {
   Content = rendered.Content;
 }
 const leaf = (slug: string) => slug.split('/').pop() ?? slug;
+
+// ── JSON-LD · Article + BreadcrumbList ──────────────────────────────────────
+//
+// A diferencia de `[section].astro`, esta página NO lleva allowlist de bots:
+// sirve exactamente lo mismo a Googlebot y al lector anónimo. No hay dos
+// contenidos que conciliar, así que aquí NO va marcado de paywall —ponerlo
+// sería declarar un muro que esta URL no tiene—. Lo que se sirve siempre es el
+// título, el subtítulo y la lista de piezas; el texto de cada pieza vive tras
+// su propia URL y es allí donde se declara su muro.
+//
+// El único caso con contenido gateado es el fallback monolítico (capítulos sin
+// `chapter-sections`), y también sin allowlist: el bot ve el mismo muro.
+const canonicalPath = `/capitulo/${chapter}`;
+const fechaIso = (data.publishedAt instanceof Date ? data.publishedAt : new Date('2026-01-01'))
+  .toISOString();
+
+const capituloSchema = wrapGraph([
+  {
+    '@type': ['Article', 'Chapter'],
+    '@id': `${SITE}${canonicalPath}#article`,
+    headline: data.title,
+    ...(data.subtitle ? { alternativeHeadline: data.subtitle } : {}),
+    description: data.subtitle ?? `${capitulo} de Tejidos de Vibración`,
+    url: `${SITE}${canonicalPath}`,
+    image: chapterOgImage(chapter),
+    datePublished: fechaIso,
+    dateModified: fechaIso,
+    inLanguage: 'es',
+    author: { '@id': `${SITE}/sobre-el-libro#person` },
+    publisher: { '@id': `${SITE}/#organization` },
+    isAccessibleForFree: true,
+    mainEntityOfPage: `${SITE}${canonicalPath}`,
+  },
+  breadcrumb(
+    [
+      { name: 'Inicio', href: '/' },
+      { name: 'Índice', href: '/indice' },
+      { name: capitulo, href: canonicalPath },
+    ],
+    `${canonicalPath}#breadcrumb`,
+  ),
+]);
 ---
 
 <CapituloLayout
@@ -97,6 +140,7 @@ const leaf = (slug: string) => slug.split('/').pop() ?? slug;
   nivel={nivel}
   pageId={`capitulo-${chapterNum}`}
   robots={data.status === 'published' ? undefined : 'noindex,follow'}
+  schemas={[capituloSchema]}
 >
   <article class="measure">
     <header class="piece-header">

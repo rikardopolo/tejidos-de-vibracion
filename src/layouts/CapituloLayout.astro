@@ -46,6 +46,13 @@ interface Props {
   pageId?: string;
   /** <meta robots> · reenviado a BookReader. undefined → default indexable. */
   robots?: string;
+  /**
+   * JSON-LD propio de la página, que se emite DESPUÉS del grafo base.
+   * Aquí van el Article/BreadcrumbList por pieza y —lo que obliga a que esta
+   * prop exista— el marcado de paywall: sin él, una URL indexable que sirve el
+   * texto completo al bot y el muro al humano es cloaking sin declarar.
+   */
+  schemas?: unknown[];
 }
 
 const {
@@ -60,20 +67,23 @@ const {
   nivel = 1,
   pageId,
   robots,
+  schemas = [],
 } = Astro.props;
 
 const resolvedChapterLabel = chapterLabel ?? 'Capítulo';
 const ogImage = chapterOgImage(chapter);
 const ogImageAlt = chapterOgAlt(resolvedChapterLabel, chapterTitle ?? title);
 
-// Grafo base (Organization + WebSite + Person) para los capítulos, que hoy no
-// emiten JSON-LD (BookReader default schemas=[]). El Article/Breadcrumb por
-// sección y el marcado de paywall (isAccessibleForFree) los añade F7.
+// Grafo base (Organization + WebSite + Person) para los capítulos. El Article,
+// el BreadcrumbList y el marcado de paywall los aporta cada página vía `schemas`
+// —hasta el 5-ago-2026 no había forma de inyectarlos y esto quedaba hardcodeado
+// a [baseGraph], que es la razón por la que las 10 URLs del Cap. 1 llegaron a
+// producción indexables y sin declarar su muro.
 const baseGraph = { '@context': 'https://schema.org', '@graph': baseSchemaGraph() };
 ---
 
 <BookReader
-  schemas={[baseGraph]}
+  schemas={[baseGraph, ...schemas]}
   title={title}
   description={description}
   robots={robots}
