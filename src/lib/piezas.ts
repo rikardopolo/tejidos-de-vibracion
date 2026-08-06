@@ -259,12 +259,15 @@ const CUENTA_POR_DEFECTO = 'tdv-ig';
  * con el default copiado del portal, y el que hacía que WF-01b añadiera
  * `utm_source=facebook` a la URL para nada.
  */
-const CUENTAS_POR_RED: Record<string, string> = {
-  ig: CUENTA_POR_DEFECTO,
-  tiktok: 'tdv-tiktok',
-  fb: 'tdv-fb',
-  yt: 'tdv-yt',
-};
+// `Map` y no un objeto: `{...}['constructor']` devuelve la función heredada del
+// prototipo —truthy— y acabaría escrita como `utm_source` desde la query de un
+// enlace público. Un `Map` no tiene ese problema por construcción.
+const CUENTAS_POR_RED = new Map([
+  ['ig', CUENTA_POR_DEFECTO],
+  ['tiktok', 'tdv-tiktok'],
+  ['fb', 'tdv-fb'],
+  ['yt', 'tdv-yt'],
+]);
 
 /**
  * Cuenta que corresponde a una red, o `null` si no la reconocemos.
@@ -275,11 +278,7 @@ const CUENTAS_POR_RED: Record<string, string> = {
  * siempre en lugar de romper el enlace.
  */
 export function cuentaDeRed(red: string | null | undefined): string | null {
-  const clave = String(red ?? '').trim().toLowerCase();
-  // `hasOwn` y no un acceso directo: `CUENTAS_POR_RED['constructor']` devuelve
-  // la función heredada del prototipo —truthy— y acabaría escrita como
-  // `utm_source` desde la query de un enlace público.
-  return Object.hasOwn(CUENTAS_POR_RED, clave) ? CUENTAS_POR_RED[clave] : null;
+  return CUENTAS_POR_RED.get(String(red ?? '').trim().toLowerCase()) ?? null;
 }
 
 /**
