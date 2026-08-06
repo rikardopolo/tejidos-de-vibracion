@@ -40,6 +40,22 @@ export const GET: APIRoute = async () => {
   const publishedChapterSlugs = new Set<string>(publishedChapters.map((chapter) => chapter.id));
 
   const chapterIndexUrls = publishedChapters.map((chapter) => `/capitulo/${chapter.id}`);
+  // El filtro mira SOLO el capítulo padre, y es correcto: `[section].astro:60-69`
+  // declara que la visibilidad la decide el status del capítulo, no el de la pieza.
+  //
+  // ⚠️ NO añadir aquí `data.status === 'published'` ni `!data.archived`, por mucho
+  // que la asimetría con la línea 30 (obertura, que sí filtra por status) invite a
+  // "corregirla". Medido el 5-ago-2026 sobre el corpus:
+  //   · `status` en chapter-sections tiene default('draft') y NINGUNA pieza de los
+  //     caps. 1-3 lo declara: las 9 piezas del Cap. 1 están hoy indexadas siendo
+  //     'draft'. Exigir 'published' daría 0 URLs para cap-2 y 0 para cap-3.
+  //   · `archived` NO EXISTE en el schema de chapter-sections — sólo en `book`.
+  //     Escribirlo en el frontmatter de una pieza no la excluye de nada: Zod lo
+  //     descarta en silencio, y ni el sitemap ni el runtime lo ven.
+  //
+  // La invariante que sí hay que sostener es la COHERENCIA con el runtime: el
+  // sitemap debe anunciar exactamente las URLs que `[section].astro` sirve. Está
+  // atada en `scripts/sitemap-coherencia.test.mjs` con su control positivo.
   const chapterSections = await getCollection('chapter-sections', ({ data }) =>
     publishedChapterSlugs.has(data.chapter)
   );
