@@ -249,12 +249,49 @@ export const ORDEN_BIO = [
 const CUENTA_POR_DEFECTO = 'tdv-ig';
 
 /**
+ * Cuenta de esta marca en cada red, para cuando el enlace declara DÓNDE se
+ * publicó (`/r/<slug>?c=fb`).
+ *
+ * Hace falta porque el puente **descarta** cualquier UTM que traiga la petición
+ * y sella siempre la de la pieza. Un `/r/reel-01` pegado en Facebook llegaba a
+ * PostHog como `tdv-ig`: nada falla —el 302 sale bien— y la cifra aparece en la
+ * fila de la red equivocada. Es el mismo modo de fallo que ya se pagó una vez
+ * con el default copiado del portal, y el que hacía que WF-01b añadiera
+ * `utm_source=facebook` a la URL para nada.
+ */
+const CUENTAS_POR_RED: Record<string, string> = {
+  ig: CUENTA_POR_DEFECTO,
+  tiktok: 'tdv-tiktok',
+  fb: 'tdv-fb',
+  yt: 'tdv-yt',
+};
+
+/**
+ * Cuenta que corresponde a una red, o `null` si no la reconocemos.
+ *
+ * Allowlist a propósito: el valor sale de la query de un enlace público y acaba
+ * dentro de una URL de destino. Lo que no esté aquí no entra — y al devolver
+ * `null` en vez de lanzar, un `?c=` inventado degrada al comportamiento de
+ * siempre en lugar de romper el enlace.
+ */
+export function cuentaDeRed(red: string | null | undefined): string | null {
+  const clave = String(red ?? '').trim().toLowerCase();
+  // `hasOwn` y no un acceso directo: `CUENTAS_POR_RED['constructor']` devuelve
+  // la función heredada del prototipo —truthy— y acabaría escrita como
+  // `utm_source` desde la query de un enlace público.
+  return Object.hasOwn(CUENTAS_POR_RED, clave) ? CUENTAS_POR_RED[clave] : null;
+}
+
+/**
  * Construye la URL final con las UTMs selladas.
  * Si el destino ya trae parámetros, se conservan.
+ *
+ * `red` gana a `pieza.source`: es dónde se publicó DE VERDAD el enlace, mientras
+ * que `source` solo es el valor por defecto de la pieza.
  */
-export function urlConAtribucion(slug: string, pieza: Pieza): string {
+export function urlConAtribucion(slug: string, pieza: Pieza, red?: string | null): string {
   const url = new URL(pieza.destino);
-  url.searchParams.set('utm_source', pieza.source ?? CUENTA_POR_DEFECTO);
+  url.searchParams.set('utm_source', cuentaDeRed(red) ?? pieza.source ?? CUENTA_POR_DEFECTO);
   url.searchParams.set('utm_medium', pieza.medium ?? 'reel');
   url.searchParams.set('utm_campaign', pieza.campaign);
   url.searchParams.set('utm_content', slug);
