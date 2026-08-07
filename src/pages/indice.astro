@@ -15,6 +15,7 @@ const SLUG_MAP: Record<number, string> = {
   1: '/capitulo/cap-1-universo-sinfonia',
   2: '/capitulo/cap-2-ciencia-escuchar',
   3: '/capitulo/cap-3-mundo-cuantico',
+  4: '/capitulo/cap-4-biologia-campo-coherente',
 };
 
 // Acto I · mes de apertura por capítulo (metadato editorial). El ESTADO
@@ -37,7 +38,10 @@ const publishedByNumber = new Map(
   allChapters.map((e) => [e.data.chapter as number, e.data])
 );
 
-// Gestating chapters (no MDX yet — hardcoded per spec)
+// Capítulos SIN MDX todavía · el título y el subtítulo viven aquí porque no hay
+// frontmatter del que sacarlos. Los que SÍ tienen MDX se derivan de él (ver el
+// map de más abajo): el Cap. 4 ya tiene sus 12 piezas escritas, así que su
+// entrada sirve sólo de reserva por si su MDX no está en la colección.
 const gestatingChapters = [
   { num: 4, roman: 'IV', title: 'La biología del campo coherente', subtitle: 'Corazón, células y los ritmos que el cuerpo comparte con el mundo' },
   { num: 5, roman: 'V',  title: 'Neurociencia de la frecuencia',  subtitle: 'Ondas cerebrales, atención y el cerebro como instrumento' },
@@ -47,6 +51,39 @@ const gestatingChapters = [
   { num: 9, roman: 'IX',   title: 'Filosofía de la ciencia vibracional', subtitle: 'Los límites del lenguaje científico ante la experiencia' },
   { num: 10, roman: 'X',  title: 'El tejedor consciente',         subtitle: 'Vivir como si la mirada importara, porque importa' },
 ];
+
+// Entradas del Acto II · resueltas AQUÍ y no en el template porque un `>=` dentro
+// de un bloque JSX de Astro se parsea como cierre de etiqueta (ts(1382)).
+//
+// Mismo mecanismo que el Acto I: el estado se DERIVA del frontmatter del MDX, que
+// es la fuente única que gobierna también el gating y el sitemap.
+// `publishedByNumber` sólo admite 'published' o 'fragmento-permanente', así que un
+// capítulo en 'draft' —el Cap. 4 en main— cae a gestación y sigue sin enlace; en un
+// preview con el capítulo abierto, aparece navegable.
+//
+// El badge sale de `nivelRequerido` y no del acto: los del Acto II son de pago, y
+// decir «Libre · requiere registro» sería falso.
+const ACTO_II = gestatingChapters
+  .filter((c) => c.num >= 4 && c.num <= 6)
+  .map((c) => {
+    const data = publishedByNumber.get(c.num);
+    if (!data) {
+      return { roman: c.roman, title: c.title, subtitle: c.subtitle, gestating: true } as const;
+    }
+    const soon = data.status !== 'published';
+    const dePago = (data.nivelRequerido ?? 1) >= 2;
+    return {
+      roman: c.roman,
+      title: data.title,
+      subtitle: data.subtitle ?? c.subtitle,
+      href: SLUG_MAP[c.num],
+      access: soon
+        ? (dePago ? 'Acto II · próximamente' : 'Libre · próximamente')
+        : (dePago ? 'Acto II · requiere compra' : 'Libre · requiere registro'),
+      soon,
+      gestating: false,
+    };
+  });
 ---
 
 <LecturaLarga
@@ -115,12 +152,26 @@ const gestatingChapters = [
         Cuerpo<span class="toc-act__title-tail">La biología que escucha</span>
       </h2>
 
-      {gestatingChapters.filter((c) => c.num >= 4 && c.num <= 6).map((c) => (
+      {/*
+        Mismo mecanismo que el Acto I: el estado se DERIVA del frontmatter del
+        MDX, no se declara aquí. `publishedByNumber` sólo contiene capítulos con
+        status 'published' o 'fragmento-permanente', así que un capítulo en
+        'draft' —como el Cap. 4 en main— cae al listado de gestación y sigue sin
+        enlace. En un preview con el capítulo abierto, aparece navegable.
+
+        El badge se deriva de `nivelRequerido`, no del acto: los del Acto II son
+        de pago (nivelRequerido 2) y decir «Libre · requiere registro» sería
+        falso.
+      */}
+      {ACTO_II.map((e) => (
         <TocEntry
-          num={c.roman}
-          title={c.title}
-          subtitle={c.subtitle}
-          gestating
+          num={e.roman}
+          title={e.title}
+          subtitle={e.subtitle}
+          href={e.href}
+          access={e.access}
+          soon={e.soon}
+          gestating={e.gestating}
         />
       ))}
     </section>
