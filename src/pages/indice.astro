@@ -15,6 +15,7 @@ const SLUG_MAP: Record<number, string> = {
   1: '/capitulo/cap-1-universo-sinfonia',
   2: '/capitulo/cap-2-ciencia-escuchar',
   3: '/capitulo/cap-3-mundo-cuantico',
+  4: '/capitulo/cap-4-biologia-campo-coherente',
 };
 
 // Acto I · mes de apertura por capítulo (metadato editorial). El ESTADO
@@ -37,7 +38,10 @@ const publishedByNumber = new Map(
   allChapters.map((e) => [e.data.chapter as number, e.data])
 );
 
-// Gestating chapters (no MDX yet — hardcoded per spec)
+// Capítulos SIN MDX todavía · el título y el subtítulo viven aquí porque no hay
+// frontmatter del que sacarlos. Los que SÍ tienen MDX se derivan de él (ver el
+// map de más abajo): el Cap. 4 ya tiene sus 12 piezas escritas, así que su
+// entrada sirve sólo de reserva por si su MDX no está en la colección.
 const gestatingChapters = [
   { num: 4, roman: 'IV', title: 'La biología del campo coherente', subtitle: 'Corazón, células y los ritmos que el cuerpo comparte con el mundo' },
   { num: 5, roman: 'V',  title: 'Neurociencia de la frecuencia',  subtitle: 'Ondas cerebrales, atención y el cerebro como instrumento' },
@@ -115,14 +119,36 @@ const gestatingChapters = [
         Cuerpo<span class="toc-act__title-tail">La biología que escucha</span>
       </h2>
 
-      {gestatingChapters.filter((c) => c.num >= 4 && c.num <= 6).map((c) => (
-        <TocEntry
-          num={c.roman}
-          title={c.title}
-          subtitle={c.subtitle}
-          gestating
-        />
-      ))}
+      {/*
+        Mismo mecanismo que el Acto I: el estado se DERIVA del frontmatter del
+        MDX, no se declara aquí. `publishedByNumber` sólo contiene capítulos con
+        status 'published' o 'fragmento-permanente', así que un capítulo en
+        'draft' —como el Cap. 4 en main— cae al listado de gestación y sigue sin
+        enlace. En un preview con el capítulo abierto, aparece navegable.
+
+        El badge se deriva de `nivelRequerido`, no del acto: los del Acto II son
+        de pago (nivelRequerido 2) y decir «Libre · requiere registro» sería
+        falso.
+      */}
+      {gestatingChapters.filter((c) => c.num >= 4 && c.num <= 6).map((c) => {
+        const data = publishedByNumber.get(c.num);
+        if (!data) return <TocEntry num={c.roman} title={c.title} subtitle={c.subtitle} gestating />;
+        const soon = data.status !== 'published';
+        const dePago = (data.nivelRequerido ?? 1) >= 2;
+        const access = soon
+          ? (dePago ? 'Acto II · próximamente' : 'Libre · próximamente')
+          : (dePago ? 'Acto II · requiere compra' : 'Libre · requiere registro');
+        return (
+          <TocEntry
+            num={c.roman}
+            title={data.title}
+            subtitle={data.subtitle ?? c.subtitle}
+            href={SLUG_MAP[c.num]}
+            access={access}
+            soon={soon}
+          />
+        );
+      })}
     </section>
 
     <!-- Acto III · Tejedor -->
