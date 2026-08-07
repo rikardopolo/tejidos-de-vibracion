@@ -51,6 +51,39 @@ const gestatingChapters = [
   { num: 9, roman: 'IX',   title: 'Filosofía de la ciencia vibracional', subtitle: 'Los límites del lenguaje científico ante la experiencia' },
   { num: 10, roman: 'X',  title: 'El tejedor consciente',         subtitle: 'Vivir como si la mirada importara, porque importa' },
 ];
+
+// Entradas del Acto II · resueltas AQUÍ y no en el template porque un `>=` dentro
+// de un bloque JSX de Astro se parsea como cierre de etiqueta (ts(1382)).
+//
+// Mismo mecanismo que el Acto I: el estado se DERIVA del frontmatter del MDX, que
+// es la fuente única que gobierna también el gating y el sitemap.
+// `publishedByNumber` sólo admite 'published' o 'fragmento-permanente', así que un
+// capítulo en 'draft' —el Cap. 4 en main— cae a gestación y sigue sin enlace; en un
+// preview con el capítulo abierto, aparece navegable.
+//
+// El badge sale de `nivelRequerido` y no del acto: los del Acto II son de pago, y
+// decir «Libre · requiere registro» sería falso.
+const ACTO_II = gestatingChapters
+  .filter((c) => c.num >= 4 && c.num <= 6)
+  .map((c) => {
+    const data = publishedByNumber.get(c.num);
+    if (!data) {
+      return { roman: c.roman, title: c.title, subtitle: c.subtitle, gestating: true } as const;
+    }
+    const soon = data.status !== 'published';
+    const dePago = (data.nivelRequerido ?? 1) >= 2;
+    return {
+      roman: c.roman,
+      title: data.title,
+      subtitle: data.subtitle ?? c.subtitle,
+      href: SLUG_MAP[c.num],
+      access: soon
+        ? (dePago ? 'Acto II · próximamente' : 'Libre · próximamente')
+        : (dePago ? 'Acto II · requiere compra' : 'Libre · requiere registro'),
+      soon,
+      gestating: false,
+    };
+  });
 ---
 
 <LecturaLarga
@@ -130,25 +163,17 @@ const gestatingChapters = [
         de pago (nivelRequerido 2) y decir «Libre · requiere registro» sería
         falso.
       */}
-      {gestatingChapters.filter((c) => c.num >= 4 && c.num <= 6).map((c) => {
-        const data = publishedByNumber.get(c.num);
-        if (!data) return <TocEntry num={c.roman} title={c.title} subtitle={c.subtitle} gestating />;
-        const soon = data.status !== 'published';
-        const dePago = (data.nivelRequerido ?? 1) >= 2;
-        const access = soon
-          ? (dePago ? 'Acto II · próximamente' : 'Libre · próximamente')
-          : (dePago ? 'Acto II · requiere compra' : 'Libre · requiere registro');
-        return (
-          <TocEntry
-            num={c.roman}
-            title={data.title}
-            subtitle={data.subtitle ?? c.subtitle}
-            href={SLUG_MAP[c.num]}
-            access={access}
-            soon={soon}
-          />
-        );
-      })}
+      {ACTO_II.map((e) => (
+        <TocEntry
+          num={e.roman}
+          title={e.title}
+          subtitle={e.subtitle}
+          href={e.href}
+          access={e.access}
+          soon={e.soon}
+          gestating={e.gestating}
+        />
+      ))}
     </section>
 
     <!-- Acto III · Tejedor -->
