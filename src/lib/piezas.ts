@@ -235,6 +235,15 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'El sonido tiene forma',
   },
+  // Primera pieza cuyo destino es el capítulo y no el laboratorio: el Cap. 1
+  // está abierto desde el 5-ago. Sin `source`: el clic se sirve desde este
+  // dominio, así que hereda su cuenta.
+  'a03-el-puente': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'agosto-a03',
+    medium: 'reel',
+    titulo: 'El puente al primer capítulo',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
