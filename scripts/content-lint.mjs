@@ -111,7 +111,9 @@ const RE_PROMESA_SEC = /§\s*\d+\.\d+(?:\.\d+)?/g;
  * Se evalúan sobre el CUERPO APLANADO (ver flattenBody), así que una frase partida
  * por el hard-wrap a ~70 caracteres ya no los evade.
  */
-const MODO_ESTRICTO = process.env.LINT_ESTRICTO === '1';
+// `--estricto` además de la variable de entorno: en PowerShell no existe el prefijo
+// `VAR=1 comando`, así que sin el flag el modo estricto sería inalcanzable en Windows.
+const MODO_ESTRICTO = process.env.LINT_ESTRICTO === '1' || process.argv.includes('--estricto');
 
 const CERROJOS = [
   // E-anti · el rigor se ejerce, no se anuncia (Fase 4a)
@@ -637,7 +639,8 @@ for (const l of LEMAS) {
   const fila = report.map((r) => (r.lemaPorDiezMil[l.id]).toFixed(2).padStart(8)).join(' ');
   console.log(`  ·  ${l.nombre} por 10.000 (techo ${l.techoPorDiezMil})`.padEnd(46) + fila);
 }
-console.log('  Para hacerlos bloqueantes cuando su fase cierre:  LINT_ESTRICTO=1 node scripts/content-lint.mjs');
+if (!MODO_ESTRICTO)
+  console.log('  Bloquean en el CI, que corre  pnpm lint:contenido:estricto  (aquí solo avisan).');
 
 console.log(`\nPromesas cruzadas → out/promesas.tsv (${promesas.length} referencias)`);
 console.log(`\n${violaciones === 0 ? '✅ SIN violaciones de reglas FALLA' : `✗ ${violaciones} regla(s) FALLA violada(s)`}\n`);

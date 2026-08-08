@@ -25,7 +25,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Content lint
-        run: pnpm lint:contenido
+        run: pnpm lint:contenido:estricto
       - name: Tests
         run: pnpm test
       # El guard corre su propio self-test antes de comprobar nada, asi que este
