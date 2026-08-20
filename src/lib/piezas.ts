@@ -171,6 +171,15 @@ export const PIEZAS: Record<string, Pieza> = {
   // Estas piezas NO llevaban ninguna URL: su endcard muestra el dominio como
   // texto plano, así que hasta ahora eran imposibles de atribuir aunque
   // alguien lo tecleara a mano.
+  // Ojo al homónimo: `reel-05` también se titula «Dos orillas, un río», pero es
+  // otra pieza — un reel de TDR de julio. Esta es el fragmento de la Obertura,
+  // de la cuenta del libro, y por eso necesita slug propio.
+  'p1-dos-orillas': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'obertura-fragmentos',
+    source: 'tdv-ig',
+    titulo: 'Dos orillas, un río',
+  },
   'p3-umbral': {
     destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'obertura-fragmentos',
