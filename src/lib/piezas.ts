@@ -253,6 +253,20 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'El puente al primer capítulo',
   },
+  // Mismo destino que A03 —el Cap. 1— porque su CTA promete exactamente eso:
+  // «EL PRIMER CAPÍTULO · gratis». Sin `source`, como su hermana: el clic se
+  // sirve desde este dominio y hereda su cuenta.
+  //
+  // El slug NO es el que traía su `data/reel-16.json`, que decía
+  // `a04-dos-manchas`: nombre heredado de un enfoque anterior, el del vaho en el
+  // espejo, retirado al comprobar que ese experimento no estaba en el libro. La
+  // pieza renderizada habla del ciclo nasal y no menciona ninguna mancha.
+  'a04-ciclo-nasal': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'agosto-a04',
+    medium: 'reel',
+    titulo: 'El ciclo nasal',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
