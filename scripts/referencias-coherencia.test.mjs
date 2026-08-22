@@ -13,9 +13,18 @@
  *   hallazgos que este test NO habría visto; habría cazado 11 de ellos.
  *
  * ALCANCE — declarado, no supuesto
- *   El libro tiene DOS superficies bibliográficas:
+ *   El libro tiene TRES superficies bibliográficas:
  *     · la caja `**Referencias:**` con citas autor-año  -> cubierta aquí
  *     · los bloques `## **Notas**` con superíndice        -> FUERA
+ *     · la caja `**Para profundizar:**` de los VozTejido -> a medias, y a propósito
+ *
+ *   Sobre «Para profundizar» (8 fichas hoy): sus obras SÍ resuelven una cita del cuerpo
+ *   —invariante (a)—, pero NO se les exige estar mencionadas —invariante (b)—. Su función
+ *   es otra: son lecturas recomendadas del personaje, no fuentes que sostengan una frase.
+ *   Exigirles mención daría 6 falsos positivos de los 8, y un guard con falsos positivos
+ *   deja de vigilar. Queda escrito aquí porque el 21-ago-2026 se tomó por un agujero del
+ *   test: no lo es, es una decisión. Lo que ese bloque SÍ puede esconder —una obra
+ *   inventada— no es automatizable, igual que en `**Referencias:**`.
  *   Y dos formatos de cita inline. Solo el de cursiva `*(Autor, Año)*` es regular:
  *   el de paréntesis planos `(Autor, Año)` es indistinguible de una acotación —
  *   `(París, 1636)`, `(Leipzig, 1948)` — así que se deja fuera a propósito.
@@ -70,8 +79,8 @@ function secciones() {
 
 /** El bloque va del rótulo a la primera línea no vacía que ya no es ficha.
  *  No se puede delimitar con `**Para profundizar:**`: hay secciones que no lo tienen. */
-function fichasDe(lineas) {
-  const i = lineas.findIndex((l) => l.trim() === '**Referencias:**');
+function bloqueDesde(lineas, rotulo) {
+  const i = lineas.findIndex((l) => l.trim() === rotulo);
   if (i === -1) return [];
   const out = [];
   for (let j = i + 1; j < lineas.length; j++) {
@@ -83,6 +92,11 @@ function fichasDe(lineas) {
   }
   return out;
 }
+
+/** Las que la invariante (b) exige mencionadas. */
+const fichasDe = (lineas) => bloqueDesde(lineas, '**Referencias:**');
+/** Lecturas recomendadas de un VozTejido: resuelven citas, pero no se les exige mención. */
+const lecturasDe = (lineas) => bloqueDesde(lineas, '**Para profundizar:**');
 
 function clavesDe(lineas, fichas) {
   const esFicha = new Set(fichas.map((x) => x.linea));
@@ -98,7 +112,8 @@ function clavesDe(lineas, fichas) {
 
 const datos = secciones().map((s) => {
   const fichas = fichasDe(s.lineas);
-  return { ...s, fichas, ...clavesDe(s.lineas, fichas) };
+  const lecturas = lecturasDe(s.lineas);
+  return { ...s, fichas, lecturas, ...clavesDe(s.lineas, [...fichas, ...lecturas]) };
 });
 const enAlcance = datos.filter((s) => s.claves.length > 0);
 
@@ -127,7 +142,9 @@ test('(a) toda cita del cuerpo tiene ficha en su propia sección', () => {
   const huerfanas = [];
   for (const s of enAlcance)
     for (const c of s.claves)
-      if (!s.fichas.some((x) => x.apellido === c.apellido && x.anio === c.anio))
+      // Vale cualquiera de las dos cajas: si el lector puede resolver la cita sin salir
+      // de la sección, la cita no es huérfana.
+      if (![...s.fichas, ...s.lecturas].some((x) => x.apellido === c.apellido && x.anio === c.anio))
         huerfanas.push(`${s.ruta}  →  *(${c.raw})*`);
 
   assert.deepEqual(huerfanas, [],
