@@ -315,6 +315,7 @@ const CUENTAS_POR_RED = new Map([
   ['tiktok', 'tdv-tiktok'],
   ['fb', 'tdv-fb'],
   ['yt', 'tdv-yt'],
+  ['li', 'tdv-li'],
 ]);
 
 /**
