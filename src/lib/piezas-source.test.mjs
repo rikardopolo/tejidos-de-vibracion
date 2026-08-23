@@ -48,6 +48,11 @@ test('un enlace pegado en Facebook NO se cuenta como Instagram', () => {
   assert.equal(fuente('obertura', 'yt'), 'tdv-yt');
   assert.equal(fuente('obertura', 'tiktok'), 'tdv-tiktok');
   assert.equal(fuente('obertura', 'ig'), 'tdv-ig');
+  // `li` entra el 23-ago-2026, al abrir la página de empresa en LinkedIn. Antes
+  // de existir, un `?c=li` no rompía nada —degradaba al default— y ese es
+  // justamente el problema: el tráfico de LinkedIn se habría contado como
+  // Instagram sin que nada avisara.
+  assert.equal(fuente('obertura', 'li'), 'tdv-li');
 });
 
 test('la red gana al `source` que declara la pieza', () => {
