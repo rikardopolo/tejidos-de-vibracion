@@ -280,15 +280,18 @@ export const PIEZAS: Record<string, Pieza> = {
     titulo: 'La ventana que quiso más',
   },
 
-  // La saciedad semántica: repetir un nombre hasta que deja de significar
+  // La saciedad semántica: repetir una palabra hasta que deja de significar
   // (§1.3 «Tradiciones olvidadas»). Gemelo del registro del portal: si solo se
   // da de alta en uno, el enlace funciona desde un dominio y cae al fallback
   // desde el otro.
-  'a06-di-tu-nombre': {
+  //
+  // El slug NO es el de la ficha del reparto (`a06-di-tu-nombre`): la pieza
+  // repite ORION, no el nombre de Ricardo. Corregido con el PR aún abierto.
+  'a06-la-palabra': {
     destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
     campaign: 'agosto-a06',
     medium: 'reel',
-    titulo: 'Di tu nombre cincuenta veces',
+    titulo: 'La palabra que se deshace',
   },
 };
 
