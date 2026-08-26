@@ -267,6 +267,18 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'El ciclo nasal',
   },
+
+  // Villard de Honnecourt y la ventana de Reims que dibujó al marcharse a
+  // Hungría (§1.5 «Catedrales Acústicas»). Dado de alta ANTES de publicar la
+  // pieza: a A04 se le pasó y estuvo en cola con el destino roto sin que
+  // saltara ningún gate — el esquema del reel valida que las UTMs estén, no
+  // que el slug exista aquí.
+  'a05-la-ventana': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'agosto-a05',
+    medium: 'reel',
+    titulo: 'La ventana que quiso más',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
