@@ -279,6 +279,17 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'La ventana que quiso más',
   },
+
+  // La saciedad semántica: repetir un nombre hasta que deja de significar
+  // (§1.3 «Tradiciones olvidadas»). Gemelo del registro del portal: si solo se
+  // da de alta en uno, el enlace funciona desde un dominio y cae al fallback
+  // desde el otro.
+  'a06-di-tu-nombre': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'agosto-a06',
+    medium: 'reel',
+    titulo: 'Di tu nombre cincuenta veces',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
