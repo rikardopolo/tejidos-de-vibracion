@@ -293,6 +293,21 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'La palabra que se deshace',
   },
+
+  // Do-Re-Mi son las primeras sílabas de un himno latino que un monje eligió
+  // hacia 1025 para nombrar las notas (§1.6 «Los Solfegios Sagrados»). Gemelo
+  // del registro del portal: si solo se da de alta en uno, el enlace funciona
+  // desde un dominio y cae al fallback desde el otro.
+  //
+  // El slug describe LA PIEZA y no la sección: la ficha del reparto la llamaba
+  // «Los solfeggios · la solmización», que no le dice nada a quien lo ve en la
+  // bio.
+  'a07-do-re-mi': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'agosto-a07',
+    medium: 'reel',
+    titulo: 'Do-Re-Mi son las primeras sílabas de una oración',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
