@@ -27,6 +27,14 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 import { MD_404, RUTAS_404, apply404Negotiation, wantsMarkdown } from '../src/lib/agent-md.mjs';
+import {
+  ACCEPT_MD,
+  MD_VARIANTS,
+  assertCatchAll404,
+  injectMarkdownRoutes,
+  srcFor,
+  varySrc,
+} from './patch-vercel-output.mjs';
 
 const raiz = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pagesDir = path.join(raiz, 'src', 'pages');
@@ -192,4 +200,197 @@ test('el middleware lee Accept DESPUÉS de next() y solo en la rama 404 (evita e
   assert.ok(iHeaders > iNext, 'leer request.headers antes de next() emite un WARN por página prerenderizada');
   assert.match(srcMiddleware, /res\.status !== 404/, 'la lectura debe estar tras el filtro de 404');
   assert.ok(srcMiddleware.includes('apply404Negotiation'), 'el middleware debe delegar en agent-md');
+});
+
+/* ═══════════════════════════════════════════════════════════════════
+   F2 · Negociación markdown de las páginas principales.
+
+   Miniatura FIEL del `.vercel/output/config.json` que emite
+   @astrojs/vercel@11 en este repo (verificado sobre el build del
+   28-ago-2026): `handle: filesystem` es el PRIMER route —no va después
+   de otros, como en otros layouts—, no hay clave `overrides`, y el
+   último route es el catch-all a `_render`. Si el adapter cambiara esa
+   forma, el build revienta por sí solo (injectMarkdownRoutes exige el
+   handle y assertCatchAll404 el catch-all), así que la miniatura no
+   puede quedarse mintiendo en silencio.
+   ═══════════════════════════════════════════════════════════════════ */
+function fixture() {
+  return {
+    version: 3,
+    routes: [
+      { handle: 'filesystem' },
+      { src: '^/_astro/(.*)$', headers: { 'cache-control': 'public, max-age=31536000, immutable' }, continue: true },
+      { src: '^/404/?$', dest: '_render' },
+      { src: '^/api/health/?$', dest: '_render' },
+      { src: '^/obertura/?$', dest: '_render' },
+      { src: '^/recibir/?$', dest: '_render' },
+      { src: '^/.*$', dest: '_render', status: 404 },
+    ],
+  };
+}
+
+const rutaMd = (config, ruta) =>
+  config.routes.find((r) => r.src === srcFor(ruta) && Array.isArray(r.has));
+
+test('las rutas se inyectan ANTES del handle filesystem (si no, el .html gana siempre)', () => {
+  const c = fixture();
+  const { changed, injected } = injectMarkdownRoutes(c);
+  assert.equal(changed, true);
+  assert.equal(injected, 1 + MD_VARIANTS.length);
+
+  const fsIdx = c.routes.findIndex((r) => r.handle === 'filesystem');
+  const idxMd = c.routes.findIndex((r) => Array.isArray(r.has));
+  assert.ok(idxMd > -1 && idxMd < fsIdx, 'toda ruta negociada va antes del filesystem');
+  for (const v of MD_VARIANTS) {
+    assert.ok(c.routes.indexOf(rutaMd(c, v.route)) < fsIdx, `${v.route} quedó después del filesystem`);
+  }
+});
+
+test('el catch-all del 404 sobrevive intacto y sigue el último', () => {
+  const c = fixture();
+  injectMarkdownRoutes(c);
+  const last = c.routes[c.routes.length - 1];
+  assert.deepEqual(last, { src: '^/.*$', dest: '_render', status: 404 });
+  assert.doesNotThrow(() => assertCatchAll404(c));
+});
+
+test('cada página negociada lleva has/accept, su .md, content-type markdown y Vary', () => {
+  const c = fixture();
+  injectMarkdownRoutes(c);
+  for (const v of MD_VARIANTS) {
+    const r = rutaMd(c, v.route);
+    assert.ok(r, `falta la ruta de ${v.route}`);
+    assert.deepEqual(r.has, [{ type: 'header', key: 'accept', value: ACCEPT_MD }]);
+    assert.equal(r.dest, v.md);
+    assert.equal(r.headers['content-type'], 'text/markdown; charset=utf-8');
+    assert.equal(r.headers.vary, 'Accept');
+  }
+});
+
+test('la ruta Vary cubre todos los paths negociados y es continue (no corta la cadena)', () => {
+  const c = fixture();
+  injectMarkdownRoutes(c);
+  const vary = c.routes.find((r) => r.continue && r.headers?.vary === 'Accept');
+  assert.ok(vary, 'falta la ruta que marca Vary: Accept');
+  const re = new RegExp(vary.src);
+  for (const v of MD_VARIANTS) {
+    assert.ok(re.test(v.route), `la ruta Vary no cubre ${v.route}`);
+    assert.ok(re.test(`${v.route === '/' ? '' : v.route}/`), `la ruta Vary no cubre ${v.route} con barra`);
+  }
+  // Control negativo: no puede marcar Vary en todo el sitio.
+  assert.equal(re.test('/capitulo/cap-1-universo-sinfonia'), false);
+  assert.equal(re.test('/ruta-inventada'), false);
+});
+
+test('overrides fija el content-type del .md directo, sin pisar los del adapter', () => {
+  const c = fixture();
+  c.overrides = { 'algo-del-adapter.html': { contentType: 'text/html' } };
+  injectMarkdownRoutes(c);
+  assert.equal(c.overrides['algo-del-adapter.html'].contentType, 'text/html', 'no debe pisar overrides ajenos');
+  for (const v of MD_VARIANTS) {
+    assert.equal(c.overrides[v.md.slice(1)].contentType, 'text/markdown; charset=utf-8');
+  }
+});
+
+test('IDEMPOTENCIA · una segunda pasada no cambia nada ni duplica rutas', () => {
+  const c = fixture();
+  injectMarkdownRoutes(c);
+  const antes = JSON.stringify(c);
+  const segunda = injectMarkdownRoutes(c);
+  assert.equal(segunda.changed, false);
+  assert.equal(segunda.injected, 0);
+  assert.equal(JSON.stringify(c), antes, 'el config no puede mutar en la segunda pasada');
+});
+
+test('una ruta AJENA que condicione por accept no bloquea la inyección (denylist disfrazada)', () => {
+  const c = fixture();
+  // El adapter podría negociar avif/webp por accept: no son nuestras.
+  c.routes.unshift({ src: '^/_image/?$', has: [{ type: 'header', key: 'accept', value: '.*avif.*' }], dest: '_render' });
+  const { changed, injected } = injectMarkdownRoutes(c);
+  assert.equal(changed, true, 'una ruta ajena con accept haría saltar la inyección si el filtro fuese por "alguna ruta con accept"');
+  assert.equal(injected, 1 + MD_VARIANTS.length);
+});
+
+test('una inyección PARCIAL revienta en vez de dar verde silencioso', () => {
+  const c = fixture();
+  injectMarkdownRoutes(c);
+  // Alguien edita el config a mano y borra una de nuestras rutas.
+  const i = c.routes.findIndex((r) => r.dest === MD_VARIANTS[0].md);
+  c.routes.splice(i, 1);
+  assert.throws(() => injectMarkdownRoutes(c), /parcial/);
+});
+
+test('sin handle filesystem el script revienta (layout inesperado del adapter)', () => {
+  const c = fixture();
+  c.routes = c.routes.filter((r) => r.handle !== 'filesystem');
+  assert.throws(() => injectMarkdownRoutes(c), /filesystem/);
+});
+
+test('CONTROL · assertCatchAll404 revienta si el 404 vuelve a ser estático', () => {
+  const c = fixture();
+  c.routes[c.routes.length - 1] = { src: '^/.*$', dest: '/404.html', status: 404 };
+  assert.throws(() => assertCatchAll404(c), /404\.astro|catch-all/);
+  // Y con el catch-all bueno no revienta (control positivo).
+  assert.doesNotThrow(() => assertCatchAll404(fixture()));
+});
+
+test('los regex de ruta casan lo que deben y nada más', () => {
+  assert.equal(srcFor('/'), '^/$');
+  assert.equal(new RegExp(srcFor('/')).test('/'), true);
+  assert.equal(new RegExp(srcFor('/')).test('/indice'), false);
+
+  const re = new RegExp(srcFor('/acto-i'));
+  assert.equal(re.test('/acto-i'), true);
+  assert.equal(re.test('/acto-i/'), true);
+  assert.equal(re.test('/acto-ii'), false, 'no puede tragarse el acto siguiente');
+  assert.equal(re.test('/acto-i/algo'), false);
+
+  assert.equal(new RegExp(ACCEPT_MD).test('text/markdown'), true);
+  assert.equal(new RegExp(ACCEPT_MD).test('text/html, text/markdown;q=0.9'), true);
+  assert.equal(new RegExp(ACCEPT_MD).test('text/html'), false);
+  assert.ok(varySrc().startsWith('^/'), 'la unión debe anclar al inicio');
+});
+
+// ── Paridad manifiesto ↔ ficheros ↔ páginas ──────────────────────────
+test('cada .md del manifiesto existe, con H1, sustancia y URLs del dominio', () => {
+  for (const md of new Set(MD_VARIANTS.map((v) => v.md))) {
+    const p = path.join(raiz, 'public', md.slice(1));
+    assert.ok(existsSync(p), `falta ${md} en public/`);
+    const txt = readFileSync(p, 'utf8');
+    assert.match(txt, /^# .+/, `${md} debe abrir con un H1`);
+    assert.ok(txt.length > 200, `${md} es demasiado corto para servir de algo (${txt.length} chars)`);
+    assert.ok(txt.includes('tejidosdevibracion.com'), `${md} debe enlazar con URLs absolutas`);
+  }
+});
+
+test('cada ruta negociada corresponde a una página pública real del sitio', () => {
+  for (const v of MD_VARIANTS) {
+    assert.ok(resuelve(v.route), `${v.route} no resuelve a ninguna página: no puede negociar markdown`);
+  }
+});
+
+test('el manifiesto NO negocia contenido gated (un .md estático puentearía el gate)', () => {
+  for (const v of MD_VARIANTS) {
+    assert.ok(!/^\/capitulo\//.test(v.route), `${v.route} es contenido de capítulo: fuera del manifiesto`);
+    assert.ok(!/^\/obertura\/.+/.test(v.route), `${v.route} es una pieza de la Obertura: fuera del manifiesto`);
+  }
+});
+
+test('el build encadena el parche después de astro build', () => {
+  const pkg = JSON.parse(readFileSync(path.join(raiz, 'package.json'), 'utf8'));
+  assert.match(pkg.scripts.build, /astro build\s*&&\s*node scripts\/patch-vercel-output\.mjs/);
+});
+
+test('los .md crudos salen con X-Robots-Tag noindex, y el bloque de seguridad sigue intacto', () => {
+  const vercel = JSON.parse(readFileSync(path.join(raiz, 'vercel.json'), 'utf8'));
+  const md = vercel.headers.find((h) => h.source.includes('.md'));
+  assert.ok(md, 'falta el bloque de cabeceras para /*.md');
+  assert.deepEqual(md.headers, [{ key: 'X-Robots-Tag', value: 'noindex' }]);
+
+  // El bloque global no se toca: sus 8 cabeceras siguen ahí, CSP incluida.
+  const global = vercel.headers.find((h) => h.source === '/(.*)');
+  assert.ok(global, 'el bloque de seguridad global desapareció');
+  assert.equal(global.headers.length, 8);
+  assert.ok(global.headers.some((h) => h.key === 'Content-Security-Policy'));
+  assert.ok(!global.headers.some((h) => h.key === 'X-Robots-Tag'), 'el noindex NO puede vivir en el bloque global');
 });

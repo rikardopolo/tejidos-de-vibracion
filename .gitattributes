@@ -1,0 +1,9 @@
+# Finales de línea LF para lo que consumen runtimes y parsers, no editores.
+#
+# Los .mjs los ejecutan node --test y el paso post-build; un CRLF en un .mjs
+# rompe transformadores de ESM y el error suele señalar al fichero IMPORTADOR,
+# no al que trae el CRLF — un diagnóstico caro. Los .md los sirve el edge tal
+# cual a los agentes (negociación Accept: text/markdown): sin esto, un checkout
+# en Windows los publicaría con CRLF.
+*.mjs text eol=lf
+*.md text eol=lf
