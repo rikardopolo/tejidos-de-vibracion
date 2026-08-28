@@ -1,13 +1,29 @@
 ---
+/**
+ * 404 · página de recuperación para humanos y agentes.
+ *
+ * `prerender = false` a propósito: el catch-all del adapter manda todo path
+ * desconocido a la función SSR (`_render` · status 404), y solo por esa vía
+ * corre el middleware que negocia la variante markdown del 404
+ * (`Accept: text/markdown` · ver src/lib/agent-md.mjs). Prerenderizarla
+ * convertiría el 404 en estático y apagaría esa negociación SIN AVISAR: el
+ * catch-all pasaría a apuntar a /404.html y nada fallaría en el build.
+ */
 import Base from '@/layouts/Base.astro';
 import BookHeader from '@/components/BookHeader.astro';
 import BookFooter from '@/components/BookFooter.astro';
+import { RUTAS_404 } from '@/lib/agent-md.mjs';
+
+export const prerender = false;
+
+Astro.response.status = 404;
 ---
 
 <Base
   title="Página no encontrada · Tejidos de Vibración"
   description="Esta dirección no existe en Tejidos de Vibración. Pero el libro entero está esperándote a una página de distancia."
   pageId="error"
+  robots="noindex,follow"
 >
   <BookHeader />
 
@@ -23,13 +39,68 @@ import BookFooter from '@/components/BookFooter.astro';
         <p class="no-indent">Tal vez seguiste un enlace que ya no apunta a ningún lado. Tal vez escribiste una dirección de memoria y la memoria falló — a todos nos pasa. Tal vez el sitio cambió de forma y olvidamos reenviarte. En cualquier caso: no hay nada roto en ti. Solo en esta dirección.</p>
       </section>
 
+      <ul class="rutas-404">
+        {RUTAS_404.map((r) => (
+          <li><a href={r.href}>{r.label}</a> — {r.desc}</li>
+        ))}
+      </ul>
+
       <div class="cta-stack">
         <a class="lit-link lit-link--lg" href="/obertura">Empezar por la Obertura</a>
         <a class="lit-link-secondary" href="/indice">Recorrer el índice</a>
         <a class="lit-link-secondary" href="/">Volver a la portada</a>
       </div>
+
+      <p class="maquinas-404">
+        ¿Eres un agente o un crawler? El inventario completo de URLs vive en
+        <a href="/sitemap.xml">/sitemap.xml</a> y la guía de uso del libro en
+        <a href="/llms.txt">/llms.txt</a>. Esta misma página responde markdown si
+        pides <code>Accept: text/markdown</code>.
+      </p>
     </article>
   </main>
 
   <BookFooter />
 </Base>
+
+<style>
+  /* Mapa de recuperación · sobrio, alineado a la izquierda como la prosa.
+     Mismo contenido que la variante markdown del 404 (RUTAS_404). */
+  .rutas-404 {
+    text-align: left;
+    list-style: none;
+    padding: 0;
+    margin: var(--gap-md) 0 0;
+    border-top: 1px solid var(--pergamino-2);
+    padding-top: var(--gap-sm);
+  }
+  .rutas-404 li {
+    font-family: var(--sans);
+    font-size: var(--fs-meta);
+    line-height: 1.75;
+    color: var(--tinta-suave);
+    margin-bottom: 0.4rem;
+  }
+  .rutas-404 a {
+    color: var(--oro-texto);
+    text-decoration: none;
+    border-bottom: 1px solid var(--oro-fantasma);
+  }
+  .rutas-404 a:hover { border-bottom-color: var(--oro-suave); }
+
+  .maquinas-404 {
+    text-align: left;
+    font-family: var(--sans);
+    font-size: var(--fs-meta);
+    line-height: 1.7;
+    color: var(--reposo);
+    border-top: 1px solid var(--pergamino-2);
+    margin-top: var(--gap-md);
+    padding-top: var(--gap-sm);
+  }
+  .maquinas-404 a { color: var(--oro-texto); }
+  .maquinas-404 code {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+  }
+</style>
