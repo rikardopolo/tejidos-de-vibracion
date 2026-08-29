@@ -15,13 +15,18 @@ import LitLink from '@/components/book/LitLink.astro';
     <section class="portada-hero vib-stage">
       <canvas id="c-1a" aria-hidden="true"></canvas>
       <p class="eyebrow eyebrow--gold">Volumen I</p>
-      <h1 class="monumental">Tejidos<br/>de <em class="vibracion-title">Vibración</em></h1>
+      <!-- El espacio antes del <br/> es deliberado: sin él, los extractores de
+           texto (y los lectores de pantalla que aplanan el nodo) leen
+           «Tejidosde Vibración». Al final de línea el navegador lo colapsa, así
+           que no altera el render — verificado por estilos computados. -->
+      <h1 class="monumental">Tejidos <br/>de <em class="vibracion-title">Vibración</em></h1>
       <p class="umbral-line portada-umbral">Donde la mirada teje lo posible en lo real, y el silencio entre dos latidos resulta ser el río que ambas orillas comparten.</p>
     </section>
 
     <!-- Retícula 640 | 1fr · prosa a la izquierda, umbral de entrada a la derecha -->
     <div class="portada-grid">
       <div class="portada-prosa">
+        <h2 class="eyebrow">La pregunta</h2>
         <div class="prose">
           <p class="no-indent">No soy físico de laboratorio, ni monje de monasterio. Soy alguien que lleva años sentado en la frontera entre la ecuación y el silencio, preguntándome si esa frontera existe.</p>
           <p>Tejidos de Vibración es el resultado de esa pregunta sostenida durante años. No pretende dar respuestas definitivas. Pretende cambiar la calidad de las preguntas.</p>
@@ -30,6 +35,7 @@ import LitLink from '@/components/book/LitLink.astro';
       </div>
 
       <div class="portada-umbral-entrada">
+        <h2 class="eyebrow">Empezar a leer</h2>
         <p class="portada-intro">Lee la Obertura completa hoy. Los capítulos del Acto I se abrirán uno a uno — y tu correo es la llave de todos.</p>
 
         <p class="portada-cta"><LitLink size="lg" href="/obertura">Empezar por la Obertura</LitLink></p>
@@ -44,6 +50,7 @@ import LitLink from '@/components/book/LitLink.astro';
     <!-- Pie -->
     <footer class="portada-pie">
       <Flourish kind="rule" />
+      <h2 class="eyebrow center">El Volumen I</h2>
       <p class="meta center">Tres actos · Diez capítulos · Una Obertura ya abierta</p>
     </footer>
   </article>

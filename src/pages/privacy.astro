@@ -1,0 +1,38 @@
+---
+/**
+ * /privacy · trust anchor en ruta inglesa (ver la nota de about.astro).
+ * Canónico en español: /privacidad. Canonical SIN barra final.
+ *
+ * Resumen NO vinculante: la política que obliga es la española. Si una y
+ * otra divergen, manda /privacidad — y este texto hay que corregirlo.
+ */
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import { canonicalFor } from '@/lib/seo';
+---
+
+<LecturaLarga
+  robots="noindex,follow"
+  title="Privacy · Tejidos de Vibración"
+  description="How personal data is handled across tejidosdevibracion.com and tejidosderealidad.com. English-path summary; the binding policy is at /privacidad (Spanish)."
+  pageId="privacy"
+  canonical={canonicalFor('/privacidad')}
+>
+  <article class="measure pt-5">
+    <header>
+      <p class="eyebrow">Privacy</p>
+      <h1 class="title-1">Your reading, your data, your choice.</h1>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">One policy covers both sites of the project: <strong>tejidosdevibracion.com</strong> (the book) and <strong>tejidosderealidad.com</strong> (the portal). The data controller is <strong>Ricardo Polo</strong> (editorial project <em>Tejidos de Realidad · Orion</em>), based in Cali, Colombia. It is governed by Colombia's <strong>Ley 1581 de 2012</strong> (habeas data) and Decreto 1377 de 2013; GDPR principles are applied by default for visitors writing from the EU or the UK.</p>
+
+      <p class="no-indent">In short: your name and email are collected when you register to read the book or to receive notice of new chapters, and they are stored with the mail provider (Brevo). Your reading progress — which pieces and sections you open, and how far you get — is recorded first-party, with no third parties and no advertising networks, for one purpose only: understanding which parts of the book work. Analytics run on PostHog (EU servers), with Session Replay, Autocapture and Heatmaps disabled by default.</p>
+
+      <p class="no-indent">What is not done: your email is neither sold nor handed to third parties, it is not cross-referenced with advertising databases, and no third-party tracking cookies are used. Every email carries a one-click unsubscribe link. You can request access, correction or deletion of your data at <a href="mailto:contacto@tejidosderealidad.com">contacto@tejidosderealidad.com</a>.</p>
+
+      <p class="no-indent">This is a summary and is not the binding text. The full and current policy — cookies, the providers that process data, retention periods and changes — is in Spanish, the site's language, at <a href="/privacidad">tejidosdevibracion.com/privacidad</a>.</p>
+    </section>
+  </article>
+</LecturaLarga>

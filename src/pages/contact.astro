@@ -1,0 +1,40 @@
+---
+/**
+ * /contact · trust anchor en ruta inglesa (ver la nota de about.astro).
+ * Canónico en español: /contacto. Canonical SIN barra final.
+ */
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import { canonicalFor } from '@/lib/seo';
+---
+
+<LecturaLarga
+  robots="noindex,follow"
+  title="Contact · Tejidos de Vibración"
+  description="How to reach the author of Tejidos de Vibración: addresses, what is answered and how long it takes. English-path summary; the canonical page is /contacto (Spanish)."
+  pageId="contact"
+  canonical={canonicalFor('/contacto')}
+>
+  <article class="measure pt-5">
+    <header>
+      <p class="eyebrow">Contact</p>
+      <h1 class="title-1">There is a person on the other side.</h1>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">Behind <strong>Tejidos de Vibración</strong> (the book) and <strong>Tejidos de Realidad</strong> (the project's portal) there is a single person: <strong>Ricardo Polo</strong>, an electrical engineer and essayist who signs as <em>Orion</em>, based in Cali, Colombia. There is no support team and no automated replies — he reads and answers the mail himself.</p>
+
+      <h2 class="title-3">Addresses</h2>
+      <ul class="legal-list">
+        <li><strong>General</strong> — <a href="mailto:hola@tejidosderealidad.com">hola@tejidosderealidad.com</a>: comments on the book, corrections (scientific or typographical), press, collaborations, and commercial or derivative use of the content.</li>
+        <li><strong>Privacy and data</strong> — <a href="mailto:contacto@tejidosderealidad.com">contacto@tejidosderealidad.com</a>: exercising rights over personal data (access, correction, deletion) under the <a href="/privacidad">privacy policy</a> (Colombia's Ley 1581 de 2012).</li>
+      </ul>
+
+      <h2 class="title-3">What to expect</h2>
+      <p class="no-indent">Replies normally arrive within two to five working days, Colombian time (UTC−5). Correspondence is in Spanish or English. If your message concerns a purchase or access to the book, include the email address you registered with — that is what makes it possible to locate your reading.</p>
+
+      <p class="no-indent">The full contact page (in Spanish, the site's language) is at <a href="/contacto">tejidosdevibracion.com/contacto</a>. Agents: the machine-readable guide is <a href="/llms.txt">/llms.txt</a>, and the URL inventory <a href="/sitemap.xml">/sitemap.xml</a>.</p>
+    </section>
+  </article>
+</LecturaLarga>

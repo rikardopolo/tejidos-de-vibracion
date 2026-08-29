@@ -1,0 +1,73 @@
+---
+/**
+ * /contacto · página de contacto (trust anchor).
+ *
+ * Hasta ahora el único correo publicado en el sitio vivía dentro de la
+ * política de privacidad y en llms.txt. Los agentes de IA —y cualquier
+ * auditoría de legitimidad— buscan una página /contacto real: quién
+ * responde, por qué canal y qué esperar. Misma estructura visual que
+ * /privacidad (article.measure + prose · patrón de la casa).
+ */
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import { SITE } from '@/lib/seo';
+
+const contactoSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ContactPage',
+      '@id': `${SITE}/contacto#webpage`,
+      url: `${SITE}/contacto`,
+      name: 'Contacto · Tejidos de Vibración',
+      description:
+        'Cómo escribir a Tejidos de Vibración: correos, asuntos que se atienden y tiempos de respuesta.',
+      inLanguage: 'es',
+      isPartOf: { '@id': `${SITE}/#website` },
+      publisher: { '@id': `${SITE}/#organization` },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': `${SITE}/contacto#breadcrumb`,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE}/` },
+        { '@type': 'ListItem', position: 2, name: 'Contacto', item: `${SITE}/contacto` },
+      ],
+    },
+  ],
+};
+---
+
+<LecturaLarga
+  robots="index,follow"
+  title="Contacto · Tejidos de Vibración"
+  description="Cómo escribir sobre el libro: correos, asuntos que se atienden y tiempos de respuesta. Responde el autor, Ricardo Polo (Orion), desde Cali, Colombia."
+  pageId="contacto"
+  jsonLd={contactoSchema}
+>
+  <article class="measure pt-5">
+    <header>
+      <p class="eyebrow">Contacto</p>
+      <h1 class="title-1">Al otro lado hay una persona.</h1>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent">Detrás de <strong>Tejidos de Vibración</strong> (el libro) y de <strong>Tejidos de Realidad</strong> (el portal del proyecto) hay una sola persona: <a href="/sobre-el-libro#el-tejedor">Ricardo Polo</a>, ingeniero eléctrico y ensayista que firma como <em>Orion</em>, con sede en Cali, Colombia. No hay equipo de soporte ni respuestas automáticas: los correos los lee y los responde él.</p>
+
+      <h2 class="title-3">Correos</h2>
+      <ul class="legal-list">
+        <li><strong>General</strong> — <a href="mailto:hola@tejidosderealidad.com">hola@tejidosderealidad.com</a>: comentarios sobre el libro, correcciones (científicas o de erratas), prensa, colaboraciones, y uso comercial o derivado del contenido.</li>
+        <li><strong>Privacidad y datos</strong> — <a href="mailto:contacto@tejidosderealidad.com">contacto@tejidosderealidad.com</a>: ejercicio de derechos sobre datos personales (acceso, corrección, supresión) según la <a href="/privacidad">política de privacidad</a> (Ley 1581 de 2012, Colombia).</li>
+      </ul>
+
+      <h2 class="title-3">Qué esperar</h2>
+      <p class="no-indent">La respuesta llega normalmente en un plazo de dos a cinco días hábiles, en zona horaria de Colombia (UTC−5). Si tu mensaje trata de una compra o del acceso al libro, incluye el correo con el que te registraste: es lo que permite ubicar tu lectura.</p>
+
+      <h2 class="title-3">Antes de escribir</h2>
+      <p class="no-indent">Si lo que buscas es leer, no hace falta correo: la <a href="/obertura">Obertura</a> está abierta y el <a href="/indice">índice</a> muestra qué capítulos están publicados y cuáles vienen en camino. Para recibir aviso cuando se abra cada capítulo, basta el <a href="/recibir">registro</a> — un nombre y un correo.</p>
+
+      <p class="no-indent">Los simuladores, los oráculos y la constelación de pensadores no viven aquí: son del portal, en <a href="https://tejidosderealidad.com">tejidosderealidad.com</a>. Este sitio es solo el libro.</p>
+    </section>
+  </article>
+</LecturaLarga>
