@@ -381,6 +381,115 @@ test('el build encadena el parche después de astro build', () => {
   assert.match(pkg.scripts.build, /astro build\s*&&\s*node scripts\/patch-vercel-output\.mjs/);
 });
 
+/* ═══════════════════════════════════════════════════════════════════
+   F3 · Trust anchors. /contacto (español, indexable) y las tres rutas
+   inglesas que los agentes sondean antes de recomendar un sitio.
+
+   🔴 El invariante del canonical va AL REVÉS que en el portal hermano:
+   este sitio canonicaliza SIN barra final (canonicalFor la quita y
+   vercel.json redirige /x/ → /x). Copiar allí el gate de allá —que
+   EXIGE barra— habría encadenado las tres anclas a un duplicado
+   rastreable. Por eso aquí se mide el comportamiento del helper, no la
+   forma del literal.
+   ═══════════════════════════════════════════════════════════════════ */
+const ANCLAS_EN = [
+  { page: 'about.astro', canonicalA: '/sobre-el-libro' },
+  { page: 'contact.astro', canonicalA: '/contacto' },
+  { page: 'privacy.astro', canonicalA: '/privacidad' },
+];
+
+const fuentePagina = (f) => readFileSync(path.join(pagesDir, f), 'utf8');
+
+/** Texto que un extractor vería en una página .astro: sin frontmatter, sin
+ * <style>, sin expresiones {…} (podadas hasta punto fijo) y sin etiquetas. */
+function visibleText(src) {
+  let s = src.replace(/^---[\s\S]*?\n---/, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ');
+  let prev;
+  do {
+    prev = s;
+    s = s.replace(/\{[^{}]*\}/g, ' ');
+  } while (s !== prev);
+  return s.replace(/<[^>]+>/g, ' ').replace(/&[a-zA-Z#0-9]+;/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+test('GATE INVERTIDO · canonicalFor normaliza SIN barra final (aquí, al revés que el portal)', async () => {
+  const { canonicalFor } = await import('../src/lib/seo.ts');
+  for (const { canonicalA } of ANCLAS_EN) {
+    assert.equal(canonicalFor(canonicalA).endsWith('/'), false, `${canonicalA} no puede canonicalizar con barra`);
+    // Control: aunque alguien escriba la barra, el helper la quita.
+    assert.equal(canonicalFor(`${canonicalA}/`), canonicalFor(canonicalA));
+  }
+  // Control positivo del helper: la raíz SÍ conserva su barra.
+  assert.ok(canonicalFor('/').endsWith('/'));
+});
+
+test('las 3 anclas inglesas canonicalizan a su página española VÍA canonicalFor (no a mano)', () => {
+  for (const { page, canonicalA } of ANCLAS_EN) {
+    const src = fuentePagina(page);
+    assert.ok(
+      src.includes(`canonical={canonicalFor('${canonicalA}')}`),
+      `${page} debe declarar canonical={canonicalFor('${canonicalA}')} — un literal a mano se saltaría la normalización`,
+    );
+    assert.ok(!/canonical="https?:/.test(src), `${page} no puede llevar un canonical literal`);
+    assert.ok(resuelve(canonicalA), `el canonical de ${page} apunta a ${canonicalA}, que no existe`);
+  }
+});
+
+test('robots: las inglesas noindex,follow · /contacto indexable', () => {
+  for (const { page } of ANCLAS_EN) {
+    assert.match(fuentePagina(page), /robots="noindex,follow"/, `${page} debe ser noindex,follow`);
+  }
+  assert.match(fuentePagina('contacto.astro'), /robots="index,follow"/);
+});
+
+test('las 4 anclas tienen ≥500 caracteres visibles (lo que mide la auditoría)', () => {
+  for (const f of ['contacto.astro', ...ANCLAS_EN.map((a) => a.page)]) {
+    const n = visibleText(fuentePagina(f)).length;
+    assert.ok(n >= 500, `${f} solo tiene ${n} caracteres visibles`);
+  }
+});
+
+test('CONTROL · visibleText no cuenta atributos, expresiones ni estilos', () => {
+  const falso = `---\nimport X from 'y';\n---\n<X title="palabra ${'largo '.repeat(200)}" canonical={canonicalFor('/x')}>\n<p>hola</p>\n</X>\n<style>.a{color:red}</style>`;
+  assert.equal(visibleText(falso), 'hola', 'si contase atributos o estilos, los 500 chars se cumplirían en falso');
+});
+
+test('el sitemap anuncia /contacto y NINGUNA de las rutas inglesas', () => {
+  const src = readFileSync(path.join(pagesDir, 'sitemap.xml.ts'), 'utf8');
+  const bloque = src.match(/STATIC_PUBLIC_URLS\s*=\s*\[([\s\S]*?)\]/);
+  assert.ok(bloque, 'no encuentro STATIC_PUBLIC_URLS');
+  const rutas = [...bloque[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
+  assert.ok(rutas.includes('/contacto'), '/contacto debe estar en el sitemap');
+  for (const { canonicalA } of ANCLAS_EN) {
+    const en = '/' + path.basename(ANCLAS_EN.find((a) => a.canonicalA === canonicalA).page, '.astro');
+    assert.ok(!rutas.includes(en), `${en} es noindex: no puede estar en el sitemap`);
+  }
+});
+
+test('las 4 anclas negocian markdown y reutilizan el .md de su canónica', () => {
+  const porRuta = Object.fromEntries(MD_VARIANTS.map((v) => [v.route, v.md]));
+  assert.equal(porRuta['/contacto'], '/contacto.md');
+  for (const { canonicalA, page } of ANCLAS_EN) {
+    const en = '/' + path.basename(page, '.astro');
+    assert.ok(porRuta[en], `${en} no está en el manifiesto`);
+    assert.equal(porRuta[en], porRuta[canonicalA], `${en} debe servir el mismo markdown que ${canonicalA}`);
+  }
+});
+
+test('el footer enlaza /contacto (si no, la página existe pero nadie la encuentra)', () => {
+  const footer = readFileSync(path.join(raiz, 'src', 'components', 'BookFooter.astro'), 'utf8');
+  assert.ok(footer.includes('href="/contacto"'));
+});
+
+test('los correos publicados no divergen entre la página española y la inglesa', () => {
+  const correos = (src) => [...new Set([...src.matchAll(/mailto:([^"]+)"/g)].map((m) => m[1]))].sort();
+  assert.deepEqual(correos(fuentePagina('contacto.astro')), correos(fuentePagina('contact.astro')));
+  assert.deepEqual(correos(fuentePagina('contacto.astro')), [
+    'contacto@tejidosderealidad.com',
+    'hola@tejidosderealidad.com',
+  ]);
+});
+
 test('los .md crudos salen con X-Robots-Tag noindex, y el bloque de seguridad sigue intacto', () => {
   const vercel = JSON.parse(readFileSync(path.join(raiz, 'vercel.json'), 'utf8'));
   const md = vercel.headers.find((h) => h.source.includes('.md'));

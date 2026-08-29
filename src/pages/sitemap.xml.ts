@@ -14,6 +14,7 @@ const STATIC_PUBLIC_URLS = [
   '/acto-iii',
   '/colofon',
   '/obertura',
+  '/contacto',
 ];
 
 function priorityFor(path: string): string {

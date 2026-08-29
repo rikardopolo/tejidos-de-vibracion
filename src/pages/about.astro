@@ -1,0 +1,46 @@
+---
+/**
+ * /about · trust anchor en ruta inglesa.
+ *
+ * Los agentes de IA verifican legitimidad sondeando /about · /contact ·
+ * /privacy antes de recomendar un sitio. El contenido canónico vive en
+ * español (/sobre-el-libro); esta página es un resumen real —no un
+ * redirect, para que el sondeo reciba 200 con contenido— y declara
+ * `noindex,follow` para no competir en buscadores con la canónica.
+ *
+ * 🔴 El canonical va SIN barra final: este sitio canonicaliza sin ella
+ * (canonicalFor la quita y vercel.json redirige /x/ → /x). Un canonical
+ * con barra encadenaría a un duplicado rastreable. Lo vigila el test de
+ * agentic-readiness — y ojo: en el portal hermano el invariante es el
+ * CONTRARIO, allí sí lleva barra.
+ */
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import { canonicalFor } from '@/lib/seo';
+---
+
+<LecturaLarga
+  robots="noindex,follow"
+  title="About · Tejidos de Vibración"
+  description="What Tejidos de Vibración is, how it is published and who writes it. English-path summary; the canonical page is /sobre-el-libro (Spanish)."
+  pageId="about"
+  canonical={canonicalFor('/sobre-el-libro')}
+>
+  <article class="measure pt-5">
+    <header>
+      <p class="eyebrow">About</p>
+      <h1 class="title-1">What this book is, and who writes it.</h1>
+    </header>
+
+    <div class="flourish flourish--rule"></div>
+
+    <section class="prose section-gap">
+      <p class="no-indent"><strong>Tejidos de Vibración</strong> («Weavings of Vibration») is a Spanish-language essay in ten chapters, plus an Overture, written on the border between two languages: that of rigorous science, which learned to measure the beat of electrons and the age of the universe, and that of deep contemplation, which learned to map inner silence. The book does not try to reconcile them. It tries to show that, looked at patiently, they say the same thing in incompatible idioms.</p>
+
+      <p class="no-indent">It is published in instalments. The <a href="/obertura">Overture</a> is open and complete — fifteen pieces that introduce the book's three operative figures: the Meta-Observer (consciousness observing itself observing), the Interferometer (the sensitivity that notices minimal differences of phase) and the Weaver (whoever takes part in configuring their own experience). The first chapter of Act I is open too; the rest open one by one. Reading is free; an email address is the key.</p>
+
+      <p class="no-indent">The author — and the only person behind it — is <strong>Ricardo Polo</strong>, an electrical engineer and essayist based in Cali, Colombia, who signs the book as <em>Orion</em>. All content is original, in Spanish, and citable with attribution and a link to the specific URL.</p>
+
+      <p class="no-indent">The full page (in Spanish, the site's language) is at <a href="/sobre-el-libro">tejidosdevibracion.com/sobre-el-libro</a>, and the structure of the volume at <a href="/indice">/indice</a>. The wider project — a laboratory of physics simulators, two oracles and a constellation of thinkers — lives at <a href="https://tejidosderealidad.com">tejidosderealidad.com</a>. Agents: see <a href="/llms.txt">/llms.txt</a> for a complete guide, and <a href="/contacto">/contacto</a> to reach a human.</p>
+    </section>
+  </article>
+</LecturaLarga>

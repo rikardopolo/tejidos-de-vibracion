@@ -48,7 +48,12 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
  * el Accept de los navegadores no lo incluye (verificado con el de Chrome). */
 export const ACCEPT_MD = '.*text/markdown.*';
 
-/** Página negociada → su fuente markdown en public/. */
+/**
+ * Página negociada → su fuente markdown en public/.
+ * Los trust anchors ingleses (/about · /contact · /privacy) reutilizan el
+ * markdown de su contraparte canónica en español — el mismo destino al que
+ * apunta su canonical.
+ */
 export const MD_VARIANTS = [
   { route: '/', md: '/index.md' },
   { route: '/indice', md: '/indice.md' },
@@ -61,6 +66,10 @@ export const MD_VARIANTS = [
   { route: '/acto-ii', md: '/acto-ii.md' },
   { route: '/acto-iii', md: '/acto-iii.md' },
   { route: '/privacidad', md: '/privacidad.md' },
+  { route: '/contacto', md: '/contacto.md' },
+  { route: '/about', md: '/sobre-el-libro.md' },
+  { route: '/contact', md: '/contacto.md' },
+  { route: '/privacy', md: '/privacidad.md' },
 ];
 
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

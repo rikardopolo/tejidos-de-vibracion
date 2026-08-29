@@ -35,6 +35,7 @@ export const RUTAS_404 = [
   { href: '/sobre-el-libro', label: 'Sobre el libro', desc: 'qué es, cómo se publica y quién lo escribe' },
   { href: '/recibir', label: 'Recibir', desc: 'aviso por correo cuando se abre cada capítulo' },
   { href: '/comunidad', label: 'Comunidad', desc: 'la sala de los tejedores' },
+  { href: '/contacto', label: 'Contacto', desc: 'al otro lado hay una persona' },
 ];
 
 /** ¿El cliente pide markdown explícitamente? */
