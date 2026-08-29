@@ -168,3 +168,34 @@ test('el canary usa la fuente única de rutas y del mapa del 404 (no una copia)'
   assert.ok(src.includes("from '../src/lib/agent-md.mjs'"), 'el mapa del 404 se importa de agent-md');
   assert.ok(RUTAS_404.length > 0 && MD_404.startsWith('# 404'), 'premisa de las importaciones');
 });
+
+// ── Resistencia a la red ─────────────────────────────────────────────
+test('un fallo de red PASAJERO no tumba la corrida: reintenta y sigue', async () => {
+  const sano = sitioFalso();
+  let primera = true;
+  const conTropiezo = async (url, opts) => {
+    if (primera) {
+      primera = false;
+      throw new TypeError('fetch failed');
+    }
+    return sano(url, opts);
+  };
+  const r = await runCanary({ base: BASE, fetchImpl: conTropiezo, verbose: false });
+  assert.equal(r.fallos.length, 0, 'un tropiezo aislado no debe dejar rastro');
+});
+
+test('un fallo de red PERSISTENTE se reporta como comprobación roja, sin reventar', async () => {
+  const r = await runCanary({
+    base: BASE,
+    fetchImpl: async () => {
+      throw new TypeError('fetch failed');
+    },
+    verbose: false,
+    retryDelayMs: 0, // sin esperas: el banco mide la lógica, no la paciencia
+  });
+  // Lo que importa: la corrida LLEGA AL FINAL. Un canary que revienta no
+  // dice qué estaba bien; uno que falla entero sí.
+  assert.ok(r.total > 60, `la corrida debe completarse, hizo ${r.total} comprobaciones`);
+  assert.ok(r.fallos.length > 0, 'y debe reportar los fallos');
+  assert.ok(r.fallos.some((f) => f.detalle.includes('599')), 'el detalle debe delatar el error de red');
+});
