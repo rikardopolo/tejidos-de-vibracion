@@ -550,6 +550,69 @@ test('llms.txt no promete nada que este sitio no tenga', () => {
   assert.ok(!/\/pensadores|\/simuladores|\/tarot|\/astral/.test(llms.match(/Negotiating routes: .+$/m)[0]), 'esas rutas son del portal');
 });
 
+/* ═══════════════════════════════════════════════════════════════════
+   F5 · Jerarquía de la home.
+
+   La auditoría medía «849 chars con H1 pero estructura plana»: la
+   portada tenía un solo encabezado y ninguna zona titulada. Lo que se
+   congela aquí es el outline —h1 + h2 sin saltos— y dos detalles que
+   fallan MUDOS:
+
+   · Ningún encabezado dentro de un <a>: los extractores tipo
+     readability/turndown podan el texto envuelto en anclas, así que un
+     título dentro de un enlace no cuenta como título (fue el hallazgo
+     que obligó a rehacer la ronda 2 del portal).
+   · El espacio antes del <br/> del h1: sin él la extracción devuelve
+     «Tejidosde Vibración», pegado. El navegador lo colapsa al final de
+     línea — verificado por estilos computados: la caja del h1 no cambia.
+   ═══════════════════════════════════════════════════════════════════ */
+const srcHome = readFileSync(path.join(pagesDir, 'index.astro'), 'utf8');
+const headingsDe = (src) =>
+  [...src.matchAll(/<(h[1-6])\b([^>]*)>([\s\S]*?)<\/\1>/gi)].map((m) => ({
+    tag: m[1].toLowerCase(),
+    attrs: m[2],
+    text: m[3].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(),
+  }));
+
+test('la home tiene UN h1 y al menos dos h2, sin saltos de nivel', () => {
+  const hs = headingsDe(srcHome);
+  const niveles = hs.map((h) => Number(h.tag[1]));
+  assert.equal(niveles.filter((n) => n === 1).length, 1, 'exactamente un h1');
+  assert.ok(niveles.filter((n) => n === 2).length >= 2, `esperaba ≥2 h2, hay ${niveles.filter((n) => n === 2).length}`);
+  assert.equal(niveles[0], 1, 'el primero debe ser el h1');
+  for (let i = 1; i < niveles.length; i++) {
+    assert.ok(niveles[i] - niveles[i - 1] <= 1, `salto de nivel: ${hs[i - 1].tag} → ${hs[i].tag}`);
+  }
+});
+
+test('ningún encabezado de la home vive dentro de un enlace', () => {
+  // <a …> … <hN> y también el componente LitLink, que renderiza un <a>.
+  assert.ok(!/<a\b[^>]*>(?:(?!<\/a>)[\s\S])*?<h[1-6]\b/i.test(srcHome), 'un h dentro de <a> no lo ve el extractor');
+  assert.ok(!/<LitLink\b[^>]*>(?:(?!<\/LitLink>)[\s\S])*?<h[1-6]\b/i.test(srcHome), 'un h dentro de LitLink tampoco');
+  for (const h of headingsDe(srcHome)) {
+    assert.ok(!/<a\b/i.test(h.text), `el ${h.tag} «${h.text}» envuelve un enlace`);
+  }
+});
+
+test('los h2 de la home llevan la gráfica del eyebrow (decisión de diseño congelada)', () => {
+  for (const h of headingsDe(srcHome).filter((x) => x.tag === 'h2')) {
+    assert.match(h.attrs, /class="[^"]*\beyebrow\b/, `el h2 «${h.text}» debe usar la clase eyebrow, no una tipografía nueva`);
+  }
+});
+
+test('el h1 no se extrae con las palabras pegadas', () => {
+  const h1 = headingsDe(srcHome).find((h) => h.tag === 'h1');
+  assert.ok(h1, 'falta el h1');
+  const plano = h1.text.replace(/<[^>]+>/g, '');
+  assert.ok(!/Tejidosde/.test(plano), 'sin el espacio antes del <br/> la extracción pega «Tejidosde»');
+  assert.match(srcHome, /Tejidos <br\/>de/, 'el espacio antes del <br/> es lo que separa las palabras');
+});
+
+test('la home no adelgaza: el texto visible no baja de lo que ya tenía', () => {
+  const n = visibleText(srcHome).length;
+  assert.ok(n >= 786, `la portada tenía 786 caracteres visibles y ahora tiene ${n}`);
+});
+
 test('los .md crudos salen con X-Robots-Tag noindex, y el bloque de seguridad sigue intacto', () => {
   const vercel = JSON.parse(readFileSync(path.join(raiz, 'vercel.json'), 'utf8'));
   const md = vercel.headers.find((h) => h.source.includes('.md'));
