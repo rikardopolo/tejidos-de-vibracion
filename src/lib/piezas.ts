@@ -308,6 +308,21 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'Do-Re-Mi son las primeras sílabas de una oración',
   },
+
+  // La octava: dividir una cuerda por la mitad da la misma nota más aguda, y esa
+  // razón 2:1 no es una convención cultural sino una medida (§1.2 «El universo
+  // como sinfonía»). Gemelo del registro del portal: si solo se da de alta en
+  // uno, el enlace funciona desde un dominio y cae al fallback desde el otro.
+  //
+  // Dado de alta ANTES de publicar, como A05, A06 y A07: es lo único que impide
+  // repetir el fallo de A04, que estuvo en cola apuntando a un slug inexistente
+  // y pasó los nueve gates de QA con el destino roto.
+  'a08-la-octava': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'agosto-a08',
+    medium: 'reel',
+    titulo: 'La octava: divide una cuerda por la mitad',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
