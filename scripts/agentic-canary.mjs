@@ -65,18 +65,34 @@ const textoVisible = (html) => {
 };
 const meta = (html, re) => (html.match(re) ?? [])[1] ?? null;
 
-export async function runCanary({ base, cookie, fetchImpl = fetch, verbose = true } = {}) {
+export async function runCanary({ base, cookie, fetchImpl = fetch, verbose = true, retryDelayMs = 1500 } = {}) {
   const raiz = base.replace(/\/+$/, '');
   const res = [];
   const check = (nombre, ok, detalle = '') => {
     res.push({ nombre, ok, detalle });
     if (verbose) console.log(`  ${ok ? '✔' : '✖'} ${nombre}${detalle ? ` · ${detalle}` : ''}`);
   };
-  const pedir = (ruta, { accept, method = 'GET' } = {}) => {
+  /* Un despliegue recién creado rechaza la primera petición de vez en cuando
+     (visto dos veces contra previews fríos: la corrida entera moría por un
+     fetch suelto). Un fallo de red debe convertirse en UNA comprobación en
+     rojo, nunca en un canary que no llega al final: si el canary revienta,
+     no sabes qué estaba bien. Un reintento y, si insiste, status 599 con la
+     causa en una cabecera, que hace fallar la comprobación con su detalle. */
+  const pedir = async (ruta, { accept, method = 'GET' } = {}) => {
     const headers = {};
     if (accept) headers.accept = accept;
     if (cookie) headers.cookie = cookie;
-    return fetchImpl(`${raiz}${ruta}`, { method, headers, redirect: 'manual' });
+    const url = `${raiz}${ruta}`;
+    for (let intento = 0; ; intento++) {
+      try {
+        return await fetchImpl(url, { method, headers, redirect: 'manual' });
+      } catch (err) {
+        if (intento >= 1) {
+          return new Response('', { status: 599, headers: { 'x-canary-error': String(err?.message ?? err).slice(0, 120) } });
+        }
+        await new Promise((r) => setTimeout(r, retryDelayMs));
+      }
+    }
   };
 
   // (a) Las 15 rutas negocian, en GET y en HEAD, con Vary en AMBAS variantes.

@@ -689,3 +689,49 @@ test('el schema del libro declara audiencia y abstract legibles por máquina', (
   assert.match(srcSobre, /abstract:/, 'falta abstract en el schema Book');
   assert.equal((srcSobre.match(/'@type': 'Audience'/g) ?? []).length, 3, 'los tres lectores, uno por nodo Audience');
 });
+
+/* ═══════════════════════════════════════════════════════════════════
+   Ronda 3 · NAP de la entidad en el schema Organization.
+
+   El CLI de Is Agentic señaló el único check Recommended en amarillo:
+   «Organization schema found but missing: contactPoint, address». Los
+   agentes lo miran para verificar que detrás hay algo legítimo antes de
+   recomendar. El portal hermano ya lo resolvió (su PR #331).
+
+   Se mide el GRAFO real —Node 24 importa el .ts—, no el texto del
+   fuente: lo que importa no es que exista la clave, sino que lo que
+   declara coincida con lo que /contacto publica. Un NAP que diverge de
+   la página es peor que no tenerlo.
+   ═══════════════════════════════════════════════════════════════════ */
+test('el Organization declara contactPoint y address (el check que faltaba)', async () => {
+  const { baseSchemaGraph } = await import('../src/lib/seo.ts');
+  const org = baseSchemaGraph().find((n) => n['@type'] === 'Organization');
+  assert.ok(org, 'premisa: hay nodo Organization');
+
+  assert.ok(Array.isArray(org.contactPoint) && org.contactPoint.length === 2, 'dos vías: general y datos');
+  for (const cp of org.contactPoint) {
+    assert.equal(cp['@type'], 'ContactPoint');
+    assert.ok(cp.contactType, 'sin contactType el agente no sabe para qué sirve');
+    assert.match(cp.email, /@tejidosderealidad\.com$/);
+    assert.match(cp.url, /^https:\/\/tejidosdevibracion\.com\//);
+  }
+  assert.equal(org.address['@type'], 'PostalAddress');
+  assert.equal(org.address.addressLocality, 'Cali');
+  assert.equal(org.address.addressCountry, 'CO');
+});
+
+test('el NAP del schema NO diverge de lo que publica /contacto', async () => {
+  const { baseSchemaGraph } = await import('../src/lib/seo.ts');
+  const org = baseSchemaGraph().find((n) => n['@type'] === 'Organization');
+  const enPagina = [...fuentePagina('contacto.astro').matchAll(/mailto:([^"]+)"/g)].map((m) => m[1]).sort();
+  const enSchema = org.contactPoint.map((c) => c.email).sort();
+  assert.deepEqual(enSchema, [...new Set(enPagina)], 'los correos del schema y los de /contacto han derivado');
+});
+
+test('la dirección de la Organization y la del autor son la misma (proyecto unipersonal)', async () => {
+  const { baseSchemaGraph } = await import('../src/lib/seo.ts');
+  const g = baseSchemaGraph();
+  const org = g.find((n) => n['@type'] === 'Organization');
+  const person = g.find((n) => n['@type'] === 'Person');
+  assert.deepEqual(org.address, person.address, 'dos direcciones distintas para la misma persona confunden al agente');
+});

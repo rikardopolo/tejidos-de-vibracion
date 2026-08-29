@@ -78,6 +78,33 @@ export function baseSchemaGraph(): SchemaNode[] {
       founder: { '@id': `${SITE}/sobre-el-libro#person` },
       publishingPrinciples: `${SITE}/privacidad`,
       email: 'hola@tejidosderealidad.com',
+      // contactPoint + address · completan el NAP de la entidad: los agentes de IA
+      // los buscan para verificar legitimidad antes de recomendar un sitio (era el
+      // único check Recommended en amarillo del análisis Is Agentic).
+      // Espejo exacto de /contacto: general → hola@ · privacidad → contacto@.
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          contactType: 'general inquiries',
+          email: 'hola@tejidosderealidad.com',
+          url: `${SITE}/contacto`,
+          availableLanguage: 'es',
+        },
+        {
+          '@type': 'ContactPoint',
+          contactType: 'privacy and data requests',
+          email: 'contacto@tejidosderealidad.com',
+          url: `${SITE}/privacidad`,
+          availableLanguage: 'es',
+        },
+      ],
+      // Misma dirección que el Person del autor (proyecto unipersonal).
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Cali',
+        addressRegion: 'Valle del Cauca',
+        addressCountry: 'CO',
+      },
       sameAs: [
         SITE_PORTAL + '/',
         'https://github.com/rikardopolo/tejidos-de-vibracion',
