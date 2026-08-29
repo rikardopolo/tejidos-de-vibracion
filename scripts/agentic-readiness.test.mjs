@@ -490,6 +490,66 @@ test('los correos publicados no divergen entre la página española y la inglesa
   ]);
 });
 
+/* ═══════════════════════════════════════════════════════════════════
+   F4 · llms.txt · guía «when to use».
+
+   El ítem de la auditoría no fallaba por falta de fichero (existe y está
+   bien formado desde antes): fallaba por falta de guía de uso. Y su
+   criterio es explícito — «generic marketing copy does not read as
+   guidance»—, así que lo que se ata aquí no es que haya una sección con
+   el título correcto, sino que la lista de rutas que anuncia coincida
+   con lo que el edge sirve de verdad. Una guía que promete rutas que no
+   negocian es peor que no tenerla.
+   ═══════════════════════════════════════════════════════════════════ */
+const llms = readFileSync(path.join(raiz, 'public', 'llms.txt'), 'utf8');
+
+test('llms.txt dice cuándo usar el sitio, para qué NO, y cómo llamarlo', () => {
+  assert.match(llms, /^## When to use this site \(for AI agents\) · Cuándo usar este sitio$/m);
+  assert.match(llms, /^Not a fit · no es para:/m, 'sin el «not a fit» la guía solo se vende');
+  assert.ok(llms.includes('How to call this site'), 'falta el bloque de acceso');
+  assert.ok(llms.includes('Accept: text/markdown'));
+  assert.ok(llms.includes('Vary: Accept'));
+  assert.ok(llms.includes('https://tejidosdevibracion.com/sitemap.xml'));
+  assert.ok(llms.includes('https://tejidosdevibracion.com/contacto'), '/contacto debe ser alcanzable desde la guía');
+});
+
+test('el «not a fit» nombra lo que de verdad vive en otro sitio o no se sirve', () => {
+  const noFit = llms.match(/^Not a fit · no es para:.*$/m)[0];
+  assert.ok(noFit.includes('tejidosderealidad.com'), 'debe redirigir al portal lo que es del portal');
+  assert.ok(/capítulos aún no abiertos|2 a 10/.test(noFit), 'debe avisar de los capítulos cerrados');
+  assert.ok(/terapéutico|médico/.test(noFit), 'un libro sobre frecuencias debe declarar que no es guía de tratamiento');
+});
+
+test('DERIVA · las rutas que anuncia llms.txt son EXACTAMENTE las que negocian', () => {
+  const linea = llms.match(/Negotiating routes: (.+)$/m);
+  assert.ok(linea, 'la guía debe listar las rutas que negocian');
+  const anunciadas = linea[1]
+    .split('·')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .sort();
+  const reales = MD_VARIANTS.map((v) => v.route).sort();
+  assert.deepEqual(anunciadas, reales, 'la guía y el manifiesto han derivado: un agente seguiría rutas que no negocian');
+});
+
+test('llms.txt sigue cumpliendo llmstxt.org: un solo H1, blockquote y secciones ##', () => {
+  const h1 = llms.match(/^# .+$/gm) ?? [];
+  assert.equal(h1.length, 1, 'llmstxt.org exige exactamente un H1');
+  assert.match(llms, /^> .+/m, 'falta el blockquote de resumen');
+  const secciones = (llms.match(/^## .+$/gm) ?? []).length;
+  assert.ok(secciones >= 6, `esperaba las secciones previas más la nueva, hay ${secciones}`);
+  // Las secciones que ya existían no se tocaron.
+  for (const s of ['## Cómo citar este sitio', '## El libro', '## Cómo se publica', '## El autor', '## Optional', '## Política']) {
+    assert.ok(llms.includes(s), `desapareció ${s}: esta fase EXTIENDE, no regenera`);
+  }
+});
+
+test('llms.txt no promete nada que este sitio no tenga', () => {
+  assert.ok(!llms.includes('llms-full.txt'), 'aquí no existe llms-full.txt (sí en el portal)');
+  assert.ok(!llms.includes('rel="alternate"'), 'este sitio no declara la variante con <link rel=alternate>');
+  assert.ok(!/\/pensadores|\/simuladores|\/tarot|\/astral/.test(llms.match(/Negotiating routes: .+$/m)[0]), 'esas rutas son del portal');
+});
+
 test('los .md crudos salen con X-Robots-Tag noindex, y el bloque de seguridad sigue intacto', () => {
   const vercel = JSON.parse(readFileSync(path.join(raiz, 'vercel.json'), 'utf8'));
   const md = vercel.headers.find((h) => h.source.includes('.md'));
