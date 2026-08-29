@@ -12,7 +12,10 @@
  * El runtime y los tests comparten esta misma fuente: no hay drift posible.
  */
 
-const SITE = 'https://tejidosdevibracion.com';
+/** Dominio canónico. Las URLs que este módulo emite son absolutas a él SIEMPRE
+ * —también cuando el sitio se sirve desde un preview—, así que quien verifique
+ * contenido debe compararlo contra esto, no contra el host que respondió. */
+export const SITE = 'https://tejidosdevibracion.com';
 
 /**
  * Mapa de recuperación · fuente ÚNICA para las dos variantes del 404.
