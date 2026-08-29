@@ -626,3 +626,66 @@ test('los .md crudos salen con X-Robots-Tag noindex, y el bloque de seguridad si
   assert.ok(global.headers.some((h) => h.key === 'Content-Security-Policy'));
   assert.ok(!global.headers.some((h) => h.key === 'X-Robots-Tag'), 'el noindex NO puede vivir en el bloque global');
 });
+
+/* ═══════════════════════════════════════════════════════════════════
+   Ronda 2 · el resumen legible por máquina.
+
+   El re-análisis dio 100/100, pero el evaluador dejó una nota: el sitio
+   «no publica un resumen claro y legible por máquina de qué hace, para
+   quién, precio o diferenciación» — el agente tuvo que RECONSTRUIRLO
+   navegando la estructura y cruzando el dominio hermano.
+
+   El tripwire de esta tanda es el de los tres lectores: si el libro
+   reescribe su sección «Para quién está escrito», el resumen que leen
+   las máquinas se queda mintiendo. Aquí salta.
+   ═══════════════════════════════════════════════════════════════════ */
+const indexMd = readFileSync(path.join(raiz, 'public', 'index.md'), 'utf8');
+const srcSobre = readFileSync(path.join(pagesDir, 'sobre-el-libro.astro'), 'utf8');
+/** Los tres lectores, tal y como los nombra el libro. */
+const LECTORES = ['ingeniera escéptica', 'buscadora espiritual', 'estudiante de filosofía'];
+
+test('llms.txt responde en un bloque qué es, para quién, qué cuesta y en qué se diferencia', () => {
+  assert.match(llms, /^## In one screen/m, 'falta el resumen de una pantalla');
+  for (const clave of ['What it is', "Who it's for", 'What it costs', 'How it differs']) {
+    assert.ok(llms.includes(`**${clave}`), `el resumen no responde «${clave}»`);
+  }
+});
+
+test('la home en markdown responde lo mismo (es lo primero que pide un agente)', () => {
+  assert.match(indexMd, /^## En una pantalla/m);
+  for (const clave of ['Qué es', 'Para quién', 'Qué cuesta', 'En qué se diferencia']) {
+    assert.ok(indexMd.includes(`**${clave}**`), `la home markdown no responde «${clave}»`);
+  }
+});
+
+test('TRIPWIRE · los tres lectores del resumen son los que el LIBRO nombra', () => {
+  // Fuente de verdad: la sección «Para quién está escrito» de /sobre-el-libro.
+  assert.ok(srcSobre.includes('Para quién está escrito'), 'premisa: la sección existe');
+  for (const lector of LECTORES) {
+    assert.ok(srcSobre.includes(lector), `el libro ya no nombra a «${lector}»: actualiza el resumen`);
+    assert.ok(llms.includes(lector), `llms.txt no nombra a «${lector}»`);
+    assert.ok(indexMd.includes(lector), `index.md no nombra a «${lector}»`);
+  }
+});
+
+test('el resumen NO fija el precio: sube en septiembre y aquí envejecería mal', () => {
+  for (const [nombre, txt] of [['llms.txt', llms], ['index.md', indexMd]]) {
+    assert.ok(!/\$\s?\d|\d+\s?USD/.test(txt), `${nombre} fija un precio; enlaza /comprar/preventa, que es quien lo sabe`);
+    assert.ok(txt.includes('/comprar/preventa'), `${nombre} debe enlazar la página que sí tiene el precio`);
+  }
+});
+
+test('/comprar redirige en vez de dar 404 (el agente del evaluador chocó ahí)', () => {
+  const vercel = JSON.parse(readFileSync(path.join(raiz, 'vercel.json'), 'utf8'));
+  const r = vercel.redirects.find((x) => x.source === '/comprar');
+  assert.ok(r, '/comprar debe redirigir');
+  assert.equal(r.destination, '/comprar/preventa');
+  assert.equal(r.permanent, false, 'no permanente: un 308 se cachea de por vida y el destino puede cambiar');
+  assert.ok(existsSync(path.join(pagesDir, 'comprar', 'preventa.astro')), 'el destino debe existir');
+});
+
+test('el schema del libro declara audiencia y abstract legibles por máquina', () => {
+  assert.match(srcSobre, /audience:\s*\[/, 'falta audience en el schema Book');
+  assert.match(srcSobre, /abstract:/, 'falta abstract en el schema Book');
+  assert.equal((srcSobre.match(/'@type': 'Audience'/g) ?? []).length, 3, 'los tres lectores, uno por nodo Audience');
+});

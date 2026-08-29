@@ -20,6 +20,16 @@ const bookSchema = {
   url: `${SITE}/sobre-el-libro`,
   image: `${SITE}/og/og-obertura.jpg`,
   isPartOf: { '@type': 'BookSeries', name: 'Tejidos de Realidad' },
+  // Audiencia y abstract legibles por máquina: el evaluador Is Agentic señaló que
+  // un agente tenía que RECONSTRUIR para quién es el libro leyendo prosa suelta.
+  // Los tres lectores son los que el propio libro nombra en «Para quién está escrito».
+  audience: [
+    { '@type': 'Audience', audienceType: 'Lectores con formación técnica o científica que piden rigor antes que metáfora' },
+    { '@type': 'Audience', audienceType: 'Lectores de tradiciones contemplativas que piden invitación antes que argumento' },
+    { '@type': 'Audience', audienceType: 'Estudiantes de filosofía y de historia de la ciencia' },
+  ],
+  abstract:
+    'Ensayo de divulgación en español que cruza física rigurosa con tradiciones contemplativas sin diluir una en otra: marca explícitamente qué afirmaciones tienen consenso experimental y cuáles pertenecen a la tradición. Se publica por entregas; la Obertura y el Capítulo 1 son de lectura libre (el registro por correo es gratuito).',
   description: 'Volumen I del proyecto Tejidos de Realidad: una Obertura, tres actos y diez capítulos, en la frontera entre física cuántica rigurosa y contemplación.',
 };
 ---

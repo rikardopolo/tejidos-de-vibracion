@@ -6,6 +6,13 @@ Donde la mirada teje lo posible en lo real, y el silencio entre dos latidos resu
 
 El libro está escrito en la frontera entre dos lenguajes: el de la ciencia rigurosa, que aprendió a medir el latido de los electrones y la edad del universo, y el de la contemplación profunda, que aprendió a cartografiar el silencio interior. No intenta reconciliarlos: muestra que, mirados con paciencia, dicen lo mismo en idiomas incompatibles. No pretende dar respuestas definitivas — pretende cambiar la calidad de las preguntas.
 
+## En una pantalla
+
+- **Qué es**: un libro de divulgación en español —ensayo, no blog ni curso—, publicado por entregas. Una Obertura, tres actos, diez capítulos.
+- **Para quién**: escrito para servir a la vez a la ingeniera escéptica, que pide rigor antes que metáfora; a la buscadora espiritual, que pide invitación antes que argumento; y al estudiante de filosofía, que quiere aparato erudito y voz literaria sin disculpas.
+- **Qué cuesta**: leer es gratis. La Obertura no pide nada; el Capítulo 1 y los siguientes del Acto I piden solo un registro por correo, gratuito. Sin suscripción ni muro de pago sobre lo publicado. Los capítulos aún no abiertos tienen pre-venta en [/comprar/preventa](https://tejidosdevibracion.com/comprar/preventa).
+- **En qué se diferencia**: marca explícitamente dónde una afirmación tiene consenso experimental y dónde no, en vez de diluir la física en metáfora o disfrazar la tradición de ciencia.
+
 ## Las puertas del libro
 
 - [Índice del Volumen I](https://tejidosdevibracion.com/indice) — tres actos, diez capítulos. Qué está abierto hoy y qué viene en camino.
