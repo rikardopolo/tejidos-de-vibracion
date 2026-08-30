@@ -323,6 +323,18 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'La octava: divide una cuerda por la mitad',
   },
+
+  // La Resonancia Schumann: la cavidad entre la superficie terrestre y la
+  // ionosfera resuena a ~7,83 Hz, muy por debajo de los ~20 Hz donde empieza el
+  // oído humano (§1.4 «Frecuencias sagradas»). Gemelo del registro del portal:
+  // si solo se da de alta en uno, el enlace funciona desde un dominio y cae al
+  // fallback desde el otro.
+  'a09-la-campana': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'agosto-a09',
+    medium: 'reel',
+    titulo: 'La campana de cien kilómetros',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
