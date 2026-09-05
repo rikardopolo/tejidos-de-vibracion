@@ -335,6 +335,16 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'La campana de cien kilómetros',
   },
+  // S#1, Short de YouTube sobre la placa de Chladni real (§1.1). Su destino NO es
+  // el capítulo sino el simulador de cimática del portal: los Shorts llevan al
+  // simulador por regla del reparto. Gemelo del registro del portal: si solo se da
+  // de alta en uno, el enlace funciona desde un dominio y cae al fallback desde el otro.
+  's1-que-es-la-cimatica': {
+    destino: 'https://tejidosderealidad.com/simuladores/cymatica',
+    campaign: 'septiembre-s1',
+    medium: 'short',
+    titulo: 'Qué es la cimática',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
