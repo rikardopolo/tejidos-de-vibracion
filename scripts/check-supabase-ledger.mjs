@@ -27,9 +27,6 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const LEDGER = {
   '20260628165651_orders.sql':
     '3be4e7ac98188af011be73d707903d27d16469a64fc07340834c2bfec062f5ba',
-  // Candado de entrega (`acceso_enviado_at`) · llego con el PR #95.
-  '20260731190000_orders_acceso_enviado_at.sql':
-    '477451445f0747ffb17225886c549acb62928a3489831efed0ba866ce6f6b2ed',
 };
 
 /**
