@@ -339,6 +339,17 @@ export const PIEZAS: Record<string, Pieza> = {
   // el capítulo sino el simulador de cimática del portal: los Shorts llevan al
   // simulador por regla del reparto. Gemelo del registro del portal: si solo se da
   // de alta en uno, el enlace funciona desde un dominio y cae al fallback desde el otro.
+  // A10, §1.5 «Catedrales»: la cola de reverberación que deja una palmada. Lo que
+  // SUENA son tres respuestas al impulso medidas —una oficina, el auditorio Arvedi
+  // y la capilla de San Nicolás de la catedral de Aquisgrán—, CC BY 4.0: el guion
+  // prohíbe el impulso sintético. Los planos sí están generados y no retratan esos
+  // recintos; lo dicen los rótulos en pantalla. Gemelo del otro registro.
+  'a10-catedral-minima': {
+    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    campaign: 'septiembre-a10',
+    medium: 'reel',
+    titulo: 'Tu catedral mínima',
+  },
   's1-que-es-la-cimatica': {
     destino: 'https://tejidosderealidad.com/simuladores/cymatica',
     campaign: 'septiembre-s1',
