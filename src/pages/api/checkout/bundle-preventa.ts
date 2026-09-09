@@ -8,29 +8,21 @@ import {
   type ClienteRegistro,
   type Desenlace,
 } from '@/lib/checkout-intento.mjs';
-import { esUrlDePago } from '@/lib/url-pago.mjs';
+import { esUrlDePago, esEnlaceDePruebaStripe } from '@/lib/url-pago.mjs';
+import { esPreview } from '@/lib/gating';
 
 export const prerender = false;
 
 /**
- * Crea un checkout de Lemon Squeezy para el Bundle de pre-venta ($26) y devuelve
- * su URL; el front redirige (D1=c, sin overlay ni JS de terceros → CSP intacta).
+ * Devuelve la URL de pago del Bundle de pre-venta ($26); el front redirige
+ * (D1=c, sin overlay ni JS de terceros → CSP intacta).
  *
- * El email es opcional (prefill); `lead_id` viaja como custom data para conciliar
- * la compra con el lead Brevo en el webhook (Fase 3). El modo test/live lo
- * determina la API key configurada en el entorno.
+ * Qué proveedor y en qué modo (prueba o real) lo decide el entorno, en
+ * `payments.ts`. Este endpoint existe aunque el enlace sea estático: es donde se
+ * cuenta CADA intento de compra (`events.checkout_intento`), se frena el ritmo y
+ * se valida a dónde mandamos a la gente. Sin él, «cuánta gente lo intentó»
+ * vuelve a ser un número que nadie tiene.
  */
-
-const readEnv = (key: string): string | undefined => {
-  // trim: un espacio invisible en el valor (p.ej. variant_id "1817937 ") rompía
-  // el checkout con un 404 de LS al variant inexistente.
-  const pick = (v: string | undefined) => (v && v.trim() !== '' ? v.trim() : undefined);
-  if (typeof process !== 'undefined' && process.env) {
-    const p = pick(process.env[key]);
-    if (p) return p;
-  }
-  return pick((import.meta.env as Record<string, string | undefined>)[key]);
-};
 
 const PRODUCT_SLUG = 'bundle-preventa';
 
@@ -92,15 +84,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     });
   }
 
-  const variantId = readEnv('LS_VARIANT_BUNDLE_PREVENTA');
-  if (!variantId) {
-    console.error('[checkout/bundle-preventa] Falta LS_VARIANT_BUNDLE_PREVENTA');
-    await registraIntento('mal_configurado', { falta: 'LS_VARIANT_BUNDLE_PREVENTA' });
-    return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
-  }
-
+  // Qué proveedor y con qué datos lo decide `payments.ts` a partir del entorno.
   const result = await createCheckout({
-    variantId,
     email: parsed.data.correo,
     leadId: parsed.data.lead_id,
     productSlug: PRODUCT_SLUG,
@@ -111,23 +96,38 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     // status), así que es seguro loguearlo entero y es lo único que distingue
     // «LS caído» de «nuestro payload es inválido».
     console.error('[checkout/bundle-preventa] createCheckout falló:', result);
+    // Sin pasarela configurada no hay «caída del proveedor» que diagnosticar:
+    // es un fallo NUESTRO y se cuenta aparte, para que no ensucie el recuento de
+    // errores del proveedor con algo que se arregla poniendo una env.
+    if (result.reason === 'not_configured') {
+      await registraIntento('mal_configurado', { falta: 'STRIPE_PAYMENT_LINK' });
+      return new Response(JSON.stringify({ error: 'not_configured' }), { status: 500 });
+    }
     await registraIntento('error_proveedor', {
       motivo: result.reason ?? null,
       estado_proveedor: result.status ?? null,
       causa: result.causa ?? null,
     });
-    const status = result.reason === 'not_configured' ? 500 : 502;
-    return new Response(JSON.stringify({ error: result.reason }), { status });
+    return new Response(JSON.stringify({ error: result.reason }), { status: 502 });
   }
 
-  // El host del checkout se valida AQUÍ, donde se parsea la respuesta de LS y
-  // donde hay tests, no en el navegador: la lista de dominios que vivía en
-  // `public/comprar-checkout.js` caducó en silencio y tiró todas las ventas.
-  // Si esto salta, se ve en `events` en vez de morir dentro del navegador.
+  // El host del checkout se valida AQUÍ, donde se parsea la respuesta del
+  // proveedor y donde hay tests, no en el navegador: la lista de dominios que
+  // vivía en `public/comprar-checkout.js` caducó en silencio y tiró todas las
+  // ventas. Si esto salta, se ve en `events` en vez de morir dentro del navegador.
   if (!esUrlDePago(result.url)) {
     console.error('[checkout/bundle-preventa] host inesperado en checkout_url:', result.url);
     await registraIntento('error_proveedor', { motivo: 'host_inesperado' });
     return new Response(JSON.stringify({ error: 'invalid_checkout_url' }), { status: 502 });
+  }
+
+  // Un enlace de PRUEBA de Stripe en producción abre un checkout impecable y no
+  // cobra nada: se rompe pareciéndose al éxito. Preferimos no vender a vender de
+  // mentira. En preview sí se permite, que es donde se prueba.
+  if (!esPreview() && esEnlaceDePruebaStripe(result.url)) {
+    console.error('[checkout/bundle-preventa] enlace de PRUEBA de Stripe en producción:', result.url);
+    await registraIntento('mal_configurado', { motivo: 'enlace_de_prueba' });
+    return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
   }
 
   await registraIntento('checkout_creado', {
