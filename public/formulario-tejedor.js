@@ -1,6 +1,45 @@
 (function () {
   'use strict';
 
+  /**
+   * Atribución · las UTMs que sella el puente /r/ llegan en la URL de aterrizaje y
+   * se pierden en cuanto el visitante navega: la Obertura son 15 páginas, y el alta
+   * ocurre casi siempre en otra distinta de la de entrada. Sin esto, `leads` guarda
+   * país y endpoint pero NUNCA de qué pieza vino nadie — comprobado el 14-sep-2026:
+   * 7 altas, 0 con utm_campaign.
+   *
+   * ponytail: sessionStorage, no cookie ni servidor. Techo conocido: se pierde si el
+   * visitante aterriza en una página sin formulario (este script no se carga allí) o
+   * si vuelve al día siguiente. Si eso pesa, el siguiente escalón es una cookie de
+   * primera parte con TTL, no un servicio.
+   */
+  var CLAVE_UTM = 'tdv_utm';
+  var CAMPOS_UTM = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+
+  function guardarUtms() {
+    try {
+      var q = new URLSearchParams(window.location.search);
+      var encontrados = {};
+      var hay = false;
+      for (var i = 0; i < CAMPOS_UTM.length; i++) {
+        var v = q.get(CAMPOS_UTM[i]);
+        if (v) { encontrados[CAMPOS_UTM[i]] = String(v).slice(0, 120); hay = true; }
+      }
+      // Solo se pisa lo guardado si esta URL trae UTMs: navegar dentro del sitio no
+      // debe borrar la atribución de la pieza por la que entró.
+      if (hay) window.sessionStorage.setItem(CLAVE_UTM, JSON.stringify(encontrados));
+    } catch (e) { /* modo privado o storage bloqueado: la atribución se pierde, el alta no */ }
+  }
+
+  function leerUtms() {
+    try {
+      var crudo = window.sessionStorage.getItem(CLAVE_UTM);
+      if (!crudo) return null;
+      var o = JSON.parse(crudo);
+      return o && typeof o === 'object' ? o : null;
+    } catch (e) { return null; }
+  }
+
   function bindForm(form) {
     var status = document.querySelector('[data-status-for="' + form.id + '"]');
     if (!status) return;
@@ -30,7 +69,13 @@
           method: 'POST',
           credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: nombre, correo: correo, acepto: true, website: website }),
+          body: JSON.stringify({
+            nombre: nombre,
+            correo: correo,
+            acepto: true,
+            website: website,
+            utm: leerUtms(),
+          }),
         });
 
         if (res.ok) {
@@ -56,6 +101,8 @@
   }
 
   function init() {
+    // Antes de enlazar nada: la URL de aterrizaje es la única que trae las UTMs.
+    guardarUtms();
     document.querySelectorAll('form[data-tejedor-form]').forEach(bindForm);
   }
 
