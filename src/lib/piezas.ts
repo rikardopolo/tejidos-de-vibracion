@@ -244,11 +244,20 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'El sonido tiene forma',
   },
-  // Primera pieza cuyo destino es el capítulo y no el laboratorio: el Cap. 1
-  // está abierto desde el 5-ago. Sin `source`: el clic se sirve desde este
-  // dominio, así que hereda su cuenta.
+  // 🔴 14-sep-2026 · a03..a10 apuntaban al Cap. 1 (abierto desde el 5-ago). Ahora van
+  // a la OBERTURA, por decisión editorial de Ricardo: la Obertura es la puerta de la
+  // obra. El puente es el único sitio donde esa decisión se escribe UNA vez y alcanza
+  // a todo lo ya publicado — por eso existe, y por eso es un 302 y no un 301.
+  //
+  // Lo que esto NO arregla: el texto de los posts ya publicados dice «el primer
+  // capítulo», así que quien pulse desde Facebook o LinkedIn leerá una cosa y
+  // aterrizará en otra. Se acepta a sabiendas: en Instagram y TikTok —donde el único
+  // camino es la bio, que ya ofrece «Leer la Obertura (gratis)»— el cambio ELIMINA una
+  // incoherencia en vez de crearla, y son las dos redes con más piezas publicadas.
+  // `cap-1` se queda apuntando al capítulo: ese enlace es del capítulo y lo usa la bio.
+  // Sin `source`: el clic se sirve desde este dominio, así que hereda su cuenta.
   'a03-el-puente': {
-    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'agosto-a03',
     medium: 'reel',
     titulo: 'El puente al primer capítulo',
@@ -262,7 +271,7 @@ export const PIEZAS: Record<string, Pieza> = {
   // espejo, retirado al comprobar que ese experimento no estaba en el libro. La
   // pieza renderizada habla del ciclo nasal y no menciona ninguna mancha.
   'a04-ciclo-nasal': {
-    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'agosto-a04',
     medium: 'reel',
     titulo: 'El ciclo nasal',
@@ -274,7 +283,7 @@ export const PIEZAS: Record<string, Pieza> = {
   // saltara ningún gate — el esquema del reel valida que las UTMs estén, no
   // que el slug exista aquí.
   'a05-la-ventana': {
-    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'agosto-a05',
     medium: 'reel',
     titulo: 'La ventana que quiso más',
@@ -288,7 +297,7 @@ export const PIEZAS: Record<string, Pieza> = {
   // El slug NO es el de la ficha del reparto (`a06-di-tu-nombre`): la pieza
   // repite ORION, no el nombre de Ricardo. Corregido con el PR aún abierto.
   'a06-la-palabra': {
-    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'agosto-a06',
     medium: 'reel',
     titulo: 'La palabra que se deshace',
@@ -303,7 +312,7 @@ export const PIEZAS: Record<string, Pieza> = {
   // «Los solfeggios · la solmización», que no le dice nada a quien lo ve en la
   // bio.
   'a07-do-re-mi': {
-    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'agosto-a07',
     medium: 'reel',
     titulo: 'Do-Re-Mi son las primeras sílabas de una oración',
@@ -318,7 +327,7 @@ export const PIEZAS: Record<string, Pieza> = {
   // repetir el fallo de A04, que estuvo en cola apuntando a un slug inexistente
   // y pasó los nueve gates de QA con el destino roto.
   'a08-la-octava': {
-    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'agosto-a08',
     medium: 'reel',
     titulo: 'La octava: divide una cuerda por la mitad',
@@ -330,7 +339,7 @@ export const PIEZAS: Record<string, Pieza> = {
   // si solo se da de alta en uno, el enlace funciona desde un dominio y cae al
   // fallback desde el otro.
   'a09-la-campana': {
-    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'agosto-a09',
     medium: 'reel',
     titulo: 'La campana de cien kilómetros',
@@ -345,7 +354,7 @@ export const PIEZAS: Record<string, Pieza> = {
   // prohíbe el impulso sintético. Los planos sí están generados y no retratan esos
   // recintos; lo dicen los rótulos en pantalla. Gemelo del otro registro.
   'a10-catedral-minima': {
-    destino: 'https://tejidosdevibracion.com/capitulo/cap-1-universo-sinfonia',
+    destino: 'https://tejidosdevibracion.com/obertura',
     campaign: 'septiembre-a10',
     medium: 'reel',
     titulo: 'Tu catedral mínima',

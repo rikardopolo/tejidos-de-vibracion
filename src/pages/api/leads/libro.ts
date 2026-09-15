@@ -9,6 +9,7 @@ import {
 import { generateAccessToken } from '@/lib/token';
 import { getServerClient } from '@/lib/supabase';
 import { getGeo } from '@/lib/geo';
+import { utmsSaneadas } from '@/lib/utm.mjs';
 
 export const prerender = false;
 
@@ -39,6 +40,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   let body: unknown;
   try { body = await request.json(); }
   catch { return new Response(JSON.stringify({ error: 'invalid_json' }), { status: 400 }); }
+
+  // Fuera del esquema a propósito: `leadSchema` valida el LEAD y lo comparten otros
+  // endpoints; las UTMs son metadato de atribución y no deben poder invalidar un alta.
+  // `z.object()` descarta las claves extra, así que hay que leerlas del cuerpo crudo.
+  const utms = utmsSaneadas((body as Record<string, unknown> | null)?.utm);
 
   const parsed = leadSchema.safeParse(body);
   if (!parsed.success) {
@@ -138,6 +144,10 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
               ctaSource: 'libro',
               country: geo.country,
               region: geo.region,
+              // null cuando el visitante llegó sin UTMs (directo, buscador, o storage
+              // bloqueado). La clave se escribe igual: distinguir «no vino de una pieza»
+              // de «no lo estábamos guardando» es justo lo que faltaba hasta hoy.
+              ...(utms ? { utm: utms } : { utm: null }),
             },
           });
         }
