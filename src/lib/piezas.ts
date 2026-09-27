@@ -387,6 +387,32 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'La física no prueba lo espiritual',
   },
+  // Fase 1, segundo lote. Mismo contrato que las tres de arriba; la campaign
+  // lleva el mes en que se publican (octubre), como el resto del registro.
+  'f1-04-todo-vibra': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'octubre-f1-04',
+    medium: 'reel',
+    titulo: 'Todo vibra, pero no te escucha',
+  },
+  'f1-05-entrelazamiento': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'octubre-f1-05',
+    medium: 'reel',
+    titulo: 'El entrelazamiento no transmite información',
+  },
+  'f1-07-la-440': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'octubre-f1-07',
+    medium: 'reel',
+    titulo: '440 Hz: la nota que decidió una reunión en 1939',
+  },
+  'f1-08-tu-voz': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'octubre-f1-08',
+    medium: 'reel',
+    titulo: 'Por qué tu voz grabada suena rara',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
