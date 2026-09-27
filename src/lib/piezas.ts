@@ -365,12 +365,35 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'short',
     titulo: 'Qué es la cimática',
   },
+
+  // Fase 1 del plan de 90 días (@tejidosderealidad). Las tres van a la Obertura:
+  // el CTA de las piezas promete el capítulo gratuito. Sin `source`: cada red
+  // añade `?c=<red>` (tiktok · fb · yt · ig). Gemelo del otro registro.
+  'f1-01-observador': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'septiembre-f1-01',
+    medium: 'reel',
+    titulo: 'El observador no es una mente',
+  },
+  'f1-02-schumann': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'septiembre-f1-02',
+    medium: 'reel',
+    titulo: '7,83 Hz existe, pero no puedes escucharlo',
+  },
+  'f1-03-dos-orillas': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'septiembre-f1-03',
+    medium: 'reel',
+    titulo: 'La física no prueba lo espiritual',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
 export const ORDEN_BIO = [
   'cap-1',
   'obertura',
+  'f1-01-observador',
   'p7-invitacion-final',
   'reel-12',
   'reel-11',
