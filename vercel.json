@@ -55,6 +55,8 @@
     { "source": "/comprar", "destination": "/comprar/preventa", "permanent": false },
     { "source": "/libro", "destination": "/", "permanent": true },
     { "source": "/libro/obertura", "destination": "/obertura", "permanent": true },
+    { "source": "/libro/:cap(cap-[^/]+){/}?", "destination": "/capitulo/:cap", "permanent": true },
+    { "source": "/libro/:cap(cap-[^/]+)/:seccion([^/]+){/}?", "destination": "/capitulo/:cap/:seccion", "permanent": true },
     { "source": "/libro/:path*", "destination": "/:path*", "permanent": true },
     { "source": "/:path+/", "destination": "/:path+", "permanent": true }
   ]
