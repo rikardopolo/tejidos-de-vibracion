@@ -10,6 +10,7 @@ import { generateAccessToken } from '@/lib/token';
 import { getServerClient } from '@/lib/supabase';
 import { getGeo } from '@/lib/geo';
 import { utmsSaneadas } from '@/lib/utm.mjs';
+import { camposDeAlta } from '@/lib/lead-alta.mjs';
 
 export const prerender = false;
 
@@ -112,28 +113,41 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const supabase = getServerClient();
   if (supabase) {
     try {
-      const { data: lead, error } = await supabase
+      const fila = {
+        email: parsed.data.correo,
+        source: 'libro',
+        name: parsed.data.nombre.slice(0, 100),
+        consent_text: CONSENT_TEXT_LIBRO,
+        ip_hash: ipHash,
+        user_agent: userAgent,
+        country: geo.country,
+        region: geo.region,
+        unsubscribed_at: null,
+      };
+      // Correo nuevo: insert-si-no-existe ATÓMICO (UNIQUE(email) arbitra; con
+      // ignoreDuplicates no devuelve fila si ya existía).
+      const { data: nuevas, error: insErr } = await supabase
         .from('leads')
-        .upsert(
-          {
-            email: parsed.data.correo,
-            source: 'libro',
-            name: parsed.data.nombre.slice(0, 100),
-            consent_text: CONSENT_TEXT_LIBRO,
-            ip_hash: ipHash,
-            user_agent: userAgent,
-            country: geo.country,
-            region: geo.region,
-            unsubscribed_at: null,
-          },
-          { onConflict: 'email' },
-        )
-        .select('id')
-        .single();
+        .upsert(camposDeAlta(fila, { existe: false }), { onConflict: 'email', ignoreDuplicates: true })
+        .select('id');
+      let error = insErr;
+      if (!insErr && nuevas && nuevas.length > 0) {
+        leadId = nuevas[0]?.id ?? null;
+      } else if (!insErr) {
+        // Ya existía. Este POST no está confirmado (cualquiera puede escribir un correo
+        // ajeno): no se tocan `name` ni `unsubscribed_at`; solo se reenvía el DOI.
+        const { data: existente, error: updErr } = await supabase
+          .from('leads')
+          .update(camposDeAlta(fila, { existe: true }))
+          .eq('email', fila.email)
+          .select('id')
+          .maybeSingle();
+        error = updErr;
+        leadId = existente?.id ?? null;
+      }
       if (error) {
         console.error('[leads/libro] supabase upsert error:', error.message);
       } else {
-        leadId = lead?.id ?? null;
         if (leadId) {
           await supabase.from('events').insert({
             lead_id: leadId,

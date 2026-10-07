@@ -8,6 +8,7 @@
  *   3 = libro completo     → + objeto terminado / acceso permanente
  */
 import type { AstroCookies } from 'astro';
+import * as Sentry from '@sentry/astro';
 import { verifyAccessToken } from './token';
 import { verifyPurchaseToken, looksLikePurchaseToken } from './purchase-token.mjs';
 import { resolveRefundGate } from './refund-gate.mjs';
@@ -80,6 +81,10 @@ export async function getAccesoVerificado(
 
   const client = getServerClient();
   if (!client) {
+    // Configuración rota (faltan PUBLIC_SUPABASE_URL / SUPABASE_SECRET_KEY): la
+    // política CIERRA (C8) y aquí se avisa, porque un despliegue así deja a todos
+    // los compradores sin el Cap. 4 hasta que alguien lo note.
+    await avisarConfigRota();
     return resolveRefundGate(otorgado, { orderId, hasClient: false, queryError: false, order: null });
   }
 
@@ -92,6 +97,8 @@ export async function getAccesoVerificado(
     // que más se parece a una caída: un Supabase LENTO no devuelve error, se cuelga,
     // agota la función SSR y el comprador ve un 504 — nunca llegaríamos a abrir.
     // El abort vuelve como `error`, que es justo lo que activa el fail-OPEN.
+    // Ese fail-OPEN por error de consulta es PROVISIONAL: S-13 lo sustituye por la
+    // marca firmada `ent` (24 h como máximo).
     .abortSignal(AbortSignal.timeout(2000))
     .maybeSingle();
 
@@ -101,6 +108,27 @@ export async function getAccesoVerificado(
     queryError: Boolean(error),
     order: data ? { status: String(data.status) } : null,
   });
+}
+
+// Un aviso por instancia: con la config rota, CADA página de pago pasaría por
+// aquí, y Sentry no necesita mil copias del mismo fallo para abrir la incidencia.
+// El console.error sí sale siempre (queda en los logs de Vercel).
+let configRotaAvisada = false;
+
+async function avisarConfigRota(): Promise<void> {
+  console.error(
+    '[gating] Supabase sin configurar (faltan PUBLIC_SUPABASE_URL / SUPABASE_SECRET_KEY) · acceso de pago CERRADO',
+  );
+  if (configRotaAvisada) return;
+  configRotaAvisada = true;
+  try {
+    Sentry.captureMessage('gating: Supabase sin configurar · acceso de pago cerrado', 'error');
+    // La función serverless puede congelarse al responder: vaciar la cola antes.
+    // Sin DSN (local) es un no-op inmediato.
+    await Sentry.flush(2000);
+  } catch {
+    /* el aviso nunca debe romper la página */
+  }
 }
 
 /** `ls_order_id` que viaja dentro del token de compra, o null si no lo lleva. */
