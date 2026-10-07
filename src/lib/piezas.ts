@@ -413,6 +413,19 @@ export const PIEZAS: Record<string, Pieza> = {
     medium: 'reel',
     titulo: 'Por qué tu voz grabada suena rara',
   },
+  // Fase 1, tercer lote. Mismo contrato que el segundo.
+  'f1-11-la-cita': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'octubre-f1-11',
+    medium: 'reel',
+    titulo: 'Tuve que corregir mi propio libro',
+  },
+  'f1-13-el-acorde': {
+    destino: 'https://tejidosdevibracion.com/obertura',
+    campaign: 'octubre-f1-13',
+    medium: 'reel',
+    titulo: 'Por esto un acorde suena bien',
+  },
 };
 
 /** Piezas que se listan en /bio, de la más reciente a la más antigua. */
