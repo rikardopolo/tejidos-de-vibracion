@@ -4,3 +4,6 @@ export const SLUG_NIVEL: Record<string, { nivel: 2 | 3; expira: string | null }>
 
 /** Catálogo de slugs válidos (claves de SLUG_NIVEL) · tupla no-vacía para z.enum. */
 export const PRODUCT_SLUGS: readonly [string, ...string[]];
+
+/** Slugs de suscripción · el camino de órdenes del webhook los ignora siempre. */
+export const SUBSCRIPTION_SLUGS: readonly string[];

@@ -48,7 +48,7 @@ test('mapeo producto→nivel', () => {
 test('parseOrderEvent: order_created normaliza campos', () => {
   const body = {
     meta: { event_name: 'order_created', custom_data: { lead_id: '42', product_slug: 'bundle-preventa' } },
-    data: { id: 9999, attributes: { identifier: 'abc-uuid', order_number: 7, user_name: 'Juliana', user_email: 'Foo@Bar.com', total: 2600, currency: 'USD', status: 'paid', test_mode: true } },
+    data: { id: 9999, attributes: { identifier: 'abc-uuid', order_number: 7, user_name: 'Juliana', user_email: 'Foo@Bar.com', total: 2600, currency: 'USD', status: 'paid', test_mode: true, first_order_item: { variant_id: 123456 } } },
   };
   const p = parseOrderEvent(body, 'order_created');
   assert.equal(p.lsOrderId, '9999');
@@ -57,9 +57,17 @@ test('parseOrderEvent: order_created normaliza campos', () => {
   assert.equal(p.userName, 'Juliana');
   assert.equal(p.leadId, '42');
   assert.equal(p.productSlug, 'bundle-preventa');
+  assert.equal(p.variantId, '123456');
+  assert.equal(p.orderStatus, 'paid');
   assert.equal(p.amountCents, 2600);
   assert.equal(p.status, 'paid');
   assert.equal(p.testMode, true);
+});
+
+test('parseOrderEvent: Test Mode también desde meta.test_mode', () => {
+  const p = parseOrderEvent({ meta: { event_name: 'order_created', test_mode: true }, data: { id: 3, attributes: {} } }, undefined);
+  assert.equal(p.testMode, true);
+  assert.equal(p.variantId, null);
 });
 
 test('parseOrderEvent: refund sin custom', () => {

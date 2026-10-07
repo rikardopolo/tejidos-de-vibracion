@@ -1,11 +1,13 @@
 /**
  * lemonsqueezy-webhook.mjs · Lógica PURA del webhook de Lemon Squeezy.
  * Verificación de firma (HMAC-SHA256 del raw body, timing-safe), mapeo
- * producto→nivel y parseo del evento de orden. Sin red, sin DB, sin env —
+ * variante→producto→nivel, parseo del evento de orden y la DECISIÓN de qué hacer
+ * con cada entrega (`decidirEntrega`). Sin red y sin DB; el entorno entra por
+ * parámetro (solo `aceptarTestMode` cae a `process.env` si no se le pasa) —
  * testeable con `node --test`. El efecto (Supabase) vive en el handler .ts.
  */
 import crypto from 'node:crypto';
-import { SLUG_NIVEL } from './product-slugs.mjs';
+import { SLUG_NIVEL, PRODUCT_SLUGS, SUBSCRIPTION_SLUGS } from './product-slugs.mjs';
 
 /**
  * Verifica la firma del webhook LS: HMAC-SHA256 hex del raw body con el signing
@@ -37,14 +39,184 @@ export function orderRef(lsOrderId) {
 // ÚNICA compartida con el schema de contenido (config.ts). Ver ese módulo.
 
 /**
- * Resuelve nivel/expiración desde el product_slug. Slug desconocido → null
- * (el handler decide el fallback y lo loguea).
+ * Resuelve nivel/expiración desde un slug del catálogo. Slug desconocido → null
+ * (el handler decide el fallback y lo loguea). El slug sale del `variant_id`
+ * (`buildVariantMap`) o de la fila ya guardada en `orders`, NUNCA de
+ * `custom_data.product_slug`, que viaja en el checkout y no decide nada.
  * @param {string|undefined|null} productSlug
  * @returns {{ nivel: 2|3, expira: string|null }|null}
  */
 export function mapProductToNivel(productSlug) {
   if (!productSlug) return null;
   return SLUG_NIVEL[productSlug] ?? null;
+}
+
+// ─── Variante → producto ───────────────────────────────────────────────────
+// El producto (y con él el nivel) sale de `first_order_item.variant_id`, que fija
+// Lemon Squeezy, y no de `custom_data.product_slug`, que viaja en el checkout.
+// Convención de nombres (la misma que ya usa el checkout de la preventa):
+//   slug `bundle-preventa` → variable `LS_VARIANT_BUNDLE_PREVENTA` = id de la variante.
+// Toda variable que empiece por `LS_VARIANT_SUSCRIPCION` es una variante de
+// SUSCRIPCIÓN, y el camino de órdenes la ignora (se resuelve en su tabla, S-13).
+
+export const PREFIJO_VARIANTE = 'LS_VARIANT_';
+export const PREFIJO_VARIANTE_SUSCRIPCION = 'LS_VARIANT_SUSCRIPCION';
+
+/**
+ * Nombre de la variable de entorno con el id de variante de un slug.
+ * @param {string} slug  p. ej. 'bundle-preventa'
+ * @returns {string}     p. ej. 'LS_VARIANT_BUNDLE_PREVENTA'
+ */
+export function envVarDeVariante(slug) {
+  return PREFIJO_VARIANTE + String(slug).toUpperCase().replace(/-/g, '_');
+}
+
+/**
+ * Construye el mapa variant_id → slug desde el entorno (función pura: el entorno
+ * entra por parámetro).
+ *
+ * Falla CERRADO ante una configuración ambigua: si dos slugs apuntan a la misma
+ * variante, esa variante no se mapea (cae en `order_unknown_product`) y se
+ * devuelve en `ambiguas` para que el handler lo grite. Una variante que además
+ * figure como de suscripción nunca se trata como pago único.
+ *
+ * @param {Record<string, string|undefined>|null|undefined} env
+ * @returns {{ unica: Map<string, string>, suscripcion: Set<string>, ambiguas: string[] }}
+ */
+export function buildVariantMap(env) {
+  const src = env ?? {};
+  const valor = (k) => {
+    const v = src[k];
+    return typeof v === 'string' && v.trim() !== '' ? v.trim() : null;
+  };
+
+  const suscripcion = new Set();
+  for (const k of Object.keys(src)) {
+    if (!k.startsWith(PREFIJO_VARIANTE_SUSCRIPCION)) continue;
+    const v = valor(k);
+    if (v) suscripcion.add(v);
+  }
+
+  const unica = new Map();
+  const ambiguas = new Set();
+  for (const slug of PRODUCT_SLUGS) {
+    if (SUBSCRIPTION_SLUGS.includes(slug)) continue;
+    const v = valor(envVarDeVariante(slug));
+    if (!v) continue;
+    if (unica.has(v) && unica.get(v) !== slug) ambiguas.add(v);
+    else unica.set(v, slug);
+  }
+  for (const v of ambiguas) unica.delete(v);
+  for (const v of suscripcion) unica.delete(v);
+
+  return { unica, suscripcion, ambiguas: [...ambiguas] };
+}
+
+/**
+ * ¿Se procesan los eventos de Test Mode? Solo con `LS_ACEPTAR_TEST_MODE=true`,
+ * que existe únicamente en Preview (C13). En producción (`VERCEL_ENV=production`)
+ * es `false` aunque la variable esté puesta por error: las 16 órdenes de
+ * producción ya son de prueba y no deben repetirse.
+ * Se lee en cada llamada (interruptor de runtime, sin rebuild).
+ * @param {Record<string, string|undefined>} [env]
+ * @returns {boolean}
+ */
+export function aceptarTestMode(env = typeof process !== 'undefined' && process.env ? process.env : {}) {
+  if (String(env?.VERCEL_ENV ?? '').trim() === 'production') return false;
+  return String(env?.LS_ACEPTAR_TEST_MODE ?? '').trim() === 'true';
+}
+
+/**
+ * Test Mode de Lemon Squeezy: `meta.test_mode` (todos los eventos) o el atributo
+ * `test_mode` del objeto (órdenes y suscripciones). Basta con uno.
+ * @param {any} body
+ * @returns {boolean}
+ */
+export function esTestMode(body) {
+  return body?.meta?.test_mode === true || body?.data?.attributes?.test_mode === true;
+}
+
+/**
+ * Clasifica una orden ya parseada contra el mapa de variantes.
+ *
+ * - `suscripcion`: variante de suscripción o `custom_data.product_slug` de
+ *   suscripción. El custom solo puede QUITAR (ignorar la orden), nunca otorgar.
+ * - `desconocida`: sin `variant_id` o con una variante que no está en el mapa.
+ * - `unica`: pago único con su slug y su nivel.
+ *
+ * @param {{ variantId: string|null, productSlug: string|null }} parsed
+ * @param {{ unica: Map<string, string>, suscripcion: Set<string> }} variantes
+ * @returns {{ tipo: 'suscripcion' } | { tipo: 'desconocida' } | { tipo: 'unica', slug: string, nivel: 2|3, expira: string|null }}
+ */
+export function clasificarOrden(parsed, variantes) {
+  const variantId = parsed.variantId;
+  if ((variantId && variantes.suscripcion.has(variantId)) || SUBSCRIPTION_SLUGS.includes(parsed.productSlug ?? '')) {
+    return { tipo: 'suscripcion' };
+  }
+  const slug = variantId ? variantes.unica.get(variantId) : undefined;
+  const info = slug ? mapProductToNivel(slug) : null;
+  if (!slug || !info) return { tipo: 'desconocida' };
+  return { tipo: 'unica', slug, nivel: info.nivel, expira: info.expira };
+}
+
+/**
+ * Decide QUÉ hacer con una entrega del webhook, sin efectos. El handler .ts solo
+ * ejecuta la decisión (escribir `orders`/`events`, enviar el enlace). Orden:
+ *
+ *   1. firma inválida               → `firma_invalida` (401)
+ *   2. cuerpo que no es JSON        → `json_invalido` (400)
+ *   3. Test Mode sin aceptarlo      → `test_mode_ignorado` (200, solo el evento)
+ *   4. evento que no es de orden    → `evento_ignorado` (200)
+ *   5. orden de suscripción         → `suscripcion_ignorada` (200, evento; sin orden ni token)
+ *   6. reembolso PARCIAL            → `reembolso_parcial` (200, evento; NO revoca · decisión de Ricardo)
+ *   7. variante desconocida         → `producto_desconocido` (camino `order_unknown_product`)
+ *   8. pago único conocido          → `procesar`
+ *
+ * @param {{ raw: string, signature: string|null|undefined, secret: string,
+ *           eventName?: string|null, variantes: { unica: Map<string, string>, suscripcion: Set<string> },
+ *           aceptarTestMode: boolean }} input
+ */
+export function decidirEntrega(input) {
+  if (!verifyLemonSignature(input.raw, input.signature, input.secret)) return { accion: 'firma_invalida' };
+
+  let body;
+  try {
+    body = JSON.parse(input.raw);
+  } catch {
+    return { accion: 'json_invalido' };
+  }
+
+  // El nombre FIRMADO (`meta.event_name`, dentro del cuerpo) manda sobre la
+  // cabecera `X-Event-Name`, que la firma no cubre: con un cuerpo firmado de
+  // `order_created` y la cabecera cambiada a `order_refunded`, una repetición
+  // revocaría una compra legítima. La cabecera solo es respaldo si el cuerpo no
+  // trae el nombre.
+  const nombreFirmado = typeof body?.meta?.event_name === 'string' ? body.meta.event_name : '';
+  const eventName = nombreFirmado || input.eventName || null;
+
+  if (esTestMode(body) && !input.aceptarTestMode) {
+    const id = body?.data?.id;
+    return { accion: 'test_mode_ignorado', body, eventName, lsOrderId: id != null ? String(id) : null };
+  }
+
+  const parsed = parseOrderEvent(body, eventName ?? undefined);
+  if (!parsed) return { accion: 'evento_ignorado', body, eventName };
+
+  const clase = clasificarOrden(parsed, input.variantes);
+  if (clase.tipo === 'suscripcion') return { accion: 'suscripcion_ignorada', body, parsed };
+
+  if (parsed.status === 'refunded' && parsed.orderStatus === 'partial_refund') {
+    return { accion: 'reembolso_parcial', body, parsed };
+  }
+
+  if (clase.tipo === 'desconocida') return { accion: 'producto_desconocido', body, parsed };
+
+  return {
+    accion: 'procesar',
+    body,
+    parsed,
+    producto: { slug: clase.slug, nivel: clase.nivel, expira: clase.expira },
+  };
 }
 
 // Eventos de orden de LS que manejamos → status que registramos.
@@ -182,11 +354,17 @@ export function parseOrderEvent(body, eventName) {
     email: typeof attr.user_email === 'string' ? attr.user_email.toLowerCase().trim() : null,
     userName: typeof attr.user_name === 'string' && attr.user_name.trim() ? attr.user_name.trim() : null,
     leadId: str(custom.lead_id),
+    // Solo INFORMATIVO (log/evento): viaja en el checkout y no decide el nivel.
     productSlug: str(custom.product_slug),
+    // En una orden, `variant_id` solo está en `first_order_item` (doc LS).
+    variantId: str(attr.first_order_item?.variant_id),
+    // Estado del objeto Order de LS (`paid`, `refunded`, `partial_refund`, …).
+    orderStatus: str(attr.status),
     amountCents: Number.isFinite(attr.total) ? attr.total : null,
+    refundedAmountCents: Number.isFinite(attr.refunded_amount) ? attr.refunded_amount : null,
     currency: typeof attr.currency === 'string' && attr.currency ? attr.currency : 'USD',
     status,
-    testMode: attr.test_mode === true,
+    testMode: esTestMode(body),
     eventName: ev,
   };
 }

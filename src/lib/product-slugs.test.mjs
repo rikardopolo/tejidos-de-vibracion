@@ -4,10 +4,10 @@
  *
  * Blinda el lado CODE del desalineo que dejaba al comprador pagando y al gate
  * negando: si productoSlug del frontmatter MDX no está en token.slugs
- * (=[custom.product_slug] del checkout), el comprador NO entra. Aquí garantizamos
- * que TODO slug code-side (catálogo + el que declare cualquier contenido) sea
- * coherente. El lado LS (que el checkout envíe product_slug == uno del catálogo)
- * es config del dashboard de LS, NO código → ver inputsNeeded.
+ * (= el slug de la variante comprada, vía LS_VARIANT_<SLUG>), el comprador NO
+ * entra. Aquí garantizamos que TODO slug code-side (catálogo + el que declare
+ * cualquier contenido) sea coherente. El lado LS (que cada variante vendida tenga
+ * su LS_VARIANT_<SLUG> en Vercel) es configuración, NO código → ver .env.example.
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
