@@ -5,9 +5,16 @@
  * con cada entrega (`decidirEntrega`). Sin red y sin DB; el entorno entra por
  * parámetro (solo `aceptarTestMode` cae a `process.env` si no se le pasa) —
  * testeable con `node --test`. El efecto (Supabase) vive en el handler .ts.
+ *
+ * S-13 · eventos `subscription_{created,updated,cancelled,resumed,expired,paused,
+ * unpaused}` → tabla `subscriptions` (`parseSubscriptionEvent` + `procesarSuscripcion`,
+ * que recibe el cliente por parámetro). Los `subscription_payment_*` (facturas,
+ * impagos y reembolsos de suscripción) siguen IGNORADOS con 200: quedan fuera de S-13
+ * y deben estar antes de la primera renovación (F3-L, plan de medios de pago).
  */
 import crypto from 'node:crypto';
 import { SLUG_NIVEL, PRODUCT_SLUGS, SUBSCRIPTION_SLUGS } from './product-slugs.mjs';
+import { secretoCustomValido, verificarCustom } from './custom-suscripcion.mjs';
 
 /**
  * Verifica la firma del webhook LS: HMAC-SHA256 hex del raw body con el signing
@@ -166,7 +173,9 @@ export function clasificarOrden(parsed, variantes) {
  *   1. firma inválida               → `firma_invalida` (401)
  *   2. cuerpo que no es JSON        → `json_invalido` (400)
  *   3. Test Mode sin aceptarlo      → `test_mode_ignorado` (200, solo el evento)
- *   4. evento que no es de orden    → `evento_ignorado` (200)
+ *   4. `subscription_*` (S-13)      → `suscripcion` (tabla `subscriptions`), o
+ *                                     `suscripcion_invalida` si el objeto no se entiende
+ *   4b. otro evento que no es de orden (incl. `subscription_payment_*`) → `evento_ignorado` (200)
  *   5. orden de suscripción         → `suscripcion_ignorada` (200, evento; sin orden ni token)
  *   6. reembolso PARCIAL            → `reembolso_parcial` (200, evento; NO revoca · decisión de Ricardo)
  *   7. variante desconocida         → `producto_desconocido` (camino `order_unknown_product`)
@@ -197,6 +206,12 @@ export function decidirEntrega(input) {
   if (esTestMode(body) && !input.aceptarTestMode) {
     const id = body?.data?.id;
     return { accion: 'test_mode_ignorado', body, eventName, lsOrderId: id != null ? String(id) : null };
+  }
+
+  if (eventName && SUBSCRIPTION_EVENTS.includes(eventName)) {
+    const sub = parseSubscriptionEvent(body, eventName);
+    if (!sub) return { accion: 'suscripcion_invalida', body, eventName };
+    return { accion: 'suscripcion', body, sub };
   }
 
   const parsed = parseOrderEvent(body, eventName ?? undefined);
@@ -367,4 +382,258 @@ export function parseOrderEvent(body, eventName) {
     testMode: esTestMode(body),
     eventName: ev,
   };
+}
+
+// ─── Suscripciones (S-13) ───────────────────────────────────────────────────
+// Plan v2 §7.6 y bloque S-13 (punto 4). La suscripción pertenece a una CUENTA: el
+// `account_id` sale del `custom` FIRMADO del checkout (`custom-suscripcion.mjs`) y de
+// su nonce de un solo uso en `checkout_intentos`. Nunca de un correo parecido.
+
+/** Eventos de suscripción que escriben `subscriptions`. Los `subscription_payment_*` NO. */
+export const SUBSCRIPTION_EVENTS = Object.freeze([
+  'subscription_created',
+  'subscription_updated',
+  'subscription_cancelled',
+  'subscription_resumed',
+  'subscription_expired',
+  'subscription_paused',
+  'subscription_unpaused',
+]);
+
+/** Estados del objeto Subscription de LS = el CHECK de `subscriptions.status`. */
+export const ESTADOS_SUSCRIPCION = Object.freeze([
+  'active',
+  'on_trial',
+  'past_due',
+  'paused',
+  'cancelled',
+  'expired',
+  'unpaid',
+]);
+
+export const PROVEEDOR = 'lemonsqueezy';
+export const SLUG_SUSCRIPCION = 'suscripcion-libro';
+// LS usa ids numéricos; además el id entra en un filtro `or()` de PostgREST, así que
+// solo se aceptan caracteres que no rompen esa sintaxis.
+const ID_PROVEEDOR = /^[A-Za-z0-9_-]{1,64}$/;
+
+/**
+ * Clave de correlación para registros y `events` (el id del proveedor se queda en la fila).
+ * @param {string} id
+ */
+export function suscripcionRef(id) {
+  return crypto.createHash('sha256').update(`lemonsqueezy-sub\0${String(id)}`, 'utf8').digest('hex');
+}
+
+function isoONull(v) {
+  if (typeof v !== 'string' || v === '') return null;
+  const t = Date.parse(v);
+  return Number.isFinite(t) ? new Date(t).toISOString() : null;
+}
+
+function pausaNormalizada(p) {
+  if (!p || typeof p !== 'object') return null;
+  if (p.mode !== 'void' && p.mode !== 'free') return null;
+  return { mode: p.mode, resumes_at: isoONull(p.resumes_at) };
+}
+
+/**
+ * Normaliza un evento `subscription_*`. `null` si no es uno de los siete, si falta el
+ * id o si el `status` no es uno de los que admite la tabla (no se escribe lo que no
+ * se entiende).
+ * @param {any} body
+ * @param {string|undefined|null} eventName
+ */
+export function parseSubscriptionEvent(body, eventName) {
+  const ev = eventName || body?.meta?.event_name;
+  if (!SUBSCRIPTION_EVENTS.includes(ev)) return null;
+  const data = body?.data;
+  const id = data?.id != null ? String(data.id) : '';
+  if (!ID_PROVEEDOR.test(id)) return null;
+  const attr = data?.attributes ?? {};
+  const status = typeof attr.status === 'string' ? attr.status : '';
+  if (!ESTADOS_SUSCRIPCION.includes(status)) return null;
+
+  const str = (v) => (v != null && String(v) !== '' ? String(v) : null);
+  const custom = body?.meta?.custom_data;
+  return {
+    providerSubscriptionId: id,
+    status,
+    // En una suscripción, `variant_id` está en `attributes` (doc LS).
+    variantId: str(attr.variant_id),
+    customerId: str(attr.customer_id),
+    email: typeof attr.user_email === 'string' && attr.user_email.trim() ? attr.user_email.toLowerCase().trim() : null,
+    userName: typeof attr.user_name === 'string' && attr.user_name.trim() ? attr.user_name.trim() : null,
+    renewsAt: isoONull(attr.renews_at),
+    endsAt: isoONull(attr.ends_at),
+    trialEndsAt: isoONull(attr.trial_ends_at),
+    createdAt: isoONull(attr.created_at),
+    updatedAt: isoONull(attr.updated_at),
+    cancelled: attr.cancelled === true,
+    pause: pausaNormalizada(attr.pause),
+    testMode: esTestMode(body),
+    custom: custom && typeof custom === 'object' && !Array.isArray(custom) ? custom : null,
+    eventName: ev,
+  };
+}
+
+/**
+ * Lo que un evento PUEDE cambiar de una suscripción ya guardada: estado, periodos y
+ * pausa (+ `raw`, el último payload, que es donde queda `variant_id`: la tabla no
+ * tiene esa columna). NUNCA `account_id`, `vinculo`, `email` ni `provider*`.
+ * `current_period_end` = `renews_at` (en una prueba, `trial_ends_at` si falta).
+ */
+export function cambiosSuscripcion(sub, body) {
+  return {
+    status: sub.status,
+    current_period_end: sub.renewsAt ?? sub.trialEndsAt,
+    ends_at: sub.endsAt,
+    cancel_at_period_end: sub.cancelled,
+    pause: sub.pause,
+    raw: body,
+  };
+}
+
+/** Fila nueva de `subscriptions` (solo en el PRIMER evento de un id). */
+export function filaSuscripcion(sub, { accountId, vinculo, body, nowIso }) {
+  return {
+    provider: PROVEEDOR,
+    provider_subscription_id: sub.providerSubscriptionId,
+    provider_customer_id: sub.customerId,
+    account_id: accountId,
+    vinculo,
+    email: sub.email,
+    product_slug: SLUG_SUSCRIPCION,
+    started_at: sub.createdAt ?? nowIso,
+    test_mode: sub.testMode,
+    ...cambiosSuscripcion(sub, body),
+  };
+}
+
+/**
+ * ¿El evento es MÁS VIEJO que lo guardado? LS reintenta a los 5, 25 y 125 s: un
+ * `subscription_created` reintentado puede llegar después del `updated` que ya
+ * canceló. Se compara el `updated_at` del objeto de LS; sin fechas, no se descarta.
+ */
+export function esEventoObsoleto(rawGuardado, sub) {
+  const guardado = Date.parse(rawGuardado?.data?.attributes?.updated_at ?? '');
+  const entrante = Date.parse(sub.updatedAt ?? '');
+  return Number.isFinite(guardado) && Number.isFinite(entrante) && entrante < guardado;
+}
+
+async function buscarSuscripcion(supabase, id) {
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('id, account_id, vinculo, raw')
+    .eq('provider', PROVEEDOR)
+    .eq('provider_subscription_id', id)
+    .maybeSingle();
+  return { fila: data ?? null, error: error ?? null };
+}
+
+async function actualizarSuscripcion(supabase, sub, fila, body) {
+  if (esEventoObsoleto(fila.raw, sub)) return { http: 200, resultado: 'obsoleto', vinculo: fila.vinculo };
+  const { error } = await supabase
+    .from('subscriptions')
+    .update(cambiosSuscripcion(sub, body))
+    .eq('provider', PROVEEDOR)
+    .eq('provider_subscription_id', sub.providerSubscriptionId)
+    .select('id');
+  if (error) return { http: 500, resultado: 'error_update' };
+  return { http: 200, resultado: 'actualizada', vinculo: fila.vinculo };
+}
+
+/**
+ * Escribe un evento `subscription_*` en `subscriptions`. Idempotente: una reentrega
+ * del mismo evento vuelve a dejar la fila igual y responde 200.
+ *
+ * - Ya hay fila para `(lemonsqueezy, id)` → solo `cambiosSuscripcion` (salvo evento
+ *   obsoleto). Nunca toca `account_id` ni `vinculo`, ni envía correos.
+ * - PRIMER evento de un id (el orden de llegada no está garantizado: puede ser
+ *   `created` o `updated`):
+ *     1. la variante tiene que ser de la suscripción del libro (`LS_VARIANT_SUSCRIPCION*`);
+ *        otra variante de la tienda no es nuestra → 200 sin fila;
+ *     2. `custom` firmado (tiempo constante, ≤ 7 días) + CAS del nonce:
+ *        `update checkout_intentos set used_at = now(), provider_subscription_id = $id
+ *         where nonce = $n and account_id = $aid
+ *           and (used_at is null or provider_subscription_id = $id)`;
+ *        si gana → fila con `account_id` y `vinculo = 'cuenta'`;
+ *     3. si no (sin custom, firma mala, caducado, nonce de otra cuenta o ya usado con
+ *        otro id) → fila con `account_id = null` y `vinculo = 'pendiente'`, y UN correo
+ *        al del pago con el enlace para vincularla desde el portal (C11). «Una sola vez»
+ *        lo garantiza el insert: solo quien lo gana envía.
+ *   El insert es `on conflict (provider, provider_subscription_id) do nothing`: si otra
+ *   entrega simultánea ganó, esta solo actualiza.
+ *
+ * @param {any} supabase  cliente supabase-js (o falso)
+ * @param {ReturnType<typeof parseSubscriptionEvent>} sub
+ * @param {{ body: unknown, secretCustom: string|null|undefined, variantesSuscripcion: Set<string>,
+ *           nowMs?: number,
+ *           enviarCorreoVincular?: (d: { email: string, nombre: string|null }) => Promise<{ ok: boolean }> }} ctx
+ * @returns {Promise<{ http: number, resultado: string, vinculo?: 'cuenta'|'pendiente', motivo?: string|null,
+ *                     correo?: 'enviado'|'fallido'|'omitido', aviso?: 'config' }>}
+ */
+export async function procesarSuscripcion(supabase, sub, ctx) {
+  const nowMs = ctx.nowMs ?? Date.now();
+  const nowIso = new Date(nowMs).toISOString();
+
+  const previa = await buscarSuscripcion(supabase, sub.providerSubscriptionId);
+  if (previa.error) return { http: 500, resultado: 'error_consulta' };
+  if (previa.fila) return actualizarSuscripcion(supabase, sub, previa.fila, ctx.body);
+
+  // ── Primer evento de este id ──
+  const variantes = ctx.variantesSuscripcion;
+  if (!variantes || variantes.size === 0) return { http: 500, resultado: 'sin_variantes', aviso: 'config' };
+  if (!sub.variantId || !variantes.has(sub.variantId)) return { http: 200, resultado: 'variante_ajena' };
+  // `subscriptions.email` es NOT NULL: mejor rechazar que reventar el insert.
+  if (!sub.email) return { http: 400, resultado: 'sin_email' };
+  // Sin secreto no se puede saber de quién es: 500 para que LS reintente cuando esté.
+  if (!secretoCustomValido(ctx.secretCustom)) return { http: 500, resultado: 'sin_secreto_custom', aviso: 'config' };
+
+  const v = verificarCustom(sub.custom, ctx.secretCustom, { nowS: Math.floor(nowMs / 1000) });
+  let accountId = null;
+  let motivo = v.ok ? null : v.motivo;
+  if (v.ok) {
+    const { data, error } = await supabase
+      .from('checkout_intentos')
+      .update({ used_at: nowIso, provider_subscription_id: sub.providerSubscriptionId })
+      .eq('nonce', v.nonce)
+      .eq('account_id', v.accountId)
+      .or(`used_at.is.null,provider_subscription_id.eq.${sub.providerSubscriptionId}`)
+      .select('nonce')
+      .maybeSingle();
+    if (error) return { http: 500, resultado: 'error_cas' };
+    if (data) accountId = v.accountId;
+    else motivo = 'nonce';
+  }
+
+  const vinculo = accountId ? 'cuenta' : 'pendiente';
+  const { data: insertadas, error: insErr } = await supabase
+    .from('subscriptions')
+    .upsert(filaSuscripcion(sub, { accountId, vinculo, body: ctx.body, nowIso }), {
+      onConflict: 'provider,provider_subscription_id',
+      ignoreDuplicates: true,
+    })
+    .select('id');
+  if (insErr) return { http: 500, resultado: 'error_insert' };
+
+  if (!insertadas || insertadas.length === 0) {
+    // Otra entrega simultánea creó la fila: esta solo actualiza.
+    const otra = await buscarSuscripcion(supabase, sub.providerSubscriptionId);
+    if (otra.error || !otra.fila) return { http: 500, resultado: 'error_consulta' };
+    return actualizarSuscripcion(supabase, sub, otra.fila, ctx.body);
+  }
+
+  if (vinculo === 'cuenta') return { http: 200, resultado: 'vinculada', vinculo };
+
+  let correo = 'omitido';
+  if (ctx.enviarCorreoVincular) {
+    try {
+      const r = await ctx.enviarCorreoVincular({ email: sub.email, nombre: sub.userName });
+      correo = r?.ok ? 'enviado' : 'fallido';
+    } catch {
+      correo = 'fallido';
+    }
+  }
+  return { http: 200, resultado: 'pendiente', vinculo, motivo, correo };
 }

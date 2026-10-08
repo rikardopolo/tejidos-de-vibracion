@@ -1,13 +1,13 @@
 /**
- * subscription-gate.mjs · Decisión (PURA) de si un token de SUSCRIPCIÓN sigue vigente.
+ * subscription-gate.mjs · Decisión (PURA) de si una fila de SUSCRIPCIÓN da el nivel 2.
  *
- * Hermano de refund-gate.mjs para el pivote a suscripción (F2, 18-sep-2026). El
- * token firmado (purchase-token.mjs, con `subscriptionId`) prueba que hubo alta,
- * pero una suscripción caduca, se impaga, se pausa o se cancela DESPUÉS de emitirlo
- * y el token no lo sabe. La fuente de verdad es la fila de `subscriptions`, que
- * gating.ts consulta en cada petición. Aquí vive solo la regla sobre esa fila; la
- * política ante caída de infraestructura (fail-OPEN, la misma de refund-gate) la
- * aplica el llamador antes de llegar aquí.
+ * Hermano de refund-gate.mjs para el pivote a suscripción (F2, 18-sep-2026). Una
+ * suscripción caduca, se impaga, se pausa o se cancela en cualquier momento, así que
+ * la fuente de verdad es la fila de `subscriptions`, que el gate consulta en cada
+ * petición por el `account_id` de la sesión del libro (S-13, `acceso-cuenta.mjs`;
+ * ya no hay token de suscripción). Aquí vive solo la regla sobre esa fila; la
+ * política ante caída de la base (la marca firmada `ent`, D4) y ante configuración
+ * rota (cerrar) la aplica `acceso-cuenta.mjs` antes de llegar aquí.
  *
  * Agnóstico de proveedor: `status` es el conjunto normalizado de `subscriptions.status`
  * (active · on_trial · past_due · paused · cancelled · expired · unpaid), no el

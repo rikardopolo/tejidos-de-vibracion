@@ -4,6 +4,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import { generatePurchaseToken, verifyPurchaseToken, looksLikePurchaseToken } from './purchase-token.mjs';
 
 const S = 'secreto-de-prueba';
@@ -26,21 +27,33 @@ test('round-trip nivel 3 sin slugs', () => {
   assert.equal(r.orderId, null);
 });
 
-test('token de suscripción: round-trip de subscriptionId con orderId null', () => {
+test('S-13: el claim u (suscripción) ya no se emite', () => {
   const t = generatePurchaseToken(
-    { email: 'a@b.com', nivel: 2, slugs: ['suscripcion-libro'], subscriptionId: 'sub-uuid-1' },
+    { email: 'a@b.com', nivel: 2, slugs: ['bundle-preventa'], orderId: '1', subscriptionId: 'sub-uuid-1' },
     S,
   );
-  const r = verifyPurchaseToken(t, S);
-  assert.equal(r.valid, true);
-  assert.equal(r.subscriptionId, 'sub-uuid-1');
-  assert.equal(r.orderId, null);
+  const payload = JSON.parse(Buffer.from(t.split('.')[0], 'base64url').toString('utf8'));
+  assert.equal('u' in payload, false);
+  assert.equal('subscriptionId' in verifyPurchaseToken(t, S), false);
 });
 
-test('un token de compra (sin subscriptionId) sigue valiendo y no se confunde con suscripción', () => {
+test('S-13: un token viejo que lleve u sigue valiendo como compra y u no se lee', () => {
+  // Firmado a mano con el formato de la rama F2 (claim u): verifica, pero el
+  // resultado no expone ninguna marca de suscripción que el gate pudiera usar.
+  const body = Buffer.from(
+    JSON.stringify({ e: 'a@b.com', n: 2, s: ['bundle-preventa'], o: '1', u: 'sub-uuid-1', t: Date.now() }),
+    'utf8',
+  ).toString('base64url');
+  const sig = crypto.createHmac('sha256', S).update(body).digest('hex');
+  const r = verifyPurchaseToken(`${body}.${sig}`, S);
+  assert.equal(r.valid, true);
+  assert.equal(r.orderId, '1');
+  assert.equal('subscriptionId' in r, false);
+});
+
+test('un token de compra con orderId sigue valiendo', () => {
   const r = verifyPurchaseToken(generatePurchaseToken({ email: 'a@b.com', nivel: 2, slugs: [], orderId: '1' }, S), S);
   assert.equal(r.valid, true);
-  assert.equal(r.subscriptionId, null);
   assert.equal(r.orderId, '1');
 });
 

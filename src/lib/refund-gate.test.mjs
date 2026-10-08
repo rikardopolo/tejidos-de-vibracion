@@ -1,8 +1,9 @@
 /**
  * refund-gate.test.mjs · Correr: node --test src/lib/refund-gate.test.mjs
  *
- * Cubre la política MIXTA: abierto ante un error de consulta, cerrado ante
- * configuración rota (sin cliente, C8) y ante fallo de dato. Los ejes se testean
+ * Cubre la política: cerrado ante un error de consulta (S-13: la caída la cubre la
+ * marca ent de la sesión), ante configuración rota (sin cliente, C8), ante fallo de
+ * dato y ante una orden de Test Mode en producción. Los ejes se testean
  * por separado porque son decisiones distintas que se toman en la misma función.
  */
 import { test } from 'node:test';
@@ -36,10 +37,24 @@ test('orden ausente con consulta OK → revoca (el token apunta a nada)', () => 
   assert.deepEqual(resolveRefundGate(granted, ok({ order: null })), REVOCADO);
 });
 
-// --- Eje "abierto en caída": la consulta falla, no el dato (hasta S-13 y su marca `ent`) ---
+// --- Caída de la base (S-13): el token suelto se CIERRA; el paso durante la caída es la marca `ent` de la sesión ---
 
-test('error de consulta → mantiene el token (fail-open de infraestructura, hasta S-13)', () => {
-  assert.deepEqual(resolveRefundGate(granted, ok({ queryError: true })), granted);
+test('error de consulta → REVOCA desde S-13 (la caída la cubre la marca ent de la sesión, no el token)', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ queryError: true })), REVOCADO);
+});
+
+// --- Órdenes de Test Mode (S-13): no cuentan en producción ---
+
+test('orden paid de Test Mode en PRODUCCIÓN → revoca', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ produccion: true, order: { status: 'paid', test_mode: true } })), REVOCADO);
+});
+
+test('orden paid de Test Mode FUERA de producción → mantiene (Preview y local prueban el camino entero)', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ produccion: false, order: { status: 'paid', test_mode: true } })), granted);
+});
+
+test('orden paid real en producción → mantiene', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ produccion: true, order: { status: 'paid', test_mode: false } })), granted);
 });
 
 // --- Configuración rota (C8): sin cliente de Supabase se CIERRA ---

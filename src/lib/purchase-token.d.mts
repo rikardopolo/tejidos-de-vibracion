@@ -4,8 +4,6 @@ export interface PurchaseClaims {
   nivel: 2 | 3;
   slugs: string[];
   orderId?: string | null;
-  /** uuid de `subscriptions.id` · presente SOLO en tokens de suscripción (marca del gate). */
-  subscriptionId?: string | null;
 }
 
 export type PurchaseVerifyResult =
@@ -15,7 +13,6 @@ export type PurchaseVerifyResult =
       nivel: 2 | 3;
       slugs: string[];
       orderId: string | null;
-      subscriptionId: string | null;
       issuedAt: number;
     }
   | { valid: false; reason: 'malformed' | 'bad_signature' | 'expired' };

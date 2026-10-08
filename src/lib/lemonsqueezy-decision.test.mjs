@@ -260,11 +260,37 @@ test('cuerpo firmado que no es JSON → json_invalido', () => {
   assert.equal(entregar(null, { raw: 'no-es-json' }).accion, 'json_invalido');
 });
 
-test('evento que no es de orden (sin Test Mode) → evento_ignorado', () => {
-  const body = { meta: { event_name: 'subscription_created', test_mode: false }, data: { type: 'subscriptions', id: 77, attributes: { variant_id: 900 } } };
+test('evento que no es de orden ni de suscripción (sin Test Mode) → evento_ignorado', () => {
+  const body = { meta: { event_name: 'customer_updated', test_mode: false }, data: { type: 'customers', id: 77, attributes: {} } };
   const d = entregar(body);
   assert.equal(d.accion, 'evento_ignorado');
-  assert.equal(d.eventName, 'subscription_created');
+  assert.equal(d.eventName, 'customer_updated');
+});
+
+test('subscription_payment_* sigue ignorado (fuera de S-13: facturas e impagos son F3-L)', () => {
+  for (const ev of ['subscription_payment_success', 'subscription_payment_failed', 'subscription_payment_recovered', 'subscription_payment_refunded']) {
+    const body = { meta: { event_name: ev, test_mode: false }, data: { type: 'subscription-invoices', id: 5, attributes: { status: 'paid' } } };
+    assert.equal(entregar(body).accion, 'evento_ignorado', ev);
+  }
+});
+
+test('subscription_created bien formado → suscripcion (S-13), con el objeto normalizado', () => {
+  const body = {
+    meta: { event_name: 'subscription_created', test_mode: false, custom_data: { account_id: 'x' } },
+    data: { type: 'subscriptions', id: 77, attributes: { status: 'active', variant_id: 900, user_email: 'Ana@Correo.com', renews_at: '2026-11-07T12:00:00.000000Z' } },
+  };
+  const d = entregar(body);
+  assert.equal(d.accion, 'suscripcion');
+  assert.equal(d.sub.providerSubscriptionId, '77');
+  assert.equal(d.sub.variantId, '900');
+  assert.equal(d.sub.email, 'ana@correo.com');
+  assert.equal(d.sub.renewsAt, '2026-11-07T12:00:00.000Z');
+  assert.deepEqual(d.sub.custom, { account_id: 'x' });
+});
+
+test('subscription_* con un status que la tabla no admite → suscripcion_invalida', () => {
+  const body = { meta: { event_name: 'subscription_updated', test_mode: false }, data: { type: 'subscriptions', id: 77, attributes: { status: 'raro', variant_id: 900 } } };
+  assert.equal(entregar(body).accion, 'suscripcion_invalida');
 });
 
 // ─── X-Event-Name no está firmada: manda meta.event_name ─────────────────────
@@ -277,11 +303,11 @@ test('cabecera X-Event-Name cambiada a order_refunded sobre un order_created fir
   assert.equal(d.parsed.eventName, 'order_created');
 });
 
-test('cabecera order_created sobre un subscription_created firmado → evento_ignorado', () => {
-  const body = { meta: { event_name: 'subscription_created', test_mode: false }, data: { type: 'subscriptions', id: 77, attributes: { variant_id: 111 } } };
+test('cabecera order_created sobre un subscription_created firmado → manda el nombre firmado (suscripción, nunca orden)', () => {
+  const body = { meta: { event_name: 'subscription_created', test_mode: false }, data: { type: 'subscriptions', id: 77, attributes: { status: 'active', variant_id: 111 } } };
   const d = entregar(body, { cabecera: 'order_created' });
-  assert.equal(d.accion, 'evento_ignorado');
-  assert.equal(d.eventName, 'subscription_created');
+  assert.equal(d.accion, 'suscripcion');
+  assert.equal(d.sub.eventName, 'subscription_created');
 });
 
 test('sin meta.event_name en el cuerpo, la cabecera sirve de respaldo', () => {

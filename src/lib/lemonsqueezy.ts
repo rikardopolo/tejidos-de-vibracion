@@ -47,6 +47,10 @@ export async function createCheckout(opts: {
   email?: string;
   leadId?: string;
   productSlug: string;
+  /** Claves extra de `checkout_data.custom` (S-13: el custom firmado de la suscripción). */
+  custom?: Record<string, string>;
+  /** `expires_at` del checkout (ISO 8601). */
+  expiresAt?: string;
 }): Promise<CheckoutResult> {
   const apiKey = readEnv('LEMONSQUEEZY_API_KEY');
   const storeId = readEnv('LS_STORE_ID');
@@ -58,6 +62,8 @@ export async function createCheckout(opts: {
     email: opts.email,
     leadId: opts.leadId,
     productSlug: opts.productSlug,
+    custom: opts.custom,
+    expiresAt: opts.expiresAt,
   });
 
   try {
