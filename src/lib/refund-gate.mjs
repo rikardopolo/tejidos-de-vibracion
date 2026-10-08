@@ -27,11 +27,15 @@
  * emisor de tokens (el webhook de Lemon Squeezy) siempre lo incluye: un token de
  * compra sin orderId es forjado o de un formato que ya no circula.
  *
+ * REVOCAR = nivel 1, no 0 (corregido 18-sep-2026, F2). Un token de compra solo lo
+ * tiene quien ya se registró: perder la compra no borra el registro, así que el
+ * reembolsado conserva Obertura + Acto I. Devolver 0 lo expulsaba a visitante.
+ *
  * Lógica pura, testeable con `node --test`.
  *
  * @param {{ nivel: 2|3, slugs: string[] }} granted  acceso que otorga el token firmado
  * @param {{ orderId: string|null, hasClient: boolean, queryError: boolean, order: { status: string }|null }} ctx
- * @returns {{ nivel: 0|2|3, slugs: string[] }}
+ * @returns {{ nivel: 1|2|3, slugs: string[] }}
  */
 export function resolveRefundGate(granted, ctx) {
   if (!ctx.orderId) return revocado();
@@ -44,5 +48,5 @@ export function resolveRefundGate(granted, ctx) {
 // Objeto nuevo en cada llamada: devolver una constante compartida invita a que un
 // caller la mute y contamine la siguiente decisión.
 function revocado() {
-  return { nivel: 0, slugs: [] };
+  return { nivel: 1, slugs: [] };
 }

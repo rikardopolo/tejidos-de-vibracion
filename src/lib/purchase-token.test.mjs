@@ -26,6 +26,24 @@ test('round-trip nivel 3 sin slugs', () => {
   assert.equal(r.orderId, null);
 });
 
+test('token de suscripción: round-trip de subscriptionId con orderId null', () => {
+  const t = generatePurchaseToken(
+    { email: 'a@b.com', nivel: 2, slugs: ['suscripcion-libro'], subscriptionId: 'sub-uuid-1' },
+    S,
+  );
+  const r = verifyPurchaseToken(t, S);
+  assert.equal(r.valid, true);
+  assert.equal(r.subscriptionId, 'sub-uuid-1');
+  assert.equal(r.orderId, null);
+});
+
+test('un token de compra (sin subscriptionId) sigue valiendo y no se confunde con suscripción', () => {
+  const r = verifyPurchaseToken(generatePurchaseToken({ email: 'a@b.com', nivel: 2, slugs: [], orderId: '1' }, S), S);
+  assert.equal(r.valid, true);
+  assert.equal(r.subscriptionId, null);
+  assert.equal(r.orderId, '1');
+});
+
 test('firma con otro secret falla', () => {
   const t = generatePurchaseToken({ email: 'a@b.com', nivel: 2, slugs: [] }, S);
   assert.equal(verifyPurchaseToken(t, 'otro-secreto').valid, false);

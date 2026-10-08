@@ -59,6 +59,16 @@ function collectDeclaredSlugs(dir) {
   return found;
 }
 
+test('(c) suscripcion-libro delega la caducidad a la tabla; los 7 de pago único siguen permanentes', () => {
+  assert.deepEqual(SLUG_NIVEL['suscripcion-libro'], { nivel: 2, expira: null });
+  // Los slugs de pago único NO cambian con el pivote: acceso_expira_at = null sigue
+  // significando permanente. Si esta lista se mueve, alguien tocó lo que no debía.
+  const pagoUnico = ['acto-2', 'acto-3', 'bundle-normal', 'bundle-preventa', 'libro-completo', 'libro-epub', 'upgrade-libro'];
+  for (const slug of pagoUnico) assert.equal(SLUG_NIVEL[slug].expira, null, `${slug} sigue permanente`);
+  // CONTROL: el catálogo es exactamente los 7 de pago único + la suscripción; nada más se coló.
+  assert.deepEqual(Object.keys(SLUG_NIVEL).sort(), [...pagoUnico, 'suscripcion-libro'].sort());
+});
+
 test('(b) todo productoSlug declarado en contenido pertenece al catálogo', () => {
   const declared = collectDeclaredSlugs(contentDir);
   // No es obligatorio que haya alguno (Acto I no usa productoSlug); si los hay,

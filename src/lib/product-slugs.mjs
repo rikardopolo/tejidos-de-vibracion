@@ -23,6 +23,11 @@ export const SLUG_NIVEL = {
   'libro-completo': { nivel: 3, expira: null },
   'libro-epub': { nivel: 3, expira: null },
   'upgrade-libro': { nivel: 3, expira: null },
+  // Suscripción al libro (F2, 18-sep-2026): nivel 2 mientras se publica. `expira` NO
+  // es una fecha: la caducidad la decide la fila de `subscriptions` (status, ends_at,
+  // current_period_end) en cada petición —subscription-gate.mjs—, nunca el token ni
+  // `orders.acceso_expira_at`. Este slug no pasa por el webhook de orden de LS.
+  'suscripcion-libro': { nivel: 2, expira: null }, // ponytail: null a propósito — la caducidad vive en subscriptions y la lee el gate por subscriptionId; un valor no-fecha aquí rompería el webhook de órdenes de LS (acceso_expira_at es timestamptz)
 };
 
 /**

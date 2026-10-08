@@ -10,7 +10,10 @@ import assert from 'node:assert/strict';
 import { resolveRefundGate } from './refund-gate.mjs';
 
 const granted = { nivel: 2, slugs: ['bundle-preventa'] };
-const REVOCADO = { nivel: 0, slugs: [] };
+// Revocar = volver a nivel 1 (registro), NO a 0: un reembolsado sigue registrado y
+// conserva Obertura + Acto I. Con el código viejo (nivel 0) todo test que use
+// REVOCADO se pone en rojo: ese es el control negativo del arreglo.
+const REVOCADO = { nivel: 1, slugs: [] };
 const ok = (extra) => ({ orderId: 'o1', hasClient: true, queryError: false, order: null, ...extra });
 
 test('orden paid → mantiene el nivel del token', () => {
@@ -73,4 +76,14 @@ test('el resultado revocado no se comparte entre llamadas', () => {
 test('nivel 3 se conserva íntegro cuando la orden está paid', () => {
   const g3 = { nivel: 3, slugs: [] };
   assert.deepEqual(resolveRefundGate(g3, ok({ order: { status: 'paid' } })), g3);
+});
+
+// --- Bug corregido (F2, 18-sep-2026): revocar no puede bajar de nivel 1 ---
+
+test('revocar deja nivel 1, nunca 0: el reembolsado conserva Obertura + Acto I', () => {
+  // El token de compra solo lo tiene quien ya se registró (nivel 1). Perder la
+  // compra no borra el registro: el gate debe devolver 1, no expulsar a visitante.
+  const r = resolveRefundGate(granted, ok({ order: { status: 'refunded' } }));
+  assert.equal(r.nivel, 1);
+  assert.notEqual(r.nivel, 0);
 });

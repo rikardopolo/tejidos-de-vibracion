@@ -8,6 +8,12 @@
  *
  * Lógica pura, testeable con `node --test`. Firma HMAC-SHA256, comparación
  * timing-safe. TTL largo (1 año): el acceso pagado dura más que el de registro.
+ *
+ * Token de SUSCRIPCIÓN (F2, 18-sep-2026): mismo formato, con el claim `subscriptionId`
+ * (`u`, uuid de `subscriptions.id`) y `orderId` a null. Ese claim es la MARCA: si
+ * viene, gating.ts pregunta a `subscriptions` (subscription-gate.mjs) en vez de a
+ * `orders`. El TTL de 1 año no es la caducidad del acceso: la decide la fila en cada
+ * petición. Los tokens de compra emitidos antes no lo llevan y siguen valiendo.
  */
 import crypto from 'node:crypto';
 
@@ -17,7 +23,7 @@ const enc = (s) => Buffer.from(s, 'utf8').toString('base64url');
 const dec = (b) => Buffer.from(b, 'base64url').toString('utf8');
 
 /**
- * @param {{ email: string, nivel: 2|3, slugs: string[], orderId?: string|null }} claims
+ * @param {{ email: string, nivel: 2|3, slugs: string[], orderId?: string|null, subscriptionId?: string|null }} claims
  * @param {string} secret
  * @returns {string}
  */
@@ -27,6 +33,7 @@ export function generatePurchaseToken(claims, secret) {
     n: claims.nivel,
     s: Array.isArray(claims.slugs) ? claims.slugs : [],
     o: claims.orderId ?? null,
+    u: claims.subscriptionId ?? null,
     t: Date.now(),
   };
   const body = enc(JSON.stringify(payload));
@@ -37,7 +44,7 @@ export function generatePurchaseToken(claims, secret) {
 /**
  * @param {string} token
  * @param {string} secret
- * @returns {{valid:true,email:string,nivel:2|3,slugs:string[],orderId:string|null,issuedAt:number}|{valid:false,reason:'malformed'|'bad_signature'|'expired'}}
+ * @returns {{valid:true,email:string,nivel:2|3,slugs:string[],orderId:string|null,subscriptionId:string|null,issuedAt:number}|{valid:false,reason:'malformed'|'bad_signature'|'expired'}}
  */
 export function verifyPurchaseToken(token, secret) {
   if (typeof token !== 'string' || !secret) return { valid: false, reason: 'malformed' };
@@ -70,6 +77,7 @@ export function verifyPurchaseToken(token, secret) {
     nivel: payload.n,
     slugs: Array.isArray(payload.s) ? payload.s : [],
     orderId: payload.o ?? null,
+    subscriptionId: payload.u ?? null,
     issuedAt: payload.t,
   };
 }

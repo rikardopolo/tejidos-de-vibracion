@@ -6,6 +6,8 @@ interface ImportMetaEnv {
   readonly BREVO_TEMPLATE_DOI: string;
   readonly BREVO_TEMPLATE_BIENVENIDA: string;
   readonly BREVO_TEMPLATE_BUNDLE_PREVENTA: string;
+  readonly BREVO_TEMPLATE_SUB_IMPAGO: string;
+  readonly BREVO_TEMPLATE_SUB_CERRADA: string;
   readonly ACCESS_TOKEN_SECRET: string;
   readonly GATING_ACTIVO: string;
   readonly SUSCRIPCION_ACTIVA: string;
