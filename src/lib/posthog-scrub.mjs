@@ -26,7 +26,9 @@
  * falsy lo descartaría).
  */
 export function limpiarEvento(evento) {
-  var SENSIBLES = ['t', 'token', 'code', 'access_token', 'session'];
+  // `code` y `state`: el código de un solo uso y el state del salto portal → libro
+  // (`/auth/callback?code&state`, S-12).
+  var SENSIBLES = ['t', 'token', 'code', 'state', 'access_token', 'session'];
   if (!evento || !evento.properties) return evento;
   // Se recorren TODAS las propiedades, no una lista de nombres conocidos. La
   // primera versión enumeraba cuatro (`$current_url`, `$referrer` y los dos

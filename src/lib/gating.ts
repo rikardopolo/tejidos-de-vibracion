@@ -3,7 +3,8 @@
  *
  * Niveles (Guía Estratégica · escalera de compromiso):
  *   0 = visitante          → fragmento 20-30% + BloqueRegistro
- *   1 = tejedor registrado → Obertura + Acto I (token de registro · token.ts)
+ *   1 = tejedor registrado → Obertura + Acto I (token de registro · token.ts,
+ *                            o sesión del libro `__Host-tdv_sesion` · S-12)
  *   2 = comprador          → + Cap. 4 + Acto II/III (token de compra · purchase-token.mjs)
  *   3 = libro completo     → + objeto terminado / acceso permanente
  */
@@ -13,6 +14,8 @@ import { verifyAccessToken } from './token';
 import { verifyPurchaseToken, looksLikePurchaseToken } from './purchase-token.mjs';
 import { resolveRefundGate } from './refund-gate.mjs';
 import { getServerClient } from './supabase';
+import { leerSesionTdv } from './cuenta-tdv';
+import { conSesionTdv } from './gate-decision.mjs';
 
 export type Nivel = 0 | 1 | 2 | 3;
 
@@ -31,8 +34,26 @@ function readEnv(key: string): string | undefined {
   return undefined;
 }
 
-/** Nivel + scope (slugs comprados) leídos y verificados desde la cookie. */
+/**
+ * Nivel + scope (slugs comprados) leídos y verificados desde las cookies.
+ *
+ * Nivel 1 por dos caminos: el token de `tejedor-access` (boletín, sigue valiendo
+ * de forma indefinida, D13) o, con `TDV_SESION_ENABLED`, una `__Host-tdv_sesion`
+ * válida (S-12). La sesión se comprueba por firma y caducidad, SIN consultar la
+ * base ni el epoch: tras «cerrar en todos» una sesión ya emitida sigue dando el
+ * nivel 1 hasta caducar (riesgo aceptado, ver `leerSesionTdv`). El nivel 2 por
+ * sesión llega en S-13, y ese sí compara el epoch.
+ */
 export function getAcceso(cookies: AstroCookies): { nivel: Nivel; slugs: string[] } {
+  const porToken = accesoPorToken(cookies);
+  // Con nivel ≥ 1 por el token, la sesión no añade nada: ni se verifica.
+  if (porToken.nivel >= 1) return porToken;
+  // Con el interruptor apagado `leerSesionTdv` devuelve null: nada cambia.
+  return conSesionTdv(porToken, leerSesionTdv(cookies) !== null);
+}
+
+/** Nivel + scope desde `tejedor-access` (token de registro o de compra). */
+function accesoPorToken(cookies: AstroCookies): { nivel: Nivel; slugs: string[] } {
   const secret = readEnv('ACCESS_TOKEN_SECRET');
   if (!secret) return { nivel: 0, slugs: [] };
 

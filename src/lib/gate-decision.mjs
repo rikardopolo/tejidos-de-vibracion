@@ -26,3 +26,18 @@ export function puedeAcceder(acceso, nivelRequerido, slugRequerido) {
   if (slugRequerido) return Array.isArray(acceso.slugs) && acceso.slugs.includes(slugRequerido);
   return true;
 }
+
+/**
+ * Suma la sesión del libro (`__Host-tdv_sesion`, S-12) al acceso del token: la
+ * sesión solo SUBE a un visitante al nivel 1, sin slugs. Nunca baja un nivel que
+ * ya da el token ni añade producto: el nivel 2 por sesión llega en S-13, con la
+ * consulta a la base.
+ *
+ * @param {{ nivel: 0|1|2|3, slugs: string[] }} porToken  Acceso de `tejedor-access`.
+ * @param {boolean} haySesion  ¿Hay una sesión del libro válida (firma y caducidad)?
+ * @returns {{ nivel: 0|1|2|3, slugs: string[] }}
+ */
+export function conSesionTdv(porToken, haySesion) {
+  if (porToken.nivel >= 1 || !haySesion) return porToken;
+  return { nivel: 1, slugs: [] };
+}

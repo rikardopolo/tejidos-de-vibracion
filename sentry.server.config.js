@@ -12,8 +12,9 @@
 import * as Sentry from '@sentry/astro';
 
 // Query params que transportan tokens: t = token de registro (/bienvenido?t=) y
-// de compra (/acceso?t=). Nunca deben llegar a Sentry.
-const QUERY_SENSIBLE = ['t', 'token', 'code', 'access_token', 'session'];
+// de compra (/acceso?t=); code y state = salto portal → libro (/auth/callback,
+// S-12). Nunca deben llegar a Sentry.
+const QUERY_SENSIBLE = ['t', 'token', 'code', 'state', 'access_token', 'session'];
 const HEADER_SENSIBLE = /^(authorization|proxy-authorization|cookie|x-api-key|x-auth-token|x-signature)$/i;
 
 function limpiarUrl(urlLike) {

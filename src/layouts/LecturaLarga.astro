@@ -11,6 +11,7 @@ import BookHeader from '../components/BookHeader.astro';
 import BookFooter from '../components/BookFooter.astro';
 import BookToc from '../components/book/BookToc.astro';
 import ReaderControls from '../components/book/ReaderControls.astro';
+import CuentaTdv from '../components/book/CuentaTdv.astro';
 import { getNivel, gatingActivo } from '@/lib/gating';
 
 interface Props {
@@ -43,6 +44,9 @@ const nivel = gatingActivo() ? getNivel(Astro.cookies) : 1;
   <BookHeader />
 
   <div class="progress-rail" id="progress-rail" aria-hidden="true"></div>
+
+  {/* S-12 · «Entraste como r***@…» + Salir. Solo con sesión del libro. */}
+  <CuentaTdv variante="barra" />
 
   <main id="main-content" tabindex="-1">
     <slot />

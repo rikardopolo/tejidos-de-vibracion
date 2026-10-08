@@ -6,3 +6,8 @@ export function puedeAcceder(
   nivelRequerido: Nivel,
   slugRequerido?: string | null,
 ): boolean;
+
+export function conSesionTdv(
+  porToken: { nivel: Nivel; slugs: string[] },
+  haySesion: boolean,
+): { nivel: Nivel; slugs: string[] };

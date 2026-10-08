@@ -14,6 +14,9 @@ interface ImportMetaEnv {
   readonly LS_STORE_ID: string;
   readonly LS_VARIANT_BUNDLE_PREVENTA: string;
   readonly LS_WEBHOOK_SECRET: string;
+  readonly TDV_SESION_ENABLED: string;
+  readonly TDV_SESSION_SECRET: string;
+  readonly PORTAL_AUTORIZAR_URL: string;
   readonly PUBLIC_SITE_URL: string;
   readonly SITE_URL: string;
 }

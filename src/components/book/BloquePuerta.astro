@@ -13,6 +13,7 @@
  *   subtitulo?: string — texto del cuerpo override
  */
 import FormularioTejedor from './FormularioTejedor.astro';
+import CuentaTdv from './CuentaTdv.astro';
 
 export interface Props {
   tipo: 'obertura' | 'cap-espera' | 'cap-bloqueado' | 'obertura-pieza';
@@ -85,6 +86,9 @@ const formId = `form-tejedor-puerta-${tipo}`;
     <div class="bloque-puerta__form">
       <FormularioTejedor id={formId} variant="inline" />
       {notaPie && <p class="bloque-puerta__nota">{notaPie}</p>}
+      {/* S-12 · «Entrar» / «Crear cuenta» por el salto al portal. Solo con
+          TDV_SESION_ENABLED y en páginas bajo demanda (CuentaTdv lo decide). */}
+      <CuentaTdv variante="puerta" />
     </div>
   )}
 
