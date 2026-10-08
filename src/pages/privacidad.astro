@@ -1,6 +1,42 @@
 ---
+/**
+ * Política de privacidad (S-15 · plan v2 §7.8 y §7.4). PROPUESTA: los textos los
+ * aprueban Ricardo y el abogado (D11) antes del merge. Cubre los dos sitios; la tabla
+ * de cookies es la del LIBRO (la del portal vive en su propia /privacidad).
+ * Al publicar: poner en «Última actualización» la fecha real de publicación, y
+ * avisar por correo (la sección 9 lo promete para cambios materiales).
+ */
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import LitLink from '@/components/book/LitLink.astro';
+import { SESION_COOKIE, STATE_COOKIE } from '@/lib/sesion-tdv.mjs';
+
+/** Cookies del libro (grep de `cookies.set` en src/ y la de PostHog, que pone su JS). */
+const COOKIES = [
+  {
+    nombre: 'tejedor-access',
+    para: 'Recordar que confirmaste tu correo —o que compraste acceso— y abrirte las páginas que te corresponden.',
+    dura: '30 días si te registraste; 1 año si llegó con un enlace de compra',
+    necesaria: 'Sí',
+  },
+  {
+    nombre: SESION_COOKIE,
+    para: 'Mantener abierta tu sesión del libro cuando entras con tu cuenta de Tejidos de Realidad.',
+    dura: '30 días desde que entras (no se alarga al usarla), o hasta que pulses «Salir»',
+    necesaria: 'Sí',
+  },
+  {
+    nombre: STATE_COOKIE,
+    para: 'Proteger el viaje al portal cuando pulsas «Entrar»: comprueba que la vuelta la empezaste tú. Se borra al volver.',
+    dura: '10 minutos',
+    necesaria: 'Sí',
+  },
+  {
+    nombre: 'ph_…_posthog',
+    para: 'Analítica de uso (PostHog): distinguir una visita de otra para medir el uso de forma agregada.',
+    dura: '1 año',
+    necesaria: 'No',
+  },
+];
 ---
 
 <LecturaLarga
@@ -27,8 +63,13 @@ import LitLink from '@/components/book/LitLink.astro';
 
       <h2 class="title-3">3. Qué datos recogemos</h2>
       <ul class="legal-list">
-        <li>Correo y nombre cuando te registras para leer el libro, recibir el boletín, o para acceder a las tiradas profundas del Tarot. Tu dirección se guarda en nuestro proveedor de correo (Brevo), encriptada en tránsito y en reposo, asociada al hecho de que lo pediste. Confirmamos tu correo con un enlace de verificación antes de activarte.</li>
-        <li>Tu avance de lectura, cuando lees el libro. El sitio registra de forma propia —sin terceros, sin redes publicitarias— qué piezas de la Obertura y qué secciones de los capítulos abres, y hasta dónde llegas. Lo hacemos para una sola cosa: entender qué partes del libro funcionan y cuáles conviene revisar. Queda asociado a tu suscripción y lo aceptas en la casilla del formulario.</li>
+        <li>Tu correo y, si quieres, tu nombre, cuando te registras en el libro para leer, para recibir las Cartas del Tejedor o para acceder a las tiradas profundas del Tarot. El nombre es opcional: solo lo usamos para saludarte. Confirmamos tu correo con un enlace de verificación antes de activarte. Si pides las Cartas, tu dirección se guarda además en nuestro proveedor de correo (Brevo), cifrada en tránsito y en reposo, asociada al hecho de que las pediste; si no las pides, Brevo solo la usa para enviarte el enlace de confirmación.</li>
+        <li>La autorización que nos diste: el texto exacto de cada casilla que marcaste, su versión y la fecha, junto con el navegador desde el que lo hiciste y una huella derivada de tu conexión (no la dirección IP en claro). Es la prueba de tu autorización que nos pide la ley. Las dos casillas aparecen sin marcar: la autorización es obligatoria para registrarte; las Cartas, opcionales.</li>
+        <li>Tu cuenta, si la creas en tejidosderealidad.com (es la misma para el portal y para el libro): tu correo, tu nombre si nos lo das, la autorización que aceptaste con su versión y su fecha, y los métodos con los que entras (código por correo, llave de acceso, Google o contraseña). Si creas una contraseña, nunca la guardamos: solo un hash, una huella a partir de la cual no se puede recuperar. Lo mismo hacemos con tus códigos de respaldo. De una llave de acceso guardamos solo su parte pública.</li>
+        <li>Si entras con Google, Google nos comunica tu nombre, tu correo, si ese correo está verificado y un identificador de tu cuenta de Google. Solo pedimos esos datos básicos (los permisos <em>openid</em>, <em>email</em> y <em>profile</em>); no guardamos los tokens de acceso de Google ni podemos ver nada más de tu cuenta. Pulsar «Continuar con Google» no reemplaza tu autorización: te la pedimos aparte, en su casilla. Puedes desvincular Google desde «Mi cuenta».</li>
+        <li>La sesión del libro. Cuando entras al libro con tu cuenta, el libro te lleva a tejidosderealidad.com para identificarte y vuelve con un código de un solo uso que caduca en un minuto. Desde ese momento, una cookie del libro guarda, firmados, el identificador de tu cuenta, cómo entraste, tu correo enmascarado (por ejemplo, a***@gmail.com) y el nivel de lectura que te corresponde, para mantenerte dentro hasta 30 días. El libro no recibe tu contraseña ni tus datos de Google.</li>
+        <li>Tu avance de lectura, cuando lees el libro. El sitio registra de forma propia —sin terceros, sin redes publicitarias— qué piezas de la Obertura y qué secciones de los capítulos abres, y hasta dónde llegas. Lo hacemos para una sola cosa: entender qué partes del libro funcionan y cuáles conviene revisar. Queda asociado a tu registro, y es una de las finalidades que autorizas en la casilla obligatoria del formulario.</li>
+        <li>Tus compras y tu suscripción, si pagas: el correo y el nombre con los que pagas, el producto o el plan, el importe y la moneda, el estado del pago o de la suscripción y el aviso que nos envía Lemon Squeezy. Los datos completos de tu tarjeta nunca nos llegan: como mucho, Lemon Squeezy nos indica la marca y los cuatro últimos dígitos.</li>
         <li>Tus lecturas de Tarot, si eres usuario registrado con acceso a las tiradas que se guardan. Conservamos la tirada, las cartas, la intención que ofreciste y la lectura generada, para que puedas releerlas en tu espacio personal. Las identificamos mediante un código derivado de tu correo, no por tu nombre ni tu correo en texto legible.</li>
         <li>Tus notas personales, cuando anotas sobre una lectura. Las guardamos como las escribiste, asociadas a esa lectura.</li>
         <li>Datos de tu carta astral, si la generas: los datos de nacimiento que introduces y la carta resultante.</li>
@@ -47,29 +88,56 @@ import LitLink from '@/components/book/LitLink.astro';
       </ul>
 
       <h2 class="title-3">5. Cookies</h2>
-      <p class="no-indent">El sitio usa cookies técnicas —no de seguimiento publicitario— para recordar que confirmaste tu correo y abrirte el contenido al que tienes acceso (el libro, las tiradas guardadas). No se comparten con terceros.</p>
+      <p class="no-indent">El libro usa cookies técnicas —no de seguimiento publicitario— para recordar que confirmaste tu correo, mantener tu sesión y abrirte el contenido al que tienes acceso, y una de analítica (PostHog). Las técnicas no se comparten con terceros; la de analítica solo la usa PostHog, nuestro proveedor, para la medición agregada que describimos arriba. Estas son las de tejidosdevibracion.com; las del portal están en su propia política, en <a href="https://tejidosderealidad.com/privacidad">tejidosderealidad.com/privacidad</a>.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Cookie</th>
+            <th scope="col">Para qué sirve</th>
+            <th scope="col">Cuánto dura</th>
+            <th scope="col">¿Necesaria?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {COOKIES.map((c) => (
+            <tr>
+              <td><code>{c.nombre}</code></td>
+              <td>{c.para}</td>
+              <td>{c.dura}</td>
+              <td>{c.necesaria}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <p>Las tres necesarias son propias del libro y están protegidas: el código de la página no puede leerlas, solo viajan por conexión cifrada y no acompañan a las peticiones que otros sitios hagan por su cuenta, solo a tu propia navegación hasta el libro. Si las borras, el libro te pedirá de nuevo tu correo o que vuelvas a entrar. La de PostHog no es imprescindible: si la bloqueas en tu navegador, el libro funciona igual.</p>
+      <p>Además, sin usar cookies, tu navegador guarda tus preferencias de lectura (tamaño de letra y modo noche) hasta que las borres, un identificador de sesión de lectura que se renueva cada 24 horas y, solo mientras dura la visita, la campaña por la que llegaste, si viniste desde una de nuestras piezas. El identificador de sesión acompaña a tu avance de lectura, y la campaña, a tu registro.</p>
 
       <h2 class="title-3">6. Proveedores que procesan datos por nosotros</h2>
       <ul class="legal-list">
         <li>Supabase · base de datos (São Paulo, sa-east-1).</li>
-        <li>Brevo · envío de correo transaccional y boletín.</li>
+        <li>Brevo · envío del correo de confirmación y, si las pides, de las Cartas del Tejedor.</li>
         <li>PostHog · analítica (UE cloud).</li>
         <li>Vercel · hosting y entrega.</li>
-        <li>Lemon Squeezy · procesamiento de pagos, cuando adquieres contenido o acceso de pago.</li>
+        <li>Cloudflare · comprobación anti-abuso (Turnstile) en la pantalla de entrada de tejidosderealidad.com, para frenar el uso automatizado.</li>
+        <li>Lemon Squeezy · vende el acceso de pago en nuestro nombre como comerciante registrado (<em>merchant of record</em>): cobra, emite la factura y gestiona los impuestos de la venta. Recibe directamente los datos de tu tarjeta —nosotros nunca los vemos— y trata tus datos de pago según su propia política de privacidad. Nos comunica lo necesario para darte acceso: tu correo, tu nombre, el producto y el estado del pago o de la suscripción.</li>
       </ul>
 
       <h2 class="title-3">7. Tus derechos</h2>
-      <p class="no-indent">En Colombia, la Ley 1581 de 2012 te da derecho a saber qué datos tuyos tenemos, corregirlos, pedir que los borremos, y oponerte a su tratamiento. Para ejercer cualquiera de esos derechos, escribe a <a href="mailto:contacto@tejidosderealidad.com">contacto@tejidosderealidad.com</a>. Respondemos dentro de los plazos que la ley exige: quince días hábiles para consultas, diez para reclamos. Cada correo que enviamos incluye además un enlace directo de baja.</p>
+      <p class="no-indent">En Colombia, la Ley 1581 de 2012 te da derecho a saber qué datos tuyos tenemos, corregirlos, pedir que los borremos, revocar la autorización que nos diste y oponerte a su tratamiento. Para ejercer cualquiera de esos derechos, escribe a <a href="mailto:contacto@tejidosderealidad.com">contacto@tejidosderealidad.com</a>. Respondemos dentro de los plazos que la ley exige: diez días hábiles para consultas y quince para reclamos. Cada correo que enviamos incluye además un enlace directo de baja.</p>
+      <p>Si tienes cuenta, en «Mi cuenta» (<a href="https://tejidosderealidad.com/cuenta">tejidosderealidad.com/cuenta</a>) puedes descargar tus datos y borrar tu cuenta tú mismo.</p>
       <p>Sobre tus lecturas: desde tu espacio personal puedes borrar una lectura concreta (con sus notas) o borrar todo tu archivo de lecturas cuando quieras. El borrado es inmediato y no se puede deshacer.</p>
 
       <h2 class="title-3">8. Conservación</h2>
-      <p class="no-indent">Mantenemos tus datos mientras sigas suscrito. Si te das de baja, los marcamos como inactivos y los borramos tras 24 meses salvo obligación legal en contrario. Tus lecturas y notas se conservan mientras mantengas tu acceso; las borras tú cuando quieras desde tu espacio personal, o nos lo pides por correo.</p>
+      <p class="no-indent">Mantenemos tus datos mientras sigas registrado o mantengas tu cuenta. Si te das de baja, los marcamos como inactivos y los borramos tras 24 meses salvo obligación legal en contrario. La prueba de tu autorización se conserva mientras tratemos tus datos. Tus lecturas y notas se conservan mientras mantengas tu acceso; las borras tú cuando quieras desde tu espacio personal, o nos lo pides por correo.</p>
+      <p>Si cancelas tu suscripción o borras tu cuenta, conservamos el registro de tus compras y de tus facturas durante el tiempo que exigen las normas contables y tributarias, ya sin asociarlo a tu cuenta. Borrar la cuenta cancela antes tu suscripción en Lemon Squeezy, para que no se te vuelva a cobrar.</p>
 
       <h2 class="title-3">9. Cambios a esta política</h2>
       <p class="no-indent">Si esta política cambia en algo material, te lo comunicamos por correo y lo reflejamos en esta página con la fecha nueva.</p>
     </section>
 
-    <p class="meta section-gap">Última actualización · 27 de junio de 2026</p>
+    <p class="meta section-gap">Última actualización · 7 de octubre de 2026</p>
 
     <p class="mt-4 mb-6">
       <LitLink href="/" size="secondary">Volver a la portada</LitLink>
@@ -92,5 +160,11 @@ import LitLink from '@/components/book/LitLink.astro';
   }
   .legal-list li::marker {
     color: var(--oro-suave);
+  }
+  /* Nombres de cookie: largos y sin espacios (`__Host-tdv_sesion`); que partan
+     antes de desbordar la celda en móvil. */
+  td code {
+    overflow-wrap: anywhere;
+    font-size: 0.85em;
   }
 </style>

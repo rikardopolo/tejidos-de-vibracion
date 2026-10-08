@@ -1,8 +1,20 @@
 ---
 /**
- * FormularioTejedor.astro — Captura nombre + correo + consentimiento + honeypot.
- * Form de registro CANÓNICO del sitio (usado en /recibir, gate de Obertura y
- * pre-venta). Envía POST al endpoint indicado vía /formulario-tejedor.js.
+ * FormularioTejedor.astro — Registro gratis del libro: correo, nombre OPCIONAL y dos
+ * casillas SIN marcar (S-15 · plan v2 §3.1 paso 3 y §7.8, D11 y D12):
+ *   1. autorización de tratamiento de datos (obligatoria);
+ *   2. recibir las Cartas del Tejedor (opcional).
+ * Form de registro CANÓNICO del sitio (gate de la Obertura, /recibir, capítulos
+ * cerrados). Envía POST JSON al endpoint vía /formulario-tejedor.js (script externo:
+ * la CSP es `script-src 'self'`).
+ *
+ * Los textos de las casillas salen de `CONSENT_TEXT_LIBRO` (lib/alta-libro.mjs), el
+ * mismo sitio del que el endpoint toma la evidencia que guarda: lo que se ve es lo que
+ * se guarda. Por eso ya no hay prop `consentText`.
+ *
+ * Accesibilidad: cada control con su `<label for>`; cada error en su `<p>` enlazado
+ * con `aria-describedby`; el botón NUNCA se deshabilita: se valida al enviar, se dice
+ * qué falta y el foco va al primer campo con error.
  *
  * Props:
  *   id: para distinguir múltiples instancias en una misma página (default "form-tejedor")
@@ -10,45 +22,74 @@
  *   endpoint: API destino (default "/api/leads/libro" · DOI flow en Brevo)
  *   submitText: texto del botón (default "Entrar al tejido")
  *   successText: mensaje tras envío exitoso
- *   consentText: prefijo del consentimiento (antes del enlace a privacidad)
  */
+import { CONSENT_TEXT_LIBRO, CORREO_MAX, NOMBRE_MAX, partirEnlace } from '@/lib/alta-libro.mjs';
+
 export interface Props {
   id?: string;
   variant?: 'inline' | 'page';
   endpoint?: string;
   submitText?: string;
   successText?: string;
-  consentText?: string;
 }
 const {
   id = 'form-tejedor',
   variant = 'inline',
   endpoint = '/api/leads/libro',
   submitText = 'Entrar al tejido',
-  successText = 'Revisa tu correo. Te enviamos un link para confirmar.',
-  consentText = 'Acepto recibir por correo los avisos de nuevos capítulos y las cartas del Tejedor, y que se registre mi avance de lectura para mejorar el libro. Conozco la',
+  successText = 'Revisa tu correo. Te enviamos un enlace para confirmar.',
 } = Astro.props;
+
+const autorizacion = partirEnlace(CONSENT_TEXT_LIBRO.autorizacion.texto);
+const ids = {
+  nombre: `${id}-nombre`,
+  correo: `${id}-correo`,
+  autorizacion: `${id}-autorizacion`,
+  cartas: `${id}-cartas`,
+};
+const err = (campo: string) => `${id}-${campo}-error`;
 ---
 
 <form id={id} class={`form-tejedor form-tejedor--${variant}`} novalidate
       data-tejedor-form data-endpoint={endpoint} data-submit-text={submitText}
       data-success-text={successText}>
-  <label class="form-tejedor__field">
-    <span class="form-tejedor__label">Nombre</span>
-    <input type="text" name="nombre" required minlength="2" maxlength="100"
-           placeholder="tu nombre" autocomplete="given-name" />
-  </label>
+  <div class="form-tejedor__field">
+    <label class="form-tejedor__label" for={ids.nombre}>
+      Nombre <span class="form-tejedor__opcional">(opcional)</span>
+    </label>
+    <input id={ids.nombre} type="text" name="nombre" maxlength={NOMBRE_MAX}
+           placeholder="tu nombre" autocomplete="given-name"
+           aria-describedby={err('nombre')} />
+    <p class="form-tejedor__error" id={err('nombre')} data-error-for="nombre"></p>
+  </div>
 
-  <label class="form-tejedor__field">
-    <span class="form-tejedor__label">Correo</span>
-    <input type="email" name="correo" required maxlength="254"
-           placeholder="tu correo" autocomplete="email" />
-  </label>
+  <div class="form-tejedor__field">
+    <label class="form-tejedor__label" for={ids.correo}>Correo</label>
+    <input id={ids.correo} type="email" name="correo" required maxlength={CORREO_MAX}
+           placeholder="tu correo" autocomplete="email" autocapitalize="none" spellcheck="false"
+           aria-describedby={err('correo')} />
+    <p class="form-tejedor__error" id={err('correo')} data-error-for="correo"></p>
+  </div>
 
-  <label class="form-tejedor__consent">
-    <input type="checkbox" name="acepto" required />
-    <span>{consentText} <a href="/privacidad" class="lit-link">política de privacidad</a>.</span>
-  </label>
+  <div class="form-tejedor__field">
+    <div class="form-tejedor__consent">
+      <input id={ids.autorizacion} type="checkbox" name="autorizacion" required
+             aria-describedby={err('autorizacion')} />
+      <label for={ids.autorizacion}>
+        {autorizacion.enlace ? (
+          <>{autorizacion.antes}<a href="/privacidad" class="lit-link">{autorizacion.enlace}</a>{autorizacion.despues}</>
+        ) : (
+          CONSENT_TEXT_LIBRO.autorizacion.texto
+        )}
+      </label>
+    </div>
+    <p class="form-tejedor__error" id={err('autorizacion')} data-error-for="autorizacion"></p>
+  </div>
+
+  <div class="form-tejedor__consent">
+    <input id={ids.cartas} type="checkbox" name="cartas" />
+    <label for={ids.cartas}>{CONSENT_TEXT_LIBRO.cartas.texto}</label>
+  </div>
 
   <input type="text" name="website" tabindex="-1" autocomplete="off"
          aria-hidden="true" class="form-tejedor__honeypot" />
@@ -56,10 +97,10 @@ const {
   <button type="submit" class="form-tejedor__submit">{submitText}</button>
 
   <p class="form-tejedor__nota">
-    Sin spam. Sin venta de datos. Cada correo trae link de baja con un click.
+    Sin spam. Sin venta de datos. Cada correo trae un enlace para darte de baja con un clic.
   </p>
-
-  <p class={`form-tejedor__status form-tejedor__status--${id}`} role="status" aria-live="polite" data-status-for={id}></p>
 </form>
+{/* Fuera del <form>: tras el éxito el form se oculta (`.is-sent`) y el aviso debe seguir a la vista. */}
+<p class={`form-tejedor__status form-tejedor__status--${id}`} role="status" aria-live="polite" data-status-for={id}></p>
 
 <script src="/formulario-tejedor.js" defer></script>

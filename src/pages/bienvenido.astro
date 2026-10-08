@@ -3,6 +3,7 @@ import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import { verifyAccessToken } from '@/lib/token';
 import { addContactToList } from '@/lib/brevo';
 import { getServerClient } from '@/lib/supabase';
+import { cartasVigentes } from '@/lib/alta-libro.mjs';
 
 export const prerender = false;
 
@@ -40,6 +41,27 @@ const tokenResult =
 type Estado = 'pending' | 'confirmado' | 'caducado';
 const estado: Estado = tokenResult.valid ? (isPost ? 'confirmado' : 'pending') : 'caducado';
 
+const supabase = tokenResult.valid ? getServerClient() : null;
+
+// ¿Pidió las Cartas del Tejedor? (S-15) Lo dice la evidencia guardada en `leads` al
+// registrarse —la casilla opcional—, nunca el enlace; y una baja posterior
+// (`unsubscribed_at`) la revoca. Sin evidencia legible (sin base, error o sin fila)
+// NO se suscribe a nadie: el acceso se abre igual.
+let conCartas = false;
+if (tokenResult.valid && supabase) {
+  try {
+    const { data, error } = await supabase
+      .from('leads')
+      .select('consent_text, unsubscribed_at')
+      .eq('email', tokenResult.email)
+      .maybeSingle();
+    if (error) console.error('[bienvenido] lectura de la evidencia:', error.message);
+    else conCartas = cartasVigentes(data);
+  } catch (err) {
+    console.error('[bienvenido] lectura de la evidencia threw:', err instanceof Error ? err.name : 'unknown');
+  }
+}
+
 // ── Sellado · SOLO en POST con token válido ───────────────────────────────
 if (estado === 'confirmado' && tokenResult.valid) {
   const emailConfirmado = tokenResult.email;
@@ -54,7 +76,6 @@ if (estado === 'confirmado' && tokenResult.valid) {
 
   // Sellar la confirmación del DOI en la Supabase unificada (best-effort, idempotente).
   // `is confirmed_at null` evita re-sellar o duplicar el evento si reenvía el form.
-  const supabase = getServerClient();
   if (supabase) {
     try {
       const { data: confirmedLead } = await supabase
@@ -77,10 +98,11 @@ if (estado === 'confirmado' && tokenResult.valid) {
     }
   }
 
-  // Alta en la lista del libro → dispara el workflow de bienvenida en Brevo.
+  // Alta en la lista del libro → dispara el workflow de bienvenida en Brevo (las
+  // Cartas). SOLO si las pidió: con la casilla desmarcada no hay suscripción.
   const apiKey = readEnv('BREVO_API_KEY');
   const listIdRaw = readEnv('BREVO_LISTA_LIBRO');
-  if (apiKey && listIdRaw) {
+  if (conCartas && apiKey && listIdRaw) {
     const listId = Number(listIdRaw);
     if (!Number.isNaN(listId)) {
       const added = await addContactToList({ email: emailConfirmado, listId, apiKey });
@@ -116,7 +138,7 @@ const DESC: Record<Estado, string> = {
         <div class="prose">
           <p class="no-indent">
             Tu enlace es válido. Falta un gesto tuyo — el que cruza el umbral. Al confirmar, la Obertura
-            del libro se abre para ti, y la primera carta del Tejedor se pone en camino.
+            del libro se abre para ti{conCartas ? ', y la primera carta del Tejedor se pone en camino.' : '.'}
           </p>
         </div>
 
@@ -141,10 +163,12 @@ const DESC: Record<Estado, string> = {
             Tu correo está confirmado. La Obertura del libro está abierta para ti, y al final del
             recorrido, el primer movimiento del Capítulo 1 te espera.
           </p>
-          <p>
-            Si la primera carta del Tejedor nunca llega — revisa la carpeta de promociones o spam.
-            A veces los correos del tejido se pierden en el ruido del mundo.
-          </p>
+          {conCartas && (
+            <p>
+              Si la primera carta del Tejedor nunca llega — revisa la carpeta de promociones o spam.
+              A veces los correos del tejido se pierden en el ruido del mundo.
+            </p>
+          )}
         </div>
 
         <div class="center mt-4">

@@ -1428,6 +1428,29 @@ html[data-reader-mode="night"] body[data-nivel="0"] .corte-tejedor {
 
 .form-tejedor input:focus { border-color: var(--oro); }
 
+/* S-15 · nombre opcional y errores por campo (enlazados con aria-describedby).
+   El error nunca va solo en color: siempre hay texto. */
+.form-tejedor { --form-error: #9b2c2c; }
+html[data-reader-mode="night"] .form-tejedor { --form-error: #f0a8a0; }
+
+.form-tejedor__opcional {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+}
+
+.form-tejedor__error {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--form-error);
+}
+.form-tejedor__error:empty { display: none; }
+
+.form-tejedor input[aria-invalid="true"] { border-color: var(--form-error); }
+.form-tejedor__consent input[aria-invalid="true"] { outline: 2px solid var(--form-error); outline-offset: 2px; }
+
 .form-tejedor__consent {
   display: flex;
   align-items: flex-start;

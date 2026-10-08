@@ -1,25 +1,26 @@
 import type { APIRoute } from 'astro';
-import {
-  leadSchema,
-  upsertContact,
-  sendTransactionalEmail,
-  hashIp,
-  isRateLimited,
-} from '@/lib/brevo';
+import { upsertContact, sendTransactionalEmail, hashIp, isRateLimited } from '@/lib/brevo';
 import { generateAccessToken } from '@/lib/token';
 import { getServerClient } from '@/lib/supabase';
 import { getGeo } from '@/lib/geo';
 import { utmsSaneadas } from '@/lib/utm.mjs';
-import { camposDeAlta } from '@/lib/lead-alta.mjs';
+import { registrarAltaLibro, validarAltaLibro } from '@/lib/alta-libro.mjs';
 
 export const prerender = false;
 
 /**
- * Texto literal del consentimiento mostrado en el checkbox de FormularioTejedor
- * (evidencia legal · Ley 1581/2012). Debe coincidir con lo que el usuario ve.
+ * POST /api/leads/libro · registro gratis del libro (boletín opcional + nivel 1).
+ *
+ * Toda la decisión vive en `lib/alta-libro.mjs` (probada con `node --test`):
+ *  - esquema zod 3 PROPIO (`altaLibroSchema`): correo, nombre opcional, autorización
+ *    obligatoria (`true`) y Cartas opcional;
+ *  - `CONSENT_TEXT_LIBRO`, partido en dos (autorización y Cartas), con su versión: es
+ *    la evidencia legal (Ley 1581/2012) y el formulario lo pinta desde el mismo sitio;
+ *  - un lead que ya existe no se reescribe: solo se le reenvía el enlace;
+ *  - sin la casilla de las Cartas no se crea contacto de marketing ni se suscribe;
+ *  - saludo neutro sin nombre (parámetro `SALUDO` de la plantilla).
+ * Aquí solo: método y content-type, límite por IP, entorno y la E/S real.
  */
-const CONSENT_TEXT_LIBRO =
-  'Acepto recibir por correo los avisos de nuevos capítulos y las cartas del Tejedor, y que se registre mi avance de lectura para mejorar el libro. Conozco la política de privacidad.';
 
 const readEnv = (key: string): string | undefined => {
   if (typeof process !== 'undefined' && process.env) {
@@ -31,46 +32,31 @@ const readEnv = (key: string): string | undefined => {
   return undefined;
 };
 
+const json = (status: number, body: unknown, headers: Record<string, string> = {}) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...headers },
+  });
+
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   // Solo aceptar JSON
   const ct = request.headers.get('content-type') || '';
-  if (!ct.includes('application/json')) {
-    return new Response(JSON.stringify({ error: 'invalid_content_type' }), { status: 415 });
-  }
+  if (!ct.includes('application/json')) return json(415, { error: 'invalid_content_type' });
 
   let body: unknown;
   try { body = await request.json(); }
-  catch { return new Response(JSON.stringify({ error: 'invalid_json' }), { status: 400 }); }
+  catch { return json(400, { error: 'invalid_json' }); }
 
-  // Fuera del esquema a propósito: `leadSchema` valida el LEAD y lo comparten otros
-  // endpoints; las UTMs son metadato de atribución y no deben poder invalidar un alta.
-  // `z.object()` descarta las claves extra, así que hay que leerlas del cuerpo crudo.
+  // Fuera del esquema a propósito: las UTMs son metadato de atribución y no deben poder
+  // invalidar un alta. `z.object()` descarta las claves extra: se leen del cuerpo crudo.
   const utms = utmsSaneadas((body as Record<string, unknown> | null)?.utm);
 
-  const parsed = leadSchema.safeParse(body);
-  if (!parsed.success) {
-    return new Response(
-      JSON.stringify({
-        error: 'invalid_input',
-        issues: parsed.error.issues.map(i => i.path.join('.')),
-      }),
-      { status: 400 }
-    );
-  }
-
-  // Honeypot: éxito silencioso si lo llenan (Zod ya hizo refuse, pero por si acaso)
-  if (parsed.data.website !== '') {
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-  }
+  const v = validarAltaLibro(body);
+  if (!v.ok) return json(400, { error: 'invalid_input', issues: v.issues });
 
   // Rate limit por IP hash
   const ipHash = hashIp(clientAddress || 'unknown');
-  if (isRateLimited(ipHash)) {
-    return new Response(JSON.stringify({ error: 'rate_limited' }), {
-      status: 429,
-      headers: { 'Retry-After': '60' },
-    });
-  }
+  if (isRateLimited(ipHash)) return json(429, { error: 'rate_limited' }, { 'Retry-After': '60' });
 
   const apiKey = readEnv('BREVO_API_KEY');
   const templateIdRaw = readEnv('BREVO_TEMPLATE_DOI');
@@ -79,141 +65,32 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   if (!apiKey || !templateIdRaw || !tokenSecret) {
     console.error('Missing env vars: BREVO_API_KEY/BREVO_TEMPLATE_DOI/ACCESS_TOKEN_SECRET');
-    return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
+    return json(500, { error: 'server_misconfigured' });
   }
 
   const templateId = Number(templateIdRaw);
-  if (Number.isNaN(templateId)) {
-    return new Response(JSON.stringify({ error: 'server_misconfigured' }), { status: 500 });
-  }
+  if (Number.isNaN(templateId)) return json(500, { error: 'server_misconfigured' });
 
-  // 1. Crear contacto en Brevo (sin lista todavía, así el workflow no se dispara)
-  const upsert = await upsertContact({
-    email: parsed.data.correo,
-    apiKey,
-    attributes: {
-      NOMBRE: parsed.data.nombre,
-      NIVEL: 'tejedor',
-      FUENTE: 'registro-libro',
-      DOI_PENDIENTE: 'true',
+  const r = await registrarAltaLibro(
+    {
+      datos: v.datos,
+      utm: utms,
+      ipHash,
+      userAgent: request.headers.get('user-agent')?.slice(0, 500) ?? null,
+      geo: getGeo(request),
     },
-  });
-
-  if (!upsert.ok) {
-    console.error('Brevo upsertContact failed:', upsert);
-    return new Response(JSON.stringify({ error: 'brevo_failed' }), { status: 502 });
-  }
-
-  // 1b. Persistir el lead en la Supabase unificada (best-effort · NUNCA bloquea el flujo).
-  //     Debe existir ANTES de enviar el DOI para que el webhook de Brevo (que vive en TDR
-  //     y escribe a la misma base) resuelva el evento `email_delivered` contra este lead.
-  const geo = getGeo(request);
-  const userAgent = request.headers.get('user-agent')?.slice(0, 500) ?? null;
-  let leadId: string | null = null;
-  const supabase = getServerClient();
-  if (supabase) {
-    try {
-      const fila = {
-        email: parsed.data.correo,
-        source: 'libro',
-        name: parsed.data.nombre.slice(0, 100),
-        consent_text: CONSENT_TEXT_LIBRO,
-        ip_hash: ipHash,
-        user_agent: userAgent,
-        country: geo.country,
-        region: geo.region,
-        unsubscribed_at: null,
-      };
-      // Correo nuevo: insert-si-no-existe ATÓMICO (UNIQUE(email) arbitra; con
-      // ignoreDuplicates no devuelve fila si ya existía).
-      const { data: nuevas, error: insErr } = await supabase
-        .from('leads')
-        .upsert(camposDeAlta(fila, { existe: false }), { onConflict: 'email', ignoreDuplicates: true })
-        .select('id');
-      let error = insErr;
-      if (!insErr && nuevas && nuevas.length > 0) {
-        leadId = nuevas[0]?.id ?? null;
-      } else if (!insErr) {
-        // Ya existía. Este POST no está confirmado (cualquiera puede escribir un correo
-        // ajeno): no se tocan `name` ni `unsubscribed_at`; solo se reenvía el DOI.
-        const { data: existente, error: updErr } = await supabase
-          .from('leads')
-          .update(camposDeAlta(fila, { existe: true }))
-          .eq('email', fila.email)
-          .select('id')
-          .maybeSingle();
-        error = updErr;
-        leadId = existente?.id ?? null;
-      }
-      if (error) {
-        console.error('[leads/libro] supabase upsert error:', error.message);
-      } else {
-        if (leadId) {
-          await supabase.from('events').insert({
-            lead_id: leadId,
-            type: 'lead_created',
-            source: 'api',
-            metadata: {
-              endpoint: 'leads/libro',
-              ctaSource: 'libro',
-              country: geo.country,
-              region: geo.region,
-              // null cuando el visitante llegó sin UTMs (directo, buscador, o storage
-              // bloqueado). La clave se escribe igual: distinguir «no vino de una pieza»
-              // de «no lo estábamos guardando» es justo lo que faltaba hasta hoy.
-              ...(utms ? { utm: utms } : { utm: null }),
-            },
-          });
-        }
-      }
-    } catch (err) {
-      console.error('[leads/libro] supabase persistence threw:', err);
-    }
-  }
-
-  // 2. Generar token HMAC y URL de confirmación
-  const token = generateAccessToken(parsed.data.correo, tokenSecret);
-  const confirmationUrl = `${siteUrl}/bienvenido?t=${encodeURIComponent(token)}`;
-
-  // 3. Enviar email transaccional (template #9) con CONFIRMATION_URL como parámetro
-  const sent = await sendTransactionalEmail({
-    to: { email: parsed.data.correo, name: parsed.data.nombre },
-    templateId,
-    params: {
-      NOMBRE: parsed.data.nombre,
-      CONFIRMATION_URL: confirmationUrl,
+    {
+      supabase: getServerClient(),
+      upsertContact: (o) => upsertContact({ ...o, apiKey }),
+      // Plantilla DOI (#9): usa {{params.SALUDO}} («Hola, Ana:» o «Hola:») y
+      // {{params.CONFIRMATION_URL}}. NOMBRE solo llega si hay nombre.
+      enviarEnlace: ({ email, name, params }) =>
+        sendTransactionalEmail({ to: { email, name }, templateId, params, apiKey }),
+      urlConfirmacion: (correo) =>
+        `${siteUrl}/bienvenido?t=${encodeURIComponent(generateAccessToken(correo, tokenSecret))}`,
     },
-    apiKey,
-  });
-
-  if (!sent.ok) {
-    console.error('Brevo sendTransactionalEmail failed:', sent);
-    return new Response(JSON.stringify({ error: 'email_send_failed' }), { status: 502 });
-  }
-
-  // 3b. Registrar el envío del DOI (best-effort). El `messageId` permite cruzar con
-  //     los eventos del webhook de Brevo (delivered/opened) si hiciera falta.
-  if (supabase && leadId) {
-    try {
-      await supabase.from('events').insert({
-        lead_id: leadId,
-        type: 'email_sent',
-        source: 'api',
-        metadata: { endpoint: 'leads/libro', kind: 'doi', messageId: sent.messageId ?? null },
-      });
-    } catch (err) {
-      console.error('[leads/libro] email_sent event threw:', err);
-    }
-  }
-
-  return new Response(
-    JSON.stringify({
-      success: true,
-      nombre: parsed.data.nombre,
-      message: 'Te enviamos un correo. Revisa tu inbox para confirmar.',
-    }),
-    { status: 201, headers: { 'Content-Type': 'application/json' } }
   );
+  return json(r.status, r.body);
 };
 
 export const ALL: APIRoute = () => {
