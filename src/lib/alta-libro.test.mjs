@@ -213,6 +213,7 @@ test('alta nueva SIN nombre y SIN Cartas: se guarda, no se suscribe y el saludo 
   assert.equal(t.correos[0].params.SALUDO, 'Hola:');
   assert.equal('NOMBRE' in t.correos[0].params, false);
   assert.equal(t.correos[0].params.CONFIRMATION_URL, 'https://libro.test/bienvenido?t=tok-ana@correo.co');
+  assert.equal(t.correos[0].params.CARTAS, 'no', 'la plantilla no le promete la primera carta');
 
   const [creado, enviado] = sb.tablas.events;
   assert.equal(creado.type, 'lead_created');
@@ -242,6 +243,7 @@ test('alta nueva CON Cartas y nombre: evidencia de las dos casillas y contacto q
   ]);
   assert.equal(t.correos[0].params.SALUDO, 'Hola, Ana:');
   assert.equal(t.correos[0].params.NOMBRE, 'Ana');
+  assert.equal(t.correos[0].params.CARTAS, 'si');
   assert.equal(t.correos[0].name, 'Ana');
   assert.equal(sb.tablas.events[0].metadata.consentimiento.cartas, CONSENT_TEXT_LIBRO.cartas.version);
 });

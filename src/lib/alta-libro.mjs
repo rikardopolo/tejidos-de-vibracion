@@ -385,7 +385,13 @@ export async function registrarAltaLibro(entrada, deps) {
 
   // 4. El enlace de confirmación (o de vuelta al nivel 1). Ver «DESVÍO» arriba.
   /** @type {Record<string, string>} */
-  const params = { SALUDO: saludo(nombre), CONFIRMATION_URL: urlConfirmacion(datos.correo) };
+  // CARTAS: la plantilla #9 solo promete «la primera carta del Tejedor» con 'si' (o sin el
+  // parámetro, que es lo que manda el código anterior, cuando todas las altas eran con Cartas).
+  const params = {
+    SALUDO: saludo(nombre),
+    CONFIRMATION_URL: urlConfirmacion(datos.correo),
+    CARTAS: conCartas ? 'si' : 'no',
+  };
   if (nombre) params.NOMBRE = nombre;
   const enviado = await enviarEnlace({ email: datos.correo, name: nombre, params });
   if (!enviado.ok) {
