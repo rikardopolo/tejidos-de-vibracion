@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { esUrlDePago, HOSTS_TIENDA } from './url-pago.mjs';
+import { esUrlDePago, esEnlaceDePruebaStripe, HOSTS_TIENDA } from './url-pago.mjs';
 
 // ── La regresión que costó todas las ventas ─────────────────────────────────
 
@@ -23,6 +23,29 @@ test('sigue aceptando el dominio genérico de Lemon Squeezy', () => {
   assert.equal(esUrlDePago('https://lemonsqueezy.com/checkout/abc'), true);
 });
 
+// ── Stripe · Managed Payments ───────────────────────────────────────────────
+
+test('acepta el enlace de pago REAL de Stripe capturado del checkout', () => {
+  // URL literal del enlace con el que se hizo la compra de prueba (6-ago-2026,
+  // factura Q5CJBGM3-0001, recibo 2894-8587). El host es el MISMO en real: al
+  // crear el enlace de producción, clavar aquí también su URL literal.
+  assert.equal(esUrlDePago('https://buy.stripe.com/test_4gMdR8eDOcol2vN7ucfjG00'), true);
+  // Forma del enlace en real (sin `/test_`).
+  assert.equal(esUrlDePago('https://buy.stripe.com/4gMdR8eDOcol2vN7ucfjG00'), true);
+});
+
+test('distingue el enlace de PRUEBA del real', () => {
+  // Un enlace de prueba en producción cobra cero y no da ningún error: el
+  // desenlace es idéntico al de una venta buena. Por eso se detecta aquí.
+  assert.equal(esEnlaceDePruebaStripe('https://buy.stripe.com/test_4gMdR8eDOcol2vN7ucfjG00'), true);
+  assert.equal(esEnlaceDePruebaStripe('https://buy.stripe.com/4gMdR8eDOcol2vN7ucfjG00'), false);
+  // No confunde un `test_` que no esté al principio de la ruta.
+  assert.equal(esEnlaceDePruebaStripe('https://buy.stripe.com/abc/test_123'), false);
+  // Ni marca como «de prueba» lo que ni siquiera es un enlace de pago válido.
+  assert.equal(esEnlaceDePruebaStripe('https://evil.com/test_abc'), false);
+  assert.equal(esEnlaceDePruebaStripe(undefined), false);
+});
+
 // ── Lo que la comprobación existe para impedir ──────────────────────────────
 
 test('rechaza cualquier host ajeno, incluidos los que lo imitan', () => {
@@ -32,6 +55,9 @@ test('rechaza cualquier host ajeno, incluidos los que lo imitan', () => {
     'https://notlemonsqueezy.com/checkout', // sin el punto separador
     'https://tejidosdevibracion.store.evil.com/checkout',
     'https://evil.com/?x=https://tejidosdevibracion.store/', // el host real en el query
+    'https://buy.stripe.com.evil.com/test_abc', // sufijo falso sobre el host de Stripe
+    'https://buy-stripe.com/test_abc',
+    'https://evil.com/?x=https://buy.stripe.com/test_abc',
   ]) {
     assert.equal(esUrlDePago(malo), false, `debería rechazar ${malo}`);
   }
