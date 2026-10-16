@@ -1,0 +1,49 @@
+---
+/**
+ * /auth/error?next=<ruta> · el salto no se pudo completar.
+ *
+ * A propósito NO dice por qué (código usado o caducado, `state` que no casa,
+ * sesión cerrada en todos los dispositivos, base caída…): el motivo queda en los
+ * registros del servidor. Ofrece reintentar el salto hacia la misma ruta.
+ */
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import { validarNext } from '@/lib/salto-tdv.mjs';
+import { CABECERAS_AUTH, sesionTdvActiva } from '@/lib/cuenta-tdv';
+
+export const prerender = false;
+
+if (!sesionTdvActiva()) {
+  return new Response('No encontrado', { status: 404, headers: CABECERAS_AUTH });
+}
+for (const [clave, valor] of Object.entries(CABECERAS_AUTH)) Astro.response.headers.set(clave, valor);
+
+const next = validarNext(Astro.url.searchParams.get('next'), Astro.url.origin) ?? '/';
+const reintentar = `/auth/entrar?next=${encodeURIComponent(next)}`;
+---
+<LecturaLarga
+  title="No pudimos abrir tu sesión · Tejidos de Vibración"
+  description="La entrada desde Tejidos de Realidad no se completó."
+  pageId="auth-error"
+  robots="noindex,nofollow"
+>
+  <article class="measure pt-5">
+    <header class="center">
+      <p class="eyebrow">Tejidos de Vibración</p>
+      <h1 class="title-1" style="font-style: italic;">La puerta no terminó de abrirse</h1>
+    </header>
+
+    <div class="flourish flourish--triple mt-2h"></div>
+
+    <div class="prose">
+      <p class="no-indent">
+        No pudimos abrir tu sesión en el libro. La vuelta desde Tejidos de Realidad
+        dura un minuto y sirve una sola vez, así que basta con volver a intentarlo.
+      </p>
+    </div>
+
+    <div class="center mt-4 mb-6">
+      <a class="lit-link lit-link--lg" href={reintentar}>Volver a intentarlo →</a>
+      <p class="mt-1"><a class="lit-link" href={next}>Seguir sin entrar</a></p>
+    </div>
+  </article>
+</LecturaLarga>

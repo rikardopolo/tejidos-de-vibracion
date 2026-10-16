@@ -36,6 +36,18 @@ test('tambien limpia $referrer y los $initial_* que se persisten', () => {
   assert.ok(!volcado.includes(TOKEN), 'ningun token debe sobrevivir');
 });
 
+test('el callback del salto pierde code y state (S-12)', () => {
+  const r = limpiarEvento(
+    evento({
+      $current_url: `https://tejidosdevibracion.com/auth/callback?code=${TOKEN}&state=STATE-${TOKEN}`,
+      $referrer: `/auth/callback?state=STATE-${TOKEN}&code=${TOKEN}`,
+    }),
+  );
+  const volcado = JSON.stringify(r.properties);
+  assert.ok(!volcado.includes(TOKEN), 'ni code ni state deben sobrevivir');
+  assert.ok(r.properties.$current_url.includes('/auth/callback'));
+});
+
 test('respeta el resto de la query (utm y compania siguen vivos)', () => {
   const r = limpiarEvento(evento({ $current_url: `https://x.com/a?utm_source=ig&t=${TOKEN}&page=2` }));
   assert.ok(r.properties.$current_url.includes('utm_source=ig'));

@@ -24,6 +24,7 @@
  */
 import '@/styles/global.css';
 import SchemaJsonLd from '@/components/SchemaJsonLd.astro';
+import CuentaTdv from '@/components/book/CuentaTdv.astro';
 import ebGaramond400 from '@fontsource/eb-garamond/files/eb-garamond-latin-400-normal.woff2?url';
 import ebGaramond400i from '@fontsource/eb-garamond/files/eb-garamond-latin-400-italic.woff2?url';
 import { DEFAULT_OG_ALT, OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH, canonicalFor, resolveOgImage } from '@/lib/seo';
@@ -216,6 +217,9 @@ const hasBreadcrumb = Boolean(breadcrumb?.text);
       <button data-action="mode-night" aria-label="Modo noche">☾</button>
     </div>
   </aside>
+
+  {/* S-12 · «Entraste como r***@…» + Salir. Solo con sesión del libro. */}
+  <CuentaTdv variante="barra" />
 
   <main id="main-content" class={mainClass} tabindex="-1">
     <slot />

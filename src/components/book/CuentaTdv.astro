@@ -1,0 +1,122 @@
+---
+/**
+ * CuentaTdv · «Entrar» / «Crear cuenta» y el aviso «Entraste como r***@…» (S-12).
+ *
+ * Variantes:
+ *   puerta → dentro de BloquePuerta (donde hoy se invita a registrarse). Sin
+ *            sesión: los dos enlaces. Con sesión: el aviso y «Salir».
+ *   barra  → bajo la cabecera del lector. SOLO con sesión: el aviso y «Salir».
+ *            Sin sesión no pinta nada (la invitación vive en la puerta).
+ *
+ * - Solo con `TDV_SESION_ENABLED` y solo en páginas bajo demanda: en una página
+ *   prerenderizada el interruptor se congelaría en el build, así que ahí no se
+ *   pinta nada (`Astro.isPrerendered`).
+ * - Los enlaces son `<a href>` con GET al salto: un `<form>` que redirige a otro
+ *   dominio lo bloquea `form-action 'self'`. «Entrar» y «Crear cuenta» van al
+ *   mismo sitio: la pantalla del portal es «Entra o crea tu cuenta».
+ * - `next` es solo el pathname: la query puede llevar tokens (`?t=`).
+ * - El correo sale de la propia cookie, YA enmascarado (`em`): sin consultar la
+ *   base en cada página. Una sesión sin `em` muestra el aviso sin correo.
+ * - «Salir» es un POST al mismo origen (`form-action 'self'` lo permite).
+ */
+import { leerSesionTdv, sesionTdvActiva } from '@/lib/cuenta-tdv';
+
+interface Props {
+  variante?: 'puerta' | 'barra';
+}
+
+const { variante = 'puerta' } = Astro.props;
+
+const activa = !Astro.isPrerendered && sesionTdvActiva();
+const sesion = activa ? leerSesionTdv(Astro.cookies) : null;
+const ruta = Astro.url.pathname;
+const hrefEntrar = `/auth/entrar?next=${encodeURIComponent(ruta)}`;
+const pintar = activa && (sesion !== null || variante === 'puerta');
+---
+
+{pintar && (
+  <div class={`cuenta-tdv cuenta-tdv--${variante}`} data-cuenta-tdv>
+    {sesion ? (
+      <form class="cuenta-tdv__fila" method="post" action="/auth/salir">
+        <span class="cuenta-tdv__aviso">
+          {sesion.em ? (
+            <>Entraste como <strong class="cuenta-tdv__correo">{sesion.em}</strong></>
+          ) : (
+            <>Entraste con tu cuenta de Tejidos de Realidad</>
+          )}
+        </span>
+        <input type="hidden" name="next" value={ruta} />
+        <button class="cuenta-tdv__salir" type="submit">Salir</button>
+      </form>
+    ) : (
+      <p class="cuenta-tdv__fila">
+        <span class="cuenta-tdv__aviso">O con una cuenta de Tejidos de Realidad:</span>
+        <a class="cuenta-tdv__enlace" href={hrefEntrar} rel="nofollow">Entrar</a>
+        <span class="cuenta-tdv__sep" aria-hidden="true">·</span>
+        <a class="cuenta-tdv__enlace" href={hrefEntrar} rel="nofollow">Crear cuenta</a>
+      </p>
+    )}
+  </div>
+)}
+
+<style>
+  .cuenta-tdv {
+    font-family: var(--sans, 'Inter', system-ui, sans-serif);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--tinta-suave, #3a3530);
+  }
+  .cuenta-tdv__fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.35rem 0.6rem;
+    margin: 0;
+  }
+  .cuenta-tdv--puerta {
+    margin: 1.5rem auto 0;
+    text-align: center;
+  }
+  .cuenta-tdv--barra {
+    position: relative;
+    z-index: 1;
+    max-width: var(--col-wide, 52rem);
+    margin: 0 auto;
+    padding: 0.6rem 1rem;
+  }
+  .cuenta-tdv--barra .cuenta-tdv__fila {
+    justify-content: flex-end;
+  }
+  .cuenta-tdv__correo {
+    font-weight: 600;
+    color: var(--tinta, #1a1a1a);
+  }
+  .cuenta-tdv__enlace,
+  .cuenta-tdv__salir {
+    font: inherit;
+    font-weight: 500;
+    color: var(--oro-texto, #86650e);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .cuenta-tdv__salir {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .cuenta-tdv__enlace:hover,
+  .cuenta-tdv__salir:hover {
+    color: var(--tinta, #1a1a1a);
+  }
+  .cuenta-tdv__enlace:focus-visible,
+  .cuenta-tdv__salir:focus-visible {
+    outline: 2px solid var(--oro, #d4a017);
+    outline-offset: 2px;
+  }
+  .cuenta-tdv__sep {
+    color: var(--reposo, #8a8a8a);
+  }
+</style>

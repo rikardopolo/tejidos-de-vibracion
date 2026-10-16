@@ -8,7 +8,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { puedeAcceder } from './gate-decision.mjs';
+import { puedeAcceder, conSesionTdv } from './gate-decision.mjs';
 
 const visitante = { nivel: 0, slugs: [] };
 const registrado = { nivel: 1, slugs: [] };
@@ -57,4 +57,25 @@ test('NO-REGRESION · nivel >= requerido sin slug de producto siempre pasa', () 
   // El contenido de Acto I no declara productoSlug → la regla de scope no aplica.
   assert.equal(puedeAcceder(registrado, 1, undefined), true);
   assert.equal(puedeAcceder(registrado, 1, null), true);
+});
+
+// ── Sesión del libro (S-12): solo sube al nivel 1 ────────────────────
+test('conSesionTdv: un visitante con sesión pasa a nivel 1, sin slugs', () => {
+  assert.deepEqual(conSesionTdv(visitante, true), { nivel: 1, slugs: [] });
+  assert.equal(puedeAcceder(conSesionTdv(visitante, true), 1), true);
+});
+
+test('conSesionTdv: sin sesión no cambia nada', () => {
+  assert.deepEqual(conSesionTdv(visitante, false), visitante);
+});
+
+test('conSesionTdv: la sesión NO da nivel 2 ni producto (eso es S-13)', () => {
+  const r = conSesionTdv(visitante, true);
+  assert.equal(puedeAcceder(r, 2), false);
+  assert.equal(puedeAcceder(r, 2, 'bundle-acto-2'), false);
+});
+
+test('conSesionTdv: nunca baja a un comprador ni le quita el scope', () => {
+  assert.deepEqual(conSesionTdv(comprador, true), comprador);
+  assert.deepEqual(conSesionTdv(registrado, true), registrado);
 });
