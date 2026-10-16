@@ -31,3 +31,15 @@ export const SLUG_NIVEL = {
  * @type {readonly [string, ...string[]]}
  */
 export const PRODUCT_SLUGS = /** @type {[string, ...string[]]} */ (Object.keys(SLUG_NIVEL));
+
+/**
+ * Slugs de SUSCRIPCIÓN: el camino de órdenes (`order_created`/`order_refunded`) los
+ * ignora siempre. Lemon Squeezy manda un `order_created` junto a cada
+ * `subscription_created`, con el mismo `custom_data`; si ese evento llegara a
+ * `SLUG_NIVEL`, crearía una orden `one-time` y un token de 365 días que no se
+ * enteran de la cancelación. La suscripción la resuelve su propia tabla (S-13).
+ * Hoy `suscripcion-libro` aún no está en `SLUG_NIVEL` (llega con la rama de la
+ * suscripción); la lista ya la excluye para que ese día no abra la fuga.
+ * @type {readonly string[]}
+ */
+export const SUBSCRIPTION_SLUGS = Object.freeze(['suscripcion-libro']);

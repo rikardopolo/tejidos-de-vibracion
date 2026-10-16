@@ -1,9 +1,9 @@
 /**
  * refund-gate.test.mjs · Correr: node --test src/lib/refund-gate.test.mjs
  *
- * Cubre la política MIXTA: abierto ante fallo de infraestructura, cerrado ante
- * fallo de dato. Los dos ejes se testean por separado porque son decisiones
- * distintas que se toman en la misma función.
+ * Cubre la política MIXTA: abierto ante un error de consulta, cerrado ante
+ * configuración rota (sin cliente, C8) y ante fallo de dato. Los ejes se testean
+ * por separado porque son decisiones distintas que se toman en la misma función.
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -33,14 +33,24 @@ test('orden ausente con consulta OK → revoca (el token apunta a nada)', () => 
   assert.deepEqual(resolveRefundGate(granted, ok({ order: null })), REVOCADO);
 });
 
-// --- Eje "abierto en caída": la infraestructura falla, no el dato ---
+// --- Eje "abierto en caída": la consulta falla, no el dato (hasta S-13 y su marca `ent`) ---
 
-test('error de consulta → mantiene el token (fail-open de infraestructura)', () => {
+test('error de consulta → mantiene el token (fail-open de infraestructura, hasta S-13)', () => {
   assert.deepEqual(resolveRefundGate(granted, ok({ queryError: true })), granted);
 });
 
-test('Supabase no disponible → mantiene el token (fail-open de infraestructura)', () => {
-  assert.deepEqual(resolveRefundGate(granted, ok({ hasClient: false })), granted);
+// --- Configuración rota (C8): sin cliente de Supabase se CIERRA ---
+
+test('sin cliente de Supabase (hasClient:false) → REVOCA (configuración rota, C8)', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ hasClient: false })), REVOCADO);
+});
+
+test('sin cliente y además con error de consulta → revoca (la config rota manda)', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ hasClient: false, queryError: true })), REVOCADO);
+});
+
+test('sin cliente revoca también el nivel 3', () => {
+  assert.deepEqual(resolveRefundGate({ nivel: 3, slugs: [] }, ok({ hasClient: false, order: { status: 'paid' } })), REVOCADO);
 });
 
 // --- Eje "cerrado en dato": el caso que cambió respecto a la versión anterior ---
