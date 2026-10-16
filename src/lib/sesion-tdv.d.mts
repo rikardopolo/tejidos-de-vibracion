@@ -8,7 +8,7 @@ export const SECRETO_MIN: number;
 export type MetodoAcceso = 'enlace' | 'codigo' | 'contrasena' | 'passkey' | 'respaldo' | 'google';
 export const METODOS_ACCESO: readonly MetodoAcceso[];
 
-/** Marca de nivel que usará S-13 (`hasta` en segundos). */
+/** Marca de nivel (S-13, D4): último nivel ≥ 2 confirmado por la base; `hasta` en segundos. */
 export type EntTdv = { n: 1 | 2 | 3; hasta: number };
 
 export type OpcionesFirma = { secret?: string | null; now?: number };
@@ -67,6 +67,12 @@ export const OPCIONES_BORRADO_TDV: Readonly<Omit<OpcionesCookieTdv, 'maxAge'>>;
 export function secretoValido(valor: unknown): string | null;
 export function secretoSesionTdv(): string | null;
 export function firmarSesionTdv(claims: SesionTdvClaims, opts?: OpcionesFirma): string | null;
+/** Re-firma una sesión verificada cambiando solo `ent` (conserva `iat` y `exp`). */
+export function reemitirSesionTdv(
+  sesion: Pick<SesionTdvValida, 'aid' | 'ep' | 'am' | 'iat' | 'exp'> & { em?: string | null },
+  ent: EntTdv | null,
+  opts?: OpcionesFirma,
+): string | null;
 export function verificarSesionTdv(token: string | null | undefined, opts?: OpcionesFirma): SesionTdvValida | RechazoTdv;
 export function firmarStateTdv(claims: { sh: string; next: string }, opts?: OpcionesFirma): string | null;
 export function verificarStateTdv(token: string | null | undefined, opts?: OpcionesFirma): StateTdvValido | RechazoTdv;

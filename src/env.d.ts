@@ -6,6 +6,11 @@ interface ImportMetaEnv {
   readonly BREVO_TEMPLATE_DOI: string;
   readonly BREVO_TEMPLATE_BIENVENIDA: string;
   readonly BREVO_TEMPLATE_BUNDLE_PREVENTA: string;
+  readonly BREVO_TEMPLATE_SUB_IMPAGO: string;
+  readonly BREVO_TEMPLATE_SUB_CERRADA: string;
+  readonly BREVO_TEMPLATE_SUB_VINCULAR: string;
+  readonly BREVO_SENDER_EMAIL: string;
+  readonly BREVO_SENDER_NAME: string;
   readonly ACCESS_TOKEN_SECRET: string;
   readonly GATING_ACTIVO: string;
   readonly SUSCRIPCION_ACTIVA: string;
@@ -13,6 +18,10 @@ interface ImportMetaEnv {
   readonly LEMONSQUEEZY_API_KEY: string;
   readonly LS_STORE_ID: string;
   readonly LS_VARIANT_BUNDLE_PREVENTA: string;
+  readonly LS_VARIANT_SUSCRIPCION_MENSUAL: string;
+  readonly LS_VARIANT_SUSCRIPCION_ANUAL: string;
+  readonly LS_CUSTOM_SECRET: string;
+  readonly SUSCRIPCION_CHECKOUT_ENABLED: string;
   readonly LS_WEBHOOK_SECRET: string;
   readonly TDV_SESION_ENABLED: string;
   readonly TDV_SESSION_SECRET: string;

@@ -10,12 +10,16 @@ import {
   persistOrderAtomic,
   claimAccesoEnvio,
   releaseAccesoEnvio,
+  procesarSuscripcion,
+  suscripcionRef,
   PREFIJO_VARIANTE,
   type ParsedOrderEvent,
+  type ParsedSubscriptionEvent,
 } from '@/lib/lemonsqueezy-webhook.mjs';
 import { SUBSCRIPTION_SLUGS } from '@/lib/product-slugs.mjs';
 import { generatePurchaseToken } from '@/lib/purchase-token.mjs';
-import { sendTransactionalEmail, tagContactSafe } from '@/lib/brevo';
+import { sendInlineEmail, sendTransactionalEmail, tagContactSafe } from '@/lib/brevo';
+import { VINCULAR_URL, contenidoCorreoVincular, planCorreoVincular } from '@/lib/correo-vincular.mjs';
 
 export const prerender = false;
 
@@ -37,6 +41,12 @@ export const prerender = false;
  *    para paid · update WHERE status<>refunded para refund), no un SELECT previo, así
  *    dos entregas concurrentes del mismo ls_order_id no duplican efectos.
  *  - Concilia con leads vía custom.lead_id; si no viene, por email.
+ *  - S-13 · `subscription_{created,updated,cancelled,resumed,expired,paused,unpaused}`
+ *    → tabla `subscriptions` (`procesarSuscripcion`): el primer evento de un id ata el
+ *    pago a la cuenta del `custom` firmado (CAS del nonce en `checkout_intentos`) o lo
+ *    deja `pendiente` con UN correo de vinculación (C11); los siguientes solo
+ *    actualizan estado, periodos y pausa. `subscription_payment_*` sigue ignorado
+ *    (200): facturas, impagos y reembolsos de suscripción son F3-L, fuera de S-13.
  */
 
 const readEnv = (key: string): string | undefined => {
@@ -113,13 +123,20 @@ export const POST: APIRoute = async ({ request }) => {
     secret,
     eventName: request.headers.get('x-event-name'),
     variantes,
-    aceptarTestMode: aceptarTestMode(),
+    // Con `readEnv`: en `astro dev` el `.env` no llega a `process.env` (Astro solo lo
+    // vuelca al compilar), y la prueba por túnel a local (S-13) necesita leerlo. En
+    // producción `VERCEL_ENV=production` lo apaga igual.
+    aceptarTestMode: aceptarTestMode({
+      VERCEL_ENV: readEnv('VERCEL_ENV'),
+      LS_ACEPTAR_TEST_MODE: readEnv('LS_ACEPTAR_TEST_MODE'),
+    }),
   });
 
   if (decision.accion === 'firma_invalida') return json(401, { ok: false, error: 'bad_signature' });
   if (decision.accion === 'json_invalido') return json(400, { ok: false, error: 'invalid_json' });
   if (decision.accion === 'evento_ignorado') {
-    // Evento que no manejamos (subscription_*, etc.) → ack sin procesar.
+    // Evento que no manejamos (subscription_payment_*, customer_updated, license_key_*…)
+    // → ack sin procesar.
     return json(200, { ok: true, ignored: decision.eventName ?? 'unknown' });
   }
 
@@ -135,6 +152,23 @@ export const POST: APIRoute = async ({ request }) => {
       console.warn('[webhooks/lemonsqueezy] test_mode_ignorado sin Supabase · evento no registrado');
     }
     return json(200, { ok: true, ignored: 'test_mode' });
+  }
+
+  if (decision.accion === 'suscripcion_invalida') {
+    // Evento de suscripción firmado que no se entiende (sin id o con un status que la
+    // tabla no admite). 200 para que LS no reintente algo que fallará igual; queda el
+    // rastro y el aviso para mirarlo a mano.
+    console.error(`[webhooks/lemonsqueezy] ${decision.eventName ?? 'subscription_?'} ilegible · ignorado`);
+    const supabase = getServerClient();
+    if (supabase) await registrarEvento(supabase, 'subscription_invalida', null, { event_name: decision.eventName });
+    await avisarSentry('lemonsqueezy: evento de suscripción ilegible (id o status) · ignorado', {
+      event_name: decision.eventName,
+    });
+    return json(200, { ok: true, ignored: 'subscription_invalid' });
+  }
+
+  if (decision.accion === 'suscripcion') {
+    return manejarSuscripcion(decision.sub, decision.body, variantes.suscripcion, startedAt);
   }
 
   const { parsed, body } = decision;
@@ -408,5 +442,114 @@ export const POST: APIRoute = async ({ request }) => {
   logWebhook('success', isFirstEffect ? 'processed' : 'duplicate');
   return json(200, { ok: true, order: parsed.lsOrderId, status: parsed.status, nivel, new: isFirstEffect });
 };
+
+/** Aviso a Sentry que nunca rompe el ack a LS. */
+async function avisarSentry(mensaje: string, extra: Record<string, unknown>): Promise<void> {
+  try {
+    Sentry.captureMessage(mensaje, { level: 'error', extra });
+    await Sentry.flush(2000);
+  } catch {
+    /* el aviso nunca rompe el ack a LS */
+  }
+}
+
+/**
+ * Correo de vinculación (C11): plantilla `BREVO_TEMPLATE_SUB_VINCULAR` si existe; si
+ * no, el texto inline de `correo-vincular.mjs`. Nunca lanza.
+ */
+async function enviarCorreoVincular(d: { email: string; nombre: string | null }): Promise<{ ok: boolean }> {
+  const plan = planCorreoVincular(readEnv);
+  if (!plan) {
+    console.error('[webhooks/lemonsqueezy] correo de vinculación omitido · falta BREVO_API_KEY');
+    return { ok: false };
+  }
+  if (plan.modo === 'plantilla') {
+    const r = await sendTransactionalEmail({
+      to: { email: d.email, name: d.nombre ?? undefined },
+      templateId: plan.templateId,
+      params: { NOMBRE: d.nombre ?? '', VINCULAR_URL },
+      apiKey: plan.apiKey,
+    });
+    if (!r.ok) console.error('[webhooks/lemonsqueezy] correo de vinculación (plantilla) falló:', r);
+    return { ok: r.ok };
+  }
+  const c = contenidoCorreoVincular({ nombre: d.nombre });
+  const r = await sendInlineEmail({
+    to: { email: d.email, name: d.nombre ?? undefined },
+    sender: plan.sender,
+    subject: c.subject,
+    htmlContent: c.html,
+    textContent: c.text,
+    apiKey: plan.apiKey,
+  });
+  if (!r.ok) console.error('[webhooks/lemonsqueezy] correo de vinculación (inline) falló:', r);
+  return { ok: r.ok };
+}
+
+/** S-13 · un evento `subscription_*` ya firmado y parseado → `subscriptions`. */
+async function manejarSuscripcion(
+  sub: ParsedSubscriptionEvent,
+  body: unknown,
+  variantesSuscripcion: Set<string>,
+  startedAt: number,
+): Promise<Response> {
+  const ref = suscripcionRef(sub.providerSubscriptionId);
+  const log = (status: 'success' | 'error', result: string) => {
+    const entry = JSON.stringify({
+      event: 'webhook_run',
+      provider: 'lemonsqueezy',
+      event_ref: ref,
+      event_type: sub.eventName,
+      product: 'suscripcion-libro',
+      status,
+      result,
+      duration_ms: Date.now() - startedAt,
+    });
+    if (status === 'success') console.info('[webhook/run]', entry);
+    else console.error('[webhook/run]', entry);
+  };
+
+  const supabase = getServerClient();
+  if (!supabase) {
+    console.error('[webhooks/lemonsqueezy] Supabase no disponible · 500 para reintento');
+    log('error', 'persist_unavailable');
+    return json(500, { ok: false, error: 'persist_unavailable' });
+  }
+
+  const r = await procesarSuscripcion(supabase, sub, {
+    body,
+    secretCustom: readEnv('LS_CUSTOM_SECRET'),
+    variantesSuscripcion,
+    enviarCorreoVincular,
+  });
+
+  if (r.aviso === 'config') {
+    console.error(`[webhooks/lemonsqueezy] CONFIG · suscripción sin procesar (${r.resultado}) · 500 para reintento · ${ref}`);
+    await avisarSentry(`lemonsqueezy: suscripción sin procesar por configuración (${r.resultado})`, {
+      resultado: r.resultado,
+      sub_ref: ref,
+    });
+  }
+  if (r.correo === 'fallido') {
+    // La fila `pendiente` ya existe: el reintento de LS no reenviaría el correo. Queda
+    // el rastro para escribir a mano (la persona también puede vincular desde /cuenta).
+    await avisarSentry('lemonsqueezy: suscripción pendiente sin correo de vinculación', { sub_ref: ref });
+  }
+
+  if (r.http === 200) {
+    await registrarEvento(supabase, `subscription_${r.resultado}`, null, {
+      sub_ref: ref,
+      event_name: sub.eventName,
+      status: sub.status,
+      vinculo: r.vinculo ?? null,
+      motivo: r.motivo ?? null,
+      correo: r.correo ?? null,
+      variant_id: sub.variantId,
+      test_mode: sub.testMode,
+    });
+  }
+  log(r.http === 200 ? 'success' : 'error', r.resultado);
+  return json(r.http, { ok: r.http === 200, resultado: r.resultado });
+}
 
 export const ALL: APIRoute = () => json(405, { ok: false, error: 'method_not_allowed' });

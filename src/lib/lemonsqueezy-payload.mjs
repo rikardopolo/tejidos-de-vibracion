@@ -15,11 +15,16 @@
  */
 
 /**
+ * `custom` extra (S-13): el `custom` FIRMADO de la suscripción (`account_id`, `nonce`,
+ * `iat`, `sig`) viaja aquí, con sus valores ya en string. `expiresAt` (ISO 8601) es
+ * el `expires_at` del checkout: pasado ese momento LS no deja pagarlo.
+ *
  * @param {{ storeId: string|number, variantId: string|number, email?: string,
- *           leadId?: string|number, productSlug?: string }} input
+ *           leadId?: string|number, productSlug?: string,
+ *           custom?: Record<string, string>, expiresAt?: string }} input
  */
 export function buildCheckoutPayload(input) {
-  const { storeId, variantId, email, leadId, productSlug } = input;
+  const { storeId, variantId, email, leadId, productSlug, custom: extra, expiresAt } = input;
   if (!storeId || !variantId) {
     throw new Error('buildCheckoutPayload: storeId y variantId son obligatorios');
   }
@@ -29,16 +34,24 @@ export function buildCheckoutPayload(input) {
   if (leadId !== undefined && leadId !== null && String(leadId) !== '') {
     custom.lead_id = String(leadId);
   }
+  if (extra && typeof extra === 'object') {
+    for (const [k, v] of Object.entries(extra)) {
+      if (v !== undefined && v !== null) custom[k] = String(v);
+    }
+  }
 
   const checkout_data = { custom };
   // email solo si viene no vacío: LS rechaza el prefill con email vacío.
   const cleanEmail = typeof email === 'string' ? email.trim() : '';
   if (cleanEmail) checkout_data.email = cleanEmail.toLowerCase();
 
+  const attributes = { checkout_data };
+  if (typeof expiresAt === 'string' && expiresAt) attributes.expires_at = expiresAt;
+
   return {
     data: {
       type: 'checkouts',
-      attributes: { checkout_data },
+      attributes,
       relationships: {
         store: { data: { type: 'stores', id: String(storeId) } },
         variant: { data: { type: 'variants', id: String(variantId) } },

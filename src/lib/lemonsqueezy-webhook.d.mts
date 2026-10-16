@@ -71,6 +71,8 @@ export type DecisionEntrega =
   | { accion: 'json_invalido' }
   | { accion: 'test_mode_ignorado'; body: unknown; eventName: string | null; lsOrderId: string | null }
   | { accion: 'evento_ignorado'; body: unknown; eventName: string | null }
+  | { accion: 'suscripcion'; body: unknown; sub: ParsedSubscriptionEvent }
+  | { accion: 'suscripcion_invalida'; body: unknown; eventName: string | null }
   | { accion: 'suscripcion_ignorada'; body: unknown; parsed: ParsedOrderEvent }
   | { accion: 'reembolso_parcial'; body: unknown; parsed: ParsedOrderEvent }
   | { accion: 'producto_desconocido'; body: unknown; parsed: ParsedOrderEvent }
@@ -107,3 +109,62 @@ export function releaseAccesoEnvio(
   supabase: { from: (table: string) => any },
   lsOrderId: string,
 ): Promise<{ error: { message: string } | null }>;
+
+// ─── Suscripciones (S-13) ───────────────────────────────────────────────────
+
+export const SUBSCRIPTION_EVENTS: readonly string[];
+export type EstadoSuscripcion = 'active' | 'on_trial' | 'past_due' | 'paused' | 'cancelled' | 'expired' | 'unpaid';
+export const ESTADOS_SUSCRIPCION: readonly EstadoSuscripcion[];
+export const PROVEEDOR: 'lemonsqueezy';
+export const SLUG_SUSCRIPCION: 'suscripcion-libro';
+
+export function suscripcionRef(id: string): string;
+
+export interface ParsedSubscriptionEvent {
+  providerSubscriptionId: string;
+  status: EstadoSuscripcion;
+  variantId: string | null;
+  customerId: string | null;
+  email: string | null;
+  userName: string | null;
+  renewsAt: string | null;
+  endsAt: string | null;
+  trialEndsAt: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  cancelled: boolean;
+  pause: { mode: 'void' | 'free'; resumes_at: string | null } | null;
+  testMode: boolean;
+  custom: Record<string, unknown> | null;
+  eventName: string;
+}
+
+export function parseSubscriptionEvent(body: unknown, eventName: string | undefined | null): ParsedSubscriptionEvent | null;
+
+export function cambiosSuscripcion(sub: ParsedSubscriptionEvent, body: unknown): Record<string, unknown>;
+export function filaSuscripcion(
+  sub: ParsedSubscriptionEvent,
+  ctx: { accountId: string | null; vinculo: 'cuenta' | 'pendiente'; body: unknown; nowIso: string },
+): Record<string, unknown>;
+export function esEventoObsoleto(rawGuardado: unknown, sub: Pick<ParsedSubscriptionEvent, 'updatedAt'>): boolean;
+
+export type ResultadoSuscripcion = {
+  http: number;
+  resultado: string;
+  vinculo?: 'cuenta' | 'pendiente';
+  motivo?: string | null;
+  correo?: 'enviado' | 'fallido' | 'omitido';
+  aviso?: 'config';
+};
+
+export function procesarSuscripcion(
+  supabase: { from: (table: string) => any },
+  sub: ParsedSubscriptionEvent,
+  ctx: {
+    body: unknown;
+    secretCustom: string | null | undefined;
+    variantesSuscripcion: Set<string>;
+    nowMs?: number;
+    enviarCorreoVincular?: (d: { email: string; nombre: string | null }) => Promise<{ ok: boolean }>;
+  },
+): Promise<ResultadoSuscripcion>;

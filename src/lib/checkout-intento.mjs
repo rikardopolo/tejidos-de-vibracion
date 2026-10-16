@@ -36,11 +36,17 @@
  * Desenlaces posibles. Se nombran por lo que le pasó a la PERSONA, no por el
  * código HTTP, para que una consulta agregada se lea sin descifrar nada.
  * @typedef {'checkout_creado'|'rechazado_formato'|'rechazado_datos'|'honeypot'
- *   |'limitado_por_ritmo'|'mal_configurado'|'error_proveedor'} Desenlace
+ *   |'limitado_por_ritmo'|'mal_configurado'|'error_proveedor'
+ *   |'sin_sesion'|'correo_sin_verificar'|'base_no_disponible'} Desenlace
+ * Los tres últimos solo los usa el checkout de la suscripción (S-13), que exige
+ * sesión y correo verificado.
  */
 
 export const TIPO_EVENTO = 'checkout_intento';
 export const ORIGEN_EVENTO = 'checkout/bundle-preventa';
+/** Origen y producto del checkout de la suscripción (S-13). */
+export const ORIGEN_SUSCRIPCION = 'checkout/suscripcion';
+export const PRODUCTO_SUSCRIPCION = 'suscripcion-libro';
 
 /** Los desenlaces que cuentan como intento de una PERSONA real. */
 export const DESENLACES_HUMANOS = Object.freeze([
@@ -49,6 +55,9 @@ export const DESENLACES_HUMANOS = Object.freeze([
   'limitado_por_ritmo',
   'mal_configurado',
   'error_proveedor',
+  'sin_sesion',
+  'correo_sin_verificar',
+  'base_no_disponible',
 ]);
 
 /**
@@ -91,16 +100,17 @@ export function construyeMetadata(desenlace, extra = {}, producto = 'bundle-prev
  * @param {{ from: (t: string) => { insert: (row: unknown) => Promise<{ error?: { message?: string } | null }> } } | null} supabase
  * @param {Desenlace} desenlace
  * @param {Record<string, unknown>} [extra]
+ * @param {{ origen?: string, producto?: string }} [donde]  por defecto, el bundle de la preventa
  * @returns {Promise<boolean>} true si quedó registrado
  */
-export async function registraIntento(supabase, desenlace, extra = {}) {
+export async function registraIntento(supabase, desenlace, extra = {}, donde = {}) {
   if (!supabase) return false;
   try {
     const { error } = await supabase.from('events').insert({
       lead_id: null,
       type: TIPO_EVENTO,
-      source: ORIGEN_EVENTO,
-      metadata: construyeMetadata(desenlace, extra),
+      source: donde.origen ?? ORIGEN_EVENTO,
+      metadata: construyeMetadata(desenlace, extra, donde.producto),
     });
     if (error) {
       console.error('[checkout/intento] no se registró:', error.message ?? error);

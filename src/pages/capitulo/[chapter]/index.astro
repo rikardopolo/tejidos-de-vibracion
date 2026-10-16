@@ -24,12 +24,16 @@
 import { getCollection, getEntry, render } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
-import { getAccesoVerificado, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
+import { getAccesoVerificado, puedeAcceder, gatingActivo, CACHE_PAGINA_GATEADA, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceMarker, type PieceKind } from '@/lib/piece-num';
 import { SITE, breadcrumb, wrapGraph, chapterOgImage } from '@/lib/seo';
 
 export const prerender = false;
+
+// Página con control de acceso: depende de las cookies del lector (y puede
+// reescribir `__Host-tdv_sesion`), así que ninguna caché compartida la guarda.
+Astro.response.headers.set('Cache-Control', CACHE_PAGINA_GATEADA);
 
 const { chapter } = Astro.params;
 if (!chapter) return Astro.redirect('/indice');

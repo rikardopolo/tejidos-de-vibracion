@@ -173,6 +173,52 @@ export async function sendTransactionalEmail(opts: {
   }
 }
 
+/**
+ * Envía un email transaccional con contenido INLINE (sin plantilla). Brevo exige
+ * `sender` cuando no hay `templateId`. Mismo contrato de error que
+ * `sendTransactionalEmail` (nunca lanza, sin cuerpo del proveedor en el fallo).
+ * Lo usa el respaldo del correo de vinculación de la suscripción (S-13).
+ */
+export async function sendInlineEmail(opts: {
+  to: { email: string; name?: string };
+  sender: { email: string; name: string };
+  subject: string;
+  htmlContent: string;
+  textContent?: string;
+  apiKey: string;
+}): Promise<{ ok: true; messageId?: string } | { ok: false; status: number; message: string }> {
+  const payload = {
+    sender: opts.sender,
+    to: [{ email: opts.to.email.toLowerCase().trim(), name: opts.to.name }],
+    subject: opts.subject,
+    htmlContent: opts.htmlContent,
+    textContent: opts.textContent,
+  };
+
+  try {
+    const res = await fetch(`${BREVO_API_BASE}/smtp/email`, {
+      method: 'POST',
+      signal: AbortSignal.timeout(8000),
+      headers: {
+        'accept': 'application/json',
+        'api-key': opts.apiKey,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await res.text();
+    if (res.status === 201 || res.status === 200) {
+      let messageId: string | undefined;
+      try { messageId = JSON.parse(text).messageId; } catch { /* ignore */ }
+      return { ok: true, messageId };
+    }
+    return { ok: false, status: res.status, message: 'provider_error' };
+  } catch (e) {
+    return falloDeRed('sendInlineEmail', e);
+  }
+}
+
 // ─── Rate limit en memoria (1 req / 60 s por hash IP) ─────────────────────
 const rateBuckets = new Map<string, number>();
 const RATE_WINDOW_MS = 60_000;

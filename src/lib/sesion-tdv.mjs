@@ -11,7 +11,9 @@
  *
  * `em` (añadido al payload del v2): el correo de la cuenta YA ENMASCARADO
  * (`r***@gmail.com`), para el aviso «Entraste como…» sin consultar la base en cada
- * página. Nunca el correo en claro. `ent` lo usará S-13 (marca de nivel 2).
+ * página. Nunca el correo en claro. `ent` = `{n, hasta}` (S-13): marca firmada del
+ * último nivel ≥ 2 que la base confirmó, `hasta` en segundos; solo se usa si la base
+ * no responde (D4). La escribe `reemitirSesionTdv` conservando `exp`.
  *
  * Falla cerrado: sin secreto, o con menos de 32 caracteres, no firma (`null`) ni
  * acepta (`{ok:false}`). El secreto se lee en cada llamada (`process.env` dentro de
@@ -141,6 +143,47 @@ export function firmarSesionTdv(claims, opts = {}) {
   if (claims.ent !== undefined && claims.ent !== null) {
     if (!entValida(claims.ent)) return null;
     payload.ent = { n: claims.ent.n, hasta: claims.ent.hasta };
+  }
+  return firmar(payload, secret);
+}
+
+/**
+ * Vuelve a firmar una sesión YA VERIFICADA cambiando solo la marca `ent` (S-13,
+ * plan v2 §7.7 y D4). Conserva `aid`, `ep`, `am`, `em`, `iat` y, sobre todo, `exp`:
+ * reescribir la marca no alarga la sesión (30 días absolutos desde el canje).
+ * `ent: null` la quita. `null` si falta el secreto, la sesión ya caducó o la marca
+ * no vale. Quien la llama decide CUÁNDO (solo tras una consulta correcta a la
+ * base: `acceso-cuenta.mjs`).
+ * @param {{ aid: string, ep: number, am: string, iat: number, exp: number, em?: string|null }} sesion
+ * @param {{ n: 1|2|3, hasta: number }|null} ent  `hasta` en segundos
+ * @param {{ secret?: string|null, now?: number }} [opts]
+ * @returns {string|null}
+ */
+export function reemitirSesionTdv(sesion, ent, opts = {}) {
+  const secret = resolverSecreto(opts);
+  if (!secret || !sesion) return null;
+  if (typeof sesion.aid !== 'string' || !UUID.test(sesion.aid)) return null;
+  if (!Number.isInteger(sesion.ep) || sesion.ep < 0) return null;
+  if (!METODOS_ACCESO.includes(sesion.am)) return null;
+  if (!Number.isInteger(sesion.iat) || !Number.isInteger(sesion.exp)) return null;
+  if (ahoraS(opts) >= sesion.exp) return null;
+
+  const payload = {
+    p: 'sesion-tdv',
+    aud: 'tdv',
+    aid: sesion.aid.toLowerCase(),
+    ep: sesion.ep,
+    am: sesion.am,
+    iat: sesion.iat,
+    exp: sesion.exp,
+  };
+  if (sesion.em !== undefined && sesion.em !== null) {
+    if (!emValido(sesion.em)) return null;
+    payload.em = sesion.em;
+  }
+  if (ent !== undefined && ent !== null) {
+    if (!entValida(ent)) return null;
+    payload.ent = { n: ent.n, hasta: ent.hasta };
   }
   return firmar(payload, secret);
 }

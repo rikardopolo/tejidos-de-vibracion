@@ -14,6 +14,8 @@
  * Gating idéntico al de la Obertura:
  *   - status 'published' + nivel >= 1 → contenido completo
  *   - status 'fragmento-permanente' o nivel < 1 → BloquePuerta espera/bloqueado
+ * El nivel 2 (Cap. 4) sale de `getAccesoVerificado`: token de compra o la cuenta de
+ * la sesión (S-13). Siempre `Cache-Control: private, no-store`.
  *
  * Bot allowlist replicada del Obertura/[slug] · search engines + LLM
  * crawlers + social unfurlers bypasean el gating.
@@ -25,12 +27,16 @@ import { getCollection, getEntry, render } from 'astro:content';
 import CapituloLayout from '@/layouts/CapituloLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import PaginacionCards from '@/components/book/PaginacionCards.astro';
-import { getAccesoVerificado, puedeAcceder, gatingActivo, esPreview, type Nivel } from '@/lib/gating';
+import { getAccesoVerificado, puedeAcceder, gatingActivo, esPreview, CACHE_PAGINA_GATEADA, type Nivel } from '@/lib/gating';
 import { romanize } from '@/lib/utils';
 import { pieceOrnament, type PieceKind } from '@/lib/piece-num';
 import { SITE, breadcrumb, wrapGraph, chapterOgImage } from '@/lib/seo';
 
 export const prerender = false;
+
+// Página con control de acceso: depende de las cookies del lector (y puede
+// reescribir `__Host-tdv_sesion`), así que ninguna caché compartida la guarda.
+Astro.response.headers.set('Cache-Control', CACHE_PAGINA_GATEADA);
 
 const { chapter, section } = Astro.params;
 if (!chapter || !section) return Astro.redirect('/indice');

@@ -8,6 +8,12 @@
  *
  * Lógica pura, testeable con `node --test`. Firma HMAC-SHA256, comparación
  * timing-safe. TTL largo (1 año): el acceso pagado dura más que el de registro.
+ *
+ * Sin token de SUSCRIPCIÓN (S-13, plan v2 §7.7): la suscripción NO viaja en un token.
+ * El nivel 2 de quien se suscribe sale de su CUENTA (sesión `__Host-tdv_sesion` →
+ * `subscriptions` por `account_id`, `acceso-cuenta.mjs`). El claim `u` que la rama F2
+ * añadió (uuid de `subscriptions.id`) se retiró: ni se emite ni se lee. Un token viejo
+ * que lo llevara sigue verificando como token de compra normal; `u` se ignora.
  */
 import crypto from 'node:crypto';
 

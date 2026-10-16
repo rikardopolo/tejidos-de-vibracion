@@ -1,8 +1,9 @@
 /**
  * refund-gate.test.mjs · Correr: node --test src/lib/refund-gate.test.mjs
  *
- * Cubre la política MIXTA: abierto ante un error de consulta, cerrado ante
- * configuración rota (sin cliente, C8) y ante fallo de dato. Los ejes se testean
+ * Cubre la política: cerrado ante un error de consulta (S-13: la caída la cubre la
+ * marca ent de la sesión), ante configuración rota (sin cliente, C8), ante fallo de
+ * dato y ante una orden de Test Mode en producción. Los ejes se testean
  * por separado porque son decisiones distintas que se toman en la misma función.
  */
 import { test } from 'node:test';
@@ -10,7 +11,10 @@ import assert from 'node:assert/strict';
 import { resolveRefundGate } from './refund-gate.mjs';
 
 const granted = { nivel: 2, slugs: ['bundle-preventa'] };
-const REVOCADO = { nivel: 0, slugs: [] };
+// Revocar = volver a nivel 1 (registro), NO a 0: un reembolsado sigue registrado y
+// conserva Obertura + Acto I. Con el código viejo (nivel 0) todo test que use
+// REVOCADO se pone en rojo: ese es el control negativo del arreglo.
+const REVOCADO = { nivel: 1, slugs: [] };
 const ok = (extra) => ({ orderId: 'o1', hasClient: true, queryError: false, order: null, ...extra });
 
 test('orden paid → mantiene el nivel del token', () => {
@@ -33,10 +37,24 @@ test('orden ausente con consulta OK → revoca (el token apunta a nada)', () => 
   assert.deepEqual(resolveRefundGate(granted, ok({ order: null })), REVOCADO);
 });
 
-// --- Eje "abierto en caída": la consulta falla, no el dato (hasta S-13 y su marca `ent`) ---
+// --- Caída de la base (S-13): el token suelto se CIERRA; el paso durante la caída es la marca `ent` de la sesión ---
 
-test('error de consulta → mantiene el token (fail-open de infraestructura, hasta S-13)', () => {
-  assert.deepEqual(resolveRefundGate(granted, ok({ queryError: true })), granted);
+test('error de consulta → REVOCA desde S-13 (la caída la cubre la marca ent de la sesión, no el token)', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ queryError: true })), REVOCADO);
+});
+
+// --- Órdenes de Test Mode (S-13): no cuentan en producción ---
+
+test('orden paid de Test Mode en PRODUCCIÓN → revoca', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ produccion: true, order: { status: 'paid', test_mode: true } })), REVOCADO);
+});
+
+test('orden paid de Test Mode FUERA de producción → mantiene (Preview y local prueban el camino entero)', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ produccion: false, order: { status: 'paid', test_mode: true } })), granted);
+});
+
+test('orden paid real en producción → mantiene', () => {
+  assert.deepEqual(resolveRefundGate(granted, ok({ produccion: true, order: { status: 'paid', test_mode: false } })), granted);
 });
 
 // --- Configuración rota (C8): sin cliente de Supabase se CIERRA ---
@@ -73,4 +91,14 @@ test('el resultado revocado no se comparte entre llamadas', () => {
 test('nivel 3 se conserva íntegro cuando la orden está paid', () => {
   const g3 = { nivel: 3, slugs: [] };
   assert.deepEqual(resolveRefundGate(g3, ok({ order: { status: 'paid' } })), g3);
+});
+
+// --- Bug corregido (F2, 18-sep-2026): revocar no puede bajar de nivel 1 ---
+
+test('revocar deja nivel 1, nunca 0: el reembolsado conserva Obertura + Acto I', () => {
+  // El token de compra solo lo tiene quien ya se registró (nivel 1). Perder la
+  // compra no borra el registro: el gate debe devolver 1, no expulsar a visitante.
+  const r = resolveRefundGate(granted, ok({ order: { status: 'refunded' } }));
+  assert.equal(r.nivel, 1);
+  assert.notEqual(r.nivel, 0);
 });

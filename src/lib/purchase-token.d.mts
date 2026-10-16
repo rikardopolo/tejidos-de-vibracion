@@ -7,7 +7,14 @@ export interface PurchaseClaims {
 }
 
 export type PurchaseVerifyResult =
-  | { valid: true; email: string; nivel: 2 | 3; slugs: string[]; orderId: string | null; issuedAt: number }
+  | {
+      valid: true;
+      email: string;
+      nivel: 2 | 3;
+      slugs: string[];
+      orderId: string | null;
+      issuedAt: number;
+    }
   | { valid: false; reason: 'malformed' | 'bad_signature' | 'expired' };
 
 export function generatePurchaseToken(claims: PurchaseClaims, secret: string): string;
