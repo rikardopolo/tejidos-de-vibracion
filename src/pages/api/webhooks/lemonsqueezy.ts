@@ -19,7 +19,7 @@ import {
 import { SUBSCRIPTION_SLUGS } from '@/lib/product-slugs.mjs';
 import { generatePurchaseToken } from '@/lib/purchase-token.mjs';
 import { sendInlineEmail, sendTransactionalEmail, tagContactSafe } from '@/lib/brevo';
-import { VINCULAR_URL, contenidoCorreoVincular, planCorreoVincular } from '@/lib/correo-vincular.mjs';
+import { urlVincularPortal, contenidoCorreoVincular, planCorreoVincular } from '@/lib/correo-vincular.mjs';
 
 export const prerender = false;
 
@@ -463,17 +463,25 @@ async function enviarCorreoVincular(d: { email: string; nombre: string | null })
     console.error('[webhooks/lemonsqueezy] correo de vinculación omitido · falta BREVO_API_KEY');
     return { ok: false };
   }
+  let vincularUrl: string;
+  try {
+    vincularUrl = urlVincularPortal(readEnv('PORTAL_AUTORIZAR_URL'));
+  } catch (e) {
+    // Mal configurada: no se envía un enlace a otro entorno ni se rompe el webhook.
+    console.error('[webhooks/lemonsqueezy] correo de vinculación omitido ·', (e as Error).message);
+    return { ok: false };
+  }
   if (plan.modo === 'plantilla') {
     const r = await sendTransactionalEmail({
       to: { email: d.email, name: d.nombre ?? undefined },
       templateId: plan.templateId,
-      params: { NOMBRE: d.nombre ?? '', VINCULAR_URL },
+      params: { NOMBRE: d.nombre ?? '', VINCULAR_URL: vincularUrl },
       apiKey: plan.apiKey,
     });
     if (!r.ok) console.error('[webhooks/lemonsqueezy] correo de vinculación (plantilla) falló:', r);
     return { ok: r.ok };
   }
-  const c = contenidoCorreoVincular({ nombre: d.nombre });
+  const c = contenidoCorreoVincular({ nombre: d.nombre, url: vincularUrl });
   const r = await sendInlineEmail({
     to: { email: d.email, name: d.nombre ?? undefined },
     sender: plan.sender,

@@ -19,6 +19,17 @@
 export const VINCULAR_URL = 'https://tejidosderealidad.com/cuenta/vincular';
 export const REMITENTE_POR_DEFECTO = Object.freeze({ email: 'hola@tejidosderealidad.com', name: 'Tejidos de Vibración' });
 
+/** Origen del portal de este entorno; producción solo cuando falta la variable. */
+export function urlVincularPortal(autorizarUrl) {
+  if (autorizarUrl == null || autorizarUrl.trim() === '') return VINCULAR_URL;
+  const portal = new URL(autorizarUrl);
+  const local = portal.hostname === 'localhost' || portal.hostname === '127.0.0.1';
+  if ((portal.protocol !== 'https:' && !(local && portal.protocol === 'http:')) || portal.username || portal.password) {
+    throw new Error('PORTAL_AUTORIZAR_URL no válida para vincular el pago');
+  }
+  return new URL('/cuenta/vincular', portal.origin).href;
+}
+
 /**
  * Cómo se envía, según el entorno. `null` si falta la API key de Brevo.
  * @param {(k: string) => string|undefined} leer

@@ -4,9 +4,28 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { REMITENTE_POR_DEFECTO, VINCULAR_URL, contenidoCorreoVincular, planCorreoVincular } from './correo-vincular.mjs';
+import { REMITENTE_POR_DEFECTO, VINCULAR_URL, contenidoCorreoVincular, planCorreoVincular, urlVincularPortal } from './correo-vincular.mjs';
 
 const leer = (env) => (k) => env[k];
+
+test('PORTAL_AUTORIZAR_URL de Preview → enlace de vinculación en esa Preview', () => {
+  const url = urlVincularPortal('https://portal-preview.vercel.app/cuenta/autorizar?aud=tdv#salto');
+  assert.equal(url, 'https://portal-preview.vercel.app/cuenta/vincular');
+  const c = contenidoCorreoVincular({ nombre: 'Ana', url });
+  assert.ok(c.text.includes(url));
+  assert.ok(c.html.includes(`href="${url}"`));
+});
+
+test('sin PORTAL_AUTORIZAR_URL → enlace de producción', () => {
+  assert.equal(urlVincularPortal(), VINCULAR_URL);
+  assert.equal(urlVincularPortal(''), VINCULAR_URL);
+});
+
+test('PORTAL_AUTORIZAR_URL configurada pero inválida no cae a producción', () => {
+  for (const url of ['no-es-una-url', 'javascript:alert(1)', 'http://portal.example/cuenta/autorizar', 'https://user:pass@portal.example/cuenta/autorizar']) {
+    assert.throws(() => urlVincularPortal(url));
+  }
+});
 
 test('el enlace es el del portal (C11): el libro no emite códigos', () => {
   assert.equal(VINCULAR_URL, 'https://tejidosderealidad.com/cuenta/vincular');
