@@ -8,8 +8,8 @@
 import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 
-export function cargarModuloTs(url, dependencias, { env = {}, fetch = sinRed } = {}) {
-  const { outputText, diagnostics } = ts.transpileModule(readFileSync(url, 'utf8'), {
+export function cargarModuloTs(url, dependencias, { env = {}, fetch = sinRed, fuente } = {}) {
+  const { outputText, diagnostics } = ts.transpileModule(fuente ?? readFileSync(url, 'utf8'), {
     fileName: url.pathname,
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
     reportDiagnostics: true,

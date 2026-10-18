@@ -245,7 +245,11 @@ const piezaSchema = wrapGraph([
         <Content />
       </section>
     ) : (
-      <BloquePuerta tipo={tipoBloquePuerta} capitulo={capitulo} />
+      <BloquePuerta
+        tipo={tipoBloquePuerta}
+        capitulo={capitulo}
+        suscripcion={chapterNum === 4 && !puedeAcceder(acceso, nivelRequerido, productoSlug)}
+      />
     )}
 
     {tieneAcceso && <PaginacionCards chapter={chapter} prev={prev} next={next} />}

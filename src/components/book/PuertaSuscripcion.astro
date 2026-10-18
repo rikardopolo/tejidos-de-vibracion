@@ -1,0 +1,84 @@
+---
+import { leerSesionTdv } from '@/lib/cuenta-tdv';
+
+const sesion = leerSesionTdv(Astro.cookies);
+const hrefEntrar = `/auth/entrar?next=${encodeURIComponent(Astro.url.pathname)}`;
+---
+
+<div class="puerta-suscripcion" data-suscripcion-checkout data-entrar={hrefEntrar}>
+  <h2 class="bloque-puerta__titulo">Suscríbete para seguir leyendo</h2>
+  {sesion ? (
+    <>
+      <p class="bloque-puerta__cuerpo">
+        Vas a suscribir la cuenta <strong class="puerta-suscripcion__correo">{sesion.em ?? '***@…'}</strong>.
+      </p>
+      <div class="puerta-suscripcion__acciones">
+        <button type="button" data-suscripcion-plan="mensual">Suscribirme al plan mensual</button>
+        <button type="button" data-suscripcion-plan="anual">Suscribirme al plan anual</button>
+      </div>
+      <p class="puerta-suscripcion__estado" data-suscripcion-estado role="status" aria-live="polite"></p>
+      <script is:inline src="/suscripcion-checkout.js" defer></script>
+    </>
+  ) : (
+    <>
+      <p class="bloque-puerta__cuerpo">Entra en tu cuenta para elegir tu suscripción.</p>
+      <a class="puerta-suscripcion__entrar" href={hrefEntrar} rel="nofollow">Entrar para suscribirme</a>
+    </>
+  )}
+  <p class="puerta-suscripcion__precio">Verás el precio antes de confirmar el pago.</p>
+</div>
+
+<style>
+  .puerta-suscripcion__correo {
+    overflow-wrap: anywhere;
+  }
+  .puerta-suscripcion__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--gap-sm);
+  }
+  .puerta-suscripcion button,
+  .puerta-suscripcion__entrar {
+    display: inline-block;
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: 0.85rem 1.2rem;
+    border: 1px solid var(--tinta);
+    border-radius: 4px;
+    background: var(--tinta);
+    color: var(--pergamino);
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .puerta-suscripcion button:hover,
+  .puerta-suscripcion__entrar:hover {
+    background: var(--tinta-suave);
+    color: var(--pergamino);
+  }
+  .puerta-suscripcion button:focus-visible,
+  .puerta-suscripcion__entrar:focus-visible {
+    outline: 2px solid var(--tinta);
+    outline-offset: 4px;
+  }
+  .puerta-suscripcion button:active,
+  .puerta-suscripcion__entrar:active {
+    background: var(--pergamino);
+    color: var(--tinta);
+  }
+  .puerta-suscripcion__estado,
+  .puerta-suscripcion__precio {
+    font-family: var(--sans);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--tinta-suave);
+    margin: var(--gap-sm) 0 0;
+  }
+  .puerta-suscripcion__estado:empty {
+    margin: 0;
+  }
+</style>
