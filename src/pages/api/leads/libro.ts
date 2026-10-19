@@ -5,6 +5,7 @@ import { getServerClient } from '@/lib/supabase';
 import { getGeo } from '@/lib/geo';
 import { utmsSaneadas } from '@/lib/utm.mjs';
 import { registrarAltaLibro, validarAltaLibro } from '@/lib/alta-libro.mjs';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
 
 export const prerender = false;
 
@@ -39,6 +40,7 @@ const json = (status: number, body: unknown, headers: Record<string, string> = {
   });
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  if (sesionTdvActiva()) return json(409, { error: 'usa_tu_cuenta', destino: '/auth/entrar?next=%2Fobertura' });
   // Solo aceptar JSON
   const ct = request.headers.get('content-type') || '';
   if (!ct.includes('application/json')) return json(415, { error: 'invalid_content_type' });

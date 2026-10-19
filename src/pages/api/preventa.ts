@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { upsertContact, hashIp, isRateLimited } from '@/lib/brevo';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
 
 export const prerender = false;
 
@@ -33,6 +34,7 @@ const preventaSchema = z.object({
 });
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  if (sesionTdvActiva()) return new Response(JSON.stringify({ error: 'usa_tu_cuenta', destino: '/auth/entrar?next=%2Fobertura' }), { status: 409 });
   const ct = request.headers.get('content-type') || '';
   if (!ct.includes('application/json')) {
     return new Response(JSON.stringify({ error: 'invalid_content_type' }), { status: 415 });

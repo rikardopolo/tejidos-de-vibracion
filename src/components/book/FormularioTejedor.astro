@@ -24,6 +24,8 @@
  *   successText: mensaje tras envío exitoso
  */
 import { CONSENT_TEXT_LIBRO, CORREO_MAX, NOMBRE_MAX, partirEnlace } from '@/lib/alta-libro.mjs';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
+import PuertaCuenta from './PuertaCuenta.astro';
 
 export interface Props {
   id?: string;
@@ -48,8 +50,10 @@ const ids = {
   cartas: `${id}-cartas`,
 };
 const err = (campo: string) => `${id}-${campo}-error`;
+const cuentaActiva = sesionTdvActiva();
 ---
 
+{cuentaActiva ? <PuertaCuenta /> : <>
 <form id={id} class={`form-tejedor form-tejedor--${variant}`} novalidate
       data-tejedor-form data-endpoint={endpoint} data-submit-text={submitText}
       data-success-text={successText}>
@@ -102,5 +106,6 @@ const err = (campo: string) => `${id}-${campo}-error`;
 </form>
 {/* Fuera del <form>: tras el éxito el form se oculta (`.is-sent`) y el aviso debe seguir a la vista. */}
 <p class={`form-tejedor__status form-tejedor__status--${id}`} role="status" aria-live="polite" data-status-for={id}></p>
+ </>}
 
 <script src="/formulario-tejedor.js" defer></script>

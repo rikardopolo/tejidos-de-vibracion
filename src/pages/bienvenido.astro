@@ -4,6 +4,7 @@ import { verifyAccessToken } from '@/lib/token';
 import { addContactToList } from '@/lib/brevo';
 import { getServerClient } from '@/lib/supabase';
 import { cartasVigentes } from '@/lib/alta-libro.mjs';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
 
 export const prerender = false;
 
@@ -22,6 +23,7 @@ const readEnv = (key: string): string | undefined => {
 // escáner corporativo (que hacen GET sobre el enlace) nunca confirma sin un cruce
 // de umbral deliberado · `confirmed_at` nace de un gesto humano real.
 const isPost = Astro.request.method === 'POST';
+const cuentaActiva = sesionTdvActiva();
 let token = Astro.url.searchParams.get('t') ?? '';
 if (isPost) {
   try {
@@ -52,12 +54,26 @@ if (tokenResult.valid && supabase) {
   try {
     const { data, error } = await supabase
       .from('leads')
-      .select('consent_text, unsubscribed_at')
+      .select('id, consent_text, unsubscribed_at')
       .eq('email', tokenResult.email)
       .maybeSingle();
     if (error) console.error('[bienvenido] lectura de la evidencia:', error.message);
-    else conCartas = cartasVigentes(data);
+    else {
+      conCartas = cartasVigentes(data);
+      // Un DOI antiguo no revierte una preferencia de cuenta posterior.
+      if (cuentaActiva && data?.id) {
+        const cambios = await supabase.from('events').select('metadata').eq('lead_id', data.id)
+          .eq('type', 'cuenta_preferencias').not('metadata->preferencias->>boletin', 'is', null)
+          .order('created_at', { ascending: false }).limit(1).maybeSingle();
+        if (cambios.error) conCartas = false;
+        else {
+          const ultimo = cambios.data;
+          if (ultimo) conCartas = ultimo.metadata.preferencias.boletin === true && !data.unsubscribed_at;
+        }
+      }
+    }
   } catch (err) {
+    conCartas = false;
     console.error('[bienvenido] lectura de la evidencia threw:', err instanceof Error ? err.name : 'unknown');
   }
 }
@@ -66,7 +82,7 @@ if (tokenResult.valid && supabase) {
 if (estado === 'confirmado' && tokenResult.valid) {
   const emailConfirmado = tokenResult.email;
 
-  Astro.cookies.set('tejedor-access', token, {
+  if (!cuentaActiva) Astro.cookies.set('tejedor-access', token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
@@ -137,14 +153,13 @@ const DESC: Record<Estado, string> = {
 
         <div class="prose">
           <p class="no-indent">
-            Tu enlace es válido. Falta un gesto tuyo — el que cruza el umbral. Al confirmar, la Obertura
-            del libro se abre para ti{conCartas ? ', y la primera carta del Tejedor se pone en camino.' : '.'}
+            {cuentaActiva ? 'Tu enlace es válido. Confirma las preferencias de correo que solicitaste. Para leer, entra después con tu cuenta.' : <>Tu enlace es válido. Falta un gesto tuyo — el que cruza el umbral. Al confirmar, la Obertura del libro se abre para ti{conCartas ? ', y la primera carta del Tejedor se pone en camino.' : '.'}</>}
           </p>
         </div>
 
         <form method="POST" action="/bienvenido" class="confirm-form center mt-4 mb-6">
           <input type="hidden" name="t" value={token} />
-          <button type="submit" class="confirm-cta">Confirmar · Entrar al tejido →</button>
+          <button type="submit" class="confirm-cta">{cuentaActiva ? 'Confirmar mi correo →' : 'Confirmar · Entrar al tejido →'}</button>
         </form>
       </>
     )}
@@ -160,8 +175,7 @@ const DESC: Record<Estado, string> = {
 
         <div class="prose">
           <p class="no-indent">
-            Tu correo está confirmado. La Obertura del libro está abierta para ti, y al final del
-            recorrido, el primer movimiento del Capítulo 1 te espera.
+            {cuentaActiva ? 'Tu correo está confirmado. Para leer la Obertura, entra o crea tu cuenta gratuita.' : 'Tu correo está confirmado. La Obertura del libro está abierta para ti, y al final del recorrido, el primer movimiento del Capítulo 1 te espera.'}
           </p>
           {conCartas && (
             <p>
@@ -172,7 +186,7 @@ const DESC: Record<Estado, string> = {
         </div>
 
         <div class="center mt-4">
-          <a class="lit-link lit-link--lg" href="/obertura">Empezar por la Obertura →</a>
+          <a class="lit-link lit-link--lg" href={cuentaActiva ? '/auth/entrar?next=%2Fobertura' : '/obertura'}>{cuentaActiva ? 'Entrar o crear mi cuenta →' : 'Empezar por la Obertura →'}</a>
         </div>
 
         <div class="center mt-2 mb-6">
@@ -196,13 +210,12 @@ const DESC: Record<Estado, string> = {
             a través de demasiados clientes de correo y se haya cortado en alguna parte.
           </p>
           <p>
-            No es nada grave. Vuelve a <a href="/recibir" class="lit-link">empezar el registro</a> con el mismo
-            correo: Brevo se encarga de no duplicarte y te enviará un nuevo enlace.
+            {cuentaActiva ? <>Puedes <a href="/auth/entrar?next=%2Fobertura" class="lit-link">entrar o crear tu cuenta</a> para leer. Los correos se eligen en Mi cuenta.</> : <>No es nada grave. Vuelve a <a href="/recibir" class="lit-link">empezar el registro</a> con el mismo correo: Brevo se encarga de no duplicarte y te enviará un nuevo enlace.</>}
           </p>
         </div>
 
         <div class="center mt-4 mb-6">
-          <a class="lit-link lit-link--lg" href="/recibir">Volver a registrarme →</a>
+          <a class="lit-link lit-link--lg" href={cuentaActiva ? '/auth/entrar?next=%2Fobertura' : '/recibir'}>{cuentaActiva ? 'Entrar o crear mi cuenta →' : 'Volver a registrarme →'}</a>
         </div>
       </>
     )}

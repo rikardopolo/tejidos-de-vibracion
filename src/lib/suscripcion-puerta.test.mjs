@@ -43,9 +43,11 @@ async function componentes(env) {
   const cuenta = cargarModuloTs(new URL('./cuenta-tdv.ts', import.meta.url), { './sesion-tdv.mjs': sesion }, { env });
   const CuentaTdv = await cargarAstro('src/components/book/CuentaTdv.astro', { '@/lib/cuenta-tdv': cuenta }, env);
   const PuertaSuscripcion = await cargarAstro('src/components/book/PuertaSuscripcion.astro', { '@/lib/cuenta-tdv': cuenta }, env);
+  const PuertaCuenta = await cargarAstro('src/components/book/PuertaCuenta.astro', { '@/lib/cuenta-tdv': cuenta }, env);
   const Puerta = await cargarAstro('src/components/book/BloquePuerta.astro', {
     './FormularioTejedor.astro': Formulario, './CuentaTdv.astro': CuentaTdv,
     './PuertaSuscripcion.astro': PuertaSuscripcion, '@/lib/checkout-suscripcion.mjs': checkout,
+    '@/lib/cuenta-tdv': cuenta, './PuertaCuenta.astro': PuertaCuenta,
   }, env);
   return Puerta;
 }
@@ -76,7 +78,8 @@ test('render: apagado con y sin sesión', async () => {
       const anterior = await renderPuerta({ ...opciones, suscripcion: false });
       assert.equal(html, anterior);
       assert.match(html, /Capítulo IV requiere cruzar la Obertura/);
-      assert.match(html, /data-formulario-anterior/);
+      assert.match(html, /data-puerta-cuenta/);
+      assert.doesNotMatch(html, /data-formulario-anterior/);
       assert.doesNotMatch(html, /data-suscripcion-checkout|suscripcion-checkout\.js/);
     }
   }

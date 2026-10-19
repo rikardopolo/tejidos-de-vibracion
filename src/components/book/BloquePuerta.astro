@@ -16,6 +16,8 @@ import FormularioTejedor from './FormularioTejedor.astro';
 import CuentaTdv from './CuentaTdv.astro';
 import PuertaSuscripcion from './PuertaSuscripcion.astro';
 import { checkoutSuscripcionActivo } from '@/lib/checkout-suscripcion.mjs';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
+import PuertaCuenta from './PuertaCuenta.astro';
 
 export interface Props {
   tipo: 'obertura' | 'cap-espera' | 'cap-bloqueado' | 'obertura-pieza';
@@ -79,6 +81,10 @@ const notaPie = 'notaPie' in d ? d.notaPie : undefined;
 const firma = 'firma' in d ? d.firma : undefined;
 
 const formId = `form-tejedor-puerta-${tipo}`;
+const cuentaActiva = sesionTdvActiva();
+const cuerpoCuenta = tipo === 'cap-espera'
+  ? 'Este capítulo sigue en preparación. Si quieres recibir los avisos de nuevas entregas, puedes elegir las Cartas del Tejedor en Mi cuenta.'
+  : 'La Obertura y los capítulos gratuitos publicados se abren con tu cuenta de Tejidos de Realidad.';
 ---
 
 <aside class={`bloque-puerta bloque-puerta--${tipo}`} data-bloque-puerta>
@@ -90,15 +96,17 @@ const formId = `form-tejedor-puerta-${tipo}`;
     <>
       <p class="bloque-puerta__eyebrow">{eyebrow ?? d.eyebrow}</p>
       <h2 class="bloque-puerta__titulo">{tituloFinal}</h2>
-      <p class="bloque-puerta__cuerpo">{cuerpoFinal}</p>
+      <p class="bloque-puerta__cuerpo">{cuentaActiva ? cuerpoCuenta : cuerpoFinal}</p>
 
       {conFormulario && (
         <div class="bloque-puerta__form">
+          {cuentaActiva ? <PuertaCuenta /> : <>
           <FormularioTejedor id={formId} variant="inline" />
           {notaPie && <p class="bloque-puerta__nota">{notaPie}</p>}
           {/* S-12 · «Entrar» / «Crear cuenta» por el salto al portal. Solo con
               TDV_SESION_ENABLED y en páginas bajo demanda (CuentaTdv lo decide). */}
           <CuentaTdv variante="puerta" />
+          </>}
         </div>
       )}
 

@@ -443,9 +443,23 @@ test('formulario-tejedor.js: no exige las Cartas y manda la autorización como b
   assert.match(js, /autorizacion: true, cartas: cartas/);
 });
 
-test('/bienvenido: solo da de alta en la lista de las Cartas según cartasVigentes (evidencia y baja)', () => {
-  const src = fuente('../pages/bienvenido.astro');
-  assert.match(src, /select\('consent_text, unsubscribed_at'\)/);
-  assert.match(src, /conCartas = cartasVigentes\(data\)/);
-  assert.match(src, /if \(conCartas && apiKey && listIdRaw\)/);
+test('/bienvenido: solo da de alta en Cartas con consentimiento vigente y nunca tras una baja posterior', async () => {
+  const { confirmarDoi } = await import('./bienvenido.test-helper.mjs');
+  for (const activa of [false, true]) {
+    for (const [opciones, esperado] of [
+      [{}, 1],
+      [{ cartas: false }, 0],
+      [{ baja: true }, 0],
+      [{ retirada: true }, activa ? 0 : 1],
+      [{ post: false }, 0],
+    ]) {
+      const r = await confirmarDoi({ activa, ...opciones });
+      assert.equal(r.contactos.length, esperado, JSON.stringify({ activa, ...opciones }));
+      if (esperado) assert.equal(r.contactos[0].listId, 9);
+    }
+  }
+  for (const falloPreferencias of ['error', 'throw']) {
+    const r = await confirmarDoi({ activa: true, retirada: true, falloPreferencias });
+    assert.equal(r.contactos.length, 0, 'sin poder leer la baja posterior no se vuelve a suscribir');
+  }
 });
