@@ -18,6 +18,7 @@
 import OberturaLayout from '@/layouts/OberturaLayout.astro';
 import BloquePuerta from '@/components/book/BloquePuerta.astro';
 import FormularioTejedor from '@/components/book/FormularioTejedor.astro';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
 import { getCollection, getEntry, render } from 'astro:content';
 import { getAcceso, puedeAcceder, gatingActivo, type Nivel } from '@/lib/gating';
 import { SITE, breadcrumb, wrapGraph } from '@/lib/seo';
@@ -176,7 +177,7 @@ const pieceSchema = wrapGraph([
   {tieneAcceso && nivel === 0 && (
     <aside class="pieza-captura">
       <p class="pieza-captura__eyebrow">Cruza el umbral</p>
-      <p class="pieza-captura__linea">La Obertura completa —las quince piezas— es libre para los tejedores registrados. Un nombre y un correo. Eso es todo.</p>
+      <p class="pieza-captura__linea">{sesionTdvActiva() ? 'La Obertura completa se abre con tu cuenta gratuita de Tejidos de Realidad.' : 'La Obertura completa —las quince piezas— es libre para los tejedores registrados. Un nombre y un correo. Eso es todo.'}</p>
       <FormularioTejedor id="form-obertura-pieza" variant="inline" />
     </aside>
   )}

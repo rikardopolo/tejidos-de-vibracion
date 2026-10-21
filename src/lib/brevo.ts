@@ -5,8 +5,11 @@
  * oficialmente. Usamos sendTransacEmail con un link DOI custom controlado por
  * nosotros (apunta a /bienvenido?t=HMAC_TOKEN). Tras la confirmación añadimos
  * el contacto a la lista #9 → workflow → bienvenida.
+ *
+ * El esquema del alta del libro ya no vive aquí: es propio del endpoint y está en
+ * `alta-libro.mjs` (S-15). El `leadSchema` de antes (nombre obligatorio y una sola
+ * casilla) no lo usaba nadie más y se retiró para que nadie lo reutilice.
  */
-import { z } from 'zod';
 
 const BREVO_API_BASE = 'https://api.brevo.com/v3';
 
@@ -36,15 +39,6 @@ export async function tagContactSafe(opts: {
   }
 }
 
-export const leadSchema = z.object({
-  nombre: z.string().min(2).max(100).trim(),
-  correo: z.string().email().max(254),
-  acepto: z.literal(true),
-  website: z.string().max(0),
-});
-
-export type Lead = z.infer<typeof leadSchema>;
-
 /**
  * Fallo de red hacia Brevo. El cuerpo de la respuesta NO se loguea (puede traer
  * datos del contacto), pero el NOMBRE de la excepción sí: sin él, un email de
@@ -60,15 +54,21 @@ function falloDeRed(donde: string, e: unknown): { ok: false; status: number; mes
  * Crea (o actualiza) un contacto en Brevo SIN añadirlo a ninguna lista.
  * Usamos esto pre-confirmación: el contacto existe en Brevo pero el workflow
  * de bienvenida (asociado a la lista #9) no se dispara hasta que confirme.
+ *
+ * `updateEnabled: false` → solo CREA: si el contacto ya existe, Brevo responde 400
+ * («already exist») y no toca sus atributos (aquí cuenta como éxito). Lo usa el alta
+ * del libro, que no está confirmada: un tercero no reescribe NOMBRE ni DOI_PENDIENTE
+ * de un contacto ajeno. Por defecto `true` (comportamiento de siempre).
  */
 export async function upsertContact(opts: {
   email: string;
   apiKey: string;
   attributes?: Record<string, string>;
+  updateEnabled?: boolean;
 }): Promise<{ ok: true } | { ok: false; status: number; message: string }> {
   const payload = {
     email: opts.email.toLowerCase().trim(),
-    updateEnabled: true,
+    updateEnabled: opts.updateEnabled ?? true,
     listIds: [] as number[],
     attributes: opts.attributes,
   };

@@ -58,8 +58,8 @@
     }
   ],
   "redirects": [
-    { "source": "/comprar/acto-2", "destination": "/comprar/preventa", "permanent": true },
-    { "source": "/comprar", "destination": "/comprar/preventa", "permanent": false },
+    { "source": "/comprar/acto-2", "destination": "/suscribirse", "permanent": true },
+    { "source": "/comprar", "destination": "/suscribirse", "permanent": false },
     { "source": "/libro", "destination": "/", "permanent": true },
     { "source": "/libro/obertura", "destination": "/obertura", "permanent": true },
     { "source": "/libro/:cap(cap-[^/]+){/}?", "destination": "/capitulo/:cap", "permanent": true },

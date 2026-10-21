@@ -8,6 +8,7 @@
  * menú desplegable nativo <details> (sin JS · CSP-safe) con los 6 ítems.
  */
 
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
 const path = Astro.url.pathname;
 
 function isCurrent(href: string): boolean {
@@ -19,7 +20,7 @@ function isCurrent(href: string): boolean {
 const links = [
   { href: '/indice', label: 'Índice' },
   { href: '/obertura', label: 'Obertura' },
-  { href: '/recibir', label: 'Recibir' },
+  sesionTdvActiva() ? { href: `/auth/entrar?next=${encodeURIComponent(path)}`, label: 'Entrar o crear cuenta' } : { href: '/recibir', label: 'Recibir' },
   { href: '/comunidad', label: 'Comunidad' },
   { href: '/sobre-el-libro', label: 'Sobre el libro' },
   { href: '/sobre-el-libro#el-tejedor', label: 'El Tejedor' },

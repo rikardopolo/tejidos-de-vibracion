@@ -49,9 +49,9 @@ function readEnv(key: string): string | undefined {
 /**
  * Nivel + scope (slugs comprados) leídos y verificados desde las cookies.
  *
- * Nivel 1 por dos caminos: el token de `tejedor-access` (boletín, sigue valiendo
- * de forma indefinida, D13) o, con `TDV_SESION_ENABLED`, una `__Host-tdv_sesion`
- * válida (S-12). La sesión se comprueba por firma y caducidad, SIN consultar la
+ * Nivel 1: con `TDV_SESION_ENABLED`, solo una `__Host-tdv_sesion` válida.
+ * Apagado, se conserva el token de registro `tejedor-access` (reversión).
+ * La sesión se comprueba por firma y caducidad, SIN consultar la
  * base ni el epoch: tras «cerrar en todos» una sesión ya emitida sigue dando el
  * nivel 1 hasta caducar (riesgo aceptado, ver `leerSesionTdv`). El nivel 2 por
  * sesión (S-13) vive en `getAccesoVerificado`, y ese sí compara el epoch.
@@ -78,6 +78,8 @@ function accesoPorToken(cookies: AstroCookies): { nivel: Nivel; slugs: string[] 
     return r.valid ? { nivel: r.nivel, slugs: r.slugs } : { nivel: 0, slugs: [] };
   }
 
+  // Puerta única: con cuentas, el nivel 1 viene de la sesión. Las compras conservan su token.
+  if (sesionTdvActiva()) return { nivel: 0, slugs: [] };
   // Token de REGISTRO (nivel 1) · formato legacy (un único blob base64url, sin puntos).
   return verifyAccessToken(value, secret).valid ? { nivel: 1, slugs: [] } : { nivel: 0, slugs: [] };
 }

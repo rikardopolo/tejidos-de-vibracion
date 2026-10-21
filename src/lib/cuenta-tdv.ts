@@ -44,6 +44,16 @@ export function portalAutorizarUrl(): string | undefined {
   return readEnv('PORTAL_AUTORIZAR_URL');
 }
 
+/** Enlace a las preferencias en el mismo portal que autoriza el libro (también en preview). */
+export function portalCuentaUrl(): string | null {
+  try {
+    const url = new URL(portalAutorizarUrl() || 'https://tejidosderealidad.com/cuenta/autorizar');
+    return url.protocol === 'https:' && !url.username && !url.password ? `${url.origin}/cuenta` : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Sesión válida del libro (firma y caducidad, SIN consultar la base) o `null`.
  * Con el interruptor apagado, siempre `null` (decisión en `sesionTdvDeCookie`,

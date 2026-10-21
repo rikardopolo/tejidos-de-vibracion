@@ -1,0 +1,22 @@
+---
+import { leerSesionTdv, portalCuentaUrl } from '@/lib/cuenta-tdv';
+const sesion = Astro.isPrerendered ? null : leerSesionTdv(Astro.cookies);
+const entrar = `/auth/entrar?next=${encodeURIComponent(Astro.url.pathname)}`;
+const cuenta = portalCuentaUrl();
+---
+<div class="puerta-cuenta" data-puerta-cuenta>
+  {sesion ? (
+    <p>Ya entraste con tu cuenta. <a class="lit-link" href="/obertura">Ir a la Obertura →</a></p>
+  ) : (
+    <>
+      <p>Entra o crea tu cuenta para seguir leyendo. Es gratis.</p>
+      <p><a class="lit-link" href={entrar} rel="nofollow">Entrar o crear mi cuenta →</a></p>
+    </>
+  )}
+  <p class="puerta-cuenta__nota">Los correos son opcionales.{cuenta && <> Puedes elegirlos en <a class="lit-link" href={`${cuenta}#correos`}>Mi cuenta</a>.</>}</p>
+</div>
+<style>
+  .puerta-cuenta { font-family: var(--sans); font-size: 1rem; line-height: 1.6; }
+  .puerta-cuenta p { margin: 0 0 1rem; }
+  .puerta-cuenta__nota { font-size: var(--fs-meta); color: var(--tinta-suave); }
+</style>

@@ -10,6 +10,7 @@
  */
 import LecturaLarga from '@/layouts/LecturaLarga.astro';
 import { SITE } from '@/lib/seo';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
 
 const contactoSchema = {
   '@context': 'https://schema.org',
@@ -65,7 +66,7 @@ const contactoSchema = {
       <p class="no-indent">La respuesta llega normalmente en un plazo de dos a cinco días hábiles, en zona horaria de Colombia (UTC−5). Si tu mensaje trata de una compra o del acceso al libro, incluye el correo con el que te registraste: es lo que permite ubicar tu lectura.</p>
 
       <h2 class="title-3">Antes de escribir</h2>
-      <p class="no-indent">Si lo que buscas es leer, no hace falta correo: la <a href="/obertura">Obertura</a> está abierta y el <a href="/indice">índice</a> muestra qué capítulos están publicados y cuáles vienen en camino. Para recibir aviso cuando se abra cada capítulo, basta el <a href="/recibir">registro</a> — un nombre y un correo.</p>
+      {sesionTdvActiva() ? <p class="no-indent">Puedes empezar por la <a href="/obertura">Obertura</a> y consultar el <a href="/indice">índice</a>. Para continuar leyendo, <a href="/auth/entrar?next=%2Fcontacto">entra o crea tu cuenta gratuita</a>. Los avisos de nuevas entregas son opcionales y se eligen en Mi cuenta.</p> : <p class="no-indent">Si lo que buscas es leer, no hace falta correo: la <a href="/obertura">Obertura</a> está abierta y el <a href="/indice">índice</a> muestra qué capítulos están publicados y cuáles vienen en camino. Para recibir aviso cuando se abra cada capítulo, basta el <a href="/recibir">registro</a> — un nombre y un correo.</p>}
 
       <p class="no-indent">Los simuladores, los oráculos y la constelación de pensadores no viven aquí: son del portal, en <a href="https://tejidosderealidad.com">tejidosderealidad.com</a>. Este sitio es solo el libro.</p>
     </section>

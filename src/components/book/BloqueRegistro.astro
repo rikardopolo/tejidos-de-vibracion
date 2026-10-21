@@ -1,5 +1,7 @@
 ---
 import FormularioTejedor from './FormularioTejedor.astro';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
+const cuentaActiva = sesionTdvActiva();
 ---
 <aside class="bloque-registro" data-bloque-registro>
   <div class="bloque-registro__fade" aria-hidden="true"></div>
@@ -7,8 +9,7 @@ import FormularioTejedor from './FormularioTejedor.astro';
   <div class="bloque-registro__inner">
     <p class="bloque-registro__intro">Súmate al recorrido del Libro.</p>
     <p class="bloque-registro__copy">
-      Para seguir leyendo, déjame saber quién eres. Un nombre y un correo — nada más.
-      Es la primera forma de pertenecer al tejido.
+      {cuentaActiva ? 'Una cuenta para leer el libro y recorrer Tejidos de Realidad.' : 'Para seguir leyendo, déjame saber quién eres. Un nombre y un correo — nada más. Es la primera forma de pertenecer al tejido.'}
     </p>
 
     <FormularioTejedor id="form-tejedor-obertura" variant="inline" />

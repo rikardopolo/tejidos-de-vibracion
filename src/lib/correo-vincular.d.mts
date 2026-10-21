@@ -2,6 +2,8 @@
 export const VINCULAR_URL: string;
 export const REMITENTE_POR_DEFECTO: Readonly<{ email: string; name: string }>;
 
+export function urlVincularPortal(autorizarUrl?: string | null): string;
+
 export function planCorreoVincular(
   leer: (k: string) => string | undefined,
 ):

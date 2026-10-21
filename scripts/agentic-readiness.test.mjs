@@ -670,8 +670,8 @@ test('TRIPWIRE · los tres lectores del resumen son los que el LIBRO nombra', ()
 
 test('el resumen NO fija el precio: sube en septiembre y aquí envejecería mal', () => {
   for (const [nombre, txt] of [['llms.txt', llms], ['index.md', indexMd]]) {
-    assert.ok(!/\$\s?\d|\d+\s?USD/.test(txt), `${nombre} fija un precio; enlaza /comprar/preventa, que es quien lo sabe`);
-    assert.ok(txt.includes('/comprar/preventa'), `${nombre} debe enlazar la página que sí tiene el precio`);
+    assert.ok(!/\$\s?\d|\d+\s?USD/.test(txt), `${nombre} fija un precio; enlaza /suscribirse, que es quien lo sabe`);
+    assert.ok(txt.includes('/suscribirse'), `${nombre} debe enlazar la página que sí tiene el precio (la preventa se retiró el 20-oct-2026)`);
   }
 });
 
@@ -679,9 +679,9 @@ test('/comprar redirige en vez de dar 404 (el agente del evaluador chocó ahí)'
   const vercel = JSON.parse(readFileSync(path.join(raiz, 'vercel.json'), 'utf8'));
   const r = vercel.redirects.find((x) => x.source === '/comprar');
   assert.ok(r, '/comprar debe redirigir');
-  assert.equal(r.destination, '/comprar/preventa');
+  assert.equal(r.destination, '/suscribirse');
   assert.equal(r.permanent, false, 'no permanente: un 308 se cachea de por vida y el destino puede cambiar');
-  assert.ok(existsSync(path.join(pagesDir, 'comprar', 'preventa.astro')), 'el destino debe existir');
+  assert.ok(existsSync(path.join(pagesDir, 'suscribirse.astro')), 'el destino debe existir');
 });
 
 test('el schema del libro declara audiencia y abstract legibles por máquina', () => {

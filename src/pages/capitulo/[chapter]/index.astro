@@ -182,7 +182,11 @@ const capituloSchema = wrapGraph([
           </section>
         )}
 
-        <BloquePuerta tipo={tipoBloquePuerta} capitulo={capitulo} />
+        <BloquePuerta
+          tipo={tipoBloquePuerta}
+          capitulo={capitulo}
+          suscripcion={chapterNum >= 4 && !puedeAcceder(acceso, data.nivelRequerido, data.productoSlug)}
+        />
       </Fragment>
     )}
   </article>

@@ -19,7 +19,7 @@
  *   base en cada página. Una sesión sin `em` muestra el aviso sin correo.
  * - «Salir» es un POST al mismo origen (`form-action 'self'` lo permite).
  */
-import { leerSesionTdv, sesionTdvActiva } from '@/lib/cuenta-tdv';
+import { leerSesionTdv, sesionTdvActiva, portalCuentaUrl } from '@/lib/cuenta-tdv';
 
 interface Props {
   variante?: 'puerta' | 'barra';
@@ -32,6 +32,7 @@ const sesion = activa ? leerSesionTdv(Astro.cookies) : null;
 const ruta = Astro.url.pathname;
 const hrefEntrar = `/auth/entrar?next=${encodeURIComponent(ruta)}`;
 const pintar = activa && (sesion !== null || variante === 'puerta');
+const miCuenta = activa ? portalCuentaUrl() : null;
 ---
 
 {pintar && (
@@ -45,6 +46,7 @@ const pintar = activa && (sesion !== null || variante === 'puerta');
             <>Entraste con tu cuenta de Tejidos de Realidad</>
           )}
         </span>
+        {miCuenta && <a class="cuenta-tdv__enlace" href={`${miCuenta}#correos`}>Mi cuenta</a>}
         <input type="hidden" name="next" value={ruta} />
         <button class="cuenta-tdv__salir" type="submit">Salir</button>
       </form>

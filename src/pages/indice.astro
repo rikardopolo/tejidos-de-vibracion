@@ -18,13 +18,13 @@ const SLUG_MAP: Record<number, string> = {
   4: '/capitulo/cap-4-biologia-campo-coherente',
 };
 
-// Acto I · mes de apertura por capítulo (metadato editorial). El ESTADO
+// Acto I · el estado
 // (soon vs abierto) NO vive aquí: se deriva del frontmatter `status` de cada
 // MDX más abajo, la misma fuente única que gobierna el gating y el sitemap.
 const ACTO_I = [
-  { n: 1, roman: 'I', mes: 'agosto' },
-  { n: 2, roman: 'II', mes: 'septiembre' },
-  { n: 3, roman: 'III', mes: 'octubre' },
+  { n: 1, roman: 'I' },
+  { n: 2, roman: 'II' },
+  { n: 3, roman: 'III' },
 ];
 
 // Load chapters visibles en el índice · 'published' renderiza contenido,
@@ -61,25 +61,21 @@ const gestatingChapters = [
 // capítulo en 'draft' —el Cap. 4 en main— cae a gestación y sigue sin enlace; en un
 // preview con el capítulo abierto, aparece navegable.
 //
-// El badge sale de `nivelRequerido` y no del acto: los del Acto II son de pago, y
-// decir «Libre · requiere registro» sería falso.
+// El Acto II se abre con la suscripción según el modelo de acceso del 19-oct.
 const ACTO_II = gestatingChapters
   .filter((c) => c.num >= 4 && c.num <= 6)
   .map((c) => {
     const data = publishedByNumber.get(c.num);
     if (!data) {
-      return { roman: c.roman, title: c.title, subtitle: c.subtitle, gestating: true } as const;
+      return { roman: c.roman, title: c.title, subtitle: c.subtitle, access: 'Con la suscripción · En preparación', gestating: true } as const;
     }
     const soon = data.status !== 'published';
-    const dePago = (data.nivelRequerido ?? 1) >= 2;
     return {
       roman: c.roman,
       title: data.title,
       subtitle: data.subtitle ?? c.subtitle,
       href: SLUG_MAP[c.num],
-      access: soon
-        ? (dePago ? 'Acto II · próximamente' : 'Libre · próximamente')
-        : (dePago ? 'Acto II · requiere compra' : 'Libre · requiere registro'),
+      access: soon ? 'Con la suscripción · En preparación' : 'Con la suscripción',
       soon,
       gestating: false,
     };
@@ -98,11 +94,12 @@ const ACTO_II = gestatingChapters
       <p class="meta">Volumen I · Tejidos de Vibración</p>
     </header>
 
-    <p style="font-family: var(--serif); font-style: italic; font-size: 1.0625rem; line-height: 1.6; color: var(--tinta-suave); max-width: 36rem; margin: 1.5rem 0 0;">Disponible hoy: la Obertura completa y el Capítulo I. En camino: el resto del Acto I, uno a uno. Tu correo es la entrada a todo.</p>
+    <p style="font-family: var(--serif); font-style: italic; font-size: 1.0625rem; line-height: 1.6; color: var(--tinta-suave); max-width: 36rem; margin: 1.5rem 0 0;">La Obertura y los capítulos I–III son libres con tu cuenta de Tejidos de Realidad. Desde el capítulo IV, las entregas publicadas se abren con la suscripción Acceso al Tejedor. Las piezas en preparación se publican a medida que están listas.</p>
 
     <!-- Obertura -->
     <TocEntry
       num="—"
+      access="Libre con tu cuenta"
       title="Obertura"
       subtitle="El tejedor consciente despierta"
       href="/obertura"
@@ -119,19 +116,19 @@ const ACTO_II = gestatingChapters
         Estados del Acto I DERIVADOS del frontmatter `status` de cada MDX
         (fuente única de verdad · la misma que gobierna el gating runtime y el
         sitemap):
-        - status 'fragmento-permanente' → soon=true · badge "Libre · abre en {mes}"
-        - status 'published'            → soon=false · badge "Libre · requiere registro" · link activo
+        - status 'fragmento-permanente' → soon=true · en preparación, sin fecha prometida
+        - status 'published'            → soon=false · libre con tu cuenta · link activo
         Los caps IV-X siguen `gestating` (Acto II/III · pagos).
 
         Para ABRIR un capítulo del Acto I: cambiar SOLO su MDX a status:
         "published" (un edit) → /indice, el gating y el sitemap se actualizan
-        juntos. Los meses viven en ACTO_I (frontmatter, arriba).
+        juntos.
       */}
-      {ACTO_I.map(({ n, roman, mes }) => {
+      {ACTO_I.map(({ n, roman }) => {
         const data = publishedByNumber.get(n);
-        if (!data) return <TocEntry num={roman} title={`Capítulo ${roman}`} subtitle="" gestating />;
+        if (!data) return <TocEntry num={roman} title={`Capítulo ${roman}`} subtitle="" access="Libre con tu cuenta · En preparación" gestating />;
         const soon = data.status !== 'published';
-        const access = soon ? `Libre · abre en ${mes}` : 'Libre · requiere registro';
+        const access = soon ? 'Libre con tu cuenta · En preparación' : 'Libre con tu cuenta';
         return (
           <TocEntry
             num={roman}
@@ -159,9 +156,7 @@ const ACTO_II = gestatingChapters
         'draft' —como el Cap. 4 en main— cae al listado de gestación y sigue sin
         enlace. En un preview con el capítulo abierto, aparece navegable.
 
-        El badge se deriva de `nivelRequerido`, no del acto: los del Acto II son
-        de pago (nivelRequerido 2) y decir «Libre · requiere registro» sería
-        falso.
+        Las entregas publicadas del Acto II se abren con la suscripción.
       */}
       {ACTO_II.map((e) => (
         <TocEntry
@@ -188,16 +183,11 @@ const ACTO_II = gestatingChapters
           num={c.roman}
           title={c.title}
           subtitle={c.subtitle}
+          access="Con la suscripción · En preparación"
           gestating
         />
       ))}
     </section>
-
-    {/* CTA de pre-venta DESPUBLICADO hasta Live Mode (25-jun-2026): el botón de
-        compra de /comprar/preventa aún no cobra (envs Lemon Squeezy live pendientes),
-        así que no se enlaza en público. La página sigue existiendo. Para reactivar,
-        restaurar la <section class="toc-preventa"> con el <a href="/comprar/preventa">
-        desde el commit c58d8f5 (squash del checkout). */}
 
     <!-- Aparato del libro -->
     <section class="mt-7">

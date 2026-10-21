@@ -10,7 +10,7 @@ El libro está escrito en la frontera entre dos lenguajes: el de la ciencia rigu
 
 - **Qué es**: un libro de divulgación en español —ensayo, no blog ni curso—, publicado por entregas. Una Obertura, tres actos, diez capítulos.
 - **Para quién**: escrito para servir a la vez a la ingeniera escéptica, que pide rigor antes que metáfora; a la buscadora espiritual, que pide invitación antes que argumento; y al estudiante de filosofía, que quiere aparato erudito y voz literaria sin disculpas.
-- **Qué cuesta**: leer es gratis. La Obertura no pide nada; el Capítulo 1 y los siguientes del Acto I piden solo un registro por correo, gratuito. Sin suscripción ni muro de pago sobre lo publicado. Los capítulos aún no abiertos tienen pre-venta en [/comprar/preventa](https://tejidosdevibracion.com/comprar/preventa).
+- **Qué cuesta**: la Obertura y los capítulos I–III publicados son libres con tu cuenta de Tejidos de Realidad. Desde el capítulo IV, las entregas publicadas se abren con la suscripción [Acceso al Tejedor](https://tejidosdevibracion.com/suscribirse). Las compras anteriores conservan su acceso.
 - **En qué se diferencia**: marca explícitamente dónde una afirmación tiene consenso experimental y dónde no, en vez de diluir la física en metáfora o disfrazar la tradición de ciencia.
 
 ## Las puertas del libro

@@ -40,62 +40,137 @@
     } catch (e) { return null; }
   }
 
+  /*
+   * S-15 · nombre opcional y dos casillas sin marcar: autorización (obligatoria) y
+   * Cartas del Tejedor (opcional). El botón NUNCA se deshabilita: se valida al
+   * enviar, cada error se escribe en el <p data-error-for> que el campo enlaza con
+   * aria-describedby, se marca aria-invalid y el foco va al primer campo con error.
+   * La validación real está en el servidor (lib/alta-libro.mjs); esta es la cortesía.
+   */
+  var MENSAJES = {
+    correoVacio: 'Escribe tu correo para continuar.',
+    correoMal: 'Revisa el correo: parece incompleto.',
+    autorizacion: 'Para enviarte el enlace necesitamos tu autorización: marca la primera casilla.',
+    nombreSignos: 'Escribe tu nombre sin los signos < y >.',
+    nombreServidor: 'Revisa tu nombre: sin los signos < y >, y no muy largo.',
+    formato: 'Algo no coincide en el formato. Revisa los campos.',
+    espera: 'Acabas de enviarlo. Espera un minuto antes de intentar de nuevo.',
+    problema: 'Hubo un problema. Inténtalo de nuevo en un momento.',
+    conexion: 'No se pudo enviar. Comprueba tu conexión.',
+  };
+  // Lo mínimo para avisar de un error de tecleo; el servidor valida de verdad.
+  var CORREO_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function campo(form, nombre) { return form.querySelector('[name="' + nombre + '"]'); }
+  function cajaError(form, nombre) { return form.querySelector('[data-error-for="' + nombre + '"]'); }
+
+  function limpiarError(form, nombre) {
+    var c = campo(form, nombre);
+    var e = cajaError(form, nombre);
+    if (c) c.removeAttribute('aria-invalid');
+    if (e) e.textContent = '';
+  }
+
+  function limpiarErrores(form) {
+    var marcados = form.querySelectorAll('[aria-invalid]');
+    for (var i = 0; i < marcados.length; i++) marcados[i].removeAttribute('aria-invalid');
+    var cajas = form.querySelectorAll('[data-error-for]');
+    for (var j = 0; j < cajas.length; j++) cajas[j].textContent = '';
+  }
+
+  /** errores: [[nombreDelCampo, mensaje], …] · devuelve true si pudo pintarlos en su sitio. */
+  function mostrarErrores(form, status, errores) {
+    var primero = null;
+    var sueltos = [];
+    for (var i = 0; i < errores.length; i++) {
+      var c = campo(form, errores[i][0]);
+      var e = cajaError(form, errores[i][0]);
+      if (c) c.setAttribute('aria-invalid', 'true');
+      if (e) e.textContent = errores[i][1];
+      else sueltos.push(errores[i][1]);
+      if (!primero && c) primero = c;
+    }
+    // Sin caja propia (marcado a medida), el aviso va a la región de estado.
+    if (sueltos.length) status.textContent = sueltos.join(' ');
+    if (primero) primero.focus();
+  }
+
   function bindForm(form) {
     var status = document.querySelector('[data-status-for="' + form.id + '"]');
     if (!status) return;
 
     var endpoint = form.getAttribute('data-endpoint') || '/api/leads/libro';
     var submitText = form.getAttribute('data-submit-text') || 'Entrar al tejido';
-    var successText = form.getAttribute('data-success-text') || 'Revisa tu correo. Te enviamos un link para confirmar.';
+    var successText = form.getAttribute('data-success-text') || 'Revisa tu correo. Te enviamos un enlace para confirmar.';
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var enviando = false;
+
+    // Al corregir un campo, su error se va.
+    function alCambiar(e) {
+      var t = e.target;
+      if (t && t.name && t.getAttribute('aria-invalid') === 'true') limpiarError(form, t.name);
+    }
+    form.addEventListener('input', alCambiar);
+    form.addEventListener('change', alCambiar);
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      if (enviando) return; // doble clic: el botón sigue activo, pero no se envía dos veces
+      limpiarErrores(form);
+      status.textContent = '';
+
       var fd = new FormData(form);
-      var nombre = String(fd.get('nombre') || '').trim();
+      var nombre = String(fd.get('nombre') || '').replace(/\s+/g, ' ').trim();
       var correo = String(fd.get('correo') || '').trim();
-      var acepto = fd.get('acepto') === 'on' || fd.get('acepto') === 'true';
+      var autorizacion = fd.get('autorizacion') === 'on';
+      var cartas = fd.get('cartas') === 'on';
       var website = String(fd.get('website') || '');
 
-      // Validación client-side mínima (la real está en backend)
-      if (nombre.length < 2) { status.textContent = 'Falta tu nombre.'; return; }
-      if (!correo.includes('@') || correo.length < 5) { status.textContent = 'Revisa el correo.'; return; }
-      if (!acepto) { status.textContent = 'Necesitas aceptar para entrar.'; return; }
+      var errores = [];
+      if (/[<>]/.test(nombre)) errores.push(['nombre', MENSAJES.nombreSignos]);
+      if (!correo) errores.push(['correo', MENSAJES.correoVacio]);
+      else if (!CORREO_RE.test(correo)) errores.push(['correo', MENSAJES.correoMal]);
+      if (!autorizacion) errores.push(['autorizacion', MENSAJES.autorizacion]);
+      if (errores.length) { mostrarErrores(form, status, errores); return; }
 
-      var submitBtn = form.querySelector('button[type="submit"]');
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando…'; }
+      var cuerpo = { correo: correo, autorizacion: true, cartas: cartas, website: website, utm: leerUtms() };
+      if (nombre) cuerpo.nombre = nombre;
+
+      enviando = true;
+      if (submitBtn) submitBtn.textContent = 'Enviando…';
 
       try {
         var res = await fetch(endpoint, {
           method: 'POST',
           credentials: 'same-origin',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nombre: nombre,
-            correo: correo,
-            acepto: true,
-            website: website,
-            utm: leerUtms(),
-          }),
+          body: JSON.stringify(cuerpo),
         });
 
         if (res.ok) {
           status.textContent = successText;
           form.reset();
-          // Ocultar el form tras éxito; mostrar status visible
+          // Ocultar el form tras éxito; el aviso vive fuera del form y sigue visible.
           form.classList.add('is-sent');
         } else if (res.status === 429) {
-          status.textContent = 'Acabas de enviarlo. Espera un minuto antes de intentar de nuevo.';
-          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitText; }
+          status.textContent = MENSAJES.espera;
         } else if (res.status === 400) {
-          status.textContent = 'Algo no coincide en el formato. Revisa los campos.';
-          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitText; }
+          var issues = [];
+          try { issues = ((await res.json()) || {}).issues || []; } catch (err) { issues = []; }
+          var delServidor = [];
+          if (issues.indexOf('correo') >= 0) delServidor.push(['correo', MENSAJES.correoMal]);
+          if (issues.indexOf('autorizacion') >= 0) delServidor.push(['autorizacion', MENSAJES.autorizacion]);
+          if (issues.indexOf('nombre') >= 0) delServidor.push(['nombre', MENSAJES.nombreServidor]);
+          if (delServidor.length) mostrarErrores(form, status, delServidor);
+          else status.textContent = MENSAJES.formato;
         } else {
-          status.textContent = 'Hubo un problema. Inténtalo de nuevo en un momento.';
-          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitText; }
+          status.textContent = MENSAJES.problema;
         }
       } catch (err) {
-        status.textContent = 'No se pudo enviar. Comprueba tu conexión.';
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitText; }
+        status.textContent = MENSAJES.conexion;
+      } finally {
+        enviando = false;
+        if (submitBtn) submitBtn.textContent = submitText;
       }
     });
   }

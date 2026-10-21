@@ -14,6 +14,10 @@
  */
 import FormularioTejedor from './FormularioTejedor.astro';
 import CuentaTdv from './CuentaTdv.astro';
+import PuertaSuscripcion from './PuertaSuscripcion.astro';
+import { checkoutSuscripcionActivo } from '@/lib/checkout-suscripcion.mjs';
+import { sesionTdvActiva } from '@/lib/cuenta-tdv';
+import PuertaCuenta from './PuertaCuenta.astro';
 
 export interface Props {
   tipo: 'obertura' | 'cap-espera' | 'cap-bloqueado' | 'obertura-pieza';
@@ -22,16 +26,22 @@ export interface Props {
   subtitulo?: string;
   /** Override del eyebrow (para invitaciones de registro fuera del lector). */
   eyebrow?: string;
+  /** Rutas desde el Cap. IV sin acceso de pago. */
+  suscripcion?: boolean;
 }
 
-const { tipo, capitulo, titulo, subtitulo, eyebrow } = Astro.props;
+const { tipo, capitulo, titulo, subtitulo, eyebrow, suscripcion = false } = Astro.props;
+const ofrecerSuscripcion = !Astro.isPrerendered && suscripcion && checkoutSuscripcionActivo({
+  SUSCRIPCION_CHECKOUT_ENABLED: process.env.SUSCRIPCION_CHECKOUT_ENABLED?.trim()
+    || import.meta.env.SUSCRIPCION_CHECKOUT_ENABLED,
+});
 
 // Defaults según tipo
 const defaults = {
   obertura: {
     eyebrow: 'Continúa el umbral',
     titulo: 'La Obertura sigue más allá',
-    cuerpo: 'El umbral apenas se entreabre. Lo que has leído es la primera respiración de un libro que dura tres actos. Para cruzar la Obertura completa — y para encontrar, al final, el primer movimiento del Capítulo 1 — déjame tu nombre y tu correo.',
+    cuerpo: 'La Obertura y los capítulos I–III son libres con tu cuenta de Tejidos de Realidad.',
     conFormulario: true,
     notaPie: 'Sin spam. Sin venta de datos. Al final de cada correo hay un enlace para darte de baja con un solo clic.',
     firma: undefined as string | undefined,
@@ -39,7 +49,7 @@ const defaults = {
   'cap-bloqueado': {
     eyebrow: 'Cruzar el umbral',
     titulo: capitulo ? `${capitulo} requiere cruzar la Obertura` : 'Este capítulo requiere cruzar la Obertura',
-    cuerpo: `${capitulo ?? 'Este capítulo'} es parte del Volumen I, libre para los tejedores registrados. Si aún no has dado tu nombre y tu correo, esta es la puerta.`,
+    cuerpo: `${capitulo ?? 'Este capítulo'} es parte del Volumen I. La Obertura y los capítulos I–III son libres con tu cuenta.`,
     conFormulario: true,
     notaPie: 'Sin spam. Sin venta de datos.',
     firma: undefined as string | undefined,
@@ -55,7 +65,7 @@ const defaults = {
   'obertura-pieza': {
     eyebrow: 'Continúa el umbral',
     titulo: 'Esta pieza espera al otro lado',
-    cuerpo: 'La Obertura completa — las quince piezas, los tres interludios, el mapa conceptual — es libre para los tejedores registrados. Un nombre y un correo. Eso es todo.',
+    cuerpo: 'La Obertura completa es libre con tu cuenta de Tejidos de Realidad.',
     conFormulario: true,
     // notaPie undefined · delegamos al built-in form-tejedor__nota (evita duplicación)
     notaPie: undefined as string | undefined,
@@ -64,38 +74,49 @@ const defaults = {
 } as const;
 
 const d = defaults[tipo];
-const tituloFinal = titulo ?? d.titulo;
+const tituloFinal = titulo ?? (suscripcion ? 'Con la suscripción' : d.titulo);
 const cuerpoFinal = subtitulo ?? d.cuerpo;
 const conFormulario = d.conFormulario;
 const notaPie = 'notaPie' in d ? d.notaPie : undefined;
 const firma = 'firma' in d ? d.firma : undefined;
 
 const formId = `form-tejedor-puerta-${tipo}`;
+const cuentaActiva = sesionTdvActiva();
+const cuerpoCuenta = tipo === 'cap-espera'
+  ? 'Este capítulo sigue en preparación. Si quieres recibir los avisos de nuevas entregas, puedes elegir las Cartas del Tejedor en Mi cuenta.'
+  : 'Libre con tu cuenta. La Obertura y los capítulos I–III publicados se abren con tu cuenta de Tejidos de Realidad.';
+const cuerpoSuscripcion = 'Desde el capítulo IV, las entregas publicadas se abren con la suscripción Acceso al Tejedor.';
 ---
 
 <aside class={`bloque-puerta bloque-puerta--${tipo}`} data-bloque-puerta>
   <div class="bloque-puerta__ornament" aria-hidden="true">◆</div>
 
-  <p class="bloque-puerta__eyebrow">{eyebrow ?? d.eyebrow}</p>
+  {ofrecerSuscripcion ? (
+    <PuertaSuscripcion />
+  ) : (
+    <>
+      <p class="bloque-puerta__eyebrow">{eyebrow ?? d.eyebrow}</p>
+      <h2 class="bloque-puerta__titulo">{tituloFinal}</h2>
+      <p class="bloque-puerta__cuerpo">{suscripcion ? cuerpoSuscripcion : cuentaActiva ? cuerpoCuenta : cuerpoFinal}</p>
 
-  <h2 class="bloque-puerta__titulo">{tituloFinal}</h2>
+      {conFormulario && (
+        <div class="bloque-puerta__form">
+          {cuentaActiva ? <PuertaCuenta /> : <>
+          <FormularioTejedor id={formId} variant="inline" />
+          {notaPie && <p class="bloque-puerta__nota">{notaPie}</p>}
+          {/* S-12 · «Entrar» / «Crear cuenta» por el salto al portal. Solo con
+              TDV_SESION_ENABLED y en páginas bajo demanda (CuentaTdv lo decide). */}
+          <CuentaTdv variante="puerta" />
+          </>}
+        </div>
+      )}
 
-  <p class="bloque-puerta__cuerpo">{cuerpoFinal}</p>
-
-  {conFormulario && (
-    <div class="bloque-puerta__form">
-      <FormularioTejedor id={formId} variant="inline" />
-      {notaPie && <p class="bloque-puerta__nota">{notaPie}</p>}
-      {/* S-12 · «Entrar» / «Crear cuenta» por el salto al portal. Solo con
-          TDV_SESION_ENABLED y en páginas bajo demanda (CuentaTdv lo decide). */}
-      <CuentaTdv variante="puerta" />
-    </div>
-  )}
-
-  {firma && (
-    <div class="bloque-puerta__firma">
-      {firma.split('\n').map((linea: string) => <p>{linea}</p>)}
-    </div>
+      {firma && (
+        <div class="bloque-puerta__firma">
+          {firma.split('\n').map((linea: string) => <p>{linea}</p>)}
+        </div>
+      )}
+    </>
   )}
 
   <div class="bloque-puerta__ornament bloque-puerta__ornament--bottom" aria-hidden="true">◆</div>
