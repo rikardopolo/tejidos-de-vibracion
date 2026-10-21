@@ -6,6 +6,7 @@ const hrefEntrar = `/auth/entrar?next=${encodeURIComponent(Astro.url.pathname)}`
 ---
 
 <div class="puerta-suscripcion" data-suscripcion-checkout data-entrar={hrefEntrar}>
+  <p class="bloque-puerta__eyebrow">Con la suscripción · Acceso al Tejedor</p>
   <h2 class="bloque-puerta__titulo">Suscríbete para seguir leyendo</h2>
   {sesion ? (
     <>

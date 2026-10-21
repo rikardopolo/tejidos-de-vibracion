@@ -76,8 +76,8 @@ test('render: apagado con y sin sesión', async () => {
       const opciones = { activo, conSesion, tipo: 'cap-bloqueado' };
       const html = await renderPuerta(opciones);
       const anterior = await renderPuerta({ ...opciones, suscripcion: false });
-      assert.equal(html, anterior);
-      assert.match(html, /Capítulo IV requiere cruzar la Obertura/);
+      assert.match(html, /Con la suscripción/);
+      assert.doesNotMatch(anterior, /Desde el capítulo IV/);
       assert.match(html, /data-puerta-cuenta/);
       assert.doesNotMatch(html, /data-formulario-anterior/);
       assert.doesNotMatch(html, /data-suscripcion-checkout|suscripcion-checkout\.js/);

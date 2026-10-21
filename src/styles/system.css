@@ -893,45 +893,6 @@ main {
   letter-spacing: 0.01em;
 }
 
-/* toc-preventa · bloque editorial de pre-venta del Acto II.
- * Vive entre la última sección del Acto III y el "Aparato del libro"
- * en /indice. Comunica precio y vigencia de la pre-venta. */
-.toc-preventa {
-  margin: 3rem 0;
-  padding: 1.5rem;
-  border: 1px solid var(--oro-fantasma);
-  border-radius: 2px;
-  background: rgba(212, 160, 23, 0.04);
-}
-.toc-preventa__eyebrow {
-  font-family: var(--cornisa, var(--sans));
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--oro-suave);
-  margin: 0 0 0.6rem;
-}
-.toc-preventa__copy {
-  font-family: var(--serif);
-  font-size: 1rem;
-  line-height: 1.55;
-  color: var(--tinta-suave);
-  margin: 0 0 1rem;
-}
-.toc-preventa__cta {
-  font-family: var(--serif);
-  font-size: 1rem;
-  font-style: italic;
-  color: var(--oro);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: color 180ms ease;
-}
-.toc-preventa__cta:hover {
-  color: var(--oro-suave);
-}
-
 /* ==========================================================================
    FOOTER
    ========================================================================== */

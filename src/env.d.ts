@@ -17,7 +17,8 @@ interface ImportMetaEnv {
   readonly COMUNIDAD_ACTIVA: string;
   readonly LEMONSQUEEZY_API_KEY: string;
   readonly LS_STORE_ID: string;
-  readonly LS_VARIANT_BUNDLE_PREVENTA: string;
+  /** Solo identifica compras anteriores en el webhook; no se necesita para vender. */
+  readonly LS_VARIANT_BUNDLE_PREVENTA?: string;
   readonly LS_VARIANT_SUSCRIPCION_MENSUAL: string;
   readonly LS_VARIANT_SUSCRIPCION_ANUAL: string;
   readonly LS_CUSTOM_SECRET: string;

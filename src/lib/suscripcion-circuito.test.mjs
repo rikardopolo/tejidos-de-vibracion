@@ -163,6 +163,33 @@ function escenario(t, cambiosEnv = {}) {
     crearCheckout, pagar, entregar, acceso, guardarMarca };
 }
 
+test('retiro: webhook firmado del bundle conserva entrega, token y orden previa aunque su checkout esté cerrado', async (t) => {
+  const e = escenario(t);
+  const retirado = cargarModuloTs(new URL('../pages/api/checkout/bundle-preventa.ts', import.meta.url), {}, { env: e.env });
+  assert.equal((await retirado.POST({})).status, 410);
+  e.tablas.orders.push({ id: 'orden-antigua', ls_order_id: '4242', account_id: A,
+    product_slug: 'bundle-preventa', status: 'paid', test_mode: true, acceso_enviado_at: null });
+  const body = {
+    meta: { event_name: 'order_created', test_mode: true },
+    data: { type: 'orders', id: '4242', attributes: { user_email: 'ana@correo.test',
+      user_name: 'Ana', total: 2600, currency: 'USD', status: 'paid', test_mode: true,
+      first_order_item: { variant_id: 111 } } },
+  };
+  const response = await e.entregar(body);
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).unknown_product, undefined);
+  assert.equal(e.tablas.orders.length, 1, 'el reintento no duplica la compra ni borra su cuenta');
+  assert.equal(e.tablas.orders[0].account_id, A);
+  assert.equal(e.envios.length, 1);
+  const enlace = new URL(e.envios[0].params.ACCESO_URL);
+  assert.equal(enlace.pathname, '/acceso/bundle-preventa');
+  const token = compra.verifyPurchaseToken(enlace.searchParams.get('t'), e.env.ACCESS_TOKEN_SECRET);
+  assert.equal(token.valid, true);
+  assert.equal(token.nivel, 2);
+  assert.deepEqual(token.slugs, ['bundle-preventa']);
+  assert.equal((await e.acceso(A)).acceso.nivel, 2);
+});
+
 for (const [caso, email] of [['C01', 'ana@correo.test'], ['C02', 'Pago.Externo@Correo.test']]) {
   test(`${caso}: POST checkout → subscription_created → acceso A con el correo del pago`, async (t) => {
     const e = escenario(t);

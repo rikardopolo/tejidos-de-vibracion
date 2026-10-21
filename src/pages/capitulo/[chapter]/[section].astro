@@ -248,7 +248,7 @@ const piezaSchema = wrapGraph([
       <BloquePuerta
         tipo={tipoBloquePuerta}
         capitulo={capitulo}
-        suscripcion={chapterNum === 4 && !puedeAcceder(acceso, nivelRequerido, productoSlug)}
+        suscripcion={chapterNum >= 4 && !puedeAcceder(acceso, nivelRequerido, productoSlug)}
       />
     )}
 

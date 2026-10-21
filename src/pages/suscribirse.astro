@@ -1,0 +1,30 @@
+---
+import LecturaLarga from '@/layouts/LecturaLarga.astro';
+import PuertaSuscripcion from '@/components/book/PuertaSuscripcion.astro';
+import { checkoutSuscripcionActivo } from '@/lib/checkout-suscripcion.mjs';
+
+export const prerender = false;
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+const activa = checkoutSuscripcionActivo({
+  SUSCRIPCION_CHECKOUT_ENABLED: process.env.SUSCRIPCION_CHECKOUT_ENABLED?.trim()
+    || import.meta.env.SUSCRIPCION_CHECKOUT_ENABLED,
+});
+---
+
+<LecturaLarga
+  title="Acceso al Tejedor · Tejidos de Vibración"
+  description="Conoce la suscripción Acceso al Tejedor para leer las entregas publicadas desde el capítulo IV."
+  pageId="suscribirse"
+>
+  <article class="measure pt-5">
+    <h1 class="title-1">Acceso al Tejedor</h1>
+    <p>Desde el capítulo IV, las entregas publicadas se abren con la suscripción Acceso al Tejedor. Las piezas en preparación estarán disponibles a medida que se publiquen.</p>
+    {activa ? (
+      <PuertaSuscripcion />
+    ) : (
+      <p>La suscripción todavía no está disponible en este sitio.</p>
+    )}
+    <p>Si ya compraste acceso al libro, lo conservas. Puedes seguir usando tu enlace de acceso.</p>
+    <p><a class="lit-link" href="/indice">Ir al índice</a></p>
+  </article>
+</LecturaLarga>
